@@ -4,9 +4,10 @@ import styles from './SideNav.less';
 
 const tools = {
   TEXT: { icon: 'a', href: '/text'},
+  RegEx: { icon: 'r', href: '/regex'},
   JWT: { icon: 'j', href: '/jwt'},
   JSON: { icon: 's', href: '/json'},
-  XML: { icon: 'x', href: '/xml'}
+  XML: { icon: 'x', href: '/xml'},
 };
 
 export default (state, actions) => (

@@ -17,7 +17,7 @@ export default () => (state, actions) => {
       <main>
         <Switch>
           <Route path="/" render={Home} />
-          <Route path="/text" render={PageText} />
+          <Route path="/text" parent render={PageText} />
           <Route render={NotFound} />
         </Switch>
       </main>

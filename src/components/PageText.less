@@ -1,13 +1,30 @@
 @import '../assets/common.less';
 
-.input {
-  width: 260px;
-  line-height: 36px;
+.input_wrap {
+  width: calc(100% - 20px);
+  background: white;
   border: 1px solid @color-grey600;
-  border-radius: 5px;
-  outline: none;
-  padding: 0 10px;
+  padding: 4px;
+  pre{
+    min-height: calc(1em + 3px);
+    margin: 0;
+    border: none;
+    background: white;
+    outline: none;
+    width: 100%;
+    white-space: normal;
+    overflow-wrap: break-word;
+  }
 }
+
+.error {
+  color: red;
+}
+
+.input_info {
+  text-align: right;
+}
+
 
 .output {
   width: 280px;
