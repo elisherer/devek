@@ -5,6 +5,7 @@ import Home from './Home';
 import PageText from './PageText';
 import NotFound from './NotFound';
 import styles from './App.less';
+import PageRegex from "./PageRegex";
 
 export default () => (state, actions) => {
 
@@ -18,6 +19,7 @@ export default () => (state, actions) => {
         <Switch>
           <Route path="/" render={Home} />
           <Route path="/text" parent render={PageText} />
+          <Route path="/regex" parent render={PageRegex} />
           <Route render={NotFound} />
         </Switch>
       </main>
