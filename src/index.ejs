@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <meta http-equiv="Cache-Control" content="no-cache">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="HandheldFriendly" content="true" />
+  <title>Devek</title>
+  <meta name="description" content="Developer Toolkit">
+  <meta name="author" content="Eli Sherer">
+  <link rel="canonical" href="https://devek.app/">
+  <% if (htmlWebpackPlugin.options.githubIndex) { %><script type="text/javascript">
+    (function(l, q) { // router fix for github pages
+      l.search && l.search.slice(1).split('&').forEach(function(v, a) {
+        a = v.split('=');
+        q[a[0]] = decodeURIComponent(a[1]);
+      });
+      q.p && window.history.replaceState(null, null, q.p + (q.q || '') + l.hash);
+    }(window.location, {}))
+  </script><% } else if (htmlWebpackPlugin.options.github404) { %><script type="text/javascript">
+    (function(l) { // router fix for github pages
+      l.replace(
+        l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') +
+        '?p=' + encodeURIComponent(l.pathname) + (l.search ? '&q=' + encodeURIComponent(l.search) : '') +
+        l.hash
+      );
+    })(window.location);
+  </script><% } %>
+</head>
+<body>
+</body>
+</html>

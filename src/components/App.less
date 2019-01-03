@@ -1,0 +1,44 @@
+@import '../assets/common.less';
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background-color: @gui-background-color;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-thumb {
+  background-color: rgba(0,0,0,0.5);
+  border-radius: 4px;
+}
+::-webkit-scrollbar, ::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+
+.header {
+  color: @gui-header-foreground;
+  width: 100%;
+  font-size: 24px;
+  height: @gui-header-height;
+  line-height: 60px;
+  background: @gui-header-background;
+  min-width: 360px;
+  box-shadow: @material-shadow;
+
+  a, a:active, a:visited, a:hover {
+    margin-left: 10px;
+    color: @gui-header-foreground;
+    font-weight: bold;
+    text-decoration: none;
+  }
+}
+
+main {
+  display: inline-block;
+  vertical-align: top;
+  padding: 0 20px 0 (@gui-nav-width + 20px);
+}
