@@ -1,33 +1,20 @@
-@import '../assets/common.less';
+@import '../assets/global';
 
-html, body {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-  background-color: @gui-background-color;
-}
+.app {
+  width: 100vw;
+  height: 100vh;
 
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-::-webkit-scrollbar-thumb {
-  background-color: rgba(0,0,0,0.5);
-  border-radius: 4px;
-}
-::-webkit-scrollbar, ::-webkit-scrollbar-track {
-  background-color: transparent;
+  display : flex;
+  flex-direction: column;
 }
 
 .header {
-  color: @gui-header-foreground;
-  width: 100%;
-  font-size: 24px;
   height: @gui-header-height;
-  line-height: 60px;
+  line-height: @gui-header-height;
+
+  font-size: 24px;
+  color: @gui-header-foreground;
   background: @gui-header-background;
-  min-width: 360px;
-  box-shadow: @material-shadow;
 
   a, a:active, a:visited, a:hover {
     margin-left: 10px;
@@ -37,7 +24,32 @@ html, body {
   }
 }
 
-main {
-  vertical-align: top;
-  padding: 0 20px 0 (@gui-nav-width + 20px);
+.main {
+  flex: 1;
+  flex-direction: row;
+  display : flex;
+  position: relative;
+}
+
+.nav {
+  width: @gui-nav-width;
+  height: 100%;
+  background: @gui-nav-background;
+  a {
+    color: @gui-nav-foreground;
+    text-decoration: none;
+    display: block;
+    width: @gui-nav-width;
+    height: @gui-nav-width;
+    line-height: @gui-nav-width;
+    text-align: center;
+    cursor: pointer;
+    &:hover, &.active {
+      background-color: rgba(255,255,255,0.3);
+    }
+  }
+}
+
+.article {
+  flex: 1;
 }

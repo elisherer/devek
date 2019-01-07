@@ -1,0 +1,65 @@
+@import '../../assets/variables';
+
+.page {
+  padding: 20px;
+  sub {
+    color: @color-grey400;
+  }
+}
+
+.input_wrap {
+  display: flex;
+  background: @gui-textarea-background;
+  border: 1px solid @color-grey800;
+  border-radius: 5px;
+  padding: 8px;
+  font-family: monospace;
+  margin-bottom: 10px;
+  input{
+    background: @gui-textarea-background;
+    color: @gui-foreground-color;
+    border: none;
+    width: 100%;
+    font-family: monospace;
+    margin: 0;
+    outline: none;
+    white-space: normal;
+    overflow-wrap: break-word;
+  }
+}
+
+.card {
+  background: rgba(255,255,255,0.1);
+  border-radius: 5px;
+  box-shadow: 1px 1px 1px rgba(0,0,0,0.5);
+  margin-bottom: 20px;
+
+  h1 {
+    margin: 0;
+    padding: 14px;
+    font-size: 14px;
+    background: rgba(0,0,0,0.2);
+  }
+
+  > div {
+    padding: 20px;
+  }
+}
+
+.textarea {
+  background: @gui-textarea-background;
+  border: 1px solid @color-grey800;
+  border-radius: 5px;
+  padding: 8px;
+  max-width: 100%;
+  word-break: break-all;
+  pre{
+    min-height: 6em;
+    margin: 0;
+    border: none;
+    outline: none;
+    height: 100%;
+    white-space: normal;
+    overflow-wrap: break-word;
+  }
+}

@@ -4,11 +4,12 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "analyze": "cross-env ANALYZE=true npm run build -- --progress",
+    "analyze": "cross-env ANALYZE=true npm run build",
     "analyze:profile": "npm run build -- --profile --json > stats.json",
     "build": "cross-env NODE_ENV=production webpack -p",
     "start": "webpack-dev-server",
     "test": "echo Not Implemented!",
+    "predeploy": "npm run build",
     "deploy": "gh-pages -d dist"
   },
   "repository": {
@@ -23,6 +24,7 @@
   "license": "UNLICENSED",
   "dependencies": {
     "@hyperapp/router": "0.7.1",
+    "classcat": "3.2.5",
     "core-js": "2.6.1",
     "html-material-css": "0.2.4",
     "hyperapp": "1.2.9",

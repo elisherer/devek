@@ -1,0 +1,80 @@
+@import '../../assets/variables';
+
+.page {
+  padding: 20px;
+  sub {
+    color: @color-grey400;
+  }
+}
+
+.nav {
+  display: flex;
+  flex-wrap: wrap;
+  text-align: center;
+  border-radius: 8px;
+  overflow: hidden;
+  &.radio {
+    background: @gui-nav-background;
+    margin-bottom: 20px;
+  }
+  a, span {
+    flex-basis: 20%;
+    font-size: 0.75em;
+    line-height: 2.5em;
+  }
+  a {
+    color: @gui-nav-foreground;
+    text-decoration: none;
+    cursor: pointer;
+    &:hover, &.active {
+      background-color: @color-pink800;
+    }
+  }
+}
+
+.card {
+  background: rgba(255,255,255,0.1);
+  border-radius: 5px;
+  box-shadow: 1px 1px 1px rgba(0,0,0,0.5);
+  margin-bottom: 20px;
+
+  h1 {
+    margin: 0;
+    padding: 14px;
+    font-size: 14px;
+    background: rgba(0,0,0,0.2);
+  }
+
+  > div {
+    padding: 20px;
+  }
+}
+
+.textarea {
+  background: @gui-textarea-background;
+  border: 1px solid @color-grey800;
+  border-radius: 5px;
+  padding: 8px;
+  max-width: 100%;
+  word-break: break-all;
+  pre{
+    min-height: 4em;
+    margin: 0;
+    border: none;
+    outline: none;
+    width: 100%;
+    white-space: normal;
+    overflow-wrap: break-word;
+  }
+  &.output {
+    background: lighten(@color-grey900, 9%);
+  }
+}
+
+.error {
+  color: red;
+}
+
+.input_info {
+  text-align: right;
+}

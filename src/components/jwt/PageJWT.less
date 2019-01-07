@@ -1,0 +1,68 @@
+@import '../../assets/variables';
+
+.page {
+  padding: 0 20px;
+}
+
+.input_wrap {
+  width: 100%;
+  display: flex;
+  background: white;
+  border: 1px solid @color-grey400;
+  padding: 4px;
+  font-family: monospace;
+  input{
+    flex-grow: 1;
+    font-family: monospace;
+    margin: 0;
+    border: none;
+    background: white;
+    outline: none;
+    white-space: normal;
+    overflow-wrap: break-word;
+  }
+}
+
+.textarea {
+  background: white;
+  border: 1px solid @color-grey400;
+  padding: 4px;
+  max-width: 100%;
+  word-break: break-all;
+  pre{
+    min-height: calc(1em + 3px);
+    margin: 0;
+    border: none;
+    outline: none;
+    width: 100%;
+    white-space: normal;
+    overflow-wrap: break-word;
+  }
+  &.readonly {
+    background: transparent;
+  }
+}
+
+.header {
+  color: crimson;
+}
+.payload {
+  color: mediumorchid;
+}
+.sig {
+  color: dodgerblue;
+}
+
+.mode {
+  float: right;
+  .badge {
+    padding: 0 4px;
+    font-size: 14px;
+    background-color: @color-grey300;
+    margin-left: 4px;
+    border-radius: 5px;
+    &.active {
+      background-color: @color-grey400;
+    }
+  }
+}
