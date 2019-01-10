@@ -1,4 +1,5 @@
 import { h } from 'hyperapp';
+import Card from '../Card';
 import { getInput, getTestString } from '../../actions/regex';
 import styles from './PageRegex.less'
 
@@ -39,34 +40,26 @@ export default () => (state, actions) => {
   return (
     <div className={styles.page}>
 
-      <div className={styles.card}>
+      <Card title="RegEx Tester">
+        <label>Regular expression</label>
+        <section className={styles.textbox}>
+          / <input placeholder=".*" value={input}
+                   oninput={handleChange}/> /gm
+        </section>
 
-        <h1>RegEx Tester</h1>
-        <div>
-          <sub>Regular expression</sub>
-          <section className={styles.input_wrap }>
-            / <input placeholder=".*" value={input}
-                     oninput={handleChange}/> /gm
-          </section>
+        <label>Test string</label>
+        <section className={styles.textarea}>
+            <pre contentEditable
+                 oninput={handleTestChange}
+            />
+        </section>
+      </Card>
 
-          <sub>Test string</sub>
-          <section className={styles.textarea}>
-              <pre contentEditable
-                   oninput={handleTestChange}
-              />
-          </section>
-        </div>
-      </div>
-
-      <div className={styles.card}>
-
-        <h1>Matches</h1>
-        <div>
+      <Card title="Matches">
         {!matchesResults || matchesResults.length === 0 ? <div>No matches</div> : (
           matchesResults
         )}
-        </div>
-      </div>
+      </Card>
     </div>
   );
 }

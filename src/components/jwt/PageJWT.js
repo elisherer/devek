@@ -1,5 +1,6 @@
 import { h } from 'hyperapp';
 import cc from 'classcat';
+import Card from '../Card';
 import {getToken, getHeader, getPayload, getSig, getEncode} from '../../actions/jwt';
 import { decode, encode } from './jwt';
 import styles from './PageJWT.less'
@@ -31,7 +32,7 @@ export default () => (state, actions) => {
         <span className={cc([styles.badge,{[styles.active]: encodeMode }])} onclick={handleToggleMode}>Encoder</span>
       </div>
 
-      <h1>JWT</h1>
+      <Card title="JWT">
 
       <sub>JWT Token:</sub>
       <section className={cc([styles.textarea, { [styles.readonly]: encodeMode}])}>
@@ -60,8 +61,7 @@ export default () => (state, actions) => {
                innerHTML={encodeMode ? undefined : result[2]}
           />
       </section>
-
-
+      </Card>
     </div>
   );
 }

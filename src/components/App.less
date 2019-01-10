@@ -32,7 +32,8 @@
 }
 
 .nav {
-  width: @gui-nav-width;
+  width: 0;
+  transition: width 300ms ease-in-out;
   height: 100%;
   background: @gui-nav-background;
   a {
@@ -40,16 +41,22 @@
     text-decoration: none;
     display: block;
     width: @gui-nav-width;
-    height: @gui-nav-width;
-    line-height: @gui-nav-width;
-    text-align: center;
+    height: @gui-nav-item-height;
+    line-height: @gui-nav-item-height;
     cursor: pointer;
+    padding-left: 20px;
     &:hover, &.active {
       background-color: rgba(255,255,255,0.3);
     }
+  }
+
+  @media (min-width: @screen-mobile-min) {
+    width: @gui-nav-width;
   }
 }
 
 .article {
   flex: 1;
+  height: 100%;
+  overflow: auto;
 }

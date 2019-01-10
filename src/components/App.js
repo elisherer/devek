@@ -2,20 +2,10 @@ import { h } from 'hyperapp';
 import { Switch, Route, Link } from '@hyperapp/router';
 import cc from 'classcat';
 import Home from './Home';
-import PageText from './text/PageText';
 import NotFound from './NotFound';
-import PageRegex from "./regex/PageRegex";
+import tools from '../tools';
 
 import styles from './App.less';
-import PageJWT from "./jwt/PageJWT";
-
-const tools = {
-  text: { title: 'Text', component: PageText },
-  regex: { title: 'RegEx', component: PageRegex },
-  jwt: { title: 'JWT', component: PageJWT},
-  json: { title: 'JSON', component: NotFound },
-  xml: { title: 'XML', component: NotFound},
-};
 
 
 export default (state, actions) => {

@@ -2,17 +2,21 @@
 
 @native-font: 16px Roboto, Ubuntu, "Segoe UI", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
 
-@gui-foreground-color: @color-grey300;
-@gui-background-color: linear-gradient(to bottom, @color-grey900,@color-grey800);
+@screen-mobile-min: 600px;
+
+@gui-foreground-color: #303030;
+@gui-background-color: #e8e8e8;
 
 @gui-header-height: 60px;
 @gui-header-background: @color-pink700;
-@gui-header-foreground: @gui-foreground-color;
+@gui-header-foreground: white;
 
-@gui-nav-width: 60px;
-@gui-nav-background: linear-gradient(to bottom, @color-pink800, @color-lightblue900);
-@gui-nav-foreground: @gui-foreground-color;
+@gui-nav-width: 120px;
+@gui-nav-item-height: 50px;
+@gui-nav-background: linear-gradient(to bottom, @color-pink800, @color-pink300);
+@gui-nav-foreground: white;
 
 @gui-bottom-tool-height: 300px;
 
-@gui-textarea-background: lighten(@color-grey900, 6%);
+@gui-textarea-background: #fdfdfd;
+@gui-textarea-readonly-bg: #f6f6f6;

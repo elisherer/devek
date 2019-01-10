@@ -1,5 +1,6 @@
 import { h } from 'hyperapp';
 import cc from 'classcat';
+import Card from '../Card';
 import { getInput } from '../../actions/text';
 import { Redirect, Link } from '@hyperapp/router';
 import styles from './PageText.less';
@@ -57,27 +58,24 @@ export default ({ location, match }) => (state, actions) => {
         })}
       </nav>
 
-      <div className={styles.card}>
-        <h1>Text > {textFunctions[ctf].title}</h1>
-        <div>
-          <sub>Input:</sub>
-          <section className={styles.textarea}>
-            <pre contentEditable oninput={handleChange} onpaste={stripFormattingOnPaste}/>
-          </section>
-          <div className={styles.input_info}>
-            <sup>Length: {input.length}</sup>
-          </div>
-
-          <sub>Output:</sub>
-          <section className={cc([styles.textarea, styles.output])}>
-            <pre className={cc({[styles.error]: error})} innerText={error || output} />
-          </section>
-          <div className={styles.input_info}>
-            <sup innerHTML={!error && output.length > 0 ? "Length: " + output.length : "&nbsp;"} />
-          </div>
+      <Card title={"Text > " + textFunctions[ctf].title}>
+        <label>Input:</label>
+        <section className={styles.textarea}>
+          <pre contentEditable oninput={handleChange} onpaste={stripFormattingOnPaste}/>
+        </section>
+        <div className={styles.input_info}>
+          <sup>Length: {input.length}</sup>
         </div>
 
-      </div>
+        <label>Output:</label>
+        <section className={cc([styles.textarea, styles.readonly])}>
+          <pre className={cc({[styles.error]: error})} innerText={error || output} />
+        </section>
+        <div className={styles.input_info}>
+          <sup innerHTML={!error && output.length > 0 ? "Length: " + output.length : "&nbsp;"} />
+        </div>
+      </Card>
+
   </div>
   );
 }

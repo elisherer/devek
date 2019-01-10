@@ -2,19 +2,23 @@
 
 .page {
   padding: 20px;
+  margin: 0 auto;
+  max-width: 800px;
   sub {
     color: @color-grey400;
   }
 }
 
-.input_wrap {
+.textbox {
   display: flex;
   background: @gui-textarea-background;
-  border: 1px solid @color-grey800;
+  border: 1px solid #cccccc;
+  border-top: 4px solid darken(@gui-textarea-background, 10%);
   border-radius: 5px;
   padding: 8px;
   font-family: monospace;
   margin-bottom: 10px;
+  max-width: 600px;
   input{
     background: @gui-textarea-background;
     color: @gui-foreground-color;
@@ -28,38 +32,24 @@
   }
 }
 
-.card {
-  background: rgba(255,255,255,0.1);
-  border-radius: 5px;
-  box-shadow: 1px 1px 1px rgba(0,0,0,0.5);
-  margin-bottom: 20px;
-
-  h1 {
-    margin: 0;
-    padding: 14px;
-    font-size: 14px;
-    background: rgba(0,0,0,0.2);
-  }
-
-  > div {
-    padding: 20px;
-  }
-}
-
 .textarea {
   background: @gui-textarea-background;
-  border: 1px solid @color-grey800;
+  border: 1px solid #cccccc;
   border-radius: 5px;
-  padding: 8px;
   max-width: 100%;
   word-break: break-all;
   pre{
-    min-height: 6em;
+    min-height: 4em;
     margin: 0;
+    padding: 8px;
     border: none;
+    border-top: 3px solid darken(@gui-textarea-background, 8%);
     outline: none;
-    height: 100%;
+    width: 100%;
     white-space: normal;
     overflow-wrap: break-word;
+  }
+  &.readonly {
+    background: @gui-textarea-readonly-bg;
   }
 }
