@@ -1,9 +1,10 @@
 @import '../assets/variables';
 
 .card {
-  background: white;
+  position: relative;
+  background: @gui-card-background;
   border-radius: 6px;
-  border-left: 3px solid @color-pink400;
+  border-left: 3px solid @gui-card-left-border;
   margin-bottom: 20px;
   padding: 0 20px 20px;
 
@@ -12,7 +13,7 @@
     padding: 20px 0;
     font-size: 18px;
     font-weight: normal;
-    border-bottom: 2px solid #eeeeee;
+    border-bottom: 2px solid @gui-card-header-border;
   }
 
   label {

@@ -4,64 +4,72 @@ import Card from '../Card';
 import { getInput } from '../../actions/text';
 import { Redirect, Link } from '@hyperapp/router';
 import styles from './PageText.less';
-import textFunctions from './text';
+import { textCategories, textFunctions } from "./text";
 
 function stripFormattingOnPaste(e) {
   const cbData = (e.originalEvent && e.originalEvent.clipboardData) || e.clipboardData;
   if (cbData && cbData.getData) {
     e.preventDefault();
-    const text = cbData.getData('text/plain');
-    window.document.execCommand('insertText', false, text);
+    const plainText = cbData.getData('text/plain');
+    window.document.execCommand('insertText', false, plainText);
   }
 }
 
 export default ({ location, match }) => (state, actions) => {
-  const handleChange = e => {
-    actions.text.set(e.target.innerText);
-  };
   const input = getInput(state);
 
-  const ctf = location.pathname.substring(match.path.length + 1);
+  const pathSegments = location.pathname.substr(1).split('/');
+
+  const category = pathSegments[1];
+  if (!category) {
+    const firstTextFunc = Object.keys(textFunctions[textCategories[0].category])[0];
+    return <Redirect to={`/${pathSegments[0]}/${textCategories[0].category}/${firstTextFunc}`}/>;
+  }
+  const ctc = textCategories.find(c => c.category === category);
+
+  const textFunc = pathSegments[2];
+  if (!textFunc) {
+    const firstTextFunc = Object.keys(textFunctions[category])[0];
+    return <Redirect to={`/${pathSegments[0]}/${category}/${firstTextFunc}`}/>;
+  }
+
   let output, error = null;
+  const ctf = textFunctions[category][textFunc];
   try {
-    output = ctf ? textFunctions[ctf].func(input) : null;
+    output = ctf.func(input);
   }
   catch (e) {
     error = e.message;
   }
 
-  if (match.isExact) {
-    return <Redirect to="/text/uppercase"/>;
-  }
+  const cardHeader = (
+    <div className={styles.functions}>
+      {
+        Object.keys(textFunctions[category]).map(tf =>{
+          return (
+            <Link className={cc({[styles.active]: tf === textFunc})} to={"/" + pathSegments[0] + "/" + pathSegments[1] + "/" + tf}>{textFunctions[category][tf].title}</Link>
+          );
+        })
+      }
+    </div>
+  );
 
   return (
     <div className={styles.page}>
-      <nav className={styles.nav}>
-        <span>Case</span>
-        <span>URL</span>
-        <span>HTML</span>
-        <span>Base64</span>
-        <span>Base36</span>
-      </nav>
-      <nav className={cc([styles.nav, styles.radio])}>
-        {Object.keys(textFunctions).map(tf => {
-          const current = location.pathname,
-            href = '/text/' + tf;
-          const active = current === href || current.startsWith(href + '/');
+
+      <nav className={styles.categories}>
+        {textCategories.map(c => {
           return (
-            <Link key={tf}
-                  className={active ? styles.active : undefined}
-                  to={href}>
-              {textFunctions[tf].button}
-            </Link>
+            <Link className={cc({[styles.active]: c.category === category})} to={"/" + pathSegments[0] + '/' + c.category}>{c.title}</Link>
           );
         })}
       </nav>
 
-      <Card title={"Text > " + textFunctions[ctf].title}>
+      <Card header={cardHeader}>
+
         <label>Input:</label>
         <section className={styles.textarea}>
-          <pre contentEditable oninput={handleChange} onpaste={stripFormattingOnPaste}/>
+          <pre contentEditable oninput={actions.text.set} onpaste={stripFormattingOnPaste}/>
         </section>
         <div className={styles.input_info}>
           <sup>Length: {input.length}</sup>
@@ -69,7 +77,7 @@ export default ({ location, match }) => (state, actions) => {
 
         <label>Output:</label>
         <section className={cc([styles.textarea, styles.readonly])}>
-          <pre className={cc({[styles.error]: error})} innerText={error || output} />
+          <pre style={ctf.style} className={cc({[styles.error]: error})} innerText={error || output} />
         </section>
         <div className={styles.input_info}>
           <sup innerHTML={!error && output.length > 0 ? "Length: " + output.length : "&nbsp;"} />

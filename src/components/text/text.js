@@ -1,18 +1,39 @@
 const spanEl = document.createElement('span');
 const areaEl = document.createElement('textarea');
 
-const textFunctions = {
-  uppercase: { title: 'Uppercase', button: 'UPPER', func: input => input.toUpperCase() },
-  urlencode: { title: 'URL Encode', button: 'Encode', func: input => encodeURIComponent(input)  },
-  htmlencode: { title: 'HTML Encode', button: 'Encode', func: input => { spanEl.textContent = input; return spanEl.innerHTML; }},
-  base64encode: { title: 'Base64 Encode', button: 'Encode', func: input => btoa(input) },
-  base36encode: { title: 'Base36 Encode', button: 'Encode', func: input => parseInt(input, 36) },
+const textCategories = [
+  { category: "transform", title: 'Transform' },
+  { category: "url", title: 'URL' },
+  { category: "html", title: 'HTML' },
+  { category: "base64", title: 'Base64' },
+  { category: "base36", title: 'Base36' },
+];
 
-  lowercase: { title: 'Lowercase', button: 'lower', func: input => input.toLowerCase() },
-  urldecode: { title: 'URL Decode', button: 'Decode', func: input => decodeURIComponent(input)  },
-  htmldecode: { title: 'HTML Decode', button: 'Decode', func: input => { areaEl.innerHTML = input; return areaEl.value; }},
-  base64decode: { title: 'Base64 Decode', button: 'Decode', func: input => atob(input) },
-  base36decode: { title: 'Base36 Decode', button: 'Decode', func: input => parseInt(input).toString(36) },
+const textFunctions = {
+  transform: {
+    uppercase: { title: 'Uppercase', func: input => input.toUpperCase() },
+    lowercase: { title: 'Lowercase', func: input => input.toLowerCase() },
+    capitalize: { title: 'Capitalize', func: input => input, style: { textTransform: 'capitalize'} },
+  },
+  url: {
+    encode: { title: 'Encode', func: input => encodeURIComponent(input)  },
+    decode: { title: 'Decode', func: input => decodeURIComponent(input)  },
+  },
+  html: {
+    encode: { title: 'Encode', func: input => { spanEl.textContent = input; return spanEl.innerHTML; }},
+    decode: { title: 'Decode', func: input => { areaEl.innerHTML = input; return areaEl.value; }},
+  },
+  base64: {
+    encode: { title: 'Encode', func: input => btoa(input) },
+    decode: { title: 'Decode', func: input => atob(input) },
+  },
+  base36: {
+    encode: { title: 'Encode', func: input => parseInt(input, 36) },
+    decode: { title: 'Decode', func: input => parseInt(input).toString(36) },
+  },
 };
 
-export default textFunctions;
+export {
+  textCategories,
+  textFunctions,
+};

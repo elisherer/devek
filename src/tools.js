@@ -6,7 +6,6 @@ import PageJWT from "./components/jwt/PageJWT";
 const tools = {
   text: { title: 'Text', component: PageText },
   regex: { title: 'RegEx', component: PageRegex },
-  base64: { title: 'Base64', component: NotFound },
   json: { title: 'JSON', component: NotFound },
   xml: { title: 'XML', component: NotFound},
   jwt: { title: 'JWT', component: PageJWT},

@@ -13,10 +13,11 @@ export default (state, actions) => {
   return (
     <div className={styles.app}>
       <header className={styles.header}>
+        <div className={styles.menu} onclick={actions.app.drawer} />
         <Link to="/">Devek</Link> Developer Toolkit
       </header>
       <main className={styles.main}>
-        <nav className={styles.nav}>
+        <nav className={cc([styles.nav,{ [styles.open]: state.app.drawer }])}>
           {Object.keys(tools).map(a => {
             const current = state.location.pathname,
               href = '/' + a;
