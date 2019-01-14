@@ -2,6 +2,7 @@ import { location } from '@hyperapp/router';
 import text from './text';
 import regex from './regex';
 import jwt from './jwt';
+import xml from './xml';
 
 const app = {
   drawer: () => state => ({
@@ -16,4 +17,5 @@ export default {
   ...text,
   ...regex,
   ...jwt,
+  ...xml
 };

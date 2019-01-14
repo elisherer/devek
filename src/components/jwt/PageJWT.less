@@ -25,11 +25,39 @@
   }
 }
 
+
+.textbox {
+  display: flex;
+  background: @gui-textarea-background;
+  border: 1px solid #cccccc;
+  border-top: 4px solid darken(@gui-textarea-background, 10%);
+  border-radius: 5px;
+  padding: 8px;
+  font-family: monospace;
+  margin-bottom: 10px;
+  max-width: 560px;
+  input{
+    background: @gui-textarea-background;
+    color: @gui-foreground-color;
+    border: none;
+    width: 100%;
+    font-family: monospace;
+    margin: 0;
+    outline: none;
+    white-space: normal;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    word-break: break-all;
+  }
+}
+
 .textarea {
-  background: white;
-  border: 1px solid @color-grey400;
-  padding: 4px;
-  max-width: 100%;
+  background: @gui-textarea-background;
+  border: 1px solid #cccccc;
+  border-top: 4px solid darken(@gui-textarea-background, 10%);
+  border-radius: 5px;
+  padding: 8px;
+  max-width: 560px;
   word-break: break-all;
   pre{
     min-height: calc(1em + 3px);
@@ -47,24 +75,29 @@
 
 .header {
   color: crimson;
+  min-height: 4em;
 }
 .payload {
   color: mediumorchid;
+  min-height: 6em;
 }
 .sig {
   color: dodgerblue;
+  min-height: 2em;
 }
 
-.mode {
-  float: right;
-  .badge {
-    padding: 0 4px;
+.tabs {
+  padding: 10px 0 20px;
+  a {
+    color: @gui-foreground-color;
+    text-decoration: none;
+    display: inline-block;
+    padding: 8px 14px;
     font-size: 14px;
-    background-color: @color-grey300;
-    margin-left: 4px;
-    border-radius: 5px;
+    border-bottom: 2px solid @gui-card-header-border;
     &.active {
-      background-color: @color-grey400;
+      color: @gui-primary-color;
+      border-bottom: 2px solid @gui-primary-color;
     }
   }
 }

@@ -1,23 +1,13 @@
 import { h } from 'hyperapp';
 import cc from 'classcat';
 import Card from '../Card';
-import { getInput } from '../../actions/text';
+import stripFormattingOnPaste from 'helpers/stripFormattingOnPaste';
+import { getInput } from 'actions/text';
 import { Redirect, Link } from '@hyperapp/router';
 import styles from './PageText.less';
 import { textCategories, textFunctions } from "./text";
 
-function stripFormattingOnPaste(e) {
-  const cbData = (e.originalEvent && e.originalEvent.clipboardData) || e.clipboardData;
-  if (cbData && cbData.getData) {
-    e.preventDefault();
-    const plainText = cbData.getData('text/plain');
-    window.document.execCommand('insertText', false, plainText);
-  }
-}
-
 export default ({ location, match }) => (state, actions) => {
-  const input = getInput(state);
-
   const pathSegments = location.pathname.substr(1).split('/');
 
   const category = pathSegments[1];
@@ -25,7 +15,6 @@ export default ({ location, match }) => (state, actions) => {
     const firstTextFunc = Object.keys(textFunctions[textCategories[0].category])[0];
     return <Redirect to={`/${pathSegments[0]}/${textCategories[0].category}/${firstTextFunc}`}/>;
   }
-  const ctc = textCategories.find(c => c.category === category);
 
   const textFunc = pathSegments[2];
   if (!textFunc) {
@@ -33,6 +22,7 @@ export default ({ location, match }) => (state, actions) => {
     return <Redirect to={`/${pathSegments[0]}/${category}/${firstTextFunc}`}/>;
   }
 
+  const input = getInput(state);
   let output, error = null;
   const ctf = textFunctions[category][textFunc];
   try {
@@ -43,7 +33,7 @@ export default ({ location, match }) => (state, actions) => {
   }
 
   const cardHeader = (
-    <div className={styles.functions}>
+    <div className={styles.tabs}>
       {
         Object.keys(textFunctions[category]).map(tf =>{
           return (

@@ -3,13 +3,13 @@ export const getTestString = state => state.regex && typeof state.regex.test ===
 
 const actions = {
   regex: {
-    set: (input) => state => ({
+    set: e => state => ({
       ...state,
-      input
+      input: e.target.value
     }),
-    setTest: test => state => ({
+    setTest: e => state => ({
       ...state,
-      test
+      test: e.target.textContent
     }),
   }
 };

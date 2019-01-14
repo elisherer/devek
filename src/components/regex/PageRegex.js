@@ -1,13 +1,12 @@
 import { h } from 'hyperapp';
 import Card from '../Card';
-import { getInput, getTestString } from '../../actions/regex';
+import { getInput, getTestString } from 'actions/regex';
+import stripFormattingOnPaste from "helpers/stripFormattingOnPaste";
 import styles from './PageRegex.less'
 
 let compiledRegex = null;
 
 export default () => (state, actions) => {
-  const handleChange = e => actions.regex.set(e.target.value);
-  const handleTestChange = e => actions.regex.setTest(e.target.textContent);
   const input = getInput(state);
   const testString = getTestString(state);
 
@@ -39,19 +38,17 @@ export default () => (state, actions) => {
 
   return (
     <div className={styles.page}>
-
       <Card title="RegEx Tester">
+
         <label>Regular expression</label>
         <section className={styles.textbox}>
           / <input placeholder=".*" value={input}
-                   oninput={handleChange}/> /gm
+                   oninput={actions.regex.set}/> /gm
         </section>
 
         <label>Test string</label>
         <section className={styles.textarea}>
-            <pre contentEditable
-                 oninput={handleTestChange}
-            />
+            <pre contentEditable oninput={actions.regex.setTest} onpaste={stripFormattingOnPaste} />
         </section>
       </Card>
 

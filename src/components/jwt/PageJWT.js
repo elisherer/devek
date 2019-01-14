@@ -1,66 +1,59 @@
 import { h } from 'hyperapp';
 import cc from 'classcat';
+import {Link, Redirect} from '@hyperapp/router';
 import Card from '../Card';
-import {getToken, getHeader, getPayload, getSig, getEncode} from '../../actions/jwt';
+import {getToken } from 'actions/jwt';
 import { decode, encode } from './jwt';
-import styles from './PageJWT.less'
+import styles from './PageJWT.less';
 
 export default () => (state, actions) => {
-  const handleTokenChange = e => actions.jwt.token(e.target.textContent),
-    handleHeaderChange = e => actions.jwt.header(e.target.textContent),
-    handlePayloadChange = e => actions.jwt.payload(e.target.textContent),
-    handleSigChange = e => actions.jwt.sig(e.target.textContent),
-    handleToggleMode = e => actions.jwt.toggle();
-  const token = getToken(state),
-    header = getHeader(state),
-    payload = getPayload(state),
-    sig = getSig(state),
-    encodeMode = getEncode(state);
+  const pathSegments = location.pathname.substr(1).split('/');
 
+  if (pathSegments.length < 2) {
+    return <Redirect to={`/${pathSegments[0]}/decode`}/>;
+  }
+
+  const token = getToken(state);
   let result;
-  if (encodeMode) {
-    result = encode(header, payload, sig);
+  if (pathSegments[1] === 'encode') {
+    result = encode({});
   }
   else {
     result = decode(token);
   }
 
+  const cardHeader = (
+    <div className={styles.tabs}>
+      <Link className={cc({[styles.active]: pathSegments[1] === 'decode'})} to="/jwt/decode">Decoder</Link>
+      <Link className={cc({[styles.active]: pathSegments[1] === 'encode'})} to="/jwt/encode">Encoder</Link>
+    </div>
+  );
+
+  if (pathSegments[1] === 'encode') {
+    return (
+      <div className={styles.page}>
+        <Card header={cardHeader}>
+        Under construction...
+        </Card>
+      </div>
+    );
+  }
+
   return (
     <div className={styles.page}>
-      <div className={styles.mode}>
-        <span className={cc([styles.badge,{[styles.active]: !encodeMode }])} onclick={handleToggleMode}>Decoder</span>
-        <span className={cc([styles.badge,{[styles.active]: encodeMode }])} onclick={handleToggleMode}>Encoder</span>
-      </div>
+      <Card header={cardHeader}>
 
-      <Card title="JWT">
+        <label>Token</label>
+        <section className={styles.textbox}>
+          <input value={token} oninput={actions.jwt.token}/>
+        </section>
 
-      <sub>JWT Token:</sub>
-      <section className={cc([styles.textarea, { [styles.readonly]: encodeMode}])}>
-          <pre contentEditable={!encodeMode}
-               oninput={handleTokenChange}
-               innerHTML={encodeMode ? result : undefined}
-          />
-      </section>
-
-      <sub>JWT contents:</sub>
-      <section className={cc([styles.textarea, styles.header, { [styles.readonly]: !encodeMode}])}>
-          <pre contentEditable={encodeMode}
-               oninput={handleHeaderChange}
-               innerHTML={encodeMode ? undefined : result[0]}
-          />
-      </section>
-      <section className={cc([styles.textarea, styles.payload, { [styles.readonly]: !encodeMode}])}>
-          <pre contentEditable={encodeMode}
-               oninput={handlePayloadChange}
-               innerHTML={encodeMode ? undefined : result[1]}
-          />
-      </section>
-      <section className={cc([styles.textarea, styles.sig, { [styles.readonly]: !encodeMode}])}>
-          <pre contentEditable={encodeMode}
-               oninput={handleSigChange}
-               innerHTML={encodeMode ? undefined : result[2]}
-          />
-      </section>
+        <label>Contents:</label>
+        <section className={styles.textarea}>
+            <pre className={styles.header} innerHTML={result[0]} />
+            <pre className={styles.payload} innerHTML={result[1]} />
+            <pre className={styles.sig} innerHTML={result[2]} />
+        </section>
       </Card>
     </div>
   );
