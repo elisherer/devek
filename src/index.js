@@ -18,3 +18,5 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 /*const unsubscribe =*/ location.subscribe(main.location);
+addEventListener("pushstate", main.app.close)
+addEventListener("popstate", main.app.close)

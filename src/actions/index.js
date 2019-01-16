@@ -8,6 +8,14 @@ const app = {
   drawer: () => state => ({
     ...state,
     drawer: !state.drawer
+  }),
+  close: () => state => ({
+    ...state,
+    drawer: false
+  }),
+  search: e => state => ({
+    ...state,
+    search: e.target.value
   })
 };
 

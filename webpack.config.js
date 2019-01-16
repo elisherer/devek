@@ -66,13 +66,6 @@ module.exports = {
     new HtmlWebpackPlugin({ // Create index.html file
       cache: PRODUCTION,
       template: 'src/index.ejs',
-      githubIndex: true
-    }),
-
-    new HtmlWebpackPlugin({ // Create index.html file
-      cache: PRODUCTION,
-      template: 'src/index.ejs',
-      filename: '404.html', github404: true, inject: false
     }),
 
     new CleanWebpackPlugin(['dist'], { // Cleanup before each build

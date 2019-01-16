@@ -19,7 +19,8 @@
   font-family: monospace;
   margin-bottom: 10px;
   max-width: 600px;
-  input{
+
+  input {
     background: @gui-textarea-background;
     color: @gui-foreground-color;
     border: none;
@@ -29,27 +30,5 @@
     outline: none;
     white-space: normal;
     overflow-wrap: break-word;
-  }
-}
-
-.textarea {
-  background: @gui-textarea-background;
-  border: 1px solid #cccccc;
-  border-radius: 5px;
-  max-width: 100%;
-  word-break: break-all;
-  pre{
-    min-height: 4em;
-    margin: 0;
-    padding: 8px;
-    border: none;
-    border-top: 3px solid darken(@gui-textarea-background, 8%);
-    outline: none;
-    width: 100%;
-    white-space: normal;
-    overflow-wrap: break-word;
-  }
-  &.readonly {
-    background: @gui-textarea-readonly-bg;
   }
 }

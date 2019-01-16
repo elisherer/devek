@@ -45,14 +45,14 @@ export default () => (state, actions) => {
 
         <label>Token</label>
         <section className={styles.textbox}>
-          <input value={token} oninput={actions.jwt.token}/>
+          <input value={token} oninput={actions.jwt.token} oncreate={e => e.select() || e.focus()}/>
         </section>
 
         <label>Contents:</label>
         <section className={styles.textarea}>
-            <pre className={styles.header} innerHTML={result[0]} />
-            <pre className={styles.payload} innerHTML={result[1]} />
-            <pre className={styles.sig} innerHTML={result[2]} />
+            <pre className={styles.header} innerText={result[0]} />
+            <pre className={styles.payload} innerText={result[1]} />
+            <pre className={styles.sig} innerText={result[2]} />
         </section>
       </Card>
     </div>

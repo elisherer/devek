@@ -1,7 +1,7 @@
 import { h } from 'hyperapp';
 import Card from '../Card';
+import TextArea from '../TextArea';
 import { getInput, getTestString } from 'actions/regex';
-import stripFormattingOnPaste from "helpers/stripFormattingOnPaste";
 import styles from './PageRegex.less'
 
 let compiledRegex = null;
@@ -42,14 +42,12 @@ export default () => (state, actions) => {
 
         <label>Regular expression</label>
         <section className={styles.textbox}>
-          / <input placeholder=".*" value={input}
+          / <input placeholder=".*" value={input} oncreate={e => e.focus()}
                    oninput={actions.regex.set}/> /gm
         </section>
 
         <label>Test string</label>
-        <section className={styles.textarea}>
-            <pre contentEditable oninput={actions.regex.setTest} onpaste={stripFormattingOnPaste} />
-        </section>
+        <TextArea onChange={actions.regex.setTest} />
       </Card>
 
       <Card title="Matches">

@@ -28,8 +28,7 @@
     "core-js": "2.6.1",
     "html-material-css": "0.2.4",
     "hyperapp": "1.2.9",
-    "hyperapp-forms": "0.1.0",
-    "vkbeautify": "0.99.3"
+    "hyperapp-forms": "0.1.0"
   },
   "devDependencies": {
     "@babel/core": "7.2.2",

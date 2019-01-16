@@ -6,19 +6,57 @@
 }
 
 .wrap {
-  max-width: 400px;
+  max-width: 468px;
   margin: 0 auto;
 }
 
 .item {
+  float: left;
   color: @color-grey900;
   display: inline-block;
-  width: 90px;
-  height: 90px;
-  line-height: 90px;
+  width: 136px;
+  height: 140px;
+  word-break: break-word;
   text-align: center;
   background: white;
-  box-shadow: 2px 2px 2px rgba(0,0,0,0.2);
+  box-shadow: 3px 3px 2px rgba(0,0,0,0.1);
   margin-right: 20px;
   margin-bottom: 20px;
+  &:hover {
+    background: #f2f2f2;
+  }
+  h3 {
+    margin-top: 10px;
+    margin-bottom: 10px;
+  }
+}
+a:focus .item {
+  background: #f2f2f2;
+}
+
+.textbox {
+  display: flex;
+  background: @gui-textarea-background;
+  border: 1px solid #cccccc;
+  border-top: 4px solid darken(@gui-textarea-background, 10%);
+  border-radius: 5px;
+  padding: 8px;
+  font-family: monospace;
+  margin-bottom: 10px;
+  max-width: 560px;
+
+  margin-right: 18px;
+  input{
+    background: @gui-textarea-background;
+    color: @gui-foreground-color;
+    border: none;
+    width: 100%;
+    font-family: monospace;
+    margin: 0;
+    outline: none;
+    white-space: normal;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    word-break: break-all;
+  }
 }

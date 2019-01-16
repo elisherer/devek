@@ -12,7 +12,7 @@
   max-width: 400px;
   border-radius: 1.5em;
   color: white;
-  background-color: @gui-primary-color;
+  background-color: @gui-togglebar-background;
   text-align: center;
   margin-bottom: 20px;
   overflow: hidden;
@@ -26,14 +26,14 @@
     line-height: 3em;
     cursor: pointer;
     &:not(:first-of-type) {
-      border-left: 1px solid darken(@gui-primary-color, 10%);
+      border-left: 1px solid darken(@gui-togglebar-background, 10%);
     }
     &:hover {
-      background-color: lighten(@gui-primary-color, 10%);
+      background-color: lighten(@gui-togglebar-background, 10%);
     }
     &.active {
       cursor: default;
-      background-color: darken(@gui-primary-color, 10%);
+      background-color: lighten(@gui-togglebar-background, 15%);
       color: white;
     }
   }
@@ -52,28 +52,6 @@
       color: @gui-primary-color;
       border-bottom: 2px solid @gui-primary-color;
     }
-  }
-}
-
-.textarea {
-  background: @gui-textarea-background;
-  border: 1px solid #cccccc;
-  border-radius: 5px;
-  max-width: 100%;
-  word-break: break-all;
-  pre{
-    min-height: 4em;
-    margin: 0;
-    padding: 8px;
-    border: none;
-    border-top: 3px solid darken(@gui-textarea-background, 8%);
-    outline: none;
-    width: 100%;
-    white-space: normal;
-    overflow-wrap: break-word;
-  }
-  &.readonly {
-    background: @gui-textarea-readonly-bg;
   }
 }
 

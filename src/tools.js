@@ -5,11 +5,11 @@ import PageJWT from "./components/jwt/PageJWT";
 import PageXML from "./components/xml/PageXML";
 
 const tools = {
-  text: { title: 'Text', component: PageText },
-  regex: { title: 'RegEx', component: PageRegex },
+  text: { title: 'Text', component: PageText, description: "Case, Encodings (URL, HTML, Base64)" },
+  regex: { title: 'RegEx', component: PageRegex, description: "Regular expression testing"  },
   json: { title: 'JSON', component: NotFound },
-  xml: { title: 'XML', component: PageXML},
-  jwt: { title: 'JWT', component: PageJWT},
+  xml: { title: 'XML', component: PageXML, description: "XML Prettify and XPath query"},
+  jwt: { title: 'JWT', component: PageJWT, description: "Decode, Verify & Encode"},
   rand: { title: 'Random', component: NotFound},
   hash: { title: 'Hash', component: NotFound},
   img: { title: 'Image', component: NotFound},

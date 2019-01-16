@@ -1,10 +1,10 @@
 import { h } from 'hyperapp';
 import cc from 'classcat';
 import Card from '../Card';
-import stripFormattingOnPaste from 'helpers/stripFormattingOnPaste';
+import TextArea from '../TextArea';
 import { getInput, getXPath } from 'actions/xml';
 import { Redirect, Link } from '@hyperapp/router';
-import { getXMLDoc, queryXPath } from "./xml";
+import {getXMLDoc, prettifyXml, queryXPath} from "./xml";
 import styles from './PageXML.less';
 
 let xmlDocSource, xmlDoc;
@@ -16,6 +16,8 @@ export default ({ location, match }) => (state, actions) => {
   if (!func) {
     return <Redirect to={`/${pathSegments[0]}/xpath`}/>;
   }
+
+  const prettify = func === "prettify";
 
   const input = getInput(state),
     xpath = getXPath(state);
@@ -34,7 +36,15 @@ export default ({ location, match }) => (state, actions) => {
       error = e.message;
     }
   }
-  if (xmlDoc && !error && xpath) {
+  if (xmlDoc && !error && prettify) {
+    try{
+      results = prettifyXml(xmlDoc);
+    }
+    catch (e) {
+      error = e.message;
+    }
+  }
+  else if (xmlDoc && !error && xpath) {
     try {
       const xPathEesult = queryXPath(xmlDoc, xpath);
       results = [];
@@ -55,35 +65,41 @@ export default ({ location, match }) => (state, actions) => {
     </div>
   );
 
+  let resultsNode;
+
+  if (!error) {
+    if (prettify) {
+      resultsNode = <TextArea readonly value={results}
+                              html={!!results && results.includes('<parsererror')}/>
+    }
+    else {
+      resultsNode = !results || !results.length
+        ? <p>No results yet</p>
+        : results.map(result =>
+          <TextArea readonly value={result}
+                    html={!!result && result.includes('<parsererror')} />
+        );
+    }
+  }
+
   return (
     <div className={styles.page}>
       <Card header={cardHeader}>
 
         <label>XML:</label>
-        <section className={styles.textarea}>
-          <pre contentEditable oninput={actions.xml.set} onpaste={stripFormattingOnPaste}/>
-        </section>
+        <TextArea autofocus onChange={actions.xml.set}/>
 
-        <label>XPath expression:</label>
-        <section className={styles.textbox}>
-          <input value={xpath} oninput={actions.xml.xpath}/>
-        </section>
-
-        <label>Results:</label>
-        {error || !results || !results.length ? (
-          <section className={cc([styles.textarea, styles.readonly])}>
-            <pre className={cc({[styles.error]: error})} innerText={error || "No results yet"} />
+        {!prettify && <label>XPath expression:</label>}
+        {!prettify && (
+          <section className={styles.textbox}>
+            <input value={xpath} oninput={actions.xml.xpath}/>
           </section>
-          )
-          : results.map(result => (
-            <section className={cc([styles.textarea, styles.readonly])}>
-              {result && result.includes('<parsererror') ? <pre innerHTML={result} /> : <pre innerText={result} /> }
-            </section>
-          ))
-        }
-
+        )}
       </Card>
 
+      <Card title="Result">
+        {error ? <p className={styles.error}>{error}</p> : resultsNode}
+      </Card>
   </div>
   );
 }

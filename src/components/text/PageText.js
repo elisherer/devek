@@ -1,7 +1,8 @@
 import { h } from 'hyperapp';
 import cc from 'classcat';
 import Card from '../Card';
-import stripFormattingOnPaste from 'helpers/stripFormattingOnPaste';
+import TextArea from '../TextArea';
+
 import { getInput } from 'actions/text';
 import { Redirect, Link } from '@hyperapp/router';
 import styles from './PageText.less';
@@ -58,17 +59,17 @@ export default ({ location, match }) => (state, actions) => {
       <Card header={cardHeader}>
 
         <label>Input:</label>
-        <section className={styles.textarea}>
-          <pre contentEditable oninput={actions.text.set} onpaste={stripFormattingOnPaste}/>
-        </section>
+        <TextArea autofocus onChange={actions.text.set}/>
         <div className={styles.input_info}>
           <sup>Length: {input.length}</sup>
         </div>
 
         <label>Output:</label>
-        <section className={cc([styles.textarea, styles.readonly])}>
-          <pre style={ctf.style} className={cc({[styles.error]: error})} innerText={error || output} />
-        </section>
+        <TextArea readonly
+                  className={cc({[styles.error]: error})}
+                  style={ctf.style}
+                  value={error || output}
+        />
         <div className={styles.input_info}>
           <sup innerHTML={!error && output.length > 0 ? "Length: " + output.length : "&nbsp;"} />
         </div>

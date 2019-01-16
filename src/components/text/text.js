@@ -2,7 +2,7 @@ const spanEl = document.createElement('span');
 const areaEl = document.createElement('textarea');
 
 const textCategories = [
-  { category: "transform", title: 'Transform' },
+  { category: "case", title: 'Case' },
   { category: "url", title: 'URL' },
   { category: "html", title: 'HTML' },
   { category: "base64", title: 'Base64' },
@@ -10,7 +10,7 @@ const textCategories = [
 ];
 
 const textFunctions = {
-  transform: {
+  case: {
     uppercase: { title: 'Uppercase', func: input => input.toUpperCase() },
     lowercase: { title: 'Lowercase', func: input => input.toLowerCase() },
     capitalize: { title: 'Capitalize', func: input => input, style: { textTransform: 'capitalize'} },

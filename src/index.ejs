@@ -10,23 +10,16 @@
   <meta name="description" content="Developer Toolkit">
   <meta name="author" content="Eli Sherer">
   <link rel="canonical" href="https://devek.app/">
-  <% if (htmlWebpackPlugin.options.githubIndex) { %><script type="text/javascript">
-    (function(l, q) { // router fix for github pages
-      l.search && l.search.slice(1).split('&').forEach(function(v, a) {
-        a = v.split('=');
-        q[a[0]] = decodeURIComponent(a[1]);
-      });
-      q.p && window.history.replaceState(null, null, q.p + (q.q || '') + l.hash);
-    }(window.location, {}))
-  </script><% } else if (htmlWebpackPlugin.options.github404) { %><script type="text/javascript">
-    (function(l) { // router fix for github pages
-      l.replace(
-        l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') +
-        '?p=' + encodeURIComponent(l.pathname) + (l.search ? '&q=' + encodeURIComponent(l.search) : '') +
-        l.hash
-      );
-    })(window.location);
-  </script><% } %>
+
+  <meta property="og:title" content="Devek">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://devek.app/assets/og.png">
+  <meta property="og:url" content="https://devek.app/">
+  <meta property="og:site_name" content="Devek">
+  <meta property="og:description" content="Developer Toolkit">
+  <meta property="og:locale" content="en_US">
+
+  <meta name="theme-color" content="#4527a0">
 </head>
 <body>
 </body>

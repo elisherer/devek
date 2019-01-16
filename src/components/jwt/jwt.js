@@ -9,9 +9,7 @@ const parseFromBase64UrlToHTML = b64uval => {
   if (!b64uval.length) return b64uval;
   try {
     const b64val = b64uval.replace(/-/g, '+').replace(/_/g, '/');
-    return JSON.stringify(JSON.parse(atob(b64val)), null, 2)
-      .replace(/\n/gm,'<br/>')
-      .replace(/ /gm,'&nbsp;');
+    return JSON.stringify(JSON.parse(atob(b64val)), null, 2);
   }
   catch (e)
   {
