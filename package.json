@@ -69,6 +69,7 @@
     "less": "3.9.0",
     "less-loader": "4.1.0",
     "mini-css-extract-plugin": "0.5.0",
+    "style-ext-html-webpack-plugin": "4.0.1",
     "style-loader": "0.23.1",
     "url-loader": "1.1.2",
     "webpack": "4.28.3",

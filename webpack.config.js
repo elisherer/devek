@@ -3,6 +3,7 @@ const webpack = require('webpack');
 
 const
   HtmlWebpackPlugin = require('html-webpack-plugin'),
+  StyleExtHtmlWebpackPlugin = require('style-ext-html-webpack-plugin'),
   MiniCssExtractPlugin = require("mini-css-extract-plugin"),
   CleanWebpackPlugin = require('clean-webpack-plugin'),
   BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin,
@@ -72,6 +73,8 @@ module.exports = {
       verbose: false,
       dry: !PRODUCTION
     }),
+
+    new StyleExtHtmlWebpackPlugin({ enabled: !ANALYZE && PRODUCTION }), // Inline CSS in HTML
 
     new CopyWebpackPlugin([{ from: 'src/www', to: '' }]), // Copy root domain files
 
