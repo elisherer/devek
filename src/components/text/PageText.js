@@ -2,7 +2,7 @@ import { h } from 'hyperapp';
 import cc from 'classcat';
 import Card from '../Card';
 import TextArea from '../TextArea';
-
+import Tabs from '../Tabs';
 import { getInput } from 'actions/text';
 import { Redirect, Link } from '@hyperapp/router';
 import styles from './PageText.less';
@@ -34,15 +34,15 @@ export default ({ location, match }) => (state, actions) => {
   }
 
   const cardHeader = (
-    <div className={styles.tabs}>
+    <Tabs>
       {
         Object.keys(textFunctions[category]).map(tf =>{
           return (
-            <Link className={cc({[styles.active]: tf === textFunc})} to={"/" + pathSegments[0] + "/" + pathSegments[1] + "/" + tf}>{textFunctions[category][tf].title}</Link>
+            <Link data-active={tf === textFunc} to={"/" + pathSegments[0] + "/" + pathSegments[1] + "/" + tf}>{textFunctions[category][tf].title}</Link>
           );
         })
       }
-    </div>
+    </Tabs>
   );
 
   return (
@@ -59,7 +59,7 @@ export default ({ location, match }) => (state, actions) => {
       <Card header={cardHeader}>
 
         <label>Input:</label>
-        <TextArea autofocus onChange={actions.text.set}/>
+        <TextArea autofocus onChange={actions.text.set} value={input}/>
         <div className={styles.input_info}>
           <sup>Length: {input.length}</sup>
         </div>

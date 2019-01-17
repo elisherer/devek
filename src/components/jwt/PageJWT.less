@@ -6,72 +6,12 @@
   max-width: 800px;
 }
 
-.input_wrap {
-  width: 100%;
-  display: flex;
-  background: white;
-  border: 1px solid @color-grey400;
-  padding: 4px;
-  font-family: monospace;
-  input{
-    flex-grow: 1;
-    font-family: monospace;
-    margin: 0;
-    border: none;
-    background: white;
-    outline: none;
-    white-space: normal;
-    overflow-wrap: break-word;
-  }
-}
-
-.textarea {
-  background: @gui-textarea-background;
-  border: 1px solid #cccccc;
-  border-top: 4px solid darken(@gui-textarea-background, 10%);
-  border-radius: 5px;
-  padding: 8px;
-  max-width: 560px;
-  word-break: break-all;
-  pre{
-    min-height: calc(1em + 3px);
-    margin: 0;
-    border: none;
-    outline: none;
-    width: 100%;
-    white-space: pre;
-    overflow-wrap: break-word;
-  }
-  &.readonly {
-    background: transparent;
-  }
-}
-
 .header {
   color: crimson;
-  min-height: 4em;
 }
 .payload {
   color: mediumorchid;
-  min-height: 6em;
 }
 .sig {
   color: dodgerblue;
-  min-height: 2em;
-}
-
-.tabs {
-  padding: 10px 0 20px;
-  a {
-    color: @gui-foreground-color;
-    text-decoration: none;
-    display: inline-block;
-    padding: 8px 14px;
-    font-size: 14px;
-    border-bottom: 2px solid @gui-card-header-border;
-    &.active {
-      color: @gui-primary-color;
-      border-bottom: 2px solid @gui-primary-color;
-    }
-  }
 }

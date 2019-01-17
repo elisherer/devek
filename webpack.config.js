@@ -92,7 +92,7 @@ module.exports = {
               sourceMap: true,
               modules: true,
               importLoaders: 1,
-              localIdentName: '[local]__[hash:base64:5]',
+              localIdentName: PRODUCTION ? '[hash:base64:8]' : '[local]__[hash:base64:5]',
             }
           },
           {

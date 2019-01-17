@@ -46,7 +46,7 @@ export default () => (state, actions) => {
                  value={input} onChange={actions.regex.set} autofocus />
 
         <label>Test string</label>
-        <TextArea onChange={actions.regex.setTest} />
+        <TextArea onChange={actions.regex.setTest} value={testString} />
       </Card>
 
       <Card title="Matches">

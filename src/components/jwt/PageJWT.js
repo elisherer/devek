@@ -1,8 +1,9 @@
 import { h } from 'hyperapp';
-import cc from 'classcat';
 import {Link, Redirect} from '@hyperapp/router';
 import Card from '../Card';
 import TextBox from '../TextBox';
+import TextArea from '../TextArea';
+import Tabs from '../Tabs';
 import {getToken } from 'actions/jwt';
 import { decode, encode } from './jwt';
 import styles from './PageJWT.less';
@@ -15,19 +16,24 @@ export default () => (state, actions) => {
   }
 
   const token = getToken(state);
-  let result;
+  let result, resultHTML;
   if (pathSegments[1] === 'encode') {
     result = encode({});
   }
   else {
     result = decode(token);
+
+    resultHTML =
+      `<div class="${styles.header}">${result[0] || ''}</div>` +
+      `<div class="${styles.payload}">${result[1] || ''}</div>` +
+      `<div class="${styles.sig}">${result[2] || ''}</div>`;
   }
 
   const cardHeader = (
-    <div className={styles.tabs}>
-      <Link className={cc({[styles.active]: pathSegments[1] === 'decode'})} to="/jwt/decode">Decoder</Link>
-      <Link className={cc({[styles.active]: pathSegments[1] === 'encode'})} to="/jwt/encode">Encoder</Link>
-    </div>
+    <Tabs>
+      <Link data-active={pathSegments[1] === 'decode'} to="/jwt/decode">Decoder</Link>
+      <Link data-active={pathSegments[1] === 'encode'} to="/jwt/encode">Encoder</Link>
+    </Tabs>
   );
 
   if (pathSegments[1] === 'encode') {
@@ -49,11 +55,8 @@ export default () => (state, actions) => {
                  onChange={actions.jwt.token} />
 
         <label>Contents:</label>
-        <section className={styles.textarea}>
-            <pre className={styles.header} innerText={result[0]} />
-            <pre className={styles.payload} innerText={result[1]} />
-            <pre className={styles.sig} innerText={result[2]} />
-        </section>
+        <TextArea readonly html
+                  value={resultHTML} />
       </Card>
     </div>
   );

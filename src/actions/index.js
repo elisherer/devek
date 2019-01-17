@@ -2,6 +2,7 @@ import { location } from '@hyperapp/router';
 import text from './text';
 import regex from './regex';
 import jwt from './jwt';
+import json from './json';
 import xml from './xml';
 
 const app = {
@@ -25,5 +26,6 @@ export default {
   ...text,
   ...regex,
   ...jwt,
-  ...xml
+  ...xml,
+  ...json,
 };

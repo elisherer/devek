@@ -1,6 +1,6 @@
 import { h } from 'hyperapp';
-import cc from 'classcat';
 import Card from '../Card';
+import Tabs from '../Tabs';
 import TextBox from '../TextBox';
 import TextArea from '../TextArea';
 import { getInput, getXPath } from 'actions/xml';
@@ -60,10 +60,10 @@ export default ({ location, match }) => (state, actions) => {
   }
 
   const cardHeader = (
-    <div className={styles.tabs}>
-      <Link className={cc({[styles.active]: func === 'xpath'})} to={"/" + pathSegments[0] + "/xpath"}>XPath</Link>
-      <Link className={cc({[styles.active]: func === 'prettify'})} to={"/" + pathSegments[0] + "/prettify"}>Prettify</Link>
-    </div>
+    <Tabs>
+      <Link data-active={func === 'xpath'} to={"/" + pathSegments[0] + "/xpath"}>XPath</Link>
+      <Link data-active={func === 'prettify'} to={"/" + pathSegments[0] + "/prettify"}>Prettify</Link>
+    </Tabs>
   );
 
   let resultsNode;
@@ -88,7 +88,7 @@ export default ({ location, match }) => (state, actions) => {
       <Card header={cardHeader}>
 
         <label>XML:</label>
-        <TextArea autofocus onChange={actions.xml.set}/>
+        <TextArea autofocus onChange={actions.xml.set} value={input}/>
 
         {!prettify && <label>XPath expression:</label>}
         {!prettify && <TextBox value={xpath} onChange={actions.xml.xpath}/>}
