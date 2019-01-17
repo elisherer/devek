@@ -1,6 +1,7 @@
 import { h } from 'hyperapp';
 import cc from 'classcat';
 import Card from '../Card';
+import TextBox from '../TextBox';
 import TextArea from '../TextArea';
 import { getInput, getXPath } from 'actions/xml';
 import { Redirect, Link } from '@hyperapp/router';
@@ -90,11 +91,7 @@ export default ({ location, match }) => (state, actions) => {
         <TextArea autofocus onChange={actions.xml.set}/>
 
         {!prettify && <label>XPath expression:</label>}
-        {!prettify && (
-          <section className={styles.textbox}>
-            <input value={xpath} oninput={actions.xml.xpath}/>
-          </section>
-        )}
+        {!prettify && <TextBox value={xpath} onChange={actions.xml.xpath}/>}
       </Card>
 
       <Card title="Result">

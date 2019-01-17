@@ -6,7 +6,7 @@ const ftpDeploy = new FtpDeploy();
 
 const config = Object.assign({}, localConfig, {
   localRoot: path.join(__dirname, 'dist'),
-  include: ['*'],
+  include: ['*', '.*', '**/*'],
   deleteRemote: true, // delete existing files at destination before uploading
   forcePasv: true, // Passive mode is forced (EPSV command is not sent)
 });

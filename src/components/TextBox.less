@@ -1,0 +1,32 @@
+@import '../assets/variables';
+
+.textbox {
+  display: flex;
+  background: @gui-textarea-background;
+  border: 1px solid #cccccc;
+  border-top: 4px solid darken(@gui-textarea-background, 10%);
+  border-radius: 5px;
+  padding: 8px;
+  font-family: monospace;
+  margin-bottom: 10px;
+  max-width: 560px;
+  input{
+    background: @gui-textarea-background;
+    color: @gui-foreground-color;
+    border: none;
+    width: 100%;
+    font-family: monospace;
+    margin: 0;
+    outline: none;
+    white-space: normal;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    word-break: break-all;
+    &[readonly] {
+      background: @gui-textarea-readonly-bg;
+    }
+  }
+  &.readonly {
+    background: @gui-textarea-readonly-bg;
+  }
+}

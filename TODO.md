@@ -1,3 +1,5 @@
+* make tabs shared
+
 ## Random
 * http://www.shortguid.com/#/password-generator
 * Password

@@ -2,6 +2,7 @@ import { h } from 'hyperapp';
 import cc from 'classcat';
 import {Link, Redirect} from '@hyperapp/router';
 import Card from '../Card';
+import TextBox from '../TextBox';
 import {getToken } from 'actions/jwt';
 import { decode, encode } from './jwt';
 import styles from './PageJWT.less';
@@ -44,9 +45,8 @@ export default () => (state, actions) => {
       <Card header={cardHeader}>
 
         <label>Token</label>
-        <section className={styles.textbox}>
-          <input value={token} oninput={actions.jwt.token} oncreate={e => e.select() || e.focus()}/>
-        </section>
+        <TextBox value={token} autofocus selectOnFocus
+                 onChange={actions.jwt.token} />
 
         <label>Contents:</label>
         <section className={styles.textarea}>
