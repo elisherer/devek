@@ -59,7 +59,7 @@ export default ({ location, match }) => (state, actions) => {
       <Card header={cardHeader}>
 
         <label>Input:</label>
-        <TextArea autofocus onChange={actions.text.set} value={input}/>
+        <TextArea autofocus onChange={actions.text.input} value={input}/>
         <div className={styles.input_info}>
           <sup>Length: {input.length}</sup>
         </div>

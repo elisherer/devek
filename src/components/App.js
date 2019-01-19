@@ -14,7 +14,8 @@ export default (state, actions) => {
     <div className={styles.app}>
       <header className={styles.header}>
         <div className={styles.menu} onclick={actions.app.drawer} />
-        <Link to="/">Devek</Link> Developer Toolkit
+        <Link to="/" className={styles.logo} />
+        <span className={styles.description}>Developer Toolkit</span>
       </header>
       <main className={styles.main}>
         <nav className={cc([styles.nav,{ [styles.open]: state.app.drawer }])}>

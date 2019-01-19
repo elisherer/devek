@@ -10,11 +10,28 @@
 
 .header {
   height: @gui-header-height;
-  line-height: @gui-header-height;
-
+  //line-height: @gui-header-height;
+  font-family: monospace;
   font-size: 24px;
   color: @gui-header-foreground;
   background: @gui-header-background;
+  display: flex;
+  align-items: center;
+
+  .logo {
+    display: inline-block;
+    background: url(../assets/devek-logo-white-with-text.svg) no-repeat;
+    background-size: contain;
+    width: 100px;
+    height: 38px;
+    margin-top: 8px;
+  }
+
+  .description {
+    font-size: 0.8em;
+    margin-left: 14px;
+    opacity: 0.5;
+  }
 
   .menu {
     position: absolute;
@@ -36,7 +53,7 @@
     font-weight: bold;
     text-decoration: none;
     @media only screen and (min-width: @screen-mobile-min) {
-      margin-left: 10px;
+      margin-left: 12px;
     }
   }
 }

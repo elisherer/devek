@@ -2,19 +2,21 @@ import { h } from 'hyperapp';
 import Card from '../Card';
 import TextBox from '../TextBox';
 import TextArea from '../TextArea';
-import { getInput, getTestString } from 'actions/regex';
+import { getRegex, getTestString, getWithReplace, getReplace } from 'actions/regex';
 import styles from './PageRegex.less'
 
 let compiledRegex = null;
 
 export default () => (state, actions) => {
-  const input = getInput(state);
-  const testString = getTestString(state);
+  const regexSource = getRegex(state),
+    testString = getTestString(state),
+    withRepalce = getWithReplace(state),
+    replace = getReplace(state);
 
-  if (input &&
-    (!compiledRegex || compiledRegex.source !== input)) {
+  if (regexSource &&
+    (!compiledRegex || compiledRegex.source !== regexSource)) {
     try {
-      compiledRegex = new RegExp(input, "gm");
+      compiledRegex = new RegExp(regexSource, "gm");
     }
     catch (e) {
       compiledRegex = null;
@@ -22,7 +24,7 @@ export default () => (state, actions) => {
   }
 
   let matchesResults = [];
-  if (input && compiledRegex) {
+  if (regexSource && compiledRegex) {
     let m, lastFind = null, lastIndex = null, c = 1;
     while ((m = compiledRegex.exec(testString)) !== null) {
       if (m[0] === lastFind && m.index === lastIndex) {
@@ -43,10 +45,14 @@ export default () => (state, actions) => {
 
         <label>Regular expression</label>
         <TextBox startAddon="/" placeholder=".*" endAddon="/gm"
-                 value={input} onChange={actions.regex.set} autofocus />
+                 value={regexSource} onChange={actions.regex.regex} autofocus />
 
         <label>Test string</label>
-        <TextArea onChange={actions.regex.setTest} value={testString} />
+        <TextArea onChange={actions.regex.testString} value={testString} />
+
+        <label><input type="checkbox" checked={withRepalce} onchange={actions.regex.withReplace} /> Substitution</label>
+        {withRepalce && <TextBox value={replace} onChange={actions.regex.replace} />}
+
       </Card>
 
       <Card title="Matches">

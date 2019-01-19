@@ -2,7 +2,7 @@ export const getInput = state => state.text && typeof state.text.input === 'stri
 
 const actions = {
   text: {
-    set: e => state => ({
+    input: e => state => ({
       ...state,
       input: e.target.innerText
     }),

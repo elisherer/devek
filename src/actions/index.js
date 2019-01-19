@@ -10,10 +10,10 @@ const app = {
     ...state,
     drawer: !state.drawer
   }),
-  close: () => state => ({
+  location: () => state => state.drawer ? ({
     ...state,
     drawer: false
-  }),
+  }) : state,
   search: e => state => ({
     ...state,
     search: e.target.value

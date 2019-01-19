@@ -1,15 +1,26 @@
-export const getInput = state => state.regex && typeof state.regex.input === 'string' ?state.regex.input : '';
+export const getRegex = state => state.regex && typeof state.regex.regex === 'string' ?state.regex.regex : '';
 export const getTestString = state => state.regex && typeof state.regex.test === 'string' ?state.regex.test : '';
+export const getWithReplace = state => state.regex && !!state.regex.withReplace;
+export const getReplace = state => state.regex && typeof state.regex.replace === 'string' ?state.regex.replace : '';
+
 
 const actions = {
   regex: {
-    set: e => state => ({
+    regex: e => state => ({
       ...state,
-      input: e.target.value
+      regex: e.target.value
     }),
-    setTest: e => state => ({
+    testString: e => state => ({
       ...state,
       test: e.target.textContent
+    }),
+    withReplace: e => state => ({
+      ...state,
+      withReplace: e.target.checked
+    }),
+    replace: e => state => ({
+      ...state,
+      replace: e.target.value
     }),
   }
 };
