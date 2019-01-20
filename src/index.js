@@ -17,6 +17,18 @@ if (process.env.NODE_ENV !== 'production') {
   main = app(state,actions,view,element);
 }
 
+const screen_desktop_min = "600px";
+let isDesktop;
+
+const handleMobileDesktopSwitch = x => isDesktop = x.matches;
+const isDesktopMatcher = window.matchMedia(`(min-width: ${screen_desktop_min})`);
+handleMobileDesktopSwitch(isDesktopMatcher);
+isDesktopMatcher.addEventListener('change', handleMobileDesktopSwitch);
+
+const handleLocationChange = () => {
+  if (!isDesktop) main.app.location();
+};
+
 /*const unsubscribe =*/ location.subscribe(main.location);
-addEventListener("pushstate", main.app.location);
-addEventListener("popstate", main.app.location);
+addEventListener("pushstate", handleLocationChange);
+addEventListener("popstate", handleLocationChange);

@@ -5,63 +5,7 @@
   height: 100vh;
 
   display : flex;
-  flex-direction: column;
-}
-
-.header {
-  height: @gui-header-height;
-  font-family: monospace;
-  font-size: 24px;
-  color: @gui-header-foreground;
-  background: @gui-header-background;
-  display: flex;
-  align-items: center;
-
-  .logo {
-    display: inline-block;
-    background: url(../assets/devek-logo-white-with-text.svg) no-repeat;
-    background-size: contain;
-    width: 100px;
-    height: 38px;
-    margin-top: 8px;
-  }
-
-  .description {
-    font-size: 18px;
-    margin-left: 14px;
-    opacity: 0.5;
-  }
-
-  .menu {
-    position: absolute;
-    top: 14px;
-    left: 12px;
-    background: url(../assets/icons/ic_menu_black_48px.svg) no-repeat;
-    width: 34px;
-    height: 34px;
-    background-size: cover;
-    cursor: pointer;
-    @media only screen and (min-width: @screen-mobile-min) {
-      display: none;
-    }
-  }
-
-  a, a:active, a:visited, a:hover {
-    margin-left: 54px;
-    color: @gui-header-foreground;
-    font-weight: bold;
-    text-decoration: none;
-    @media only screen and (min-width: @screen-mobile-min) {
-      margin-left: 12px;
-    }
-  }
-}
-
-.main {
-  flex: 1;
   flex-direction: row;
-  display : flex;
-  position: relative;
 }
 
 .nav {
@@ -72,7 +16,13 @@
   overflow: hidden;
   position: absolute;
   z-index:9999;
-  a {
+
+  .menu {
+    background: url(../assets/icons/ic_menu_white_48px.svg) no-repeat;
+    background-size: cover;
+  }
+
+  .menuitem {
     color: @gui-nav-foreground;
     text-decoration: none;
     display: block;
@@ -81,18 +31,91 @@
     line-height: @gui-nav-item-height;
     cursor: pointer;
     padding-left: 20px;
-    &:hover, &.active {
-      background-color: rgba(255,255,255,0.3);
+    &:hover {
+      background-color: rgba(255,255,255,0.1);
+    }
+    &.active {
+      background-color: rgba(255,255,255,0.2);
     }
   }
 
-  @media (min-width: @screen-mobile-min) {
+  @media (min-width: @screen-desktop-min) {
     position: relative;
     width: @gui-nav-width;
   }
   &.open {
     width: @gui-nav-width;
   }
+}
+
+.logo {
+  display: block;
+  background: url(../assets/devek-logo-white-with-text.min.svg) no-repeat;
+  background-size: contain;
+  width: 110px;
+  height: 30px;
+  margin: 15px 20px 16px 65px;
+
+  @media (min-width: @screen-desktop-min) {
+    margin: 16px;
+    width: 140px;
+    height: 38px;
+  }
+}
+
+.main {
+  flex: 1;
+  flex-direction: column;
+  display : flex;
+  position: relative;
+}
+
+.overlay {
+  z-index: 9998;
+  opacity: 0.5;
+  background-color: black;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  @media (min-width: @screen-desktop-min) {
+    display: none;
+  }
+}
+
+.menu {
+  position: absolute;
+  top: 14px;
+  left: 12px;
+  width: 34px;
+  height: 34px;
+  cursor: pointer;
+  @media only screen and (min-width: @screen-desktop-min) {
+    display: none;
+  }
+}
+
+.header {
+  height: @gui-header-height;
+  font-family: monospace;
+  font-size: 24px;
+  //color: @gui-header-foreground;
+  //background: @gui-header-background;
+  display: flex;
+  align-items: center;
+
+  .description {
+    margin-left: 54px;
+    font-size: 18px;
+    opacity: 0.5;
+  }
+
+  .menu {
+    background: url(../assets/icons/ic_menu_black_48px.svg) no-repeat;
+    background-size: cover;
+  }
+
 }
 
 .article {

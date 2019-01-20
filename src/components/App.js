@@ -12,26 +12,28 @@ export default (state, actions) => {
 
   return (
     <div className={styles.app}>
-      <header className={styles.header}>
-        <div className={styles.menu} onclick={actions.app.drawer} />
-        <Link to="/" className={styles.logo} />
-        <span className={styles.description}>Developer Toolkit</span>
-      </header>
+      <nav className={cc([styles.nav,{ [styles.open]: state.app.drawer }])}>
+        <div className={styles.menu} onclick={actions.app.drawer}/>
+        <Link to="/" className={styles.logo}/>
+        {Object.keys(tools).map(a => {
+          const current = state.location.pathname,
+            href = '/' + a;
+          const active = current === href || current.startsWith(href + '/');
+          return (
+            <Link key={a}
+                  className={cc({ [styles.menuitem]: true, [styles.active]: active })}
+                  to={href}>
+              {tools[a].title}
+            </Link>
+          );
+        })}
+      </nav>
       <main className={styles.main}>
-        <nav className={cc([styles.nav,{ [styles.open]: state.app.drawer }])}>
-          {Object.keys(tools).map(a => {
-            const current = state.location.pathname,
-              href = '/' + a;
-            const active = current === href || current.startsWith(href + '/');
-            return (
-              <Link key={a}
-                    className={cc({ [styles.active]: active })}
-                    to={href}>
-                {tools[a].title}
-              </Link>
-            );
-          })}
-        </nav>
+        {state.app.drawer && <div className={styles.overlay} onclick={actions.app.drawer} /> }
+        <header className={styles.header}>
+          <div className={styles.menu} onclick={actions.app.drawer} />
+          <span className={styles.description}>Developer Toolkit</span>
+        </header>
         <article className={styles.article}>
           <Switch>
             <Route path="/" render={Home} />
