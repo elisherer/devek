@@ -1,10 +1,11 @@
 import { h } from 'hyperapp';
+import cc from 'classcat';
 import {Link, Redirect} from '@hyperapp/router';
 import Card from '../Card';
 import TextBox from '../TextBox';
 import TextArea from '../TextArea';
 import Tabs from '../Tabs';
-import {getToken } from 'actions/jwt';
+import {getSecret, getToken} from 'actions/jwt';
 import { decode, encode } from './jwt';
 import styles from './PageJWT.less';
 
@@ -15,13 +16,14 @@ export default () => (state, actions) => {
     return <Redirect to={`/${pathSegments[0]}/decode`}/>;
   }
 
-  const token = getToken(state);
+  const token = getToken(state),
+    secret = getSecret(state);
   let result, resultHTML;
   if (pathSegments[1] === 'encode') {
     result = encode({});
   }
   else {
-    result = decode(token);
+    result = decode(token, secret);
 
     resultHTML =
       `<div class="${styles.header}">${result[0] || ''}</div>` +
@@ -57,6 +59,13 @@ export default () => (state, actions) => {
         <label>Contents:</label>
         <TextArea readonly html
                   value={resultHTML} />
+
+        <label>Validate Signature</label>
+        <TextBox value={secret}
+                 onChange={actions.jwt.secret} />
+        <TextBox className={cc([result[3] === result[2] ? styles.valid : styles.error])}
+                 inputClassName={cc([result[3] === result[2] ? styles.valid : styles.error])}
+                 readonly value={result[3] || 'N/A'}/>
       </Card>
     </div>
   );

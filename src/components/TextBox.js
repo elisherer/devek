@@ -9,6 +9,7 @@ export default ({
   autofocus,
   selectOnFocus,
   className,
+  inputClassName,
   style,
   onChange,
   readonly,
@@ -20,6 +21,7 @@ export default ({
   <section style={style} className={cc([className, styles.textbox, { [styles.readonly]: readonly }])}>
     {startAddon}
     <input readonly={readonly} placeholder={placeholder}
+           className={inputClassName}
            value={value}
            oninput={onChange}
            oncreate={autofocus ? (selectOnFocus ? AutoFocusWithSelect : AutoFocus) : undefined}
