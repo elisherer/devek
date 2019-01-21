@@ -38,7 +38,7 @@ export default () => (state, actions) => {
 
   return (
     <div className={styles.page}>
-      <Card title="JSON Debugger/Prettifier">
+      <Card>
 
         <label>JSON:</label>
         <TextArea autofocus
@@ -48,7 +48,7 @@ export default () => (state, actions) => {
         <TextBox startAddon="JSON" placeholder=".x" value={path} onChange={actions.json.path}/>
       </Card>
 
-      <Card title="Result">
+      <Card title="Result (Prettified)">
         {error
           ? <p className={styles.error}>{error}</p>
           : <TextArea readonly value={result} />}

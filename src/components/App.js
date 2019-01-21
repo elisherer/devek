@@ -9,7 +9,7 @@ import styles from './App.less';
 
 
 export default (state, actions) => {
-
+  let header;
   return (
     <div className={styles.app}>
       <nav className={cc([styles.nav,{ [styles.open]: state.app.drawer }])}>
@@ -19,6 +19,7 @@ export default (state, actions) => {
           const current = state.location.pathname,
             href = '/' + a;
           const active = current === href || current.startsWith(href + '/');
+          if (active) header = tools[a].header;
           return (
             <Link key={a}
                   className={cc({ [styles.menuitem]: true, [styles.active]: active })}
@@ -32,7 +33,7 @@ export default (state, actions) => {
         {state.app.drawer && <div className={styles.overlay} onclick={actions.app.drawer} /> }
         <header className={styles.header}>
           <div className={styles.menu} onclick={actions.app.drawer} />
-          <span className={styles.description}>Developer Toolkit</span>
+          <span className={styles.description}>{header}</span>
         </header>
         <article className={styles.article}>
           <Switch>

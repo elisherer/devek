@@ -31,13 +31,6 @@ export default () => (state, actions) => {
       `<div class="${styles.sig}">${result[2] || ''}</div>`;
   }
 
-  const cardHeader = (
-    <Tabs>
-      <Link data-active={pathSegments[1] === 'decode'} to="/jwt/decode">Decoder</Link>
-      <Link data-active={pathSegments[1] === 'encode'} to="/jwt/encode">Encoder</Link>
-    </Tabs>
-  );
-
   if (pathSegments[1] === 'encode') {
     return (
       <div className={styles.page}>
@@ -50,7 +43,11 @@ export default () => (state, actions) => {
 
   return (
     <div className={styles.page}>
-      <Card header={cardHeader}>
+      <Card>
+        <Tabs>
+          <Link data-active={pathSegments[1] === 'decode'} to="/jwt/decode">Decoder</Link>
+          <Link data-active={pathSegments[1] === 'encode'} to="/jwt/encode">Encoder</Link>
+        </Tabs>
 
         <label>Token</label>
         <TextBox value={token} autofocus selectOnFocus

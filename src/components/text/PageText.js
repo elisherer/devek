@@ -33,30 +33,27 @@ export default ({ location, match }) => (state, actions) => {
     error = e.message;
   }
 
-  const cardHeader = (
-    <Tabs>
-      {
-        Object.keys(textFunctions[category]).map(tf =>{
-          return (
-            <Link data-active={tf === textFunc} to={"/" + pathSegments[0] + "/" + pathSegments[1] + "/" + tf}>{textFunctions[category][tf].title}</Link>
-          );
-        })
-      }
-    </Tabs>
-  );
-
   return (
     <div className={styles.page}>
+      <Card>
 
-      <nav className={styles.categories}>
-        {textCategories.map(c => {
-          return (
-            <Link className={cc({[styles.active]: c.category === category})} to={"/" + pathSegments[0] + '/' + c.category}>{c.title}</Link>
-          );
-        })}
-      </nav>
+        <nav className={styles.categories}>
+          {textCategories.map(c => {
+            return (
+              <Link className={cc({[styles.active]: c.category === category})} to={"/" + pathSegments[0] + '/' + c.category}>{c.title}</Link>
+            );
+          })}
+        </nav>
 
-      <Card header={cardHeader}>
+        <Tabs>
+          {
+            Object.keys(textFunctions[category]).map(tf =>{
+              return (
+                <Link data-active={tf === textFunc} to={"/" + pathSegments[0] + "/" + pathSegments[1] + "/" + tf}>{textFunctions[category][tf].title}</Link>
+              );
+            })
+          }
+        </Tabs>
 
         <label>Input:</label>
         <TextArea autofocus onChange={actions.text.input} value={input}/>

@@ -41,7 +41,7 @@ export default () => (state, actions) => {
 
   return (
     <div className={styles.page}>
-      <Card title="RegEx Tester">
+      <Card>
 
         <label>Regular expression</label>
         <TextBox startAddon="/" placeholder=".*" endAddon="/gm"

@@ -59,13 +59,6 @@ export default ({ location, match }) => (state, actions) => {
     }
   }
 
-  const cardHeader = (
-    <Tabs>
-      <Link data-active={func === 'xpath'} to={"/" + pathSegments[0] + "/xpath"}>XPath</Link>
-      <Link data-active={func === 'prettify'} to={"/" + pathSegments[0] + "/prettify"}>Prettify</Link>
-    </Tabs>
-  );
-
   let resultsNode;
 
   if (!error) {
@@ -85,7 +78,11 @@ export default ({ location, match }) => (state, actions) => {
 
   return (
     <div className={styles.page}>
-      <Card header={cardHeader}>
+      <Card>
+        <Tabs>
+          <Link data-active={func === 'xpath'} to={"/" + pathSegments[0] + "/xpath"}>XPath</Link>
+          <Link data-active={func === 'prettify'} to={"/" + pathSegments[0] + "/prettify"}>Prettify</Link>
+        </Tabs>
 
         <label>XML:</label>
         <TextArea autofocus onChange={actions.xml.set} value={input}/>

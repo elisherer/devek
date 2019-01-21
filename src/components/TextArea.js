@@ -1,7 +1,8 @@
 import { h } from 'hyperapp';
 import cc from 'classcat';
 import styles from "./TextArea.less";
-import AutoFocus from "../helpers/autofocus";
+import AutoFocus from "helpers/autofocus";
+import screen from "helpers/screen";
 
 function stripFormattingOnPaste(e) {
   const cbData = (e.originalEvent && e.originalEvent.clipboardData) || e.clipboardData;
@@ -47,17 +48,16 @@ export default ({ autofocus, className, style, onChange, readonly, value, html }
   if (readonly) { // gets constant updates
     more[innerProp] = value;
   }
-  more.oncreate = autofocus
+  more.oncreate = autofocus && screen.isDesktop
     ? (readonly ? AutoFocus : el => { el[innerProp] = value; el.focus(); replaceCaret(el); })
     : (readonly ? undefined : el => { el[innerProp] = value; });
 
   return (
-    <section style={style} className={cc([className, styles.textarea, {[styles.readonly]: readonly}])}>
-    <pre contentEditable={!readonly}
+    <pre style={style} className={cc([className, styles.textarea, {[styles.readonly]: readonly}])}
+         contentEditable={!readonly}
          oninput={onChange}
          onpaste={html ? undefined : stripFormattingOnPaste}
          {...more}
     />
-    </section>
   );
 }

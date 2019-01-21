@@ -1,6 +1,7 @@
 import { h } from 'hyperapp';
 import cc from 'classcat';
 import styles from "./TextBox.less";
+import screen from 'helpers/screen';
 import AutoFocus from "../helpers/autofocus";
 
 const AutoFocusWithSelect = e => e.select() || e.focus();
@@ -24,7 +25,7 @@ export default ({
            className={inputClassName}
            value={value}
            oninput={onChange}
-           oncreate={autofocus ? (selectOnFocus ? AutoFocusWithSelect : AutoFocus) : undefined}
+           oncreate={autofocus && screen.isDesktop ? (selectOnFocus ? AutoFocusWithSelect : AutoFocus) : undefined}
     />
     {endAddon}
   </section>

@@ -2,21 +2,21 @@
 
 .textarea {
   background: @gui-textarea-background;
-  border: 1px solid #cccccc;
+  border: 1px solid @gui-grey-border;
   border-radius: 5px;
-  max-width: 100%;
-  word-break: break-all;
-  pre{
-    min-height: 4em;
-    margin: 0;
-    padding: 8px;
-    border: none;
-    border-top: 3px solid darken(@gui-textarea-background, 8%);
-    outline: none;
-    width: 100%;
-    white-space: pre;
-    overflow: auto;
+  min-height: 4em;
+  margin: 0;
+  padding: 8px;
+  outline: none;
+  width: 100%;
+  white-space: pre;
+  overflow: auto;
+  margin-bottom: 10px;
+
+  &:focus {
+    border-color: @gui-primary-color;
   }
+
   &.readonly {
     background: @gui-textarea-readonly-bg;
   }

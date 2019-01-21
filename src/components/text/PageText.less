@@ -1,7 +1,7 @@
 @import '../../assets/variables';
 
 .page {
-  padding: 20px;
+  padding: 0 20px;
   max-width: 800px;
 }
 
@@ -9,30 +9,20 @@
   display: flex;
   flex-wrap: wrap;
   max-width: 400px;
-  //border-radius: 1.5em;
-  //color: white;
-  //background-color: @gui-togglebar-background;
   text-align: center;
   margin-bottom: 20px;
   overflow: hidden;
-  //box-shadow: 2px 2px 2px rgba(0,0,0,0.1);
 
   a {
-    color: white;
+    color: @gui-foreground-color;
     text-decoration: none;
     flex-basis: 15%;
     font-size: 12px;
-    font-weight: bold;
     line-height: 3em;
     cursor: pointer;
     border-radius: 3px;
     margin-right: 8px;
-    background-color: #cbcbcb;
-    /*
-    &:not(:first-of-type) {
-      border-left: 1px solid darken(@gui-togglebar-background, 10%);
-    }
-    */
+    background-color: #dddddd;
     &:hover {
       background-color: lighten(@gui-togglebar-background, 40%);
     }
