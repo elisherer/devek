@@ -32,9 +32,9 @@ export default (state, actions) => {
       <main className={styles.main}>
         {state.app.drawer && <div className={styles.overlay} onclick={actions.app.drawer} /> }
         <header className={styles.header}>
-          <div className={styles.menu} onclick={actions.app.drawer} />
-          <span className={styles.description}>{header}</span>
+          {header && <span className={styles.description}>{header}</span>}
         </header>
+        <div className={styles.menu} onclick={actions.app.drawer}/>
         <article className={styles.article}>
           <Switch>
             <Route path="/" render={Home} />

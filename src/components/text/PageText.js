@@ -3,6 +3,7 @@ import cc from 'classcat';
 import Card from '../Card';
 import TextArea from '../TextArea';
 import Tabs from '../Tabs';
+import Radio from '../Radio';
 import { getInput } from 'actions/text';
 import { Redirect, Link } from '@hyperapp/router';
 import styles from './PageText.less';
@@ -37,13 +38,14 @@ export default ({ location, match }) => (state, actions) => {
     <div className={styles.page}>
       <Card>
 
-        <nav className={styles.categories}>
+        <Radio className={styles.categories}>
           {textCategories.map(c => {
             return (
-              <Link className={cc({[styles.active]: c.category === category})} to={"/" + pathSegments[0] + '/' + c.category}>{c.title}</Link>
+              <Link data-active={c.category === category}
+                    to={"/" + pathSegments[0] + '/' + c.category}>{c.title}</Link>
             );
           })}
-        </nav>
+        </Radio>
 
         <Tabs>
           {

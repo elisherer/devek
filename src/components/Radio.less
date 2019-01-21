@@ -1,0 +1,30 @@
+@import '../assets/variables';
+
+.radio {
+  display: flex;
+  flex-wrap: wrap;
+  max-width: 400px;
+  text-align: center;
+  margin-bottom: 20px;
+  overflow: hidden;
+
+  > * {
+    color: @gui-foreground-color;
+    text-decoration: none;
+    flex-basis: 50%;
+    font-size: 12px;
+    line-height: 3em;
+    cursor: pointer;
+    border-radius: 3px;
+    margin-right: 8px;
+    background-color: #dddddd;
+    &:hover {
+      background-color: lighten(@gui-togglebar-background, 40%);
+    }
+    &[data-active] {
+      cursor: default;
+      background-color: lighten(@gui-togglebar-background, 15%);
+      color: white;
+    }
+  }
+}

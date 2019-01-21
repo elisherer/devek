@@ -1,10 +1,12 @@
 import encBase64 from 'crypto-js/enc-base64';
+import encUtf8 from 'crypto-js/enc-utf8';
 import hmacSHA256 from 'crypto-js/hmac-sha256';
+
 const emptyB64 = btoa('');
 
-const base64UrlEncode = value => {
-  if (!value) return emptyB64;
-  return encBase64.stringify(value).replace(/=+/g, "").replace(/\+/g, '-').replace(/\//g, '_');
+const base64UrlEncode = wordArray => {
+  if (!wordArray) return emptyB64;
+  return encBase64.stringify(wordArray).replace(/=+/g, "").replace(/\+/g, '-').replace(/\//g, '_');
 };
 
 const base64UrlDecode = b64uval => {
@@ -20,14 +22,20 @@ const base64UrlDecode = b64uval => {
 };
 
 const sign = (alg, token, secret) => {
-  if (secret) {
-    const parsedSecret = encBase64.parse(secret);
-    switch (alg) {
-      case 'HS256':
-        return base64UrlEncode(hmacSHA256(token, parsedSecret));
+  try {
+    if (secret) {
+      const parsedSecret = encBase64.parse(secret);
+      switch (alg) {
+        case 'HS256':
+          return base64UrlEncode(hmacSHA256(token, parsedSecret));
+      }
     }
+    return '';
   }
-  return '';
+  catch (e) {
+    console.error(e); // eslint-disable-line
+    return '';
+  }
 };
 
 const encode = (payload, alg, key) => {
@@ -38,8 +46,8 @@ const encode = (payload, alg, key) => {
     header.alg = alg;
   }
 
-  const encodedHeader = base64UrlEncode(JSON.stringify(header)),
-    encodedPayload = base64UrlEncode(JSON.stringify(payload));
+  const encodedHeader = base64UrlEncode(encUtf8.parse(JSON.stringify(header))),
+    encodedPayload = base64UrlEncode(encUtf8.parse(JSON.stringify(payload)));
 
   const prefix = encodedHeader + '.' + encodedPayload;
 

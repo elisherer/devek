@@ -17,9 +17,10 @@ export default () => (state, actions) => {
   }
 
   const token = getToken(state),
-    secret = getSecret(state);
+    secret = getSecret(state),
+    encodeMode = pathSegments[1] === 'encode';
   let result, resultHTML;
-  if (pathSegments[1] === 'encode') {
+  if (encodeMode) {
     result = encode({});
   }
   else {
@@ -31,10 +32,19 @@ export default () => (state, actions) => {
       `<div class="${styles.sig}">${result[2] || ''}</div>`;
   }
 
-  if (pathSegments[1] === 'encode') {
+  const tabs = (
+    <Tabs>
+      <Link data-active={pathSegments[1] === 'decode'} to="/jwt/decode">Decoder</Link>
+      <Link data-active={pathSegments[1] === 'encode'} to="/jwt/encode">Encoder</Link>
+    </Tabs>
+  );
+
+  if (encodeMode) {
     return (
       <div className={styles.page}>
-        <Card header={cardHeader}>
+        <Card>
+          {tabs}
+
         Under construction...
         </Card>
       </div>
@@ -44,10 +54,8 @@ export default () => (state, actions) => {
   return (
     <div className={styles.page}>
       <Card>
-        <Tabs>
-          <Link data-active={pathSegments[1] === 'decode'} to="/jwt/decode">Decoder</Link>
-          <Link data-active={pathSegments[1] === 'encode'} to="/jwt/encode">Encoder</Link>
-        </Tabs>
+        {tabs}
+
 
         <label>Token</label>
         <TextBox value={token} autofocus selectOnFocus
@@ -58,7 +66,7 @@ export default () => (state, actions) => {
                   value={resultHTML} />
 
         <label>Validate Signature</label>
-        <TextBox value={secret}
+        <TextBox value={secret} placeholder="Base64 encoded secret"
                  onChange={actions.jwt.secret} />
         <TextBox className={cc([result[3] === result[2] ? styles.valid : styles.error])}
                  inputClassName={cc([result[3] === result[2] ? styles.valid : styles.error])}

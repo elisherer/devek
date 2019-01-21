@@ -98,6 +98,11 @@
   }
 }
 
+.menu {
+  background: url(../assets/icons/ic_menu_black_48px.svg) no-repeat;
+  background-size: cover;
+}
+
 .header {
   height: @gui-header-height;
   font-family: monospace;
@@ -105,6 +110,10 @@
   display: flex;
   align-items: center;
   border-bottom: 1px solid @gui-grey-border;
+
+  &:empty {
+    border-bottom: none;
+  }
 
   .description {
     margin-left: 54px;
@@ -114,12 +123,6 @@
       margin-left: 20px;
     }
   }
-
-  .menu {
-    background: url(../assets/icons/ic_menu_black_48px.svg) no-repeat;
-    background-size: cover;
-  }
-
 }
 
 .article {

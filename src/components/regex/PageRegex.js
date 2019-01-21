@@ -2,21 +2,23 @@ import { h } from 'hyperapp';
 import Card from '../Card';
 import TextBox from '../TextBox';
 import TextArea from '../TextArea';
-import { getRegex, getTestString, getWithReplace, getReplace } from 'actions/regex';
+import Radio from '../Radio';
+import { getRegex, getFlags, getTestString, getWithReplace, getReplace } from 'actions/regex';
 import styles from './PageRegex.less'
 
 let compiledRegex = null;
 
 export default () => (state, actions) => {
   const regexSource = getRegex(state),
+    flags = getFlags(state),
     testString = getTestString(state),
     withRepalce = getWithReplace(state),
     replace = getReplace(state);
 
   if (regexSource &&
-    (!compiledRegex || compiledRegex.source !== regexSource)) {
+    (!compiledRegex || compiledRegex.source !== regexSource || compiledRegex.flags !== flags)) {
     try {
-      compiledRegex = new RegExp(regexSource, "gm");
+      compiledRegex = new RegExp(regexSource, flags);
     }
     catch (e) {
       compiledRegex = null;
@@ -44,8 +46,15 @@ export default () => (state, actions) => {
       <Card>
 
         <label>Regular expression</label>
-        <TextBox startAddon="/" placeholder=".*" endAddon="/gm"
+        <TextBox startAddon="/" placeholder=".*" endAddon={"/" + flags}
                  value={regexSource} onChange={actions.regex.regex} autofocus />
+
+        <label>Flags</label>
+        <Radio className={styles.flags}>
+          <div data-active={flags.includes('g')} data-flag="g" onclick={actions.regex.flags}>Global</div>
+          <div data-active={flags.includes('m')} data-flag="m" onclick={actions.regex.flags}>Multi&#8209;line</div>
+          <div data-active={flags.includes('i')} data-flag="i" onclick={actions.regex.flags}>Insensitive</div>
+        </Radio>
 
         <label>Test string</label>
         <TextArea onChange={actions.regex.testString} value={testString} />
@@ -60,6 +69,13 @@ export default () => (state, actions) => {
           matchesResults
         )}
       </Card>
+
+      {withRepalce && (
+        <Card title="Result">
+          <TextArea readonly value={testString.replace(compiledRegex, replace)}/>
+        </Card>
+      )}
+
     </div>
   );
 }
