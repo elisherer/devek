@@ -39,9 +39,7 @@ function replaceCaret(el) {
   }
 }
 
-export default ({ autofocus, className, style, onChange, readonly, value, html }) => {
-
-  const more = {};
+export default ({ autofocus, className, style, onChange, readonly, value, html, ...more }) => {
 
   const innerProp = html ? "innerHTML" : "innerText";
 

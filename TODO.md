@@ -10,9 +10,6 @@
 ## Color
 * color picker
 
-## Regex
-* Add substitutions
-
 ## DateTime
 * unix, utc, local
 
@@ -22,6 +19,8 @@
 ## Math
 * Programmer Calc (all bases)
 * Ascii<>binary
+  https://www.rapidtables.com/convert/number/ascii-hex-bin-dec-converter.html
+* Hex<>Base64
 
 ## List
 * Add Commas, ticks,...

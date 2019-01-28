@@ -18,4 +18,8 @@ export default {
   json: {
     input: '{"x":1}'
   },
+  random: {
+    size: 8,
+    flags: 'aA0'
+  }
 };

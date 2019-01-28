@@ -5,6 +5,7 @@ import TextArea from '../TextArea';
 import { getInput, getPath } from 'actions/json';
 import { queryObject } from "./json";
 import styles from './PageJSON.less';
+import CopyToClipboard from "../CopyToClipboard";
 
 let objSource, obj;
 
@@ -49,9 +50,10 @@ export default () => (state, actions) => {
       </Card>
 
       <Card title="Result (Prettified)">
+        {!error && <CopyToClipboard from="pretty-json" />}
         {error
           ? <p className={styles.error}>{error}</p>
-          : <TextArea readonly value={result} />}
+          : <TextArea readonly value={result} id="pretty-json" />}
       </Card>
   </div>
   );

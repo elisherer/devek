@@ -4,6 +4,7 @@ export const getTestString = state => state.regex && typeof state.regex.test ===
 export const getWithReplace = state => state.regex && !!state.regex.withReplace;
 export const getReplace = state => state.regex && typeof state.regex.replace === 'string' ?state.regex.replace : '';
 
+const composeFlags = on => ["g","m","i"].filter(flag => on.includes(flag)).join('');
 
 const actions = {
   regex: {
@@ -13,7 +14,7 @@ const actions = {
     }),
     flags: e => state => ({
       ...state,
-      flags: state.flags.includes(e.target.dataset.flag) ? state.flags.replace(e.target.dataset.flag, '') : state.flags + e.target.dataset.flag
+      flags: state.flags.includes(e.target.dataset.flag) ? state.flags.replace(e.target.dataset.flag, '') : composeFlags(state.flags + e.target.dataset.flag)
     }),
     testString: e => state => ({
       ...state,

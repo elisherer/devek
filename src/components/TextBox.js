@@ -17,7 +17,8 @@ export default ({
   value,
   placeholder,
   startAddon,
-  endAddon
+  endAddon,
+  ...more
 }) => (
   <section style={style} className={cc([className, styles.textbox, { [styles.readonly]: readonly }])}>
     {startAddon}
@@ -26,6 +27,7 @@ export default ({
            value={value}
            oninput={onChange}
            oncreate={autofocus && screen.isDesktop ? (selectOnFocus ? AutoFocusWithSelect : AutoFocus) : undefined}
+           {...more}
     />
     {endAddon}
   </section>

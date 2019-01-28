@@ -4,6 +4,7 @@ import regex from './regex';
 import jwt from './jwt';
 import json from './json';
 import xml from './xml';
+import random from './random';
 
 const app = {
   drawer: () => state => ({
@@ -17,7 +18,11 @@ const app = {
   search: e => state => ({
     ...state,
     search: e.target.value
-  })
+  }),
+  refresh: () => state => ({
+    ...state,
+    refresh: !state.refresh
+  }),
 };
 
 export default {
@@ -28,4 +33,5 @@ export default {
   ...jwt,
   ...xml,
   ...json,
+  ...random
 };

@@ -4,6 +4,7 @@ import Card from '../Card';
 import TextArea from '../TextArea';
 import Tabs from '../Tabs';
 import Radio from '../Radio';
+import CopyToClipboard from '../CopyToClipboard';
 import { getInput } from 'actions/text';
 import { Redirect, Link } from '@hyperapp/router';
 import styles from './PageText.less';
@@ -63,8 +64,8 @@ export default ({ location, match }) => (state, actions) => {
           <sup>Length: {input.length}</sup>
         </div>
 
-        <label>Output:</label>
-        <TextArea readonly
+        <span>Output:</span><CopyToClipboard from="text-output"/>
+        <TextArea id="text-output" readonly
                   className={cc({[styles.error]: error})}
                   style={ctf.style}
                   value={error || output}

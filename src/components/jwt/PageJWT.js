@@ -8,6 +8,7 @@ import Tabs from '../Tabs';
 import {getSecret, getToken} from 'actions/jwt';
 import { decode, encode } from './jwt';
 import styles from './PageJWT.less';
+import CopyToClipboard from "../CopyToClipboard";
 
 export default () => (state, actions) => {
   const pathSegments = location.pathname.substr(1).split('/');
@@ -57,12 +58,15 @@ export default () => (state, actions) => {
         {tabs}
 
 
-        <label>Token</label>
-        <TextBox value={token} autofocus selectOnFocus
+
+        <span>Token</span><CopyToClipboard from="jwt" />
+
+
+        <TextBox id="jwt" value={token} autofocus selectOnFocus style={{maxWidth: "100%"}}
                  onChange={actions.jwt.token} />
 
         <label>Contents:</label>
-        <TextArea readonly html
+        <TextArea readonly html className={styles.jwt}
                   value={resultHTML} />
 
         <label>Validate Signature</label>
