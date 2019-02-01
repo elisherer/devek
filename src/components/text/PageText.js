@@ -1,11 +1,10 @@
 import { h } from 'hyperapp';
 import cc from 'classcat';
-import Card from '../Card';
 import TextArea from '../TextArea';
 import Tabs from '../Tabs';
 import Radio from '../Radio';
 import CopyToClipboard from '../CopyToClipboard';
-import { getInput } from 'actions/text';
+import { getInput } from './actions';
 import { Redirect, Link } from '@hyperapp/router';
 import styles from './PageText.less';
 import { textCategories, textFunctions } from "./text";
@@ -36,45 +35,42 @@ export default ({ location, match }) => (state, actions) => {
   }
 
   return (
-    <div className={styles.page}>
-      <Card>
+    <div>
 
-        <Radio className={styles.categories}>
-          {textCategories.map(c => {
+      <Radio className={styles.categories}>
+        {textCategories.map(c => {
+          return (
+            <Link data-active={c.category === category}
+                  to={"/" + pathSegments[0] + '/' + c.category}>{c.title}</Link>
+          );
+        })}
+      </Radio>
+
+      <Tabs>
+        {
+          Object.keys(textFunctions[category]).map(tf =>{
             return (
-              <Link data-active={c.category === category}
-                    to={"/" + pathSegments[0] + '/' + c.category}>{c.title}</Link>
+              <Link data-active={tf === textFunc} to={"/" + pathSegments[0] + "/" + pathSegments[1] + "/" + tf}>{textFunctions[category][tf].title}</Link>
             );
-          })}
-        </Radio>
+          })
+        }
+      </Tabs>
 
-        <Tabs>
-          {
-            Object.keys(textFunctions[category]).map(tf =>{
-              return (
-                <Link data-active={tf === textFunc} to={"/" + pathSegments[0] + "/" + pathSegments[1] + "/" + tf}>{textFunctions[category][tf].title}</Link>
-              );
-            })
-          }
-        </Tabs>
+      <label>Input:</label>
+      <TextArea autofocus onChange={actions.text.input} value={input}/>
+      <div className={styles.input_info}>
+        <sup>Length: {input.length}</sup>
+      </div>
 
-        <label>Input:</label>
-        <TextArea autofocus onChange={actions.text.input} value={input}/>
-        <div className={styles.input_info}>
-          <sup>Length: {input.length}</sup>
-        </div>
-
-        <span>Output:</span><CopyToClipboard from="text-output"/>
-        <TextArea id="text-output" readonly
-                  className={cc({[styles.error]: error})}
-                  style={ctf.style}
-                  value={error || output}
-        />
-        <div className={styles.input_info}>
-          <sup innerHTML={!error && output.length > 0 ? "Length: " + output.length : "&nbsp;"} />
-        </div>
-      </Card>
-
-  </div>
+      <span>Output:</span><CopyToClipboard from="text_output"/>
+      <TextArea id="text_output" readonly
+                className={cc({[styles.error]: error})}
+                style={ctf.style}
+                value={error || output}
+      />
+      <div className={styles.input_info}>
+        <sup innerHTML={!error && output.length > 0 ? "Length: " + output.length : "&nbsp;"} />
+      </div>
+    </div>
   );
 }

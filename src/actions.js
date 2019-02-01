@@ -1,10 +1,5 @@
 import { location } from '@hyperapp/router';
-import text from './text';
-import regex from './regex';
-import jwt from './jwt';
-import json from './json';
-import xml from './xml';
-import random from './random';
+import initialState from './initialState';
 
 const app = {
   drawer: () => state => ({
@@ -25,13 +20,11 @@ const app = {
   }),
 };
 
+initialState.app = {
+  drawer: false,
+};
+
 export default {
   location: location.actions,
   app,
-  ...text,
-  ...regex,
-  ...jwt,
-  ...xml,
-  ...json,
-  ...random
 };

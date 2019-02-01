@@ -1,10 +1,8 @@
 import { h } from 'hyperapp';
-import Card from '../Card';
 import TextBox from '../TextBox';
 import TextArea from '../TextArea';
-import { getInput, getPath } from 'actions/json';
+import { getInput, getPath } from './actions';
 import { queryObject } from "./json";
-import styles from './PageJSON.less';
 import CopyToClipboard from "../CopyToClipboard";
 
 let objSource, obj;
@@ -38,23 +36,19 @@ export default () => (state, actions) => {
   }
 
   return (
-    <div className={styles.page}>
-      <Card>
+    <div>
+      <label>JSON:</label>
+      <TextArea autofocus
+                onChange={actions.json.set} value={input}/>
 
-        <label>JSON:</label>
-        <TextArea autofocus
-                  onChange={actions.json.set} value={input}/>
+      <label>Path expression:</label>
+      <TextBox startAddon="JSON" placeholder=".x" value={path} onChange={actions.json.path}/>
 
-        <label>Path expression:</label>
-        <TextBox startAddon="JSON" placeholder=".x" value={path} onChange={actions.json.path}/>
-      </Card>
-
-      <Card title="Result (Prettified)">
-        {!error && <CopyToClipboard from="pretty-json" />}
-        {error
-          ? <p className={styles.error}>{error}</p>
-          : <TextArea readonly value={result} id="pretty-json" />}
-      </Card>
-  </div>
+      <h1>Result (Prettified)</h1>
+      {!error && <CopyToClipboard from="pretty-json" />}
+      {error
+        ? <p style={{color:'red'}}>{error}</p>
+        : <TextArea readonly value={result} id="pretty-json" />}
+    </div>
   );
 }

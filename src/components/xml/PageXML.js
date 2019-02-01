@@ -1,12 +1,10 @@
 import { h } from 'hyperapp';
-import Card from '../Card';
 import Tabs from '../Tabs';
 import TextBox from '../TextBox';
 import TextArea from '../TextArea';
-import { getInput, getXPath } from 'actions/xml';
+import { getInput, getXPath } from './actions';
 import { Redirect, Link } from '@hyperapp/router';
 import {getXMLDoc, prettifyXml, queryXPath} from "./xml";
-import styles from './PageXML.less';
 
 let xmlDocSource, xmlDoc;
 
@@ -77,23 +75,20 @@ export default ({ location, match }) => (state, actions) => {
   }
 
   return (
-    <div className={styles.page}>
-      <Card>
-        <Tabs>
-          <Link data-active={func === 'xpath'} to={"/" + pathSegments[0] + "/xpath"}>XPath</Link>
-          <Link data-active={func === 'prettify'} to={"/" + pathSegments[0] + "/prettify"}>Prettify</Link>
-        </Tabs>
+    <div>
+      <Tabs>
+        <Link data-active={func === 'xpath'} to={"/" + pathSegments[0] + "/xpath"}>XPath</Link>
+        <Link data-active={func === 'prettify'} to={"/" + pathSegments[0] + "/prettify"}>Prettify</Link>
+      </Tabs>
 
-        <label>XML:</label>
-        <TextArea autofocus onChange={actions.xml.set} value={input}/>
+      <label>XML:</label>
+      <TextArea autofocus onChange={actions.xml.set} value={input}/>
 
-        {!prettify && <label>XPath expression:</label>}
-        {!prettify && <TextBox value={xpath} onChange={actions.xml.xpath}/>}
-      </Card>
+      {!prettify && <label>XPath expression:</label>}
+      {!prettify && <TextBox value={xpath} onChange={actions.xml.xpath}/>}
 
-      <Card title="Result">
-        {error ? <p className={styles.error}>{error}</p> : resultsNode}
-      </Card>
-  </div>
+      <h1>Result</h1>
+      {error ? <p style={{color:'red'}}>{error}</p> : resultsNode}
+    </div>
   );
 }

@@ -1,7 +1,7 @@
 import { app } from 'hyperapp';
-import state from './state';
-import actions from './actions';
 import view from './components/App';
+import initialState from './initialState';
+import actions from './actions';
 import screen from './helpers/screen';
 import { location } from '@hyperapp/router';
 
@@ -13,9 +13,9 @@ document.body.appendChild(element);
 
 if (process.env.NODE_ENV !== 'production') {
   const devtools = require('hyperapp-redux-devtools');
-  main = devtools(app)(state,actions,view,element);
+  main = devtools(app)(initialState,actions,view,element);
 } else {
-  main = app(state,actions,view,element);
+  main = app(initialState,actions,view,element);
 }
 
 const handleLocationChange = () => {

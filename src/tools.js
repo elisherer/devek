@@ -12,7 +12,7 @@ const tools = {
   json: { title: 'JSON', header: 'JSON Debugger', component: PageJSON, description: "Debug, Prettify" },
   xml: { title: 'XML', header: 'XML Debugger', component: PageXML, description: "XML Prettify and XPath query"},
   jwt: { title: 'JWT', header: 'JWT Tool', component: PageJWT, description: "Decode, Verify & Encode"},
-  rand: { title: 'Random', header: 'Random Generator', component: PageRandom, description: "Generate Random passwords, numbers, etc"},
+  random: { title: 'Random', header: 'Random Generator', component: PageRandom, description: "Generate Random passwords, numbers, etc"},
   //hash: { title: 'Hash', component: NotFound},
   //img: { title: 'Image', component: NotFound},
   //color: { title: 'Color', component: NotFound},

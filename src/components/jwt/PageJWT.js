@@ -1,12 +1,10 @@
 import { h } from 'hyperapp';
 import cc from 'classcat';
 import {Link, Redirect} from '@hyperapp/router';
-import Card from '../Card';
 import TextBox from '../TextBox';
 import TextArea from '../TextArea';
 import Tabs from '../Tabs';
-import {getSecret, getToken} from 'actions/jwt';
-import { decode, encode } from './jwt';
+import {getSecret, getToken, getResult} from './actions';
 import styles from './PageJWT.less';
 import CopyToClipboard from "../CopyToClipboard";
 
@@ -20,12 +18,12 @@ export default () => (state, actions) => {
   const token = getToken(state),
     secret = getSecret(state),
     encodeMode = pathSegments[1] === 'encode';
-  let result, resultHTML;
+  let result = getResult(state), resultHTML;
   if (encodeMode) {
-    result = encode({});
+    result = [];//await encodeAsync({});
   }
   else {
-    result = decode(token, secret);
+//    result = await decodeAsync(token, secret);
 
     resultHTML =
       `<div class="${styles.header}">${result[0] || ''}</div>` +
@@ -42,40 +40,34 @@ export default () => (state, actions) => {
 
   if (encodeMode) {
     return (
-      <div className={styles.page}>
-        <Card>
-          {tabs}
+      <div>
+        {tabs}
 
         Under construction...
-        </Card>
       </div>
     );
   }
 
   return (
-    <div className={styles.page}>
-      <Card>
-        {tabs}
+    <div>
+      {tabs}
+
+      <span>Token</span><CopyToClipboard from="jwt" />
 
 
+      <TextBox id="jwt" value={token} autofocus selectOnFocus style={{maxWidth: "100%"}}
+               onChange={actions.jwt.token} />
 
-        <span>Token</span><CopyToClipboard from="jwt" />
+      <label>Contents:</label>
+      <TextArea readonly html className={styles.jwt}
+                value={resultHTML} />
 
-
-        <TextBox id="jwt" value={token} autofocus selectOnFocus style={{maxWidth: "100%"}}
-                 onChange={actions.jwt.token} />
-
-        <label>Contents:</label>
-        <TextArea readonly html className={styles.jwt}
-                  value={resultHTML} />
-
-        <label>Validate Signature</label>
-        <TextBox value={secret} placeholder="Base64 encoded secret"
-                 onChange={actions.jwt.secret} />
-        <TextBox className={cc([result[3] === result[2] ? styles.valid : styles.error])}
-                 inputClassName={cc([result[3] === result[2] ? styles.valid : styles.error])}
-                 readonly value={result[3] || 'N/A'}/>
-      </Card>
+      <label>Validate Signature</label>
+      <TextBox value={secret} placeholder="Base64Url encoded secret"
+               onChange={actions.jwt.secret} />
+      <TextBox className={cc([result[3] === result[2] ? styles.valid : styles.error])}
+               inputClassName={cc([result[3] === result[2] ? styles.valid : styles.error])}
+               readonly value={result[3] || 'N/A'}/>
     </div>
   );
 }

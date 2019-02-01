@@ -1,3 +1,4 @@
+/* global crypto, msCrypto */
 const similarLetters=/[1lIioO0]/g;
 
 const generateTable = flags => {
@@ -20,12 +21,54 @@ const generateTable = flags => {
   return table;
 };
 
+const getRandomValues = (typeof crypto !== 'undefined' && crypto.getRandomValues && crypto.getRandomValues.bind(crypto)) ||
+  (typeof msCrypto !== 'undefined' && typeof msCrypto.getRandomValues == 'function' && msCrypto.getRandomValues.bind(msCrypto));
+
+let get16Bytes;
+
+if (getRandomValues) {
+  let rnds = new Uint8Array(16);
+  get16Bytes = () => {
+    getRandomValues(rnds);
+    return rnds;
+  }
+} else {
+  let rnds = new Array(16);
+  get16Bytes = () => {
+    for (let i = 0, r; i < 16; i++) {
+      if ((i & 0x03) === 0) r = Math.random() * 0x100000000;
+      rnds[i] = r >>> ((i & 0x03) << 3) & 0xff;
+    }
+    return rnds;
+  }
+}
+
+const b2h = [];
+for (let i = 0; i < 256; ++i) {
+  b2h[i] = (i + 0x100).toString(16).substr(1);
+}
+
+const uuidv4 = () => {
+  let i = 0;
+  const buf = get16Bytes();
+  buf[6] = (buf[6] & 0x0f) | 0x40;
+  buf[8] = (buf[8] & 0x3f) | 0x80;
+  return ([b2h[buf[i++]], b2h[buf[i++]],
+    b2h[buf[i++]], b2h[buf[i++]], '-',
+    b2h[buf[i++]], b2h[buf[i++]], '-',
+    b2h[buf[i++]], b2h[buf[i++]], '-',
+    b2h[buf[i++]], b2h[buf[i++]], '-',
+    b2h[buf[i++]], b2h[buf[i++]],
+    b2h[buf[i++]], b2h[buf[i++]],
+    b2h[buf[i++]], b2h[buf[i]]]).join('');
+};
+
 const generatePassword = (size, table) => {
   if (typeof crypto.getRandomValues === "function") {
-    const u16array = new Uint16Array(size);
-    crypto.getRandomValues(u16array);
-    const array = Array.prototype.slice.call(u16array);
-    return array.map(rnd => table[Math.floor(table.length * rnd/65536)]).join('');
+    const u8array = new Uint8Array(size);
+    crypto.getRandomValues(u8array);
+    const array = Array.prototype.slice.call(u8array);
+    return array.map(rnd => table[Math.floor(table.length * rnd/255)]).join('');
   }
   else
     return "Crypto not supported";
@@ -33,5 +76,6 @@ const generatePassword = (size, table) => {
 
 export {
   generateTable,
-  generatePassword
+  generatePassword,
+  uuidv4
 };
