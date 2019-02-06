@@ -37,16 +37,16 @@ export default ({ location, match }) => (state, actions) => {
   return (
     <div>
 
-      <Radio className={styles.categories}>
+      <Tabs>
         {textCategories.map(c => {
           return (
             <Link data-active={c.category === category}
                   to={"/" + pathSegments[0] + '/' + c.category}>{c.title}</Link>
           );
         })}
-      </Radio>
+      </Tabs>
 
-      <Tabs>
+      <Radio className={styles.funcs}>
         {
           Object.keys(textFunctions[category]).map(tf =>{
             return (
@@ -54,7 +54,7 @@ export default ({ location, match }) => (state, actions) => {
             );
           })
         }
-      </Tabs>
+      </Radio>
 
       <label>Input:</label>
       <TextArea autofocus onChange={actions.text.input} value={input}/>

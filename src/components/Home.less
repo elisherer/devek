@@ -14,30 +14,22 @@
 }
 
 .item {
-  float: left;
   color: @gui-foreground-color;
-  display: inline-block;
-  width: 136px;
-  height: 140px;
-  word-break: break-word;
-  text-align: center;
+  display: block;
   background: white;
-  box-shadow: 3px 3px 2px rgba(0,0,0,0.1);
-  margin-right: 20px;
-  margin-bottom: 20px;
-  &:hover {
+  padding: 4px 8px;
+  text-align: left;
+  text-decoration: none;
+  border: 1px solid silver;
+  border-top: none;
+  outline: none;
+  &:hover, &:focus {
     background: #f2f2f2;
   }
-  h3 {
-    margin-top: 10px;
-    margin-bottom: 10px;
-  }
-}
-a:focus .item {
-  background: #f2f2f2;
 }
 
 .searchbox {
   margin-right: 18px;
+  margin-bottom: 0;
   width: 100%;
 }

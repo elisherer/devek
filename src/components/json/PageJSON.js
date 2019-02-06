@@ -1,7 +1,7 @@
 import { h } from 'hyperapp';
 import TextBox from '../TextBox';
 import TextArea from '../TextArea';
-import { getInput, getPath } from './actions';
+import {getInput, getParse, getPath} from './actions';
 import { queryObject } from "./json";
 import CopyToClipboard from "../CopyToClipboard";
 
@@ -9,18 +9,28 @@ let objSource, obj;
 
 export default () => (state, actions) => {
 
-  const input = getInput(state),
+  const parse = getParse(state),
     path = getPath(state);
+  let input = getInput(state);
 
   let result, error = null;
   if (!input) {
     objSource = input;
     obj = null;
   }
-  if (input && input !== objSource) {
+  else if (parse) {
+    try {
+      input = JSON.parse(input);
+      if (typeof input !== 'string') throw new Error("Must be parsed into a string");
+    }
+    catch (e) {
+      error = 'JSON.parse error: ' + e.message;
+    }
+  }
+  if (input && input !== objSource && !error) {
     objSource = input;
     try {
-      obj = JSON.parse(input);
+      obj = JSON.parse(objSource);
     }
     catch (e) {
       error = e.message;
@@ -40,6 +50,8 @@ export default () => (state, actions) => {
       <label>JSON:</label>
       <TextArea autofocus
                 onChange={actions.json.set} value={input}/>
+
+      <label><input type="checkbox" checked={parse} onchange={actions.json.parse}/> <code>JSON.parse</code> first</label>
 
       <label>Path expression:</label>
       <TextBox startAddon="JSON" placeholder=".x" value={path} onChange={actions.json.path}/>

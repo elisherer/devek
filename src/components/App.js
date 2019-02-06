@@ -3,28 +3,35 @@ import { Switch, Route, Link } from '@hyperapp/router';
 import cc from 'classcat';
 import Home from './Home';
 import NotFound from './NotFound';
-import tools from '../tools';
+import sitemap from '../sitemap';
+import pages from '../pages';
 
 import styles from './App.less';
 
+let lastActive = null;
 
 export default (state, actions) => {
   let header;
+  const current = state.location.pathname;
+
   return (
     <div className={styles.app}>
       <nav className={cc([styles.nav,{ [styles.open]: state.app.drawer }])}>
         <div className={styles.menu} onclick={actions.app.drawer}/>
         <Link to="/" className={styles.logo}/>
-        {Object.keys(tools).map(a => {
-          const current = state.location.pathname,
-            href = '/' + a;
-          const active = current === href || current.startsWith(href + '/');
-          if (active) header = tools[a].header;
+        {Object.keys(sitemap).map(path => {
+          const active = current === path || current.startsWith(path + '/');
+          if (active) {
+            header = sitemap[path].header;
+            if (lastActive !== path) {
+              document.querySelector('title').text = `Devek - ${header}`;
+              lastActive = path;
+            }
+          }
           return (
-            <Link key={a}
-                  className={cc({ [styles.menuitem]: true, [styles.active]: active })}
-                  to={href}>
-              {tools[a].title}
+            <Link key={path} to={path}
+                  className={cc({ [styles.menuitem]: true, [styles.active]: active })}>
+              {sitemap[path].title}
             </Link>
           );
         })}
@@ -38,8 +45,8 @@ export default (state, actions) => {
         <article className={styles.article}>
           <Switch>
             <Route path="/" render={Home} />
-            {Object.keys(tools).map(a => (
-              <Route path={'/' + a} parent render={tools[a].component} />
+            {Object.keys(sitemap).map(path => (
+              <Route path={path} parent render={pages[sitemap[path].name]} />
             ))}
             <Route render={NotFound} />
           </Switch>

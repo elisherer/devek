@@ -2,8 +2,8 @@
 
 ## Random
 * http://www.shortguid.com/#/password-generator
-* Password
-* UUID
+* [V] Password
+* [V] UUID
 * Name
 * Multi
 
