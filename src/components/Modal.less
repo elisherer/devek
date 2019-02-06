@@ -1,9 +1,5 @@
 .modal {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  right: auto;
-  bottom: auto;
+  position: relative;
   border: 1px solid rgb(204, 204, 204);
   background: rgb(255, 255, 255);
   overflow: auto;
@@ -11,8 +7,6 @@
   outline: none;
   padding: 20px;
   z-index: 1000;
-  margin-right: -50%;
-  transform: translate(-50%, -50%);
 }
 .title {
   font-size: 1.5em;
@@ -40,4 +34,9 @@
   bottom: 0;
   background-color: rgba(0, 0, 0, 0.5);
   z-index: 999;
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

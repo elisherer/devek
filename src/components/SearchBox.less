@@ -1,0 +1,26 @@
+@import '../assets/variables';
+
+.search_modal {
+  padding: 8px 48px 8px 8px !important;
+}
+.search_overlay {
+  background: linear-gradient(to right bottom, rgba(233, 233, 233, 0.6), rgba(255, 255, 255, 0.8));
+  background-color: transparent !important;
+}
+.search_box {
+  margin-bottom: 0;
+}
+.item {
+  color: @gui-foreground-color;
+  display: block;
+  background: white;
+  padding: 4px 8px;
+  text-align: left;
+  text-decoration: none;
+  border: 1px solid silver;
+  border-top: none;
+  outline: none;
+  &:hover, &:focus {
+    background: #f2f2f2;
+  }
+}

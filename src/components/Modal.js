@@ -3,12 +3,14 @@ import {h, app} from 'hyperapp';
 import close from 'html-material-css/less/icons/close.less';
 import styles from './Modal.less';
 
-const Modal = (props, children) => {
+const Modal = (props, children) => (state) => {
   const {
     key,
     className,
+    overlayClassName,
     contentClassName,
     onRequestClose,
+    closeOnOverlayClick,
     title,
     hideTitle
   } = props;
@@ -28,10 +30,12 @@ const Modal = (props, children) => {
       key={key || 'portal'}
       oncreate={element => {
         const overlay = document.createElement('div');
-        overlay.className = styles.overlay;
-
+        overlay.className = styles.overlay + (overlayClassName ? ' ' + overlayClassName : '');
+        if (closeOnOverlayClick) {
+          overlay.onclick = e => e.target === overlay && onRequestClose();
+        }
         const portal = {
-          state: {},
+          state,
           actions: { update: () => ({}) },
           view,
           container: document.body.appendChild(overlay)
@@ -46,7 +50,7 @@ const Modal = (props, children) => {
       }}
       onupdate={element => {
         const portal = element.portal;
-        portal.view = () => <div>{children}</div>;
+        portal.view = view;
         portal.app.update();
       }}
       ondestroy={element => {

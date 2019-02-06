@@ -2,6 +2,7 @@ import { h } from 'hyperapp';
 import { Switch, Route, Link } from '@hyperapp/router';
 import cc from 'classcat';
 import Home from './Home';
+import SearchBox from './SearchBox';
 import NotFound from './NotFound';
 import sitemap from '../sitemap';
 import pages from '../pages';
@@ -13,7 +14,6 @@ let lastActive = null;
 export default (state, actions) => {
   let header;
   const current = state.location.pathname;
-
   return (
     <div className={styles.app}>
       <nav className={cc([styles.nav,{ [styles.open]: state.app.drawer }])}>
@@ -52,6 +52,9 @@ export default (state, actions) => {
           </Switch>
         </article>
       </main>
+      {
+        state.app.openSearch && <SearchBox />
+      }
     </div>
   );
 }

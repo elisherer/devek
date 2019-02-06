@@ -19,9 +19,11 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 const handleLocationChange = () => {
-  if (!screen.isDesktop) main.app.location();
+  if (!screen.isDesktop) main.app.locationOnMobile();
+  main.app.closeSearch();
 };
 
 /*const unsubscribe =*/ location.subscribe(main.location);
 addEventListener("pushstate", handleLocationChange);
 addEventListener("popstate", handleLocationChange);
+main.app.initSearch();
