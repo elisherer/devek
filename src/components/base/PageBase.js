@@ -2,9 +2,8 @@ import { h } from 'hyperapp';
 import cc from 'classcat';
 import TextBox from '../TextBox';
 import Tabs from '../Tabs';
-import Radio from '../Radio';
 import CopyToClipboard from '../CopyToClipboard';
-import { getFrom, getTo, getFromNumber, getToNumber, getFromError, getToError } from './actions';
+import { getErrors, getFromBase, getToBase, getFromNumber, getToNumber } from './actions';
 import { Redirect, Link } from '@hyperapp/router';
 import styles from './PageBase.less';
 //import { textCategories, textFunctions } from "./text";
@@ -34,12 +33,11 @@ export default ({ location, match }) => (state, actions) => {
     );
   }
 
-  const from = getFrom(state),
+  const errors = getErrors(state),
+    fromBase = getFromBase(state),
     fromNumber = getFromNumber(state),
-    fromError = getFromError(state),
-    to = getTo(state),
-    toNumber = getToNumber(state),
-    toError = getToError(state);
+    toBase = getToBase(state),
+    toNumber = getToNumber(state);
 
   return (
     <div>
@@ -47,14 +45,14 @@ export default ({ location, match }) => (state, actions) => {
 
       <span>From:</span><CopyToClipboard from="base_number_to"/>
       <div className={styles.wrap}>
-        <TextBox className={cc([styles.number, { [styles.error]: fromError }])} id="base_number_from" autofocus onChange={actions.base.fromNumber} value={fromNumber} />
-        <TextBox className={styles.base} onChange={actions.base.from} type="number" value={from} min={2} max={36}/>
+        <TextBox className={cc([styles.number, { [styles.error]: errors.fromNumber }])} id="base_number_from" autofocus onChange={actions.base.fromNumber} value={fromNumber} />
+        <TextBox className={styles.base} onChange={actions.base.fromBase} type="number" value={fromBase} min={2} max={36}/>
       </div>
 
       <span>To:</span><CopyToClipboard from="base_number_to"/>
       <div className={styles.wrap}>
-        <TextBox className={cc([styles.number, { [styles.error]: toError }])} id="base_number_to" onChange={actions.base.toNumber} value={toNumber}/>
-        <TextBox className={styles.base} onChange={actions.base.to} type="number" value={to} min={2} max={36}/>
+        <TextBox className={cc([styles.number, { [styles.error]: errors.toNumber }])} id="base_number_to" onChange={actions.base.toNumber} value={toNumber}/>
+        <TextBox className={styles.base} onChange={actions.base.toBase} type="number" value={toBase} min={2} max={36}/>
       </div>
     </div>
   );
