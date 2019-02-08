@@ -11,9 +11,17 @@ import styles from './App.less';
 
 let lastActive = null;
 
+const docTitle = document.querySelector('title');
+
 export default (state, actions) => {
   let header;
   const current = state.location.pathname;
+
+  if (lastActive !== current && current === '/') {
+    docTitle.text = 'Devek';
+    lastActive = current;
+  }
+
   return (
     <div className={styles.app}>
       <nav className={cc([styles.nav,{ [styles.open]: state.app.drawer }])}>
@@ -24,7 +32,7 @@ export default (state, actions) => {
           if (active) {
             header = sitemap[path].header;
             if (lastActive !== path) {
-              document.querySelector('title').text = `Devek - ${header}`;
+              docTitle.text = `Devek - ${header}`;
               lastActive = path;
             }
           }
@@ -41,6 +49,9 @@ export default (state, actions) => {
         <header className={styles.header}>
           {header && <span className={styles.description}>{header}</span>}
         </header>
+        {
+          state.app.openSearch && <SearchBox />
+        }
         <div className={styles.menu} onclick={actions.app.drawer}/>
         <article className={styles.article}>
           <Switch>
@@ -52,9 +63,6 @@ export default (state, actions) => {
           </Switch>
         </article>
       </main>
-      {
-        state.app.openSearch && <SearchBox />
-      }
     </div>
   );
 }

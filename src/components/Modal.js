@@ -10,7 +10,7 @@ const Modal = (props, children) => (state) => {
     overlayClassName,
     contentClassName,
     onRequestClose,
-    closeOnOverlayClick,
+    onOverlayClick,
     title,
     hideTitle
   } = props;
@@ -18,7 +18,7 @@ const Modal = (props, children) => (state) => {
   const view = () => (
     <div class={(className || "") + " " + styles.modal} role="dialog" aria-labelledby="modal__title" aria-describedby="modal__content">
       {!hideTitle && <div id="modal__title" class={styles.title}>{title}</div>}
-      <i class={`${styles.close} ${close._}`} onclick={onRequestClose} title="Close" />
+      {onRequestClose && <i class={`${styles.close} ${close._}`} onclick={onRequestClose} title="Close" />}
       <div id="modal__content" class={(contentClassName || "") + " " + styles.content}>
         {children}
       </div>
@@ -31,8 +31,8 @@ const Modal = (props, children) => (state) => {
       oncreate={element => {
         const overlay = document.createElement('div');
         overlay.className = styles.overlay + (overlayClassName ? ' ' + overlayClassName : '');
-        if (closeOnOverlayClick) {
-          overlay.onclick = e => e.target === overlay && onRequestClose();
+        if (onOverlayClick) {
+          overlay.onclick = e => e.target === overlay && onOverlayClick();
         }
         const portal = {
           state,

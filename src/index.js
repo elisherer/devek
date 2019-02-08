@@ -27,3 +27,15 @@ const handleLocationChange = () => {
 addEventListener("pushstate", handleLocationChange);
 addEventListener("popstate", handleLocationChange);
 main.app.initSearch();
+
+const searchShortcutHandler = e => {
+  if (e.key === "s" && e.altKey && !e.shiftKey && !e.ctrlKey) { // Alt + S
+    main.app.openSearch();
+    setTimeout(() => {
+      document.getElementById('search_box').focus();
+    }, 0);
+    e.preventDefault();
+  }
+};
+addEventListener('keydown', searchShortcutHandler);
+

@@ -1,14 +1,16 @@
 @import '../assets/variables';
 
 .search_modal {
-  padding: 8px 48px 8px 8px !important;
-}
-.search_overlay {
-  background: linear-gradient(to right bottom, rgba(233, 233, 233, 0.6), rgba(255, 255, 255, 0.8));
-  background-color: transparent !important;
+  position: absolute;
+  width: 100%;
+  background: white;
 }
 .search_box {
+  margin-top: 8px;
+  margin-left: 40px;
   margin-bottom: 0;
+  max-width: 100%;
+  border: none;
 }
 .item {
   color: @gui-foreground-color;
@@ -20,7 +22,10 @@
   border: 1px solid silver;
   border-top: none;
   outline: none;
-  &:hover, &:focus {
+  &:hover {
+    background: #e2e2e2;
+  }
+  &.active {
     background: #f2f2f2;
   }
 }

@@ -1,22 +1,23 @@
 import { location } from '@hyperapp/router';
 import initialState from './initialState';
+import sitemap from "./sitemap";
 
-const searchShortcutHandlerFactory = appActions => e => {
-  if (e.key === "P" && e.ctrlKey && e.shiftKey) {
-    appActions.openSearch();
-    e.preventDefault();
-  }
-};
 const closeSearchBoxHandlerFactory = appActions => e => {
   if (e.key === "Escape") {
     appActions.closeSearch();
+    e.preventDefault();
+  } else if (e.key === "ArrowDown") {
+    appActions.searchDown();
+    e.preventDefault();
+  } else if (e.key === "ArrowUp") {
+    appActions.searchUp();
     e.preventDefault();
   } else if (e.key === "Enter") {
     appActions.searchChoose();
     e.preventDefault();
   }
 };
-let searchShortcutHandler, closeSearchBoxHandler;
+let closeSearchBoxHandler;
 
 const app = {
   drawer: () => state => ({
@@ -29,42 +30,65 @@ const app = {
   }) : state,
   search: e => state => ({
     ...state,
-    search: e.target.value
+    search: e.target.value,
+    paths: Object.keys(sitemap)
+      .filter(t =>
+        t !== window.location.pathname && (
+          !state.search ||
+          t.includes(state.search) ||
+          sitemap[t].header.includes(state.search) ||
+          sitemap[t].description.includes(state.search)
+        )
+      )
   }),
   refresh: () => state => ({
     ...state,
     refresh: !state.refresh
   }),
   initSearch: () => (state, actions) => {
-    searchShortcutHandler = searchShortcutHandlerFactory(actions);
     closeSearchBoxHandler = closeSearchBoxHandlerFactory(actions);
-    addEventListener('keydown', searchShortcutHandler);
     return state;
   },
+  searchDown: () => state => ({
+    ...state,
+    searchIndex: Math.min(state.searchIndex + 1, state.paths.length - 1)
+  }),
+  searchUp: () => state => ({
+    ...state,
+    searchIndex: Math.max(state.searchIndex - 1, 0)
+  }),
   openSearch: () => state => {
-    removeEventListener('keydown', searchShortcutHandler);
     addEventListener('keyup', closeSearchBoxHandler);
     return {
       ...state,
+      searchIndex: -1,
       openSearch: true
     };
   },
   closeSearch: () => state => {
-    addEventListener('keydown', searchShortcutHandler);
     removeEventListener('keyup', closeSearchBoxHandler);
     return {
       ...state,
       search: '',
+      searchIndex: -1,
       openSearch: false
     };
   },
-  searchChoose: () => (state, actions) => {
+  searchChoose: () => state => {
+    if (state.search && (state.paths[state.searchIndex] || state.paths.length === 1)) {
+      history.pushState(window.location.pathname, "", state.paths[state.searchIndex] || state.paths[0]);
+      return {
+        ...state,
+        openSearch: false
+      };
+    }
     return state;
   }
 };
 
 initialState.app = {
   drawer: false,
+  paths: []
 };
 
 export default {
