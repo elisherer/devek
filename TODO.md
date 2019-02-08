@@ -1,4 +1,4 @@
-* make tabs shared
+* [V] make tabs shared
 
 ## Random
 * http://www.shortguid.com/#/password-generator
@@ -16,11 +16,14 @@
 ## Image
 * Base64, crop, resize
 
-## Math
-* Programmer Calc (all bases)
+## Base
+* [V] Programmer Calc (all bases)
 * Ascii<>binary
   https://www.rapidtables.com/convert/number/ascii-hex-bin-dec-converter.html
 * Hex<>Base64
 
 ## List
 * Add Commas, ticks,...
+
+## JWT
+* encode
