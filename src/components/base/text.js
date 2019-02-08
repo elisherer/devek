@@ -5,8 +5,6 @@ const textCategories = [
   { category: "case", title: 'Case' },
   { category: "url", title: 'URL' },
   { category: "html", title: 'HTML' },
-  //{ category: "base64", title: 'Base64' },
-  //{ category: "base36", title: 'Base36' },
 ];
 
 const textFunctions = {
@@ -23,16 +21,6 @@ const textFunctions = {
     encode: { title: 'Encode', func: input => { spanEl.textContent = input; return spanEl.innerHTML; }},
     decode: { title: 'Decode', func: input => { areaEl.innerHTML = input; return areaEl.value; }},
   },
-  /*
-  base64: {
-    encode: { title: 'Encode', func: input => btoa(input) },
-    decode: { title: 'Decode', func: input => atob(input) },
-  },
-  base36: {
-    encode: { title: 'Encode', func: input => parseInt(input, 36) },
-    decode: { title: 'Decode', func: input => parseInt(input).toString(36) },
-  },
-  */
 };
 
 export {

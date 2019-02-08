@@ -2,7 +2,7 @@ import { h } from 'hyperapp';
 import { Switch, Route, Link } from '@hyperapp/router';
 import cc from 'classcat';
 import Home from './Home';
-import SearchBox from './SearchBox';
+import SearchBox from './search/SearchBox';
 import NotFound from './NotFound';
 import sitemap from '../sitemap';
 import pages from '../pages';
@@ -26,38 +26,38 @@ export default (state, actions) => {
     <div className={styles.app}>
       <nav className={cc([styles.nav,{ [styles.open]: state.app.drawer }])}>
         <div className={styles.menu} onclick={actions.app.drawer}/>
-        <Link to="/" className={styles.logo}/>
         {Object.keys(sitemap).map(path => {
           const active = current === path || current.startsWith(path + '/');
           if (active) {
             header = sitemap[path].header;
             if (lastActive !== path) {
-              docTitle.text = `Devek - ${header}`;
+              docTitle.text = path === "/" ? 'Devek' : `Devek - ${header}`;
               lastActive = path;
             }
           }
-          return (
+
+          return path === '/' ? (
+            <Link to="/" className={styles.logo}/>
+          ) : (
             <Link key={path} to={path}
                   className={cc({ [styles.menuitem]: true, [styles.active]: active })}>
               {sitemap[path].title}
             </Link>
           );
         })}
+        <p>Alt+S for search</p>
       </nav>
       <main className={styles.main}>
         {state.app.drawer && <div className={styles.overlay} onclick={actions.app.drawer} /> }
         <header className={styles.header}>
+          <div className={styles.menu} onclick={actions.app.drawer}/>
           {header && <span className={styles.description}>{header}</span>}
         </header>
-        {
-          state.app.openSearch && <SearchBox />
-        }
-        <div className={styles.menu} onclick={actions.app.drawer}/>
+        <SearchBox />
         <article className={styles.article}>
           <Switch>
-            <Route path="/" render={Home} />
             {Object.keys(sitemap).map(path => (
-              <Route path={path} parent render={pages[sitemap[path].name]} />
+              <Route path={path} parent={path !== "/"} render={pages[sitemap[path].name]} />
             ))}
             <Route render={NotFound} />
           </Switch>

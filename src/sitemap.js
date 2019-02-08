@@ -1,4 +1,10 @@
 const sitemap = {
+  "/": {
+    name: 'home',
+    title: 'Home',
+    header: 'Developer Kit',
+    description: 'Home'
+  },
   "/text": {
     name: 'text',
     title: 'Text',

@@ -1,6 +1,6 @@
 # Devek
 
-Developer toolkit - helping utilities for developers
+Developer Kit - helping utilities for developers
 
 ## Development
 

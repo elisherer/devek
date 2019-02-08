@@ -20,17 +20,16 @@ if (process.env.NODE_ENV !== 'production') {
 
 const handleLocationChange = () => {
   if (!screen.isDesktop) main.app.locationOnMobile();
-  main.app.closeSearch();
+  main.search.close();
 };
 
 /*const unsubscribe =*/ location.subscribe(main.location);
 addEventListener("pushstate", handleLocationChange);
 addEventListener("popstate", handleLocationChange);
-main.app.initSearch();
 
 const searchShortcutHandler = e => {
   if (e.key === "s" && e.altKey && !e.shiftKey && !e.ctrlKey) { // Alt + S
-    main.app.openSearch();
+    main.search.open();
     setTimeout(() => {
       document.getElementById('search_box').focus();
     }, 0);

@@ -5,9 +5,11 @@ import PageJSON from "./components/json/PageJSON";
 import PageXML from "./components/xml/PageXML";
 import PageJWT from "./components/jwt/PageJWT";
 import PageRandom from "./components/random/PageRandom";
+import Home from "./components/Home";
 //import NotFound from "./components/NotFound";
 
 const pages = {
+  home: Home,
   text: PageText,
   base: PageBase,
   regex: PageRegex,

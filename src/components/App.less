@@ -12,6 +12,7 @@
   width: 0;
   transition: width 300ms ease-in-out;
   height: 100%;
+  color: rgba(255,255,255,0.5);
   background: @gui-nav-background;
   overflow: hidden;
   position: absolute;
@@ -41,6 +42,17 @@
     }
   }
 
+  > p {
+    display: none;
+    margin: 40px 20px 0 20px;
+    font-family: monospace;
+    @media (min-width: @screen-desktop-min) {
+      display: block;
+      position: relative;
+      width: @gui-nav-width;
+    }
+  }
+
   @media (min-width: @screen-desktop-min) {
     position: relative;
     width: @gui-nav-width;
@@ -59,7 +71,7 @@
   margin: 15px 20px 16px 65px;
 
   @media (min-width: @screen-desktop-min) {
-    margin: 16px;
+    margin: 16px 16px 36px;
     width: 140px;
     height: 38px;
   }
@@ -105,6 +117,7 @@
 }
 
 .header {
+  background: white;
   height: @gui-header-height;
   font-family: monospace;
   font-size: 24px;
@@ -131,11 +144,16 @@
   height: 100%;
   overflow: auto;
 
-  padding-top: 20px;
-  padding-left: 20px;
-  padding-right: 20px;
-  width: 100%;
-  max-width: 800px;
+  > div {
+    padding: 10px;
+    max-width: 800px;
+    background: white;
+    @media only screen and (min-width: @screen-desktop-min) {
+      padding: 20px;
+      margin: 20px;
+      box-shadow: 0 0 16px rgba(0,0,0,.2);
+    }
+  }
 
   h1 {
     color: @gui-card-left-border;

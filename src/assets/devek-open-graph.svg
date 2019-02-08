@@ -7,6 +7,7 @@
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="777.52551mm"
@@ -17,7 +18,29 @@
    sodipodi:docname="devek-open-graph.svg"
    inkscape:version="0.92.4 (5da689c313, 2019-01-14)">
   <defs
-     id="defs2" />
+     id="defs2">
+    <linearGradient
+       inkscape:collect="always"
+       id="linearGradient839">
+      <stop
+         style="stop-color:#5500aa;stop-opacity:1;"
+         offset="0"
+         id="stop835" />
+      <stop
+         style="stop-color:#5050ff;stop-opacity:1"
+         offset="1"
+         id="stop837" />
+    </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient839"
+       id="linearGradient841"
+       x1="208.90895"
+       y1="-4.2402587"
+       x2="585.67554"
+       y2="474.71548"
+       gradientUnits="userSpaceOnUse" />
+  </defs>
   <sodipodi:namedview
      id="base"
      pagecolor="#ffffff"
@@ -26,14 +49,14 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.29775281"
-     inkscape:cx="937.79015"
+     inkscape:cx="989.71707"
      inkscape:cy="622.97668"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="false"
-     inkscape:window-width="2560"
-     inkscape:window-height="1387"
-     inkscape:window-x="2552"
+     inkscape:window-width="1920"
+     inkscape:window-height="1017"
+     inkscape:window-x="-8"
      inkscape:window-y="-8"
      inkscape:window-maximized="1" />
   <metadata
@@ -54,7 +77,7 @@
      id="layer1"
      transform="translate(56.782635,52.224697)">
     <rect
-       style="fill:#5500aa;fill-opacity:1;stroke:none;stroke-width:8;stroke-linecap:square;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="fill:url(#linearGradient841);fill-opacity:1;stroke:none;stroke-width:8;stroke-linecap:square;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect6618"
        width="777.52551"
        height="410.53351"
@@ -158,7 +181,7 @@
        xml:space="preserve"
        id="flowRoot7163"
        style="font-style:normal;font-weight:normal;font-size:40px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none"
-       transform="matrix(0.26458333,0,0,0.26458333,63.178453,7.7220702)"><flowRegion
+       transform="matrix(0.26458333,0,0,0.26458333,135.67453,7.7220702)"><flowRegion
          id="flowRegion7165"><rect
            id="rect7167"
            width="2636.415"
@@ -166,5 +189,5 @@
            x="-120.90566"
            y="757.46729" /></flowRegion><flowPara
          id="flowPara7169"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:240px;font-family:Consolas;-inkscape-font-specification:Consolas;fill:#ffffff;fill-opacity:1">Developer Toolkit</flowPara></flowRoot>  </g>
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:240px;font-family:Consolas;-inkscape-font-specification:Consolas;fill:#ffffff;fill-opacity:1">Developer Kit</flowPara></flowRoot>  </g>
 </svg>
