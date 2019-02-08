@@ -18,11 +18,17 @@ const prettifyXSLT = `
     </xsl:template>
     <xsl:output indent="yes"/>
   </xsl:stylesheet>`;
-const prettifier = new XSLTProcessor();
-prettifier.importStylesheet(getXMLDoc(prettifyXSLT));
+let prettifyProcessor;
+const getProcessor = () => {
+  if (!prettifyProcessor) {
+      prettifyProcessor = new XSLTProcessor();
+      prettifyProcessor.importStylesheet(getXMLDoc(prettifyXSLT));
+  }
+  return prettifyProcessor;
+};
 
 const prettifyXml = xmlDoc => {
-  const resultDoc = prettifier.transformToDocument(xmlDoc);
+  const resultDoc = getProcessor().transformToDocument(xmlDoc);
   return serializer.serializeToString(resultDoc);
 };
 
