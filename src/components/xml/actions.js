@@ -1,15 +1,25 @@
 import actions from 'actions';
+import initialState from 'initialState';
 
 actions.xml = {
-  set: e => state => ({
+  xml: e => state => ({
     ...state,
-    input: e.target.innerText
+    xml: e.target.innerText
   }),
-    xpath: e => state => ({
+  xpathToggle: e => state => ({
     ...state,
-    xpath: e.target.value
+    xpathEnabled: !state.xpathEnabled,
+  }),
+  xpath: e => state => ({
+    ...state,
+    xpath: e.target.value,
   }),
 };
 
-export const getInput = state => state.xml && typeof state.xml.input === 'string' ?state.xml.input : '';
+initialState.xml = {
+  xpath: '/*'
+};
+
+export const getXML = state => state.xml && typeof state.xml.xml === 'string' ?state.xml.xml : '';
 export const getXPath = state => state.xml && typeof state.xml.xpath === 'string' ?state.xml.xpath : '';
+export const getXPathEnabled = state => state.xml && state.xml.xpathEnabled;

@@ -8,16 +8,13 @@ const queryXPath = (xmlDoc, xpath) =>
   xmlDoc.evaluate(xpath, xmlDoc, null, XPathResult.ANY_TYPE,  null);
 
 const prettifyXSLT = `
-  <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-    <xsl:strip-space elements="*"/>
-    <xsl:template match="para[content-style][not(text())]">
-      <xsl:value-of select="normalize-space(.)"/>
-    </xsl:template>
-    <xsl:template match="node()|@*">
-      <xsl:copy><xsl:apply-templates select="node()|@*"/></xsl:copy>
-    </xsl:template>
-    <xsl:output indent="yes"/>
-  </xsl:stylesheet>`;
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+ <xsl:output method="xml" indent="yes"/>
+ <xsl:strip-space elements="*"/>
+ <xsl:template match="/">
+  <xsl:copy-of select="."/>
+ </xsl:template>
+</xsl:stylesheet>`;
 let prettifyProcessor;
 const getProcessor = () => {
   if (!prettifyProcessor) {

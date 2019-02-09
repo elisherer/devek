@@ -37,13 +37,13 @@ const sitemap = {
   "/json": {
     name: 'json',
     title: 'JSON',
-    header: 'JSON Debugger',
+    header: 'JSON Debugger/Prettifier',
     description: "Debug, Prettify"
   },
   "/xml": {
     name: 'xml',
     title: 'XML',
-    header: 'XML Debugger',
+    header: 'XML Debugger/Prettifier',
     description: "XML Prettify and XPath query"
   },
   "/jwt": {

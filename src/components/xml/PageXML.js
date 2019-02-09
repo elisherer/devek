@@ -1,25 +1,16 @@
 import { h } from 'hyperapp';
-import Tabs from '../Tabs';
 import TextBox from '../TextBox';
 import TextArea from '../TextArea';
-import { getInput, getXPath } from './actions';
-import { Redirect, Link } from '@hyperapp/router';
+import { getXML, getXPath, getXPathEnabled } from './actions';
 import {getXMLDoc, prettifyXml, queryXPath} from "./xml";
 
 let xmlDocSource, xmlDoc;
 
-export default ({ location, match }) => (state, actions) => {
-  const pathSegments = location.pathname.substr(1).split('/');
+export default () => (state, actions) => {
 
-  const func = pathSegments[1];
-  if (!func) {
-    return <Redirect to={`/${pathSegments[0]}/xpath`}/>;
-  }
-
-  const prettify = func === "prettify";
-
-  const input = getInput(state),
-    xpath = getXPath(state);
+  const input = getXML(state),
+    xpath = getXPath(state),
+    xpathEnabled = getXPathEnabled(state);
 
   let results, error = null;
   if (!input) {
@@ -35,21 +26,17 @@ export default ({ location, match }) => (state, actions) => {
       error = e.message;
     }
   }
-  if (xmlDoc && !error && prettify) {
+  if (xmlDoc && !error) {
     try{
-      results = prettifyXml(xmlDoc);
-    }
-    catch (e) {
-      error = e.message;
-    }
-  }
-  else if (xmlDoc && !error && xpath) {
-    try {
-      const xPathEesult = queryXPath(xmlDoc, xpath);
-      results = [];
-      let node;
-      while ((node = xPathEesult.iterateNext())) {
-        results.push(node.outerHTML);
+      if (xpathEnabled) {
+        const xPathEesult = queryXPath(xmlDoc, xpath);
+        results = [];
+        let node;
+        while ((node = xPathEesult.iterateNext())) {
+          results.push(node.outerHTML);
+        }
+      } else {
+        results = prettifyXml(xmlDoc);
       }
     }
     catch (e) {
@@ -60,7 +47,7 @@ export default ({ location, match }) => (state, actions) => {
   let resultsNode;
 
   if (!error) {
-    if (prettify) {
+    if (!xpathEnabled) {
       resultsNode = <TextArea readonly value={results}
                               html={!!results && results.includes('<parsererror')}/>
     }
@@ -76,16 +63,12 @@ export default ({ location, match }) => (state, actions) => {
 
   return (
     <div>
-      <Tabs>
-        <Link data-active={func === 'xpath'} to={"/" + pathSegments[0] + "/xpath"}>XPath</Link>
-        <Link data-active={func === 'prettify'} to={"/" + pathSegments[0] + "/prettify"}>Prettify</Link>
-      </Tabs>
-
       <label>XML:</label>
-      <TextArea autofocus onChange={actions.xml.set} value={input}/>
+      <TextArea autofocus onChange={actions.xml.xml} value={input}/>
 
-      {!prettify && <label>XPath expression:</label>}
-      {!prettify && <TextBox value={xpath} onChange={actions.xml.xpath}/>}
+      <label><input type="checkbox" checked={xpathEnabled} onchange={actions.xml.xpathToggle}/> Use XPath</label>
+      {xpathEnabled && <label>XPath expression:</label>}
+      {xpathEnabled && <TextBox value={xpath} onChange={actions.xml.xpath}/>}
 
       <h1>Result</h1>
       {error ? <p style={{color:'red'}}>{error}</p> : resultsNode}
