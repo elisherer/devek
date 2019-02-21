@@ -3,7 +3,7 @@ import TextArea from '../TextArea';
 import CopyToClipboard from '../CopyToClipboard';
 import Radio from "../Radio";
 import Tabs from "../Tabs";
-import { getFlags, getSize } from './actions';
+import { getFlags, getSize, getCount } from './actions';
 import {generatePassword, generateTable, uuidv4} from "./rand";
 import {Link, Redirect} from "@hyperapp/router";
 
@@ -22,21 +22,29 @@ export default () => (state, actions) => {
 
   let result, flags, size;
 
+  const count = getCount(state);
+
   if (type === "password") {
     flags = getFlags(state);
     size = getSize(state);
+    const results = [];
 
     if (tableFlags !== flags) {
       table = generateTable(flags);
     }
-
-    result = generatePassword(size, table);
+    for (let i = 0; i < count ; i++)
+      results.push(generatePassword(size, table));
+    result = results.join('\n');
   }
   else if (type === "guid") {
-    result = uuidv4();
+    const results = [];
+    for (let i = 0; i < count ; i++)
+      results.push(uuidv4());
+    result = results.join('\n');
   } else {
     result = "N/A";
   }
+
 
   return (
     <div>
@@ -45,9 +53,13 @@ export default () => (state, actions) => {
         <Link data-active={pathSegments[1] === 'guid'} to="/random/guid">Guid</Link>
       </Tabs>
 
+      <label>Count ({count})</label>
+      <input type="range" min="1" max="16" value={count} onchange={actions.random.count}/>
+
+
       {type === "password" && (
         <div>
-          <label>Length</label>
+          <label>Length ({size})</label>
           <input type="range" min="6" max="64" value={size} onchange={actions.random.size} />
 
           <label>Flags</label>
@@ -60,7 +72,10 @@ export default () => (state, actions) => {
           </Radio>
         </div>
       )}
-      <button onclick={actions.app.refresh}>Regenerate</button>
+
+      <div className={styles.buttons}>
+        <button onclick={actions.app.refresh}>Regenerate</button>
+      </div>
 
       <h1>Result</h1>
       <CopyToClipboard from="random_result" />

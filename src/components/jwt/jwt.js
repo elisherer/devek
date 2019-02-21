@@ -60,8 +60,7 @@ const sign = async (alg, token, secret) => {
   }
 };
 
-/*
-const encodeAsync = async (payload, alg, key) => {
+const encodeAsync = async (alg, payload, key) => {
   const header = {
     type: 'JWT'
   };
@@ -69,32 +68,37 @@ const encodeAsync = async (payload, alg, key) => {
     header.alg = alg;
   }
 
-  const encodedHeader = base64UrlEncodeWeb(JSON.stringify(header)),
-    encodedPayload = base64UrlEncodeWeb(JSON.stringify(payload));
+  try {
+    const encodedHeader = base64UrlEncodeWeb(JSON.stringify(header)),
+      encodedPayload = base64UrlEncodeWeb(JSON.stringify(JSON.parse(payload)));
 
-  const prefix = encodedHeader + '.' + encodedPayload;
-  const sig = await sign(alg, prefix, key);
+    const prefix = encodedHeader + '.' + encodedPayload;
+    const sig = await sign(alg, prefix, key);
 
-  return prefix + '.' + sig;
+    return {out_token: prefix + '.' + sig, sig};
+  }
+  catch (e) {
+    return { out_token: e.message};
+  }
 };
-*/
 
 
 const decodeAsync = async (token, secret) => {
   try {
-    const parts = token.split('.'), result = [];
+    const parts = token.split('.'), result = { alg: '', header: '', payload: '', sig: '', valid: false };
     if (parts.length > 0) {
       const header = base64UrlDecode(parts[0]);
-      result.push(JSON.stringify(header, null, 2));
+      result.header = JSON.stringify(header, null, 2);
 
       if (parts.length > 1) {
-        result.push(JSON.stringify(base64UrlDecode(parts[1]), null, 2));
-        result.push(parts.length > 2 ? parts[2] : '');
+        result.payload = JSON.stringify(base64UrlDecode(parts[1]), null, 2);
+        result.sig = parts.length > 2 ? parts[2] : '';
         let sig = 'No alg!';
         if (header.alg && header.alg.toLowerCase() !== "none") {
+          result.alg = header.alg;
           sig = await sign(header.alg, `${parts[0]}.${parts[1]}`, secret);
         }
-        result.push(sig)
+        result.valid = result.sig === sig;
       }
     }
     return result;
@@ -106,6 +110,6 @@ const decodeAsync = async (token, secret) => {
 };
 
 export {
-  //encodeAsync,
+  encodeAsync,
   decodeAsync
 };

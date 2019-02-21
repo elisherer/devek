@@ -4,70 +4,57 @@ import {Link, Redirect} from '@hyperapp/router';
 import TextBox from '../TextBox';
 import TextArea from '../TextArea';
 import Tabs from '../Tabs';
-import {getSecret, getToken, getResult} from './actions';
+import './actions';
 import styles from './PageJWT.less';
 import CopyToClipboard from "../CopyToClipboard";
 
 export default () => (state, actions) => {
-  const pathSegments = location.pathname.substr(1).split('/');
+  const encodeMode = state.jwt.encode;
+  let resultHTML;
 
-  if (pathSegments.length < 2) {
-    return <Redirect to={`/${pathSegments[0]}/decode`}/>;
-  }
+  resultHTML =
+    `<div class="${styles.header}">${state.jwt.header || ''}</div>` +
+    `<div class="${styles.payload}">${state.jwt.payload || ''}</div>` +
+    `<div class="${styles.sig}">${state.jwt.sig || ''}</div>`;
 
-  const token = getToken(state),
-    secret = getSecret(state),
-    encodeMode = pathSegments[1] === 'encode';
-  let result = getResult(state), resultHTML;
-  if (encodeMode) {
-    result = [];//await encodeAsync({});
-  }
-  else {
-//    result = await decodeAsync(token, secret);
-
-    resultHTML =
-      `<div class="${styles.header}">${result[0] || ''}</div>` +
-      `<div class="${styles.payload}">${result[1] || ''}</div>` +
-      `<div class="${styles.sig}">${result[2] || ''}</div>`;
-  }
-
-  const tabs = (
-    <Tabs>
-      <Link data-active={pathSegments[1] === 'decode'} to="/jwt/decode">Decoder</Link>
-      <Link data-active={pathSegments[1] === 'encode'} to="/jwt/encode">Encoder</Link>
-    </Tabs>
-  );
-
-  if (encodeMode) {
-    return (
-      <div>
-        {tabs}
-
-        Under construction...
-      </div>
-    );
-  }
-
+  const secretTextbox = <TextBox value={state.jwt.secret}
+                                 placeholder="Base64Url encoded secret"
+                                 onChange={actions.jwt.secret} />;
   return (
     <div>
-      {tabs}
+      <Tabs>
+        <span data-active={!encodeMode} onclick={actions.jwt.toggle}>Decoder</span>
+        <span data-active={encodeMode} onclick={actions.jwt.toggle}>Encoder</span>
+      </Tabs>
+
+      {encodeMode && (<div>
+        <label>Algorithm</label>
+        <TextBox value="HS256" readonly/>
+
+        <TextArea className={styles.header} value={state.jwt.header} readonly />
+        <TextArea className={styles.payload} value={state.jwt.in_payload} onChange={actions.jwt.in_payload} autofocus />
+        <TextArea className={styles.sig} value={state.jwt.sig} readonly />
+
+        <label>Secret key</label>
+        {secretTextbox}
+      </div>)}
 
       <span>Token</span><CopyToClipboard from="jwt" />
+      <TextBox id="jwt" style={{maxWidth: "100%"}} autofocus={!encodeMode}
+               value={encodeMode ? state.jwt.out_token : state.jwt.in_token}
+               selectOnFocus
+               onChange={actions.jwt.in_token}
+               readonly={encodeMode} />
 
+      {!encodeMode && (<div>
+        { state.jwt.alg && (
+          <label className={styles.emoji}>Verify <b>{state.jwt.alg}</b> Signature {state.jwt.valid ? "- ✔ Verified" : "- ❌ Not verified"}</label>)}
+        {state.jwt.alg && secretTextbox}
 
-      <TextBox id="jwt" value={token} autofocus selectOnFocus style={{maxWidth: "100%"}}
-               onChange={actions.jwt.token} />
-
-      <label>Contents:</label>
-      <TextArea readonly html className={styles.jwt}
-                value={resultHTML} />
-
-      <label>Validate Signature</label>
-      <TextBox value={secret} placeholder="Base64Url encoded secret"
-               onChange={actions.jwt.secret} />
-      <TextBox className={cc([result[3] === result[2] ? styles.valid : styles.error])}
-               inputClassName={cc([result[3] === result[2] ? styles.valid : styles.error])}
-               readonly value={result[3] || 'N/A'}/>
+        <label>Contents:</label>
+        <TextArea readonly={!encodeMode} html className={styles.jwt}
+                  value={resultHTML} />
+      </div>)}
     </div>
   );
 }

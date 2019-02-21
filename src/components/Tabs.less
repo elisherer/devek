@@ -2,7 +2,7 @@
 
 .tabs {
   padding-bottom: 20px;
-  a {
+  > * {
     text-align: center;
     color: @gui-foreground-color;
     text-decoration: none;
@@ -11,6 +11,8 @@
     font-size: 14px;
     border-bottom: 2px solid @gui-card-header-border;
     min-width: 60px;
+    cursor: pointer;
+    user-select: none;
     /*
     @media only screen and (min-width: 370px) {
       padding: 8px 14px;
