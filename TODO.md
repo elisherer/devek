@@ -17,6 +17,3 @@
 
 ## List
 * Add Commas, ticks,...
-
-## JWT
-* encode

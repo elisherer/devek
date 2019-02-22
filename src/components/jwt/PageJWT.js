@@ -70,7 +70,7 @@ export default () => (state, actions) => {
         <p style={{color: 'red'}}>{state.jwt.error}</p>
       )}
       { state.jwt.alg && (
-        <label className={styles.emoji}>Verify <b>{state.jwt.alg}</b> Signature {state.jwt.valid ? "- ✔ Verified" : "- ❌ Not verified"}</label>
+        <label className="emoji">Verify <b>{state.jwt.alg}</b> Signature {state.jwt.valid ? "- ✔ Verified" : "- ❌ Not verified"}</label>
       )}
       {state.jwt.alg && secretTextbox}
 

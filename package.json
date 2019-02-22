@@ -26,7 +26,6 @@
     "@hyperapp/router": "0.7.1",
     "classcat": "3.2.5",
     "core-js": "2.6.1",
-    "crypto-js": "3.1.9-1",
     "html-material-css": "0.2.4",
     "hyperapp": "1.2.9",
     "hyperapp-forms": "0.1.0"
