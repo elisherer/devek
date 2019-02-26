@@ -1,6 +1,3 @@
-## Random
-* Names
-
 ## Color
 * color picker
 
