@@ -14,53 +14,37 @@ const parseBinaryText = value => {
 
 };
 
-const reduceByFrom = (fromNumber, fromBase, state) => {
-  let toNumber = state.toNumber,
-    invalid = true;
-  const newFromNumber = parseIntStrict(fromNumber, fromBase);
-  if (!isNaN(newFromNumber)) { // if the new to is valid, then calc the new from
-    toNumber = newFromNumber.toString(state.toBase);
-    invalid = false;
-  }
-  return {
-    ...state,
-    fromNumber,
-    fromBase,
-    toNumber,
-    errors: {
-      ...state.errors,
-      fromNumber: invalid,
-      toNumber: invalid && state.errors.toNumber
-    }
-  }
-};
+const utf8ToBinary = utf8 => utf8.split('').map(char => ('0000000' + char.charCodeAt(0).toString(2)).slice(-8)).join(' ');
 
-const reduceByTo = (toNumber, toBase, state) => {
-  let fromNumber = state.fromNumber,
-    invalid = true;
-  const newToNumber = parseIntStrict(toNumber, toBase);
-  if (!isNaN(newToNumber)) { // if the new to is valid, then calc the new from
-    fromNumber = newToNumber.toString(state.fromBase);
-    invalid = false;
+
+const reduceNumberBy = (field, fields /*fromNumber, toNumber, fromBase, toBase*/) => {
+  // save current field
+  const newState = { ...fields, errors: { ...fields.errors }};
+  newState[field + 'Number'] = fields[field + 'Number'];
+  newState[field + 'Base'] = fields[field + 'Base'];
+
+  // calc new field (and determine if is valid)
+  const parsedValue = parseIntStrict(fields[field + 'Number'], fields[field + 'Base']);
+  const invalid = isNaN(parsedValue);
+
+  // if the new value is valid, then calc the others fields new values
+  const otherField = field === "to" ? "from" : "to";
+  if (!invalid) {
+    newState[otherField + 'Number'] = parsedValue.toString(fields[otherField + 'Base']);
   }
-  return {
-    ...state,
-    toNumber,
-    toBase,
-    fromNumber,
-    errors: {
-      ...state.errors,
-      toNumber: invalid,
-      fromNumber: invalid && state.errors.fromNumber
-    }
-  }
+
+  newState.errors[field + 'Number'] = invalid;
+  newState.errors[otherField + 'Number'] = newState.errors[otherField + 'Number'] && invalid;
+
+  return newState;
 };
 
 actions.base = {
-  fromBase: e => state => reduceByFrom(state.fromNumber, parseInt(e.target.value), state),
-  toBase: e => state => reduceByTo(state.toNumber, parseInt(e.target.value), state),
-  fromNumber: e => state => reduceByFrom(e.target.value, state.fromBase, state),
-  toNumber: e => state => reduceByTo(e.target.value, state.toBase, state),
+  fromBase: e => state => reduceNumberBy('from', { ...state, fromBase: parseInt(e.target.value) }),
+  toBase: e => state => reduceNumberBy('to', { ...state, toBase: parseInt(e.target.value) }),
+  fromNumber: e => state => reduceNumberBy('from', { ...state, fromNumber: e.target.value }),
+  toNumber: e => state => reduceNumberBy('to', { ...state, toNumber: e.target.value }),
+
   utf8: e => state => {
     return {
       ...state,
@@ -78,12 +62,3 @@ initialState.base = {
   toBase: 10,
   errors: {}
 };
-
-export const getErrors = state => state.base && state.base.errors;
-
-export const getFromBase = state => state.base && typeof state.base.fromBase === 'number' ? state.base.fromBase : 0;
-export const getToBase = state => state.base && typeof state.base.toBase === 'number' ? state.base.toBase : 0;
-export const getFromNumber = state => state.base && typeof state.base.fromNumber === 'string' ? state.base.fromNumber : '';
-export const getToNumber = state => state.base && typeof state.base.toNumber === 'string' ? state.base.toNumber : '';
-
-export const getUTF8 = state => state.base && typeof state.base.utf8 === 'number' ? state.base.from : 0;

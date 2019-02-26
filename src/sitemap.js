@@ -52,6 +52,12 @@ const sitemap = {
     header: 'JWT Tool',
     description: "Decode, Verify & Encode"
   },
+  "/time": {
+    name: 'time',
+    title: 'Time',
+    header: 'Time tools',
+    description: "See world time and do conversions"
+  },
   "/random": {
     name: 'random',
     title: 'Random',

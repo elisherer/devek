@@ -6,6 +6,7 @@ import PageXML from "./components/xml/PageXML";
 import PageJWT from "./components/jwt/PageJWT";
 import PageRandom from "./components/random/PageRandom";
 import Home from "./components/Home";
+import PageTime from "./components/time/PageTime";
 //import NotFound from "./components/NotFound";
 
 const pages = {
@@ -16,6 +17,7 @@ const pages = {
   json: PageJSON,
   xml: PageXML,
   jwt: PageJWT,
+  time: PageTime,
   random: PageRandom,
 };
 

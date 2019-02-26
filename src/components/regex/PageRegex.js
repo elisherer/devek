@@ -2,6 +2,7 @@ import { h } from 'hyperapp';
 import TextBox from '../TextBox';
 import TextArea from '../TextArea';
 import Radio from '../Radio';
+import Checkbox from '../Checkbox';
 import { getRegex, getFlags, getTestString, getWithReplace, getReplace } from './actions';
 import styles from './PageRegex.less'
 
@@ -57,7 +58,8 @@ export default () => (state, actions) => {
       <label>Test string</label>
       <TextArea onChange={actions.regex.testString} value={testString} />
 
-      <label><input type="checkbox" checked={withRepalce} onchange={actions.regex.withReplace} /> Substitution</label>
+      <Checkbox label="Substitution" checked={withRepalce} onchange={actions.regex.withReplace} />
+
       {withRepalce && <TextBox value={replace} onChange={actions.regex.replace} />}
 
       <h1>Matches</h1>

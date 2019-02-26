@@ -3,6 +3,7 @@ import TextBox from '../TextBox';
 import TextArea from '../TextArea';
 import { getXML, getXPath, getXPathEnabled } from './actions';
 import {getXMLDoc, prettifyXml, queryXPath} from "./xml";
+import Checkbox from "../Checkbox";
 
 let xmlDocSource, xmlDoc;
 
@@ -66,7 +67,7 @@ export default () => (state, actions) => {
       <label>XML:</label>
       <TextArea autofocus onChange={actions.xml.xml} value={input}/>
 
-      <label><input type="checkbox" checked={xpathEnabled} onchange={actions.xml.xpathToggle}/> Use XPath</label>
+      <Checkbox label="Use XPath" checked={xpathEnabled} onchange={actions.xml.xpathToggle} />
       {xpathEnabled && <label>XPath expression:</label>}
       {xpathEnabled && <TextBox value={xpath} onChange={actions.xml.xpath}/>}
 
