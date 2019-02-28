@@ -61,7 +61,7 @@ export const reduceTextBy = (field, fields) => {
 
   // calc new field (and determine if is valid)
   const parsedValue = parsers[field](fields[field]);
-  const invalid = isNaN(parsedValue);
+  const invalid = typeof parsedValue !== 'string' && isNaN(parsedValue);
 
   // if the new value is valid, then calc the others fields new values
   const otherFields = allFields.filter(x => x !== field);

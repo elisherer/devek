@@ -54,7 +54,7 @@ export default (state, actions) => {
           {header && <span className={styles.description}>{header}</span>}
         </header>
         <SearchBox />
-        <article className={styles.article}>
+        <article className={styles.article} key={current /* force re-rendering of page */}>
           <Switch>
             {Object.keys(sitemap).map(path => (
               <Route path={path} parent={path !== "/"} render={pages[sitemap[path].name]} />
