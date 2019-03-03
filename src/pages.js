@@ -10,15 +10,15 @@ import PageTime from "./components/time/PageTime";
 //import NotFound from "./components/NotFound";
 
 const pages = {
-  home: Home,
-  text: PageText,
-  base: PageBase,
-  regex: PageRegex,
-  json: PageJSON,
-  xml: PageXML,
-  jwt: PageJWT,
-  time: PageTime,
-  random: PageRandom,
+  "/": Home,
+  "/text": PageText,
+  "/base": PageBase,
+  "/regex": PageRegex,
+  "/json": PageJSON,
+  "/xml": PageXML,
+  "/jwt": PageJWT,
+  "/time": PageTime,
+  "/random": PageRandom,
 };
 
 export default pages;

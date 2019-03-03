@@ -53,14 +53,17 @@ export default () => (state, actions) => {
         <Link data-active={pathSegments[1] === 'guid'} to="/random/guid">Guid</Link>
       </Tabs>
 
-      <label>Count ({count})</label>
-      <input type="range" min="1" max="16" value={count} onchange={actions.random.count}/>
-
+      <label className={styles.range}>
+        <span>Count ({count})</span>
+        <input type="range" min="1" max="16" value={count} onchange={actions.random.count}/>
+      </label>
 
       {type === "password" && (
         <div>
-          <label>Length ({size})</label>
-          <input type="range" min="6" max="64" value={size} onchange={actions.random.size} />
+          <label className={styles.range}>
+            <span>Length ({size})</span>
+            <input type="range" min="6" max="64" value={size} onchange={actions.random.size} />
+          </label>
 
           <label>Flags</label>
           <Radio className={styles.flags}>

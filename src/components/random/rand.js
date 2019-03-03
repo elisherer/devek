@@ -68,7 +68,7 @@ const generatePassword = (size, table) => {
     const u8array = new Uint8Array(size);
     crypto.getRandomValues(u8array);
     const array = Array.prototype.slice.call(u8array);
-    return array.map(rnd => table[Math.floor(table.length * rnd/255)]).join('');
+    return array.map(rnd => table[Math.floor(table.length * rnd/256)]).join('');
   }
   else
     return "Crypto not supported";

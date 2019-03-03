@@ -1,6 +1,8 @@
 import actions from 'actions';
 import initialState from 'initialState';
-import sitemap from "sitemap";
+import { flatMap } from "sitemap";
+
+const index = Object.keys(flatMap);
 
 let closeSearchBoxHandler;
 
@@ -14,19 +16,19 @@ const initialSearchState = {
 actions.search = {
   search: e => state => {
     const search = e.target.value;
+    const lower = search.toLowerCase();
     return {
       ...state,
       search,
-      paths: Object.keys(sitemap)
-        .filter(t =>
-          t !== '/' &&
-          t !== window.location.pathname && (
-            !search ||
-            sitemap[t].name.includes(search) ||
-            sitemap[t].header.includes(search) ||
-            sitemap[t].description.includes(search)
-          )
+      paths: index.filter(t =>
+        !flatMap[t].parent && // already appears in the search as a child
+        !window.location.pathname.startsWith(t) && (
+          (flatMap[t].keyword && flatMap[t].keyword.toLowerCase().includes(lower)) ||
+          (flatMap[t].title && flatMap[t].title.toLowerCase().includes(lower)) ||
+          (flatMap[t].header && flatMap[t].header.toLowerCase().includes(lower)) ||
+          (flatMap[t].description && flatMap[t].description.toLowerCase().includes(lower))
         )
+      )
     };
   },
   searchDown: () => state => ({

@@ -3,7 +3,7 @@ import cc from 'classcat';
 import { Link } from '@hyperapp/router';
 import TextBox from '../TextBox';
 import {getSearch, getSearchIndex, getSearchOpen, getSearchPaths} from "./actions";
-import sitemap from '../../sitemap';
+import { flatMap } from '../../sitemap';
 import styles from "./SearchBox.less";
 
 let clickedLink = false;
@@ -28,7 +28,7 @@ export default () => (state, actions) => {
       {search && paths.map((path, i) => (
           <Link key={path} to={path} className={cc([styles.item, { [styles.active]: i === index}])}
                 onmousedown={clickLinkHandler}>
-            <strong>{sitemap[path].title}</strong> - <span>{sitemap[path].description}</span>
+            <strong>{flatMap[path].title}</strong> - <span>{flatMap[path].description}</span>
           </Link>
         ))
       }

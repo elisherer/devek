@@ -149,11 +149,15 @@
     width: 100%;
     background: white;
     @media only screen and (min-width: @screen-desktop-min) {
-      width: fit-content;
-      min-width: 75%;
+      width: calc(100% - 40px);
+      min-width: (@screen-desktop-min - @gui-nav-width - 40px);
       padding: 20px;
       margin: 20px;
       box-shadow: 0 0 16px rgba(0,0,0,.2);
+    }
+    @media only screen and (min-width: 1024px) {
+      min-width: 768px;
+      width: fit-content;
     }
   }
 

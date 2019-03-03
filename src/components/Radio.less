@@ -13,18 +13,17 @@
     text-decoration: none;
     flex-basis: 50%;
     font-size: 12px;
-    line-height: 3em;
+    line-height: 2.5em;
     cursor: pointer;
     border-radius: 3px;
     margin-right: 8px;
-    background-color: #dddddd;
+    background-color: #cccccc;
     user-select: none;
     &:hover {
-      background-color: lighten(@gui-togglebar-background, 40%);
+      background-color: lighten(@gui-togglebar-background, 30%);
     }
     &[data-active] {
-      cursor: default;
-      background-color: lighten(@gui-togglebar-background, 15%);
+      background-color: @gui-togglebar-background;
       color: white;
     }
   }

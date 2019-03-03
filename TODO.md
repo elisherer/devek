@@ -9,3 +9,6 @@
 
 ## List
 * Add Commas, ticks,...
+
+
+## Dev Joke of the day

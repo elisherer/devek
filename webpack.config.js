@@ -27,7 +27,7 @@ module.exports = {
       path.resolve(info.absoluteResourcePath).replace(/\\/g, '/'),
   },
   devtool: ANALYZE ? 'source-map' : (PRODUCTION ? false : 'cheap-module-source-map'),
-  /*optimization: {
+  optimization: {
     splitChunks: {
       cacheGroups: {
         commons: {
@@ -37,7 +37,7 @@ module.exports = {
         }
       }
     }
-  },*/
+  },
   devServer: {
     historyApiFallback: true,
     before: (app, server) => {

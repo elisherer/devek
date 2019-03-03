@@ -1,14 +1,13 @@
 import { h } from 'hyperapp';
 import { Switch, Route, Link } from '@hyperapp/router';
 import cc from 'classcat';
-import Home from './Home';
 import SearchBox from './search/SearchBox';
 import NotFound from './NotFound';
-import sitemap from '../sitemap';
+import { siteMap } from '../sitemap';
 import pages from '../pages';
-
 import styles from './App.less';
 
+const appName = 'Devek';
 let lastActive = null;
 
 const docTitle = document.querySelector('title');
@@ -18,7 +17,7 @@ export default (state, actions) => {
   const current = state.location.pathname;
 
   if (lastActive !== current && current === '/') {
-    docTitle.text = 'Devek';
+    docTitle.text = appName;
     lastActive = current;
   }
 
@@ -26,12 +25,12 @@ export default (state, actions) => {
     <div className={styles.app}>
       <nav className={cc([styles.nav,{ [styles.open]: state.app.drawer }])}>
         <div className={styles.menu} onclick={actions.app.drawer}/>
-        {Object.keys(sitemap).map(path => {
+        {Object.keys(siteMap).map(path => {
           const active = current === path || current.startsWith(path + '/');
           if (active) {
-            header = sitemap[path].header;
+            header = siteMap[path].header;
             if (lastActive !== path) {
-              docTitle.text = path === "/" ? 'Devek' : `Devek - ${header}`;
+              docTitle.text = path === "/" ? appName : `${appName} - ${header}`;
               lastActive = path;
             }
           }
@@ -41,7 +40,7 @@ export default (state, actions) => {
           ) : (
             <Link key={path} to={path}
                   className={cc({ [styles.menuitem]: true, [styles.active]: active })}>
-              {sitemap[path].title}
+              {siteMap[path].title}
             </Link>
           );
         })}
@@ -56,8 +55,8 @@ export default (state, actions) => {
         <SearchBox />
         <article className={styles.article} key={current /* force re-rendering of page */}>
           <Switch>
-            {Object.keys(sitemap).map(path => (
-              <Route path={path} parent={path !== "/"} render={pages[sitemap[path].name]} />
+            {Object.keys(siteMap).map(path => (
+              <Route path={path} parent={path !== "/"} render={pages[path]} />
             ))}
             <Route render={NotFound} />
           </Switch>

@@ -7,11 +7,9 @@ const now = new Date();
 let boundRefreshAction;
 let timer;
 const startTimer = () => {
-  console.log('setting'); // eslint-disable-line
   timer = setInterval(boundRefreshAction, 1000);
 };
 const clearTimer = () => {
-  console.log('clearing'); // eslint-disable-line
   clearTimeout(timer);
 };
 
@@ -34,7 +32,7 @@ export default () => (state, actions) => {
     <div>
       <h1>Local: GMT{local[1]}</h1>
       <div className={styles.float}>
-        <Checkbox label="24H" value={ampm} onchange={actions.time.ampm} />
+        <Checkbox label="12H" checked={ampm} onchange={actions.time.ampm} />
       </div>
       <div className={styles.bold}>{localTime}</div>
       <div className={styles.big}>{now.toDateString()}</div>

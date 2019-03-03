@@ -12,12 +12,13 @@
 @gui-grey-border: #cccccc;
 
 @gui-primary-color: #5500aa;
+@gui-secondary-color: lighten(#0055aa, 15%);
 
 @gui-header-height: 60px;
-@gui-header-background: #5500aa;
+@gui-header-background: @gui-primary-color;
 @gui-header-foreground: white;
 
-@gui-togglebar-background: @gui-header-background;
+@gui-togglebar-background: @gui-secondary-color;
 
 @gui-card-background: white;
 @gui-card-left-border: @gui-primary-color;
@@ -30,5 +31,6 @@
 
 @gui-bottom-tool-height: 300px;
 
+@gui-textarea-border: @gui-secondary-color;
 @gui-textarea-background: #fdfdfd;
 @gui-textarea-readonly-bg: #f6f6f6;
