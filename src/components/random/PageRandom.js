@@ -49,8 +49,8 @@ export default () => (state, actions) => {
   return (
     <div>
       <Tabs>
-        <Link data-active={pathSegments[1] === 'password'} to="/random/password">Password</Link>
-        <Link data-active={pathSegments[1] === 'guid'} to="/random/guid">Guid</Link>
+        <Link data-active={type === 'password'} to="/random/password">Password</Link>
+        <Link data-active={type === 'guid'} to="/random/guid">Guid</Link>
       </Tabs>
 
       <label className={styles.range}>
