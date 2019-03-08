@@ -1,5 +1,4 @@
 import { h } from 'hyperapp';
-import cc from 'classcat';
 import TextBox from '../TextBox';
 import TextArea from '../TextArea';
 import Tabs from '../Tabs';
@@ -41,7 +40,8 @@ export default () => (state, actions) => {
             <div>
               <span>Token</span><CopyToClipboard from="jwt"/>
               <TextBox id="jwt"
-                       className={cc([styles.token, { [styles.error]: state.jwt.error }])}
+                       className={styles.token}
+                       invalid={state.jwt.error}
                        value={state.jwt.out_token}
                        selectOnFocus
                        readonly />
@@ -63,7 +63,8 @@ export default () => (state, actions) => {
 
       <span>Token</span><CopyToClipboard from="jwt"/>
       <TextBox id="jwt" autofocus selectOnFocus
-               className={cc([styles.token, { [styles.error]: state.jwt.error }])}
+               className={styles.token}
+               invalid={state.jwt.error}
                value={state.jwt.in_token}
                onChange={actions.jwt.in_token} />
       { state.jwt.error && (

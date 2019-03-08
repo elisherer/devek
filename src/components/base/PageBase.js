@@ -1,5 +1,4 @@
 import { h } from 'hyperapp';
-import cc from 'classcat';
 import TextBox from '../TextBox';
 import Tabs from '../Tabs';
 import CopyToClipboard from '../CopyToClipboard';
@@ -35,17 +34,17 @@ export default ({ location, match }) => (state, actions) => {
 
         <span>UTF8:</span><CopyToClipboard from="base_text_utf8"/>
         <div className={styles.wrap}>
-          <TextBox className={cc([styles.number, { [styles.error]: errors.utf8 }])} id="base_text_utf8" autofocus onChange={actions.base.utf8} value={utf8} />
+          <TextBox className={styles.number} invalid={errors.utf8} id="base_text_utf8" autofocus onChange={actions.base.utf8} value={utf8} />
         </div>
 
         <span>Hex:</span><CopyToClipboard from="base_text_hex"/>
         <div className={styles.wrap}>
-          <TextBox className={cc([styles.number, { [styles.error]: errors.hex }])} id="base_text_hex" onChange={actions.base.hex} value={hex}/>
+          <TextBox className={styles.number} invalid={errors.hex} id="base_text_hex" onChange={actions.base.hex} value={hex}/>
         </div>
 
         <span>Binary:</span><CopyToClipboard from="base_text_binary"/>
         <div className={styles.wrap}>
-          <TextBox className={cc([styles.number, { [styles.error]: errors.binary }])} id="base_text_binary" onChange={actions.base.binary} value={binary}/>
+          <TextBox className={styles.number} invalid={errors.binary} id="base_text_binary" onChange={actions.base.binary} value={binary}/>
         </div>
       </div>
     );
@@ -64,13 +63,13 @@ export default ({ location, match }) => (state, actions) => {
 
       <span>From:</span><CopyToClipboard from="base_number_to"/><span className={styles.base_label}>Base:</span>
       <div className={styles.wrap}>
-        <TextBox className={cc([styles.number, { [styles.error]: errors.from }])} id="base_number_from" autofocus onChange={actions.base.from} value={from} />
+        <TextBox className={styles.number} invalid={errors.from} id="base_number_from" autofocus onChange={actions.base.from} value={from} />
         <TextBox className={styles.base} onChange={actions.base.fromBase} type="number" value={fromBase} min={2} max={36}/>
       </div>
 
       <span>To:</span><CopyToClipboard from="base_number_to"/><span className={styles.base_label}>Base:</span>
       <div className={styles.wrap}>
-        <TextBox className={cc([styles.number, { [styles.error]: errors.to }])} id="base_number_to" onChange={actions.base.to} value={to}/>
+        <TextBox className={styles.number} invalid={errors.to} id="base_number_to" onChange={actions.base.to} value={to}/>
         <TextBox className={styles.base} onChange={actions.base.toBase} type="number" value={toBase} min={2} max={36}/>
       </div>
     </div>

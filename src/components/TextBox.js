@@ -18,9 +18,10 @@ export default ({
   placeholder,
   startAddon,
   endAddon,
+  invalid,
   ...more
 }) => (
-  <section style={style} className={cc([className, styles.textbox, { [styles.readonly]: readonly }])}>
+  <section style={style} className={cc([className, styles.textbox, { [styles.readonly]: readonly, [styles.error]: invalid }])}>
     {startAddon}
     <input readonly={readonly} placeholder={placeholder}
            className={inputClassName}

@@ -84,7 +84,12 @@ export const siteMap = {
   },
   //hash: { title: 'Hash', component: NotFound},
   //img: { title: 'Image', component: NotFound},
-  //color: { title: 'Color', component: NotFound},
+  "/color": {
+    keyword: 'color',
+    title: 'Color',
+    header: 'Color Conversion',
+    description: 'Convert between color '
+  },
 };
 
 export const flatMap = Object.keys(siteMap).reduce((a,c) => {
