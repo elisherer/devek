@@ -10,6 +10,7 @@ import {Link, Redirect} from "@hyperapp/router";
 import styles from './PageRandom.less';
 
 let table = null, tableFlags = null;
+let ticks = null;
 
 export default () => (state, actions) => {
   const pathSegments = location.pathname.substr(1).split('/');
@@ -45,6 +46,15 @@ export default () => (state, actions) => {
     result = "N/A";
   }
 
+  if (!ticks) {
+    const opts = [];
+    for (let i = 6; i < 65; i++) {
+      opts.push(<option key={i}>{i}</option>);
+    }
+    ticks = (
+      <datalist id="random_password_size">{opts}</datalist>
+    );
+  }
 
   return (
     <div>
@@ -62,7 +72,8 @@ export default () => (state, actions) => {
         <div>
           <label className={styles.range}>
             <span>Length ({size})</span>
-            <input type="range" min="6" max="64" value={size} onchange={actions.random.size} />
+            <input type="range" min="6" max="64" step="1" list="random_password_size" value={size} onchange={actions.random.size} />
+            {ticks}
           </label>
 
           <label>Flags</label>

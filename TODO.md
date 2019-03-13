@@ -1,5 +1,6 @@
 ## Color
-* color picker
+* color picker; (with web colors)
+https://codepen.io/amwill/pen/ZbdGeW/
 
 ## Image
 * Base64, crop, resize

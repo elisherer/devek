@@ -1,10 +1,12 @@
 import actions from 'actions';
 import initialState from 'initialState';
+import webcolors from './webcolors';
 import { reduceBy } from "./color";
 
 actions.color = {
   rgba: e => state => reduceBy('rgba', { ...state, rgba: e.target.value }),
   hex: e => state => reduceBy('hex', { ...state, hex: e.target.value }),
+  webcolor: e => state => reduceBy('hex', { ...state, hex: webcolors[e.target.value] }),
 };
 
 initialState.color = {

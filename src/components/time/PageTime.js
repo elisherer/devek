@@ -54,20 +54,27 @@ export default () => (state, actions) => {
 
     return (
       <div>
-        {tabs}
-
+        <dt oncreate={startTimer} ondestroy={clearTimer}/>
         <div className={styles.float}>
           <Checkbox label="12H" checked={ampm} onchange={actions.time.ampm}/>
         </div>
-        <div className={styles.bold}>{localTime}</div>
-        <div className={styles.big}>{now.toDateString()}</div>
-        <div>Week {week}<br/>GMT{local[1]}</div>
-        <hr/>
-        <span className={styles.big}>{utcTime}</span> <span> UTC</span>
-        <hr/>
-        <div className={styles.big}>{now.getTime()}</div>
-        <div>Milliseconds since Epoch time</div>
-        <dt oncreate={startTimer} ondestroy={clearTimer}/>
+
+        {tabs}
+
+        <div className={styles.local_time}>
+          <div className={styles.bold}>{localTime}</div>
+          <div className={styles.big}>{now.toDateString()}</div>
+          <div>Week {week}<br/>GMT{local[1]}</div>
+        </div>
+
+        <div className={styles.utc_time}>
+          <span className={styles.big}>{utcTime}</span> <span> UTC</span>
+        </div>
+
+        <div className={styles.epoch_time}>
+          <div className={styles.big}>{now.getTime()}</div>
+          <div>Milliseconds since Epoch time</div>
+        </div>
       </div>
     );
 

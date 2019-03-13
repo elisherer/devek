@@ -26,5 +26,8 @@
       background-color: @gui-togglebar-background;
       color: white;
     }
+    &[data-active]:hover {
+      background-color: lighten(@gui-togglebar-background, 10%);
+    }
   }
 }
