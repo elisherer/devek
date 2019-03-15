@@ -1,3 +1,5 @@
+import zPad from 'helpers/zPad';
+
 const radixStr = "0123456789abcdefghijklmnopqrstuvwxyz";
 const radixRegex = Array.from({ length: 36 - 2 + 1 },
   (_, i) => new RegExp("^[-+]?([" + radixStr.substr(0, 2+i) + "]+|Infinity)$"));
@@ -39,13 +41,6 @@ const parsers = {
   hex: hex => hex && !hexRegex.test(hex) ? NaN :
     hex.trim().replace(whiteSpaceRegex, ' ').split(' ')
       .map(hx => String.fromCharCode(parseInt(hx, 16))).join(''),
-};
-
-const zPad = (val, size) => {
-  const r = val.length % size;
-  if (!r) return val;
-  const q = Math.floor(val.length / size);
-  return ('0000000' + val).slice(-size*(q+1));
 };
 
 const serializers = {

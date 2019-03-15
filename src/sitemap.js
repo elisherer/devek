@@ -90,6 +90,12 @@ export const siteMap = {
     header: 'Color Conversion',
     description: 'Convert between color '
   },
+  "/network": {
+    keyword: 'network',
+    title: 'Network',
+    header: 'Network tools',
+    description: 'Network information utilities'
+  },
 };
 
 export const flatMap = Object.keys(siteMap).reduce((a,c) => {

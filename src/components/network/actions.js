@@ -1,27 +1,20 @@
 import actions from 'actions';
 import initialState from 'initialState';
+import { reduceBy, subnetToMask } from "./network";
 
-actions.random = {
-  flags: e => state => ({
-    ...state,
-    flags: state.flags.includes(e.target.dataset.flag) ? state.flags.replace(e.target.dataset.flag, '') : state.flags + e.target.dataset.flag
-  }),
-  size: e => state => ({
-    ...state,
-    size: parseInt(e.target.value)
-  }),
-  count: e => state => ({
-    ...state,
-    count: parseInt(e.target.value)
+actions.network = {
+  ipv4: e => state => reduceBy('ipv4', { ...state, ipv4: e.target.value }),
+  subnet: e => state => ({ 
+    ...state, 
+    subnet: parseInt(e.target.value), 
+    mask: parseInt(subnetToMask(e.target.value), 2) 
   }),
 };
 
-initialState.random = {
-  size: 8,
-  flags: 'aA0O',
-  count: 1,
+initialState.network = {
+  ipv4: '192.168.0.1',
+  subnet: 24,
+  mask: 0xFFFFFF00,
+  parsed: 0xC0A80001,
+  errors: {},
 };
-
-export const getFlags = state => state.random && typeof state.random.flags === 'string' ? state.random.flags : '';
-export const getSize = state => state.random && typeof state.random.size === 'number' ? state.random.size : 0;
-export const getCount = state => state.random && typeof state.random.count === 'number' ? state.random.count : 0;

@@ -1,6 +1,12 @@
+## Dev Joke of the day
+
 ## Color
+* convert: https://www.w3schools.com/lib/w3color.js
 * color picker; (with web colors)
 https://codepen.io/amwill/pen/ZbdGeW/
+* drag & drop and image and pick color
+? hwb, cmyk
+? gradients: https://www.w3schools.com/colors/colors_gradient.asp
 
 ## Image
 * Base64, crop, resize
@@ -8,19 +14,8 @@ https://codepen.io/amwill/pen/ZbdGeW/
 ## List
 * Add Commas, ticks,...
 
-
-## Dev Joke of the day
+## URL debugger
+- split url into its components (including query)
 
 ## network
-
-input: 192.168.0.1 / 20
-
-Address:   192.168.0.1           11000000.10101000.00000000.00000001
-Netmask:   255.255.240.0 = 20    11111111.11111111.11110000.00000000 // emphasis on this line
-Wildcard:  0.0.15.255            00000000.00000000.00001111.11111111
-=>
-Network:   192.168.0.0/20        11000000.10101000.00000000.00000000 (Class C)
-Broadcast: 192.168.15.255        11000000.10101000.00001111.11111111
-HostMin:   192.168.0.1           11000000.10101000.00000000.00000001
-HostMax:   192.168.15.254        11000000.10101000.00001111.11111110
-Hosts/Net: 4094                  (Private Internet)
+* https://www.site24x7.com/tools/ipv6-subnetcalculator.html

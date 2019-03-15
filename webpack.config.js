@@ -44,7 +44,13 @@ module.exports = {
 
       // Be sure to pass the server argument from the arguments
       app.use(webpackDevServerWaitpage(server));
-
+    },
+    proxy: {
+      '/api': {
+        target: 'https://devek.app',
+        changeOrigin: true,
+        secure: false,
+      },
     }
   },
   resolve: {

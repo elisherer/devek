@@ -8,6 +8,7 @@ import PageRandom from "./components/random/PageRandom";
 import Home from "./components/Home";
 import PageTime from "./components/time/PageTime";
 import PageColor from "./components/color/PageColor";
+import PageNetwork from "./components/network/PageNetwork";
 //import NotFound from "./components/NotFound";
 
 const pages = {
@@ -20,7 +21,8 @@ const pages = {
   "/jwt": PageJWT,
   "/time": PageTime,
   "/random": PageRandom,
-  "/color": PageColor
+  "/color": PageColor,
+  "/network": PageNetwork,
 };
 
 export default pages;
