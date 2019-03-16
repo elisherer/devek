@@ -1,5 +1,6 @@
 const rgbaRegex = /^rgba?\((\d{1,3}),\s*(\d{1,3}),\s*(\d{1,3})(,\s*(\d*(?:\.\d+)?))?\)$/,
   hslaRegex = /^hsla?\((-?\d+|-?\d+\.\d+),\s*(\d+|-?\d+\.\d+)%,\s*(\d+|-?\d+\.\d+)%(,\s*(\d*(?:\.\d+)?))?\)$/,
+  cmykaRegex = /^cmyka?\((\d+|-?\d+\.\d+)%,\s*(\d+|-?\d+\.\d+)%,\s*(\d+|-?\d+\.\d+)%(,\s*(\d*(?:\.\d+)?))?\)$/,
   hexRegex = /^#([0-9a-f]{1,2})([0-9a-f]{1,2})([0-9a-f]{1,2})$|^#([0-9a-f])([0-9a-f])([0-9a-f])$/i;
 
 const RGBA = (r,g,b,a) => ({r,g,b,a});
@@ -46,9 +47,26 @@ const parsers = {
       Math.round(hue2rgb(p, q, h) * 255), 
       Math.round(hue2rgb(p, q, h - 1/3) * 255),
       a || 1);
+  },
+  cmyka: str => {
+    const match = str.match(cmykaRegex);
+    if (!match) return null;
+    let c = Number(match[1]), m = Number(match[2]), y = Number(match[3]), k = Number(match[4]), a = Number(match[6]);
+    c = c / 100;
+    m = m / 100;
+    y = y / 100;
+    k = k / 100;
+    return RGBA(
+      Math.round(255 * (1-c) * (1-k)), 
+      Math.round(255 * (1-m) * (1-k)), 
+      Math.round(255 * (1-y) * (1-k)),
+      a || 1);
   }
 };
-const formatters = {
+
+const fix = num => parseFloat(num.toFixed(2));
+
+export const formatters = {
   rgba: c => `rgb${c.a < 1 ? 'a' : ''}(${c.r}, ${c.g}, ${c.b}${c.a < 1 ? ', ' + c.a : ''})`,
   hex: c => '#' + (c.r < 16 ? '0' : '') + c.r.toString(16) + (c.g < 16 ? '0' : '') + c.g.toString(16) + (c.b < 16 ? '0' : '') + c.b.toString(16),
   hsla: c => {
@@ -68,12 +86,22 @@ const formatters = {
         }
         h /= 6;
     }
-    h = (h * 360).toFixed(2), s = (s * 100).toFixed(2), l = (l * 100).toFixed(2);
+    h = fix(h * 360), s = fix(s * 100), l = fix(l * 100);
     return `hsl${c.a < 1 ? 'a' : ''}(${h}, ${s}%, ${l}%${c.a < 1 ? ', ' + c.a : ''})`;
+  },
+  cmyka: c => {
+    const r = c.r / 255, g = c.g / 255, b = c.b / 255;
+    let k = 1 - Math.max(r, g, b);
+    const
+      cy = fix((1-r-k)/(1-k) * 100),
+      m = fix((1-g-k)/(1-k) * 100),
+      y = fix((1-b-k)/(1-k) * 100);
+    k = fix(k * 100);
+    return `cmyk${c.a < 1 ? 'a' : ''}(${cy}%, ${m}%, ${y}%, ${k}%${c.a < 1 ? ', ' + c.a : ''})`;    
   }
 };
 
-const allFields = ['rgba', 'hex', 'hsla'];
+const allFields = ['rgba', 'hex', 'hsla', 'cmyka'];
 
 
 export const reduceBy = (field, fields) => {

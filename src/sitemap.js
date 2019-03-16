@@ -94,7 +94,7 @@ export const siteMap = {
     keyword: 'network',
     title: 'Network',
     header: 'Network tools',
-    description: 'Network information utilities'
+    description: 'Network information utilities (IP address and more)'
   },
 };
 

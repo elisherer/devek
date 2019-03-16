@@ -14,6 +14,7 @@ initialState.color = {
   rgba: 'rgba(85, 0, 170, 0.75)',
   hex: '#50a',
   hsla: 'hsla(270, 100%, 33.3%, 0.75)',
+  cmyka: 'cmyka(50%, 100%, 0%, 33.33%, 0.75)',
   parsed: { r: 85, g: 0, b: 170, a: 0.75 },
   errors: {},
 };

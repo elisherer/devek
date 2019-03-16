@@ -2,7 +2,7 @@ import { h } from 'hyperapp';
 import TextBox from '../TextBox';
 import CopyToClipboard from "../CopyToClipboard";
 import './actions';
-//import { getWeek } from './color.js';
+import { formatters } from './color.js';
 import styles from './PageColor.less';
 import webcolors from './webcolors';
 
@@ -10,9 +10,9 @@ let webcolorsDdl;
 
 export default () => (state, actions) => {
 
-  const { errors, rgba, hex, hsla, parsed } = state.color;
+  const { errors, rgba, hex, hsla, cmyka, parsed } = state.color;
 
-  const preview = { background: `rgba(${parsed.r},${parsed.g},${parsed.b},${parsed.a})`};
+  const preview = { background: formatters.rgba(parsed) };
 
   if (!webcolorsDdl) {
     webcolorsDdl = (
@@ -36,6 +36,11 @@ export default () => (state, actions) => {
         {webcolorsDdl}
       </div>
 
+      <div className={styles.predefined}>
+        <span>Picker: </span>
+        <input type="color" onchange={actions.color.hex} value={formatters.hex(parsed)} />
+      </div>
+
       <span>RGB/A:</span><CopyToClipboard from="color_rgba"/>
       <TextBox invalid={errors.rgba} id="color_rgba" autofocus onChange={actions.color.rgba} value={rgba} />
 
@@ -44,6 +49,9 @@ export default () => (state, actions) => {
 
       <span>HSL/A:</span><CopyToClipboard from="color_hsla"/>
       <TextBox invalid={errors.hsla} id="color_hsla" onChange={actions.color.hsla} value={hsla}/>
+
+      <span>CMYK/A:</span><CopyToClipboard from="color_cmyka"/>
+      <TextBox invalid={errors.cmyka} id="color_cmyka" onChange={actions.color.cmyka} value={cmyka}/>
 
     </div>
   );
