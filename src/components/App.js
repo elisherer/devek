@@ -24,7 +24,7 @@ export default (state, actions) => {
   return (
     <div className={styles.app}>
       <nav className={cc([styles.nav,{ [styles.open]: state.app.drawer }])}>
-        <div className={styles.menu} onclick={actions.app.drawer}/>
+      <div className={styles.menu} onclick={actions.app.drawer}/>
         {Object.keys(siteMap).map(path => {
           const active = current === path || current.startsWith(path + '/');
           if (active) {
@@ -35,16 +35,16 @@ export default (state, actions) => {
             }
           }
 
-          return path === '/' ? (
-            <Link to="/" className={styles.logo}/>
-          ) : (
+          return path === '/' ? [
+            <Link to="/" className={styles.logo}/>,
+            <div className={styles.search_hint}>Press <kbd>/</kbd> to search</div>
+          ] : (
             <Link key={path} to={path}
                   className={cc({ [styles.menuitem]: true, [styles.active]: active })}>
               {siteMap[path].title}
             </Link>
           );
         })}
-        <p>Alt+S for search</p>
       </nav>
       <main className={styles.main}>
         {state.app.drawer && <div className={styles.overlay} onclick={actions.app.drawer} /> }

@@ -27,8 +27,11 @@ const handleLocationChange = () => {
 addEventListener("pushstate", handleLocationChange);
 addEventListener("popstate", handleLocationChange);
 
+const inputNodeNames = ['INPUT','TEXTAREA','PRE'];
 const searchShortcutHandler = e => {
-  if (e.key === "s" && e.altKey && !e.shiftKey && !e.ctrlKey) { // Alt + S
+  if (e.key === "/" && 
+    !e.altKey && !e.shiftKey && !e.ctrlKey &&
+    !inputNodeNames.includes(e.target.nodeName)) {     
     main.search.open();
     setTimeout(() => {
       document.getElementById('search_box').focus();

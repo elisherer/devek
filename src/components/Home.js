@@ -10,7 +10,7 @@ export default () => (
       your information is <strong>safe</strong>!<br/>
     </p>
 
-    <p>Press <code>Alt+S</code>/<code>⌥+S</code> for quick search</p>
+    <p>Press <kbd>/</kbd> for quick search</p>
 
     <footer className="emoji"><strong>Developed & Hosted</strong> with ❤ by <a href="https://github.com/elisherer">elisherer</a></footer>
   </div>

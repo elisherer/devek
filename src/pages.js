@@ -9,6 +9,7 @@ import Home from "./components/Home";
 import PageTime from "./components/time/PageTime";
 import PageColor from "./components/color/PageColor";
 import PageNetwork from "./components/network/PageNetwork";
+import PageImage from "./components/image/PageImage";
 //import NotFound from "./components/NotFound";
 
 const pages = {
@@ -20,6 +21,7 @@ const pages = {
   "/xml": PageXML,
   "/jwt": PageJWT,
   "/time": PageTime,
+  "/image": PageImage,
   "/random": PageRandom,
   "/color": PageColor,
   "/network": PageNetwork,

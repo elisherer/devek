@@ -22,30 +22,11 @@
     background: url(../assets/icons/ic_menu_white_48px.svg) no-repeat;
     background-size: cover;
   }
-
-  .menuitem {
-    color: @gui-nav-foreground;
-    text-decoration: none;
-    display: block;
-    width: @gui-nav-width;
-    height: @gui-nav-item-height;
-    line-height: @gui-nav-item-height;
-    cursor: pointer;
-    padding-left: 20px;
-    border-left: 4px solid transparent;
-    &:hover {
-      background-color: rgba(255,255,255,0.1);
-    }
-    &.active {
-      background-color: rgba(255,255,255,0.2);
-      border-left: 4px solid white;
-    }
-  }
-
+  
   > p {
     display: none;
     margin: 40px 20px 0 20px;
-    font-family: monospace;
+    font-family: @font-mono;
     @media (min-width: @screen-desktop-min) {
       display: block;
       position: relative;
@@ -62,6 +43,25 @@
   }
 }
 
+.menuitem {
+  color: @gui-nav-foreground;
+  text-decoration: none;
+  display: block;
+  width: @gui-nav-width;
+  height: @gui-nav-item-height;
+  line-height: @gui-nav-item-height;
+  cursor: pointer;
+  padding-left: 20px;
+  border-left: 4px solid transparent;
+  &:hover {
+    background-color: rgba(255,255,255,0.1);
+  }
+  &.active {
+    background-color: rgba(255,255,255,0.2);
+    border-left: 4px solid white;
+  }
+}
+
 .logo {
   display: block;
   background: url(../assets/devek_text_white.svg) no-repeat;
@@ -71,7 +71,7 @@
   margin: 15px 20px 16px 65px;
 
   @media (min-width: @screen-desktop-min) {
-    margin: 16px 16px 36px;
+    margin: 16px;
     width: 140px;
     height: 38px;
   }
@@ -119,7 +119,7 @@
 .header {
   background: white;
   height: @gui-header-height;
-  font-family: monospace;
+  font-family: @font-mono;
   font-size: 24px;
   display: flex;
   align-items: center;
@@ -136,6 +136,15 @@
     @media only screen and (min-width: @screen-desktop-min) {
       margin-left: 20px;
     }
+  }
+}
+
+.search_hint {
+  display: none;
+  
+  @media (min-width: @screen-desktop-min) {
+    padding: 10px;
+    display: block;
   }
 }
 

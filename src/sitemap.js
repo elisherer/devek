@@ -64,6 +64,12 @@ export const siteMap = {
     header: 'Time tools',
     description: "See world time and do conversions"
   },
+  "/image": {
+    keyword: 'image',
+    title: 'Image',
+    header: 'Image web tools',
+    description: 'Convert, crop, resize, filter images',
+  },
   "/random": {
     keyword: 'random',
     title: 'Random',

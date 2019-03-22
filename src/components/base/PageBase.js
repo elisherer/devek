@@ -25,7 +25,7 @@ export default ({ location, match }) => (state, actions) => {
     errors = state.base.errors;
 
   if (type === 'text') {
-    const { utf8, hex, binary } = state.base;
+    const { utf8, hex, binary, base64 } = state.base;
 
     return (
       <div>
@@ -45,6 +45,11 @@ export default ({ location, match }) => (state, actions) => {
         <span>Binary:</span><CopyToClipboard from="base_text_binary"/>
         <div className={styles.wrap}>
           <TextBox className={styles.number} invalid={errors.binary} id="base_text_binary" onChange={actions.base.binary} value={binary}/>
+        </div>
+        
+        <span>Base64:</span><CopyToClipboard from="base_text_base64"/>
+        <div className={styles.wrap}>
+          <TextBox className={styles.number} invalid={errors.base64} id="base_text_base64" value={base64} onChange={actions.base.base64} value={base64}/>
         </div>
       </div>
     );

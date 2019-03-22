@@ -41,12 +41,21 @@ const parsers = {
   hex: hex => hex && !hexRegex.test(hex) ? NaN :
     hex.trim().replace(whiteSpaceRegex, ' ').split(' ')
       .map(hx => String.fromCharCode(parseInt(hx, 16))).join(''),
+      base64: b64 => {
+        try {
+          return atob(b64);
+        }
+        catch (e) {
+          return NaN;
+        }
+      }
 };
 
 const serializers = {
   utf8: id,
   binary: utf8 => utf8.split('').map(char => zPad(char.charCodeAt(0).toString(2), 8)).join(' '),
   hex: utf8 => utf8.split('').map(char => zPad(char.charCodeAt(0).toString(16), 2)).join(' '),
+  base64: utf8 => btoa(utf8),
 };
 
 const allFields = Object.keys(parsers);
@@ -61,6 +70,7 @@ export const reduceTextBy = (field, fields) => {
   // if the new value is valid, then calc the others fields new values
   const otherFields = allFields.filter(x => x !== field);
   if (!invalid) {
+    newState.parsed = parsedValue;
     otherFields.forEach(otherField => {
       newState[otherField] = serializers[otherField](parsedValue);
       newState.errors[otherField] = false;

@@ -12,8 +12,8 @@
 ## List
 * Add Commas, ticks,...
 
+# Crypto
+* Hash, ...
+
 ## URL debugger
 - split url into its components (including query)
-
-## network
-* https://www.site24x7.com/tools/ipv6-subnetcalculator.html
