@@ -75,20 +75,15 @@ module.exports = {
       template: 'src/index.ejs',
     }),
 
-    new CleanWebpackPlugin(['dist'], { // Cleanup before each build
-      verbose: false,
-      dry: !PRODUCTION
-    }),
+    !PRODUCTION && new CleanWebpackPlugin(), // Cleanup before each build
 
     new StyleExtHtmlWebpackPlugin({ enabled: !ANALYZE && PRODUCTION }), // Inline CSS in HTML
 
     new CopyWebpackPlugin([{ from: 'src/www', to: '' }]), // Copy root domain files
 
-    new BundleAnalyzerPlugin({
-      analyzerMode: ANALYZE ? 'static' : 'disabled',
-      openAnalyzer: false
-    }),
-  ],
+    ANALYZE && new BundleAnalyzerPlugin({ analyzerMode: 'static', openAnalyzer: false }),
+    
+  ].filter(Boolean),
   module: {
     strictExportPresence: true,
     rules: [
