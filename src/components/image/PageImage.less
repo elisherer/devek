@@ -5,7 +5,29 @@
 .dragging {
   border-color: #333;
 }
-
+.actions {
+  padding: 2px;
+  color: #ddd;
+  &.loaded {
+    color: inherit;
+  }
+}
 .canvas {
   max-width: 100%;
+  display: none;
+}
+.visible {
+  display: block;
+}
+.color {
+  border: 2px solid #ddd;
+  padding: 5px;
+  border-radius: 4px;
+  margin-left: 5px;
+  width: 24px;
+  height: 24px;
+  display: inline-flex;
+  .loaded & {
+    border-color: black;
+  }
 }

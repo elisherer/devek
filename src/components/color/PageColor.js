@@ -10,7 +10,7 @@ let webcolorsDdl;
 
 export default () => (state, actions) => {
 
-  const { errors, rgba, hex, hsla, cmyka, parsed } = state.color;
+  const { errors, rgba, hex, hsla, hwba, cmyka, parsed } = state.color;
 
   const preview = { background: formatters.rgba(parsed) };
 
@@ -49,6 +49,9 @@ export default () => (state, actions) => {
 
       <span>HSL/A:</span><CopyToClipboard from="color_hsla"/>
       <TextBox invalid={errors.hsla} id="color_hsla" onChange={actions.color.hsla} value={hsla}/>
+
+      <span>HWB/A:</span><CopyToClipboard from="color_hwba"/>
+      <TextBox invalid={errors.hwba} id="color_hwba" onChange={actions.color.hwba} value={hwba}/>
 
       <span>CMYK/A:</span><CopyToClipboard from="color_cmyka"/>
       <TextBox invalid={errors.cmyka} id="color_cmyka" onChange={actions.color.cmyka} value={cmyka}/>

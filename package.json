@@ -26,6 +26,7 @@
     "@babel/polyfill": "7.4.0",
     "@hyperapp/router": "0.7.1",
     "classcat": "3.2.5",
+    "core-js": "3.0.1",
     "html-material-css": "0.2.4",
     "hyperapp": "1.2.9",
     "hyperapp-forms": "0.1.0"

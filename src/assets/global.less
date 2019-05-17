@@ -127,6 +127,10 @@ button {
   &:hover, &:active, &:focus {
     background: lighten(@gui-secondary-color, 20%);
   }
+  &[disabled] {
+    background: @gui-button-disabled;
+    cursor: default;
+  }
 }
 
 kbd {

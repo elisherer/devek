@@ -1,5 +1,6 @@
 const rgbaRegex = /^rgba?\((\d{1,3}),\s*(\d{1,3}),\s*(\d{1,3})(,\s*(\d*(?:\.\d+)?))?\)$/,
-  hslaRegex = /^hsla?\((-?\d+|-?\d+\.\d+),\s*(\d+|-?\d+\.\d+)%,\s*(\d+|-?\d+\.\d+)%(,\s*(\d*(?:\.\d+)?))?\)$/,
+  hslaRegex = /^hsla?\((-?\d+|-?\d+\.\d+)d?e?g?,\s*(\d+|-?\d+\.\d+)%,\s*(\d+|-?\d+\.\d+)%(,\s*(\d*(?:\.\d+)?))?\)$/,
+  hwbaRegex = /^hwba?\((-?\d+|-?\d+\.\d+)d?e?g?,\s*(\d+|-?\d+\.\d+)%,\s*(\d+|-?\d+\.\d+)%(,\s*(\d*(?:\.\d+)?))?\)$/,
   cmykaRegex = /^cmyka?\((\d+|-?\d+\.\d+)%,\s*(\d+|-?\d+\.\d+)%,\s*(\d+|-?\d+\.\d+)%(,\s*(\d*(?:\.\d+)?))?\)$/,
   hexRegex = /^#([0-9a-f]{1,2})([0-9a-f]{1,2})([0-9a-f]{1,2})$|^#([0-9a-f])([0-9a-f])([0-9a-f])$/i;
 
@@ -48,6 +49,31 @@ const parsers = {
       Math.round(hue2rgb(p, q, h - 1/3) * 255),
       a || 1);
   },
+  hwba: str => {
+    const match = str.match(hwbaRegex);
+    if (!match) return null;
+    let h = Number(match[1]), w = Number(match[2]), b = Number(match[3]), a = Number(match[5]);
+    h = (h % 360) / 360;
+    w = w / 100;
+    b = b / 100;
+    // HWB to HSV
+    let sv = 1 - w / (1 - b);
+    let v = 1 - b;
+    // HSV to HSL
+    let l = v - v*sv/2;
+    let s = l == 0 || l == 1 ? 0 : (v - l)/Math.min(l, 1-l);
+    // Same algorithm as HSL
+    if (s === 0) {
+      return RGBA(l,l,l,a || 1);
+    }
+    const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+    const p = 2 * l - q;
+    return RGBA(
+      Math.round(hue2rgb(p, q, h + 1/3) * 255), 
+      Math.round(hue2rgb(p, q, h) * 255), 
+      Math.round(hue2rgb(p, q, h - 1/3) * 255),
+      a || 1);
+  },
   cmyka: str => {
     const match = str.match(cmykaRegex);
     if (!match) return null;
@@ -66,28 +92,42 @@ const parsers = {
 
 const fix = num => parseFloat(num.toFixed(2));
 
+const toHSL = c =>{
+  const r = c.r / 255, g = c.g / 255, b = c.b / 255;
+  const max = Math.max(r, g, b), min = Math.min(r, g, b);
+  let h, s, l = (max + min) / 2;
+
+  if (max == min){
+      h = s = 0; // achromatic
+  } else {
+      const d = max - min;
+      s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+      switch(max){
+          case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+          case g: h = (b - r) / d + 2; break;
+          case b: h = (r - g) / d + 4; break;
+      }
+      h /= 6;
+  }
+  return { h, s, l };
+};
+
 export const formatters = {
   rgba: c => `rgb${c.a < 1 ? 'a' : ''}(${c.r}, ${c.g}, ${c.b}${c.a < 1 ? ', ' + c.a : ''})`,
   hex: c => '#' + (c.r < 16 ? '0' : '') + c.r.toString(16) + (c.g < 16 ? '0' : '') + c.g.toString(16) + (c.b < 16 ? '0' : '') + c.b.toString(16),
   hsla: c => {
-    const r = c.r / 255, g = c.g / 255, b = c.b / 255;
-    const max = Math.max(r, g, b), min = Math.min(r, g, b);
-    let h, s, l = (max + min) / 2;
-
-    if (max == min){
-        h = s = 0; // achromatic
-    } else {
-        const d = max - min;
-        s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-        switch(max){
-            case r: h = (g - b) / d + (g < b ? 6 : 0); break;
-            case g: h = (b - r) / d + 2; break;
-            case b: h = (r - g) / d + 4; break;
-        }
-        h /= 6;
-    }
-    h = fix(h * 360), s = fix(s * 100), l = fix(l * 100);
-    return `hsl${c.a < 1 ? 'a' : ''}(${h}, ${s}%, ${l}%${c.a < 1 ? ', ' + c.a : ''})`;
+    const hsl = toHSL(c);
+    return `hsl${c.a < 1 ? 'a' : ''}(${fix(hsl.h * 360)}, ${fix(hsl.s * 100)}%, ${fix(hsl.l * 100)}%${c.a < 1 ? ', ' + c.a : ''})`;
+  },
+  hwba: c => {
+    const hsl = toHSL(c);
+    // HSL to HSV
+    const v = hsl.l + hsl.s * Math.min(hsl.l, 1 - hsl.l);
+    const s = v === 0 ? hsl.s : 2 - (2 * hsl.l / v); 
+    // HSV to HWB
+    const w = s * (1 - v);
+    const b = 1 - v;
+    return `hwb${c.a < 1 ? 'a' : ''}(${fix(hsl.h * 360)}, ${fix(w * 100)}%, ${fix(b * 100)}%${c.a < 1 ? ', ' + c.a : ''})`;
   },
   cmyka: c => {
     const r = c.r / 255, g = c.g / 255, b = c.b / 255;
@@ -101,7 +141,7 @@ export const formatters = {
   }
 };
 
-const allFields = ['rgba', 'hex', 'hsla', 'cmyka'];
+const allFields = ['rgba', 'hex', 'hsla', 'hwba', 'cmyka'];
 
 
 export const reduceBy = (field, fields) => {
