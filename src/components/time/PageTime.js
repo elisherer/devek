@@ -97,20 +97,20 @@ export default () => (state, actions) => {
 
       <label className={styles.range}>
         <span>Time Zone: ({timezone})</span>
-        <input type="range" min="-11" max="14" value={timezone} onchange={actions.time.timezone}/>
+        <input type="range" min="-11" max="14" value={timezone} onChange={actions.time.timezone}/>
       </label>
 
       <span>ISO 8601:</span><CopyToClipboard from="time_iso"/>
-      <TextBox invalid={errors.iso} id="time_iso" autofocus onChange={actions.time.iso} value={iso} />
+      <TextBox invalid={errors.iso} id="time_iso" autoFocus onChange={actions.time.iso} value={iso} />
 
       <span>Epoch (ms since):</span><CopyToClipboard from="time_epoch"/>
       <TextBox invalid={errors.epoch} id="time_epoch" onChange={actions.time.epoch} value={epoch}/>
 
       <span>Unix:</span><CopyToClipboard from="time_unix"/>
-      <TextBox id="time_unix" value={unix} readonly />
+      <TextBox id="time_unix" value={unix} readOnly />
 
       <span>RFC 2822:</span><CopyToClipboard from="time_unix"/>
-      <TextBox id="time_unix" value={rfc} readonly />
+      <TextBox id="time_unix" value={rfc} readOnly />
 
     </div>
   );

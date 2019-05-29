@@ -3,13 +3,13 @@ import TextBox from '../../lib/TextBox';
 import TextArea from '../../lib/TextArea';
 import Checkbox from "../../lib/Checkbox";
 import CopyToClipboard from "../../lib/CopyToClipboard";
-import { getState, actions } from './actions';
+import { useStore, actions } from './actions';
 import { queryObject } from "./json";
 
 let objSource, obj;
 
 const PageJSON = () => {
-  const state = getState();
+  const state = useStore();
 
   const {
     parse,

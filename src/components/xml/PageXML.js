@@ -49,14 +49,14 @@ export default () => (state, actions) => {
 
   if (!error) {
     if (!xpathEnabled) {
-      resultsNode = <TextArea readonly value={results}
+      resultsNode = <TextArea readOnly value={results}
                               html={!!results && results.includes('<parsererror')}/>
     }
     else {
       resultsNode = !results || !results.length
         ? <p>No results yet</p>
         : results.map(result =>
-          <TextArea readonly value={result}
+          <TextArea readOnly value={result}
                     html={!!result && result.includes('<parsererror')} />
         );
     }
@@ -65,7 +65,7 @@ export default () => (state, actions) => {
   return (
     <div>
       <label>XML:</label>
-      <TextArea autofocus onChange={actions.xml.xml} value={input}/>
+      <TextArea autoFocus onChange={actions.xml.xml} value={input}/>
 
       <Checkbox label="Use XPath" checked={xpathEnabled} onchange={actions.xml.xpathToggle} />
       {xpathEnabled && <label>XPath expression:</label>}

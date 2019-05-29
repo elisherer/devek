@@ -65,12 +65,14 @@ export const siteMap = {
   header: 'XML Debugger/Prettifier',
   description: "XML Prettify and XPath query"
 },
+*/
 "/jwt": {
   keyword: 'jwt',
   title: 'JWT',
   header: 'JWT Tool',
   description: "Decode, Verify & Encode"
 },
+  /*
 "/time": {
   keyword: 'time',
   title: 'Time',

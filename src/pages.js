@@ -4,7 +4,7 @@ import PageBase from "./components/base/PageBase";
 import PageRegex from "./components/regex/PageRegex";
 import PageJSON from "./components/json/PageJSON";
 // import PageXML from "./components/xml/PageXML";
-// import PageJWT from "./components/jwt/PageJWT";
+import PageJWT from "./components/jwt/PageJWT";
 // import PageRandom from "./components/random/PageRandom";
 // import PageTime from "./components/time/PageTime";
 // import PageColor from "./components/color/PageColor";
@@ -20,7 +20,7 @@ const pages = {
   "/regex": PageRegex,
   "/json": PageJSON,
   // "/xml": PageXML,
-  // "/jwt": PageJWT,
+  "/jwt": PageJWT,
   // "/time": PageTime,
   // "/image": PageImage,
   // "/random": PageRandom,

@@ -31,11 +31,11 @@ export default () => (state, actions) => {
       </div>
 
       <span>IPv4:</span><CopyToClipboard from="network_ipv4"/>
-      <TextBox invalid={errors.ipv4} id="network_ipv4" autofocus onChange={actions.network.ipv4} value={ipv4} />
+      <TextBox invalid={errors.ipv4} id="network_ipv4" autoFocus onChange={actions.network.ipv4} value={ipv4} />
 
       <label>
         <span>Subnet ({subnet})</span>
-        <input type="range" min="8" max="32" value={subnet} onchange={actions.network.subnet}/>
+        <input type="range" min="8" max="32" value={subnet} onChange={actions.network.subnet}/>
       </label>
 
       <label>Info:</label>

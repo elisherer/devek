@@ -1,24 +1,27 @@
-import { h } from 'hyperapp';
+import React from 'react';
 import TextBox from '../../lib/TextBox';
 import TextArea from '../../lib/TextArea';
 import Tabs from '../../lib/Tabs';
-import './actions';
 import styles from './PageJWT.less';
 import CopyToClipboard from "../../lib/CopyToClipboard";
 
-export default () => (state, actions) => {
-  const encodeMode = state.jwt.encode;
+import { useStore, actions } from './actions';
+
+export default () => {
+  const state = useStore();
+
+  const encodeMode = state.encode;
 
   const tabs = (
     <Tabs>
-      <span data-active={!encodeMode} onclick={actions.jwt.toggle}>Decoder</span>
-      <span data-active={encodeMode} onclick={actions.jwt.toggle}>Encoder</span>
+      <span data-active={!encodeMode || null} onClick={actions.toggle}>Decoder</span>
+      <span data-active={encodeMode || null} onClick={actions.toggle}>Encoder</span>
     </Tabs>
   );
 
-  const secretTextbox = <TextBox value={state.jwt.secret}
+  const secretTextbox = <TextBox value={state.secret}
                                  placeholder="Base64Url encoded secret"
-                                 onChange={actions.jwt.secret} />;
+                                 onChange={actions.secret} />;
 
   if (encodeMode) {
     return (
@@ -26,23 +29,23 @@ export default () => (state, actions) => {
         {tabs}
 
         <label>Algorithm</label>
-        <TextBox value="HS256" readonly/>
+        <TextBox value="HS256" readOnly />
 
-        <TextArea className={styles.header} value={state.jwt.header} readonly />
-        <TextArea className={styles.payload} value={state.jwt.in_payload} onChange={actions.jwt.in_payload} autofocus />
-        <TextArea className={styles.sig} value={state.jwt.secret ? state.jwt.sig : ''} readonly />
+        <TextArea className={styles.header} value={state.header} readOnly />
+        <TextArea className={styles.payload} value={state.in_payload} onChange={actions.in_payload} autoFocus />
+        <TextArea className={styles.sig} value={state.secret ? state.sig : ''} readOnly />
 
         <label>Secret key</label>
         {secretTextbox}
 
-        {state.jwt.error
-          ? <p style={{color: 'red'}}>{state.jwt.error}</p> : (
+        {state.error
+          ? <p style={{color: 'red'}}>{state.error}</p> : (
             <div>
               <span>Token</span><CopyToClipboard from="jwt"/>
               <TextBox id="jwt"
                        className={styles.token}
-                       invalid={state.jwt.error}
-                       value={state.jwt.out_token}
+                       invalid={state.error}
+                       value={state.out_token}
                        selectOnFocus
                        readonly />
             </div>
@@ -53,27 +56,27 @@ export default () => (state, actions) => {
   }
 
   const resultHTML =
-    `<div class="${styles.header}">${state.jwt.header || ''}</div>` +
-    `<div class="${styles.payload}">${state.jwt.payload || ''}</div>` +
-    `<div class="${styles.sig}">${state.jwt.sig || ''}</div>`;
+    `<div class="${styles.header}">${state.header || ''}</div>` +
+    `<div class="${styles.payload}">${state.payload || ''}</div>` +
+    `<div class="${styles.sig}">${state.sig || ''}</div>`;
 
   return (
     <div>
       {tabs}
 
       <span>Token</span><CopyToClipboard from="jwt"/>
-      <TextBox id="jwt" autofocus selectOnFocus
+      <TextBox id="jwt" autoFocus selectOnFocus
                className={styles.token}
-               invalid={state.jwt.error}
-               value={state.jwt.in_token}
-               onChange={actions.jwt.in_token} />
-      { state.jwt.error && (
-        <p style={{color: 'red'}}>{state.jwt.error}</p>
+               invalid={state.error}
+               value={state.in_token}
+               onChange={actions.in_token} />
+      { state.error && (
+        <p style={{color: 'red'}}>{state.error}</p>
       )}
-      { state.jwt.alg && (
-        <label className="emoji">Verify <b>{state.jwt.alg}</b> Signature {state.jwt.valid ? "- ✔ Verified" : "- ❌ Not verified"}</label>
+      { state.alg && (
+        <label className="emoji">Verify <b>{state.alg}</b> Signature {state.valid ? "- ✔ Verified" : "- ❌ Not verified"}</label>
       )}
-      {state.jwt.alg && secretTextbox}
+      {state.alg && secretTextbox}
 
       <label>Contents:</label>
       <TextArea readonly={!encodeMode} html className={styles.jwt}

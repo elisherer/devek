@@ -15,7 +15,7 @@ export default () => (state, actions) => {
       </label>
       <div className={cc([styles.actions, { [styles.loaded]: state.image.loaded }])}>
         <button disabled={disabled} onclick={actions.image.open}>To Base64</button>
-        <div>Picker: <input disabled={disabled} type="color" value={state.image.color} /> ► <input disabled={disabled} type="color" value={state.image.select} /><input readonly value={state.image.select} /></div>
+        <div>Picker: <input disabled={disabled} type="color" value={state.image.color} /> ► <input disabled={disabled} type="color" value={state.image.select} /><input readOnly value={state.image.select} /></div>
       </div>
       <canvas 
         className={cc([styles.canvas, { [styles.visible]: state.image.loaded }])} 

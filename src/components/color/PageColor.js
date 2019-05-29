@@ -38,11 +38,11 @@ export default () => (state, actions) => {
 
       <div className={styles.predefined}>
         <span>Picker: </span>
-        <input type="color" onchange={actions.color.hex} value={formatters.hex(parsed)} />
+        <input type="color" onChange={actions.color.hex} value={formatters.hex(parsed)} />
       </div>
 
       <span>RGB/A:</span><CopyToClipboard from="color_rgba"/>
-      <TextBox invalid={errors.rgba} id="color_rgba" autofocus onChange={actions.color.rgba} value={rgba} />
+      <TextBox invalid={errors.rgba} id="color_rgba" autoFocus onChange={actions.color.rgba} value={rgba} />
 
       <span>Hex:</span><CopyToClipboard from="color_hex"/>
       <TextBox invalid={errors.hex} id="color_hex" onChange={actions.color.hex} value={hex}/>

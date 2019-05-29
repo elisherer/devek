@@ -1,9 +1,8 @@
-import actions from 'actions';
-import initialState from 'initialState';
+import createStore from "../../helpers/createStore";
 
 import {decodeAsync, encodeAsync} from "./jwt";
 
-actions.jwt = {
+const actionCreators = {
   in_token: e => async (state, actions) => {
     const in_token = e.target.value,
       results = await decodeAsync(in_token, state.secret);
@@ -43,7 +42,7 @@ actions.jwt = {
   }),
 };
 
-initialState.jwt = {
+const initialState = {
   in_token: [
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9',
     'eyJzdWIiOiIxMjM0NTYiLCJuYW1lIjoiSm9obiBEb2UiLCJzZWNyZXQtaXMiOiJaV3hwIn0',
@@ -56,3 +55,8 @@ initialState.jwt = {
   valid: false,
   alg: 'HS256',
 };
+
+export const {
+  actions,
+  useStore,
+} = createStore(actionCreators, initialState);

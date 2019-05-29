@@ -93,7 +93,7 @@ export default () => (state, actions) => {
 
       <h1>Result</h1>
       <CopyToClipboard from="random_result" />
-      <TextArea id="random_result" readonly value={result} />
+      <TextArea id="random_result" readOnly value={result} />
 
     </div>
   );

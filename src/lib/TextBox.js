@@ -4,7 +4,7 @@ import styles from "./TextBox.less";
 import screen from 'helpers/screen';
 
 const TextBox = ({
-                   autofocus,
+                   autoFocus,
                    selectOnFocus,
                    className,
                    inputClassName,
@@ -17,7 +17,7 @@ const TextBox = ({
                    invalid,
                    ...more
                  } : {
-  autofocus?: boolean,
+  autoFocus?: boolean,
   selectOnFocus?: boolean,
   className?: string,
   inputClassName?: string,
@@ -32,7 +32,7 @@ const TextBox = ({
   const inputElement = useRef();
 
   useEffect(() => {
-    if (autofocus && screen.isDesktop) {
+    if (autoFocus && screen.isDesktop) {
       if (selectOnFocus) {
         inputElement.current.select();
         inputElement.current.focus();

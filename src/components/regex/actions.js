@@ -1,42 +1,39 @@
+import createStore from "../../helpers/createStore";
+
 const composeFlags = on => ["g","m","i"].filter(flag => on.includes(flag)).join('');
 
-const actions = {
-  regex: (state, action) => ({
+const actionCreators = {
+  regex: e => state => ({
     ...state,
-    regex: action.payload
+    regex: e.target.value
   }),
-    flags: (state, action) => {
-      const flag = action.payload;
-      return {
-        ...state,
-        flags: state.flags.includes(flag)
-          ? state.flags.replace(flag, '')
-          : composeFlags(state.flags + flag)
-      };
-    },
-    testString: (state, action) => ({
+  flags: e => state => ({
     ...state,
-    test: action.payload
+    flags: state.flags.includes(e.target.dataset.flag) ? state.flags.replace(e.target.dataset.flag, '') : composeFlags(state.flags + e.target.dataset.flag)
   }),
-    withReplace: (state, action) => ({
+  testString: e => state => ({
     ...state,
-    withReplace: action.payload
+    test: e.target.textContent
   }),
-    replace: (state, action) => ({
+  withReplace: e => state => ({
     ...state,
-    replace: action.payload
+    withReplace: e.target.checked
+  }),
+  replace: e => state => ({
+    ...state,
+    replace: e.target.value
   }),
 };
 
-export const reducer = (state, action) => {
-  const reduce = actions[action.type];
-  return reduce ? reduce(state, action) : state;
-};
-
-export const initialState =  {
+const initialState =  {
   regex: '',
   flags: 'gm',
   test: '',
   withReplace: false,
   replace: '$&'
 };
+
+export const {
+  actions,
+  useStore,
+} = createStore(actionCreators, initialState);

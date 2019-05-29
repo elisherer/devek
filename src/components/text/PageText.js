@@ -1,12 +1,13 @@
-import React, {useReducer} from 'react';
+import React from 'react';
 import cx from 'classnames';
 import TextArea from '../../lib/TextArea';
 import Tabs from '../../lib/Tabs';
 import Radio from '../../lib/Radio';
 import CopyToClipboard from '../../lib/CopyToClipboard';
 import { textCategories, textFunctions } from "./text";
-import { initialState, reducer } from './actions';
 import { Redirect, NavLink } from 'react-router-dom';
+
+import { useStore, actions } from './actions';
 
 import styles from './PageText.less';
 
@@ -25,7 +26,7 @@ const PageText = ({ location } : { location: Object }) => {
     return <Redirect to={`/${pathSegments[0]}/${category}/${firstTextFunc}`}/>;
   }
 
-  const [state, dispatch] = useReducer(reducer, initialState);
+  const state = useStore();
 
   const { input } = state;
   let output, error = null;
@@ -57,13 +58,13 @@ const PageText = ({ location } : { location: Object }) => {
       </Radio>
 
       <label>Input:</label>
-      <TextArea autoFocus onChange={e => dispatch({ type: 'input', payload: e.target.innerText })} value={input}/>
+      <TextArea autoFocus onChange={actions.input} value={input}/>
       <div className={styles.input_info}>
         <sup>Length: {input.length}</sup>
       </div>
 
       <span>Output:</span><CopyToClipboard from="text_output"/>
-      <TextArea id="text_output" readonly
+      <TextArea id="text_output" readOnly
                 className={cx({[styles.error]: error})}
                 style={ctf.style}
                 value={error || output}

@@ -1,16 +1,18 @@
-const actions = {
-  input: (state, action) => ({
+import createStore from "../../helpers/createStore";
+
+const actionCreators = {
+  input: e => state => ({
     ...state,
-    input: action.payload
+    input: e.target.innerText
   }),
 };
 
-export const reducer = (state, action) => {
-  const reduce = actions[action.type];
-  return reduce ? reduce(state, action) : state;
-};
-
-export const initialState = {
+const initialState = {
   input: '',
   errors: {}
 };
+
+export const {
+  actions,
+  useStore,
+} = createStore(actionCreators, initialState);

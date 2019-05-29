@@ -1,15 +1,15 @@
-import React, {useReducer} from 'react';
+import React from 'react';
 import TextBox from '../../lib/TextBox';
 import TextArea from '../../lib/TextArea';
 import Radio from '../../lib/Radio';
 import Checkbox from '../../lib/Checkbox';
-import { initialState, reducer } from './actions';
+import { useStore, actions } from './actions';
 import styles from './PageRegex.less'
 
 let compiledRegex = null;
 
 const PageRegex = () => {
-  const [state, dispatch] = useReducer(reducer, initialState);
+  const state = useStore();
 
   const {
     regex: regexSource,
@@ -45,28 +45,26 @@ const PageRegex = () => {
     }
   }
 
-  const onFlagClick = e => dispatch({ type: 'flags', payload: e.target.dataset.flag });
-
   return (
     <div>
 
       <label>Regular expression</label>
       <TextBox startAddon="/" placeholder=".*" endAddon={"/" + flags}
-               value={regexSource} onChange={e => dispatch({ type: 'regex', payload: e.target.value })} autofocus />
+               value={regexSource} onChange={actions.regex} autoFocus />
 
       <label>Flags</label>
       <Radio className={styles.flags}>
-        <div data-active={flags.includes('g') || null} data-flag="g" onClick={onFlagClick}>Global</div>
-        <div data-active={flags.includes('m') || null} data-flag="m" onClick={onFlagClick}>Multi&#8209;line</div>
-        <div data-active={flags.includes('i') || null} data-flag="i" onClick={onFlagClick}>Insensitive</div>
+        <div data-active={flags.includes('g') || null} data-flag="g" onClick={actions.flags}>Global</div>
+        <div data-active={flags.includes('m') || null} data-flag="m" onClick={actions.flags}>Multi&#8209;line</div>
+        <div data-active={flags.includes('i') || null} data-flag="i" onClick={actions.flags}>Insensitive</div>
       </Radio>
 
       <label>Test string</label>
-      <TextArea onChange={e => dispatch({ type: 'testString', payload: e.target.textContent })} value={testString} />
+      <TextArea onChange={actions.testString} value={testString} />
 
-      <Checkbox label="Substitution" checked={withReplace} onChange={e => dispatch({ type: 'withReplace', payload: e.target.checked })} />
+      <Checkbox label="Substitution" checked={withReplace} onChange={actions.withReplace} />
 
-      {withReplace && <TextBox value={replace} onChange={e => dispatch({ type: 'replace', payload: e.target.value })} />}
+      {withReplace && <TextBox value={replace} onChange={actions.replace} />}
 
       <h1>Matches</h1>
       {!matchesResults || matchesResults.length === 0 ? <div>No matches</div> : (
@@ -75,7 +73,7 @@ const PageRegex = () => {
 
       {withReplace && <>
         <h1>Result</h1>
-        <TextArea readonly value={testString.replace(compiledRegex, replace)}/>
+        <TextArea readOnly value={testString.replace(compiledRegex, replace)}/>
       </>}
     </div>
   );
