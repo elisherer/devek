@@ -1,20 +1,21 @@
-import { h } from 'hyperapp';
-import TextBox from '../TextBox';
-import TextArea from '../TextArea';
-import './actions';
+import React from 'react';
+import TextBox from '../../lib/TextBox';
+import TextArea from '../../lib/TextArea';
+import Checkbox from "../../lib/Checkbox";
+import CopyToClipboard from "../../lib/CopyToClipboard";
+import { getState, actions } from './actions';
 import { queryObject } from "./json";
-import CopyToClipboard from "../CopyToClipboard";
-import Checkbox from "../Checkbox";
 
 let objSource, obj;
 
-export default () => (state, actions) => {
+const PageJSON = () => {
+  const state = getState();
 
   const {
     parse,
     path,
     input
-  } = state.json;
+  } = state;
 
   let source = input;
   let result, error = null;
@@ -52,19 +53,20 @@ export default () => (state, actions) => {
   return (
     <div>
       <label>JSON:</label>
-      <TextArea autofocus
-                onChange={actions.json.set} value={input}/>
+      <TextArea autoFocus onChange={actions.set} value={input}/>
 
-      <Checkbox label={<span><code>JSON.parse</code> first</span>} checked={parse} onchange={actions.json.parse} />
+      <Checkbox label={<span><code>JSON.parse</code> first</span>} checked={parse} onChange={actions.parse} />
 
       <label>Path expression:</label>
-      <TextBox startAddon="JSON" placeholder=".x" value={path} onChange={actions.json.path}/>
+      <TextBox startAddon="JSON" placeholder=".x" value={path} onChange={actions.path}/>
 
       <h1>Result (Prettified)</h1>
       {!error && <CopyToClipboard from="pretty-json" />}
       {error
         ? <p style={{color:'red'}}>{error}</p>
-        : <TextArea readonly value={result} id="pretty-json" />}
+        : <TextArea readOnly value={result} id="pretty-json" />}
     </div>
   );
-}
+};
+
+export default PageJSON;

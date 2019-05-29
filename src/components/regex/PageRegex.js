@@ -1,19 +1,23 @@
-import { h } from 'hyperapp';
-import TextBox from '../TextBox';
-import TextArea from '../TextArea';
-import Radio from '../Radio';
-import Checkbox from '../Checkbox';
-import { getRegex, getFlags, getTestString, getWithReplace, getReplace } from './actions';
+import React, {useReducer} from 'react';
+import TextBox from '../../lib/TextBox';
+import TextArea from '../../lib/TextArea';
+import Radio from '../../lib/Radio';
+import Checkbox from '../../lib/Checkbox';
+import { initialState, reducer } from './actions';
 import styles from './PageRegex.less'
 
 let compiledRegex = null;
 
-export default () => (state, actions) => {
-  const regexSource = getRegex(state),
-    flags = getFlags(state),
-    testString = getTestString(state),
-    withRepalce = getWithReplace(state),
-    replace = getReplace(state);
+const PageRegex = () => {
+  const [state, dispatch] = useReducer(reducer, initialState);
+
+  const {
+    regex: regexSource,
+    flags,
+    test: testString,
+    withReplace,
+    replace,
+  } = state;
 
   if (regexSource &&
     (!compiledRegex || compiledRegex.source !== regexSource || compiledRegex.flags !== flags)) {
@@ -41,36 +45,40 @@ export default () => (state, actions) => {
     }
   }
 
+  const onFlagClick = e => dispatch({ type: 'flags', payload: e.target.dataset.flag });
+
   return (
     <div>
 
       <label>Regular expression</label>
       <TextBox startAddon="/" placeholder=".*" endAddon={"/" + flags}
-               value={regexSource} onChange={actions.regex.regex} autofocus />
+               value={regexSource} onChange={e => dispatch({ type: 'regex', payload: e.target.value })} autofocus />
 
       <label>Flags</label>
       <Radio className={styles.flags}>
-        <div data-active={flags.includes('g')} data-flag="g" onclick={actions.regex.flags}>Global</div>
-        <div data-active={flags.includes('m')} data-flag="m" onclick={actions.regex.flags}>Multi&#8209;line</div>
-        <div data-active={flags.includes('i')} data-flag="i" onclick={actions.regex.flags}>Insensitive</div>
+        <div data-active={flags.includes('g') || null} data-flag="g" onClick={onFlagClick}>Global</div>
+        <div data-active={flags.includes('m') || null} data-flag="m" onClick={onFlagClick}>Multi&#8209;line</div>
+        <div data-active={flags.includes('i') || null} data-flag="i" onClick={onFlagClick}>Insensitive</div>
       </Radio>
 
       <label>Test string</label>
-      <TextArea onChange={actions.regex.testString} value={testString} />
+      <TextArea onChange={e => dispatch({ type: 'testString', payload: e.target.textContent })} value={testString} />
 
-      <Checkbox label="Substitution" checked={withRepalce} onchange={actions.regex.withReplace} />
+      <Checkbox label="Substitution" checked={withReplace} onChange={e => dispatch({ type: 'withReplace', payload: e.target.checked })} />
 
-      {withRepalce && <TextBox value={replace} onChange={actions.regex.replace} />}
+      {withReplace && <TextBox value={replace} onChange={e => dispatch({ type: 'replace', payload: e.target.value })} />}
 
       <h1>Matches</h1>
       {!matchesResults || matchesResults.length === 0 ? <div>No matches</div> : (
         matchesResults
       )}
 
-      {withRepalce && [
-        <h1>Result</h1>,
+      {withReplace && <>
+        <h1>Result</h1>
         <TextArea readonly value={testString.replace(compiledRegex, replace)}/>
-      ]}
+      </>}
     </div>
   );
-}
+};
+
+export default PageRegex;

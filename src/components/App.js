@@ -1,67 +1,76 @@
-import { h } from 'hyperapp';
-import { Switch, Route, Link } from '@hyperapp/router';
-import cc from 'classcat';
+import React, { useReducer } from 'react';
+import { Switch, Route, Link, NavLink, withRouter } from 'react-router-dom';
+import Helmet from 'react-helmet';
+import cx from 'classnames';
 import SearchBox from './search/SearchBox';
 import NotFound from './NotFound';
 import { siteMap } from '../sitemap';
 import pages from '../pages';
 import styles from './App.less';
 
-const appName = 'Devek';
-let lastActive = null;
-
-const docTitle = document.querySelector('title');
-
-export default (state, actions) => {
-  let header;
-  const current = state.location.pathname;
-
-  if (lastActive !== current && current === '/') {
-    docTitle.text = appName;
-    lastActive = current;
+const reducer = (state, action) => {
+  switch (action.type) {
+    case 'drawer':
+      return {
+        ...state,
+        drawer: !state.drawer
+      };
   }
+  return state;
+};
+
+const initialState = {
+  drawer: false
+};
+
+const App = ({ location } : { location: Object }) => {
+  const [state, dispatch] = useReducer(reducer, initialState);
+
+  const toggleDrawer = () => dispatch({ type: 'drawer'});
+
+  let header;
 
   return (
     <div className={styles.app}>
-      <nav className={cc([styles.nav,{ [styles.open]: state.app.drawer }])}>
-      <div className={styles.menu} onclick={actions.app.drawer}/>
+      <nav className={cx(styles.nav,{ [styles.open]: state.drawer })}>
+      <div className={styles.menu} onClick={toggleDrawer}/>
         {Object.keys(siteMap).map(path => {
-          const active = current === path || current.startsWith(path + '/');
+          const active = location.pathname === path || location.pathname.startsWith(path + '/');
           if (active) {
             header = siteMap[path].header;
-            if (lastActive !== path) {
-              docTitle.text = path === "/" ? appName : `${appName} - ${header}`;
-              lastActive = path;
-            }
           }
 
-          return path === '/' ? [
-            <Link to="/" className={styles.logo}/>,
+          return path === '/' ? <React.Fragment key={path}>
+            <Link to="/" className={styles.logo}/>
             <div className={styles.search_hint}>Press <kbd>/</kbd> to search</div>
-          ] : (
-            <Link key={path} to={path}
-                  className={cc({ [styles.menuitem]: true, [styles.active]: active })}>
+          </React.Fragment> : (
+            <NavLink key={path} to={path} className={styles.menuitem} activeClassName={styles.active}>
               {siteMap[path].title}
-            </Link>
+            </NavLink>
           );
         })}
       </nav>
       <main className={styles.main}>
-        {state.app.drawer && <div className={styles.overlay} onclick={actions.app.drawer} /> }
+        <Helmet>
+          <title>{header && location.pathname !== "/" ? `Devek - ${header}` : 'Devek'}</title>
+        </Helmet>
+        {state.drawer && <div className={styles.overlay} onClick={toggleDrawer} /> }
         <header className={styles.header}>
-          <div className={styles.menu} onclick={actions.app.drawer}/>
+          <div className={styles.menu} onClick={toggleDrawer}/>
           {header && <span className={styles.description}>{header}</span>}
         </header>
         <SearchBox />
-        <article className={styles.article} key={current /* force re-rendering of page */}>
+        <article className={styles.article}>
           <Switch>
             {Object.keys(siteMap).map(path => (
-              <Route path={path} parent={path !== "/"} render={pages[path]} />
+              <Route key={path} path={path} exact={path === "/"} component={pages[path]} />
             ))}
-            <Route render={NotFound} />
+            <Route component={NotFound} />
           </Switch>
         </article>
       </main>
     </div>
   );
-}
+};
+
+export default withRouter(App);

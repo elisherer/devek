@@ -1,12 +1,12 @@
-import { h } from 'hyperapp';
-import TextBox from '../TextBox';
-import Tabs from '../Tabs';
-import CopyToClipboard from '../CopyToClipboard';
-import './actions';
-import { Redirect, Link } from '@hyperapp/router';
+import React, {useReducer} from 'react';
+import TextBox from '../../lib/TextBox';
+import Tabs from '../../lib/Tabs';
+import CopyToClipboard from '../../lib/CopyToClipboard';
+ import { Redirect, NavLink } from 'react-router-dom';
+
 import styles from './PageBase.less';
 
-export default ({ location, match }) => (state, actions) => {
+const PageBase = ({ location } : { location: Object }) => {
   const pathSegments = location.pathname.substr(1).split('/');
 
   const type = pathSegments[1];
@@ -14,42 +14,42 @@ export default ({ location, match }) => (state, actions) => {
     return <Redirect to={`/${pathSegments[0]}/numbers`}/>;
   }
 
+  const [state, dispatch] = useReducer(reducer, initialState);
+
   const tabs = (
     <Tabs>
-      <Link data-active={type === "numbers"} to={"/" + pathSegments[0] + "/numbers"}>Numbers</Link>
-      <Link data-active={type === "text"} to={"/" + pathSegments[0] + "/text"}>Text</Link>
+      <NavLink to={"/" + pathSegments[0] + "/numbers"}>Numbers</NavLink>
+      <NavLink to={"/" + pathSegments[0] + "/text"}>Text</NavLink>
     </Tabs>
   );
 
-  const
-    errors = state.base.errors;
+  const { errors } = state;
 
   if (type === 'text') {
-    const { utf8, hex, binary, base64 } = state.base;
+    const { utf8, hex, binary, base64 } = state;
 
     return (
       <div>
         {tabs}
 
-
         <span>UTF8:</span><CopyToClipboard from="base_text_utf8"/>
         <div className={styles.wrap}>
-          <TextBox className={styles.number} invalid={errors.utf8} id="base_text_utf8" autofocus onChange={actions.base.utf8} value={utf8} />
+          <TextBox className={styles.number} invalid={errors.utf8} id="base_text_utf8" autofocus onChange={e => dispatch({ type: 'utf8', payload: e.target.value })} value={utf8} />
         </div>
 
         <span>Hex:</span><CopyToClipboard from="base_text_hex"/>
         <div className={styles.wrap}>
-          <TextBox className={styles.number} invalid={errors.hex} id="base_text_hex" onChange={actions.base.hex} value={hex}/>
+          <TextBox className={styles.number} invalid={errors.hex} id="base_text_hex" onChange={e => dispatch({ type: 'hex', payload: e.target.value })} value={hex}/>
         </div>
 
         <span>Binary:</span><CopyToClipboard from="base_text_binary"/>
         <div className={styles.wrap}>
-          <TextBox className={styles.number} invalid={errors.binary} id="base_text_binary" onChange={actions.base.binary} value={binary}/>
+          <TextBox className={styles.number} invalid={errors.binary} id="base_text_binary" onChange={e => dispatch({ type: 'binary', payload: e.target.value })} value={binary}/>
         </div>
-        
+
         <span>Base64:</span><CopyToClipboard from="base_text_base64"/>
         <div className={styles.wrap}>
-          <TextBox className={styles.number} invalid={errors.base64} id="base_text_base64" value={base64} onChange={actions.base.base64} value={base64}/>
+          <TextBox className={styles.number} invalid={errors.base64} id="base_text_base64" value={base64} onChange={e => dispatch({ type: 'base64', payload: e.target.value })} />
         </div>
       </div>
     );
@@ -60,7 +60,7 @@ export default ({ location, match }) => (state, actions) => {
     from,
     toBase,
     to
-  } = state.base;
+  } = state;
 
   return (
     <div>
@@ -68,15 +68,17 @@ export default ({ location, match }) => (state, actions) => {
 
       <span>From:</span><CopyToClipboard from="base_number_to"/><span className={styles.base_label}>Base:</span>
       <div className={styles.wrap}>
-        <TextBox className={styles.number} invalid={errors.from} id="base_number_from" autofocus onChange={actions.base.from} value={from} />
-        <TextBox className={styles.base} onChange={actions.base.fromBase} type="number" value={fromBase} min={2} max={36}/>
+        <TextBox className={styles.number} invalid={errors.from} id="base_number_from" autofocus onChange={e => dispatch({ type: 'from', payload: e.target.value })} value={from} />
+        <TextBox className={styles.base} onChange={e => dispatch({ type: 'fromBase', payload: e.target.value })} type="number" value={fromBase} min={2} max={36}/>
       </div>
 
       <span>To:</span><CopyToClipboard from="base_number_to"/><span className={styles.base_label}>Base:</span>
       <div className={styles.wrap}>
-        <TextBox className={styles.number} invalid={errors.to} id="base_number_to" onChange={actions.base.to} value={to}/>
-        <TextBox className={styles.base} onChange={actions.base.toBase} type="number" value={toBase} min={2} max={36}/>
+        <TextBox className={styles.number} invalid={errors.to} id="base_number_to" onChange={e => dispatch({ type: 'to', payload: e.target.value })} value={to}/>
+        <TextBox className={styles.base} onChange={e => dispatch({ type: 'toBase', payload: e.target.value })} type="number" value={toBase} min={2} max={36}/>
       </div>
     </div>
   );
-}
+};
+
+export default PageBase;

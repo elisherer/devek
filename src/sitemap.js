@@ -32,7 +32,19 @@ export const siteMap = {
     keyword: 'base',
     title: 'Base',
     header: 'Base Conversion',
-    description: "Convert between bases"
+    description: "Convert between bases",
+    children: {
+      "/numbers": {
+        keyword: 'numbers',
+        title: "Numbers bases",
+        description: "Convert between numbers bases"
+      },
+      "/text": {
+        keyword: 'text',
+        title: "Text bases",
+        description: 'Convert between text bases',
+      },
+    }
   },
   "/regex": {
     keyword: 'regex',
@@ -40,68 +52,70 @@ export const siteMap = {
     header: 'RegEx Tester',
     description: "Regular expression testing"
   },
-  "/json": {
-    keyword: 'json',
-    title: 'JSON',
-    header: 'JSON Debugger/Prettifier',
-    description: "Debug, Prettify"
-  },
-  "/xml": {
-    keyword: 'xml',
-    title: 'XML',
-    header: 'XML Debugger/Prettifier',
-    description: "XML Prettify and XPath query"
-  },
-  "/jwt": {
-    keyword: 'jwt',
-    title: 'JWT',
-    header: 'JWT Tool',
-    description: "Decode, Verify & Encode"
-  },
-  "/time": {
-    keyword: 'time',
-    title: 'Time',
-    header: 'Time tools',
-    description: "See world time and do conversions"
-  },
-  "/image": {
-    keyword: 'image',
-    title: 'Image',
-    header: 'Image web tools',
-    description: 'Convert, crop, resize, filter images',
-  },
-  "/random": {
-    keyword: 'random',
-    title: 'Random',
-    header: 'Random Generator',
-    description: "Generate Random passwords, numbers, etc",
-    children: {
-      "/password": {
-        keyword: 'password',
-        title: "Passwords",
-        description: "Generate passwords"
-      },
-      "/guid": {
-        keyword: 'guid',
-        title: "GUID",
-        description: 'Generate unique ids',
-      },
-    }
-  },
-  //hash: { title: 'Hash', component: NotFound},
-  //img: { title: 'Image', component: NotFound},
-  "/color": {
-    keyword: 'color',
-    title: 'Color',
-    header: 'Color Conversion',
-    description: 'Convert between color '
-  },
-  "/network": {
-    keyword: 'network',
-    title: 'Network',
-    header: 'Network tools',
-    description: 'Network information utilities (IP address and more)'
-  },
+
+"/json": {
+  keyword: 'json',
+  title: 'JSON',
+  header: 'JSON Debugger/Prettifier',
+  description: "Debug, Prettify"
+},  /*
+"/xml": {
+  keyword: 'xml',
+  title: 'XML',
+  header: 'XML Debugger/Prettifier',
+  description: "XML Prettify and XPath query"
+},
+"/jwt": {
+  keyword: 'jwt',
+  title: 'JWT',
+  header: 'JWT Tool',
+  description: "Decode, Verify & Encode"
+},
+"/time": {
+  keyword: 'time',
+  title: 'Time',
+  header: 'Time tools',
+  description: "See world time and do conversions"
+},
+"/image": {
+  keyword: 'image',
+  title: 'Image',
+  header: 'Image web tools',
+  description: 'Convert, crop, resize, filter images',
+},
+"/random": {
+  keyword: 'random',
+  title: 'Random',
+  header: 'Random Generator',
+  description: "Generate Random passwords, numbers, etc",
+  children: {
+    "/password": {
+      keyword: 'password',
+      title: "Passwords",
+      description: "Generate passwords"
+    },
+    "/guid": {
+      keyword: 'guid',
+      title: "GUID",
+      description: 'Generate unique ids',
+    },
+  }
+},
+//hash: { title: 'Hash', component: NotFound},
+//img: { title: 'Image', component: NotFound},
+"/color": {
+  keyword: 'color',
+  title: 'Color',
+  header: 'Color Conversion',
+  description: 'Convert between color '
+},
+"/network": {
+  keyword: 'network',
+  title: 'Network',
+  header: 'Network tools',
+  description: 'Network information utilities (IP address and more)'
+},
+*/
 };
 
 export const flatMap = Object.keys(siteMap).reduce((a,c) => {

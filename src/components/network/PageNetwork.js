@@ -1,9 +1,9 @@
 import { h } from 'hyperapp';
 //import cc from "classcat";
 //import Checkbox from '../Checkbox';
-import TextBox from '../TextBox';
+import TextBox from '../../lib/TextBox';
 //import Tabs from '../Tabs';
-import CopyToClipboard from "../CopyToClipboard";
+import CopyToClipboard from "../../lib/CopyToClipboard";
 import './actions';
 //import { getWeek } from './time.js';
 import styles from './PageNetwork.less';

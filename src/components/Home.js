@@ -1,9 +1,11 @@
-import {h} from 'hyperapp';
+import React from 'react';
 import styles from "./Home.less";
 
-export default () => (
+import logo from '../assets/devek_text.svg';
+
+const Home = () => (
   <div className={styles.page}>
-    <img src={require('../assets/devek_text.svg')} />
+    <img alt="Logo" src={logo} />
     <p>
       <strong>Helping tools for developers</strong><br />
       <strong>Everything</strong> is done on the client side,<br/>
@@ -15,3 +17,5 @@ export default () => (
     <footer className="emoji"><strong>Developed & Hosted</strong> with ❤ by <a href="https://github.com/elisherer">elisherer</a></footer>
   </div>
 );
+
+export default Home;

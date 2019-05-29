@@ -22,11 +22,11 @@
     &:hover {
       background-color: lighten(@gui-togglebar-background, 30%);
     }
-    &[data-active] {
+    &[aria-current], &[data-active] {
       background-color: @gui-togglebar-background;
       color: white;
     }
-    &[data-active]:hover {
+    &[aria-current]:hover, &[data-active]:hover {
       background-color: lighten(@gui-togglebar-background, 10%);
     }
   }

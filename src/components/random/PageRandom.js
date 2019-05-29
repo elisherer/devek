@@ -1,8 +1,8 @@
 import { h } from 'hyperapp';
-import TextArea from '../TextArea';
-import CopyToClipboard from '../CopyToClipboard';
-import Radio from "../Radio";
-import Tabs from "../Tabs";
+import TextArea from '../../lib/TextArea';
+import CopyToClipboard from '../../lib/CopyToClipboard';
+import Radio from "../../lib/Radio";
+import Tabs from "../../lib/Tabs";
 import { getFlags, getSize, getCount } from './actions';
 import {generatePassword, generateTable, uuidv4} from "./rand";
 import {Link, Redirect} from "@hyperapp/router";

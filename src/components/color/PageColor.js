@@ -1,6 +1,6 @@
 import { h } from 'hyperapp';
-import TextBox from '../TextBox';
-import CopyToClipboard from "../CopyToClipboard";
+import TextBox from '../../lib/TextBox';
+import CopyToClipboard from "../../lib/CopyToClipboard";
 import './actions';
 import { formatters } from './color.js';
 import styles from './PageColor.less';

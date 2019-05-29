@@ -1,10 +1,16 @@
-import actions from 'actions';
-
-actions.text = {
-  input: e => state => ({
+const actions = {
+  input: (state, action) => ({
     ...state,
-    input: e.target.innerText
+    input: action.payload
   }),
 };
 
-export const getInput = state => state.text && typeof state.text.input === 'string' ?state.text.input : '';
+export const reducer = (state, action) => {
+  const reduce = actions[action.type];
+  return reduce ? reduce(state, action) : state;
+};
+
+export const initialState = {
+  input: '',
+  errors: {}
+};

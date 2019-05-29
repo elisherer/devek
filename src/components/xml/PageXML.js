@@ -1,9 +1,9 @@
 import { h } from 'hyperapp';
-import TextBox from '../TextBox';
-import TextArea from '../TextArea';
+import TextBox from '../../lib/TextBox';
+import TextArea from '../../lib/TextArea';
 import { getXML, getXPath, getXPathEnabled } from './actions';
 import {getXMLDoc, prettifyXml, queryXPath} from "./xml";
-import Checkbox from "../Checkbox";
+import Checkbox from "../../lib/Checkbox";
 
 let xmlDocSource, xmlDoc;
 

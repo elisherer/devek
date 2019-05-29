@@ -1,10 +1,10 @@
 import { h } from 'hyperapp';
-import TextBox from '../TextBox';
-import TextArea from '../TextArea';
-import Tabs from '../Tabs';
+import TextBox from '../../lib/TextBox';
+import TextArea from '../../lib/TextArea';
+import Tabs from '../../lib/Tabs';
 import './actions';
 import styles from './PageJWT.less';
-import CopyToClipboard from "../CopyToClipboard";
+import CopyToClipboard from "../../lib/CopyToClipboard";
 
 export default () => (state, actions) => {
   const encodeMode = state.jwt.encode;

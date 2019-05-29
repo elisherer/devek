@@ -1,21 +1,39 @@
-import actions from 'actions';
-import initialState from 'initialState';
-import { flatMap } from "sitemap";
-
+import { flatMap } from 'sitemap';
+import {getHistory} from "../../helpers/history";
 const index = Object.keys(flatMap);
 
-let closeSearchBoxHandler;
+let closeSearchBoxHandler,
+  dispatch = null,
+  initialized = false;
+export const init = _dispatch => {
+  if (initialized) return;
+  initialized = true;
+  dispatch = _dispatch;
+  const inputNodeNames = ['INPUT', 'TEXTAREA', 'PRE'];
+  const searchShortcutHandler = e => {
+    if (e.key === "/" &&
+      !e.altKey && !e.shiftKey && !e.ctrlKey &&
+      !inputNodeNames.includes(e.target.nodeName)) {
+      dispatch({ type: 'open' });
+      setTimeout(() => {
+        document.getElementById('search_box').focus();
+      }, 0);
+      e.preventDefault();
+    }
+  };
+  addEventListener('keydown', searchShortcutHandler);
+};
 
-const initialSearchState = {
+export const initialState = {
   search: '',
   index: -1,
   open: false,
   paths: []
 };
 
-actions.search = {
-  search: e => state => {
-    const search = e.target.value;
+export const actions = {
+  search: (state, action) => {
+    const search = action.payload;
     const lower = search.toLowerCase();
     return {
       ...state,
@@ -25,35 +43,34 @@ actions.search = {
         !window.location.pathname.startsWith(t) && (
           (flatMap[t].keyword && flatMap[t].keyword.toLowerCase().includes(lower)) ||
           (flatMap[t].title && flatMap[t].title.toLowerCase().includes(lower)) ||
-          (flatMap[t].header && flatMap[t].header.toLowerCase().includes(lower)) ||
           (flatMap[t].description && flatMap[t].description.toLowerCase().includes(lower))
         )
       )
     };
   },
-  searchDown: () => state => ({
+  search_down: state => ({
     ...state,
     index: Math.min(state.index + 1, state.paths.length - 1)
   }),
-  searchUp: () => state => ({
+  search_up: state => ({
     ...state,
     index: Math.max(state.index - 1, 0)
   }),
-  open: () => (state, actions) => {
+  open: state => {
     if (state.open) return state;
     if (!closeSearchBoxHandler)
       closeSearchBoxHandler = e => {
         if (e.key === "Escape") {
-          actions.close();
+          dispatch({ type: 'close' });
           e.preventDefault();
         } else if (e.key === "ArrowDown") {
-          actions.searchDown();
+          dispatch({ type: 'search_down' });
           e.preventDefault();
         } else if (e.key === "ArrowUp") {
-          actions.searchUp();
+          dispatch({ type: 'search_up' });
           e.preventDefault();
         } else if (e.key === "Enter") {
-          actions.searchChoose();
+          dispatch({ type: 'search_choose' });
           e.preventDefault();
         }
       };
@@ -64,23 +81,16 @@ actions.search = {
       open: true
     };
   },
-  close: () => state => {
+  close: state => {
     if (!state.open) return state;
     removeEventListener('keyup', closeSearchBoxHandler);
-    return initialSearchState;
+    return initialState;
   },
-  searchChoose: () => state => {
+  search_choose: state => {
     if (state.search && (state.paths[state.index] || state.paths.length === 1)) {
-      history.pushState(window.location.pathname, "", state.paths[state.index] || state.paths[0]);
-      return initialSearchState;
+      getHistory().push(state.paths[state.index] || state.paths[0]);
+      return initialState;
     }
     return state;
   }
 };
-
-initialState.search = initialSearchState;
-
-export const getSearchOpen = state => state.search.open;
-export const getSearch = state => state.search.search;
-export const getSearchIndex = state => state.search.index;
-export const getSearchPaths = state => state.search.paths;

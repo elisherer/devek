@@ -1,37 +1,42 @@
-import actions from 'actions';
-import initialState from 'initialState';
-
 const composeFlags = on => ["g","m","i"].filter(flag => on.includes(flag)).join('');
 
-actions.regex = {
-  regex: e => state => ({
+const actions = {
+  regex: (state, action) => ({
     ...state,
-    regex: e.target.value
+    regex: action.payload
   }),
-    flags: e => state => ({
+    flags: (state, action) => {
+      const flag = action.payload;
+      return {
+        ...state,
+        flags: state.flags.includes(flag)
+          ? state.flags.replace(flag, '')
+          : composeFlags(state.flags + flag)
+      };
+    },
+    testString: (state, action) => ({
     ...state,
-    flags: state.flags.includes(e.target.dataset.flag) ? state.flags.replace(e.target.dataset.flag, '') : composeFlags(state.flags + e.target.dataset.flag)
+    test: action.payload
   }),
-    testString: e => state => ({
+    withReplace: (state, action) => ({
     ...state,
-    test: e.target.textContent
+    withReplace: action.payload
   }),
-    withReplace: e => state => ({
+    replace: (state, action) => ({
     ...state,
-    withReplace: e.target.checked
-  }),
-    replace: e => state => ({
-    ...state,
-    replace: e.target.value
+    replace: action.payload
   }),
 };
 
-initialState.regex =  {
+export const reducer = (state, action) => {
+  const reduce = actions[action.type];
+  return reduce ? reduce(state, action) : state;
+};
+
+export const initialState =  {
+  regex: '',
   flags: 'gm',
+  test: '',
+  withReplace: false,
+  replace: '$&'
 };
-
-export const getRegex = state => state.regex && typeof state.regex.regex === 'string' ?state.regex.regex : '';
-export const getFlags = state => state.regex && typeof state.regex.flags === 'string' ?state.regex.flags : '';
-export const getTestString = state => state.regex && typeof state.regex.test === 'string' ?state.regex.test : '';
-export const getWithReplace = state => state.regex && !!state.regex.withReplace;
-export const getReplace = state => state.regex && typeof state.regex.replace === 'string' ?state.regex.replace : '';
