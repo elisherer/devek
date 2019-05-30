@@ -1,19 +1,24 @@
-import { h } from 'hyperapp';
-import cc from 'classcat';
-import { Link } from '@hyperapp/router';
-import TextBox from '../TextBox';
-import {getSearch, getSearchIndex, getSearchOpen, getSearchPaths} from "./actions";
-import { flatMap } from '../../sitemap';
+import React, {useEffect} from 'react';
+import cx from 'classnames';
+import { Link, withRouter } from 'react-router-dom';
+import TextBox from '../../lib/TextBox';
+import { actions, useStore } from './SearchBox.store';
+
 import styles from "./SearchBox.less";
 
 let clickedLink = false;
 const clickLinkHandler = () => clickedLink = true;
+const onBlur = () => clickedLink ? (clickedLink = false) : actions.close();
 
-export default () => (state, actions) => {
-  const search = getSearch(state),
-    open = getSearchOpen(state),
-    index = getSearchIndex(state),
-    paths = getSearchPaths(state);
+const SearchBox = ({ location } : { location: Object }) => {
+  const state = useStore();
+
+  // location change
+  useEffect(() => {
+    actions.close();
+  }, [location.pathname]);
+
+  const { search, open, index, paths } = state;
   if (!open) return null;
 
   return (
@@ -22,16 +27,32 @@ export default () => (state, actions) => {
       <TextBox id="search_box" className={styles.search_box}
                placeholder="Search"
                value={search}
-               onChange={actions.search.search} autofocus autocomplete="off" type="search"
-               onblur={() => clickedLink ? (clickedLink = false) : actions.search.close()}
+               onChange={actions.search} autoFocus autoComplete="off" type="search"
+               onBlur={onBlur}
       />
-      {search && paths.map((path, i) => (
-          <Link key={path} to={path} className={cc([styles.item, { [styles.active]: i === index}])}
-                onmousedown={clickLinkHandler}>
-            <strong>{flatMap[path].title}</strong> - <span>{flatMap[path].description}</span>
-          </Link>
-        ))
+      {search && paths.map((p, i) => (
+        <Link key={p.path} to={p.path} className={cx(styles.item, { [styles.active]: i === index})}
+              onMouseDown={clickLinkHandler}>
+          <strong>{p.title}</strong> - <span>{p.description}</span>
+        </Link>
+      ))
       }
     </div>
   );
 };
+
+const inputNodeNames = ['INPUT', 'TEXTAREA', 'PRE'];
+const searchShortcutHandler = e => {
+  if (e.key === "/" &&
+    !e.altKey && !e.shiftKey && !e.ctrlKey &&
+    !inputNodeNames.includes(e.target.nodeName)) {
+    actions.open();
+    setTimeout(() => {
+      document.getElementById('search_box').focus();
+    }, 0);
+    e.preventDefault();
+  }
+};
+addEventListener('keydown', searchShortcutHandler);
+
+export default withRouter(SearchBox);

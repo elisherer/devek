@@ -1,7 +1,7 @@
 const rgbaRegex = /^rgba?\((\d{1,3}),\s*(\d{1,3}),\s*(\d{1,3})(,\s*(\d*(?:\.\d+)?))?\)$/,
   hslaRegex = /^hsla?\((-?\d+|-?\d+\.\d+)d?e?g?,\s*(\d+|-?\d+\.\d+)%,\s*(\d+|-?\d+\.\d+)%(,\s*(\d*(?:\.\d+)?))?\)$/,
   hwbaRegex = /^hwba?\((-?\d+|-?\d+\.\d+)d?e?g?,\s*(\d+|-?\d+\.\d+)%,\s*(\d+|-?\d+\.\d+)%(,\s*(\d*(?:\.\d+)?))?\)$/,
-  cmykaRegex = /^cmyka?\((\d+|-?\d+\.\d+)%,\s*(\d+|-?\d+\.\d+)%,\s*(\d+|-?\d+\.\d+)%(,\s*(\d*(?:\.\d+)?))?\)$/,
+  cmykaRegex = /^cmyka?\((\d+|-?\d+\.\d+)%,\s*(\d+|-?\d+\.\d+)%,\s*(\d+|-?\d+\.\d+)%,\s*(\d+|-?\d+\.\d+)%(,\s*(\d*(?:\.\d+)?))?\)$/,
   hexRegex = /^#([0-9a-f]{1,2})([0-9a-f]{1,2})([0-9a-f]{1,2})$|^#([0-9a-f])([0-9a-f])([0-9a-f])$/i;
 
 const RGBA = (r,g,b,a) => ({r,g,b,a});
@@ -97,7 +97,7 @@ const toHSL = c =>{
   const max = Math.max(r, g, b), min = Math.min(r, g, b);
   let h, s, l = (max + min) / 2;
 
-  if (max == min){
+  if (max === min){
       h = s = 0; // achromatic
   } else {
       const d = max - min;

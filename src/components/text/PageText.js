@@ -1,15 +1,17 @@
-import { h } from 'hyperapp';
-import cc from 'classcat';
-import TextArea from '../TextArea';
-import Tabs from '../Tabs';
-import Radio from '../Radio';
-import CopyToClipboard from '../CopyToClipboard';
-import { getInput } from './actions';
-import { Redirect, Link } from '@hyperapp/router';
-import styles from './PageText.less';
+import React from 'react';
+import cx from 'classnames';
+import TextArea from '../../lib/TextArea';
+import Tabs from '../../lib/Tabs';
+import Radio from '../../lib/Radio';
+import CopyToClipboard from '../../lib/CopyToClipboard';
 import { textCategories, textFunctions } from "./text";
+import { Redirect, NavLink } from 'react-router-dom';
 
-export default ({ location, match }) => (state, actions) => {
+import { useStore, actions } from './PageText.store';
+
+import styles from './PageText.less';
+
+const PageText = ({ location } : { location: Object }) => {
   const pathSegments = location.pathname.substr(1).split('/');
 
   const category = pathSegments[1];
@@ -24,7 +26,9 @@ export default ({ location, match }) => (state, actions) => {
     return <Redirect to={`/${pathSegments[0]}/${category}/${firstTextFunc}`}/>;
   }
 
-  const input = getInput(state);
+  const state = useStore();
+
+  const { input } = state;
   let output, error = null;
   const ctf = textFunctions[category][textFunc];
   try {
@@ -36,41 +40,40 @@ export default ({ location, match }) => (state, actions) => {
 
   return (
     <div>
-
       <Tabs>
-        {textCategories.map(c => {
-          return (
-            <Link data-active={c.category === category}
-                  to={"/" + pathSegments[0] + '/' + c.category}>{c.title}</Link>
-          );
-        })}
+        {textCategories.map(c => (
+          <NavLink key={c.category}
+                to={"/" + pathSegments[0] + '/' + c.category}>{c.title}</NavLink>
+        ))}
       </Tabs>
 
       <Radio className={styles.funcs}>
         {
           Object.keys(textFunctions[category]).map(tf =>{
             return (
-              <Link data-active={tf === textFunc} to={"/" + pathSegments[0] + "/" + pathSegments[1] + "/" + tf}>{textFunctions[category][tf].title}</Link>
+              <NavLink key={tf} to={"/" + pathSegments[0] + "/" + pathSegments[1] + "/" + tf}>{textFunctions[category][tf].title}</NavLink>
             );
           })
         }
       </Radio>
 
       <label>Input:</label>
-      <TextArea autofocus onChange={actions.text.input} value={input}/>
+      <TextArea autoFocus onChange={actions.input} value={input}/>
       <div className={styles.input_info}>
         <sup>Length: {input.length}</sup>
       </div>
 
       <span>Output:</span><CopyToClipboard from="text_output"/>
-      <TextArea id="text_output" readonly
-                className={cc({[styles.error]: error})}
+      <TextArea id="text_output" readOnly
+                className={cx({[styles.error]: error})}
                 style={ctf.style}
                 value={error || output}
       />
       <div className={styles.input_info}>
-        <sup innerHTML={!error && output.length > 0 ? "Length: " + output.length : "&nbsp;"} />
+        <sup>&nbsp;{!error && output.length > 0 ? "Length: " + output.length : ''}</sup>
       </div>
     </div>
   );
-}
+};
+
+export default PageText;

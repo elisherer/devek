@@ -34,21 +34,30 @@ module.exports = function (api) {
   }
 
   const presets = [
-    ["@babel/preset-react", { "pragma": "h" }],
+    "@babel/preset-flow",
+    "@babel/preset-react",
     ["@babel/preset-env", {
       "modules": test ? "commonjs" : false,
-      "targets": {
-        "browsers": ["last 2 versions", "ie > 10"]
-      },
       "useBuiltIns": "usage",
       "corejs": 3,
     }],
     [babelPresetStage1, { decoratorsLegacy: true }],
   ];
 
-  let plugins = [
+  let plugins =
 
-  ];
+    prod ? [
+      "@babel/plugin-transform-react-constant-elements",
+      "@babel/plugin-transform-react-inline-elements",
+      "babel-plugin-transform-react-pure-class-to-function",
+      "babel-plugin-transform-react-remove-prop-types"
+
+    ] : dev ? [
+      "react-hot-loader/babel"
+
+    ] : [
+
+    ];
 
   return {
     presets,

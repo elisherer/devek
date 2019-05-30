@@ -1,41 +1,32 @@
-import { h } from 'hyperapp';
-//import cc from "classcat";
-//import Checkbox from '../Checkbox';
-import TextBox from '../TextBox';
-//import Tabs from '../Tabs';
-import CopyToClipboard from "../CopyToClipboard";
-import './actions';
-//import { getWeek } from './time.js';
-import styles from './PageNetwork.less';
-//import {Link, Redirect} from "@hyperapp/router";
+import React, {useEffect} from 'react';
+import TextBox from '../../lib/TextBox';
+import CopyToClipboard from "../../lib/CopyToClipboard";
+import { useStore, actions } from './PageNetwork.store';
 import { formatters, isPrivate } from './network';
 import zPad from 'helpers/zPad';
+import styles from './PageNetwork.less';
 
-export default () => (state, actions) => {
-  const getIP = () => {
-    if (!state.network.ip) {
-      actions.network.ip();
-    }
-  };
+const PageNetwork = () => {
+  useEffect(actions.ip, []);
 
-  const { ip, errors, ipv4, subnet, mask, parsed } = state.network;
+  const { ip, errors, ipv4, subnet, mask, parsed } = useStore();
   const wildcard = 0xffffffff - mask;
   const network = (parsed & mask) >>> 0;
 
   return (
     <div>
-      <dt key="network_ip_address" oncreate={getIP}/>
+      <dt key="network_ip_address" />
 
       <div className={styles.my_ip}>
         My IP Address: <strong>{ip || "fetching..."}</strong>
       </div>
 
       <span>IPv4:</span><CopyToClipboard from="network_ipv4"/>
-      <TextBox invalid={errors.ipv4} id="network_ipv4" autofocus onChange={actions.network.ipv4} value={ipv4} />
+      <TextBox invalid={errors.ipv4} id="network_ipv4" autoFocus onChange={actions.ipv4} value={ipv4} />
 
       <label>
         <span>Subnet ({subnet})</span>
-        <input type="range" min="8" max="32" value={subnet} onchange={actions.network.subnet}/>
+        <input type="range" min="8" max="32" value={subnet} onChange={actions.subnet}/>
       </label>
 
       <label>Info:</label>
@@ -65,4 +56,6 @@ export default () => (state, actions) => {
       )}
     </div>
   );
-}
+};
+
+export default PageNetwork;

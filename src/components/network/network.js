@@ -1,10 +1,11 @@
 import zPad from 'helpers/zPad';
+
 /**
  * Convert to base2 padded to 8 bits
  * @param num {Number}
  * @returns {string}
  */
-const to8Bit = num => zPad(num.toString(2), 8);
+//const to8Bit = num => zPad(num.toString(2), 8);
 
 const ipv4Regex = /^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/;
 const 

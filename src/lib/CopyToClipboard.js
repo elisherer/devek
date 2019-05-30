@@ -1,5 +1,4 @@
-import { h } from 'hyperapp';
-
+import React from 'react';
 import styles from "./CopyToClipboard.less";
 
 const copyFrom = e => {
@@ -14,9 +13,11 @@ const copyFrom = e => {
   document.execCommand("copy");
 };
 
-export default ({ from }, children) => (
-  <span className={styles.copy} data-from={from} onclick={copyFrom}>
+const CopyToClipboard = ({ from } : { from: string }) => (
+  <span className={styles.copy} data-from={from} onClick={copyFrom}>
     <textarea />
     Copy
   </span>
 );
+
+export default CopyToClipboard;

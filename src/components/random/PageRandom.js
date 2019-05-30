@@ -1,18 +1,18 @@
-import { h } from 'hyperapp';
-import TextArea from '../TextArea';
-import CopyToClipboard from '../CopyToClipboard';
-import Radio from "../Radio";
-import Tabs from "../Tabs";
-import { getFlags, getSize, getCount } from './actions';
+import React from 'react';
+import {NavLink, Redirect} from "react-router-dom";
+import TextArea from '../../lib/TextArea';
+import CopyToClipboard from '../../lib/CopyToClipboard';
+import Radio from "../../lib/Radio";
+import Tabs from "../../lib/Tabs";
+import { useStore, actions } from './PageRandom.store';
 import {generatePassword, generateTable, uuidv4} from "./rand";
-import {Link, Redirect} from "@hyperapp/router";
 
 import styles from './PageRandom.less';
 
 let table = null, tableFlags = null;
 let ticks = null;
 
-export default () => (state, actions) => {
+const PageRandom = () => {
   const pathSegments = location.pathname.substr(1).split('/');
 
   if (pathSegments.length < 2) {
@@ -22,12 +22,14 @@ export default () => (state, actions) => {
   const type = pathSegments[1];
 
   let result, flags, size;
-
-  const count = getCount(state);
+  const state = useStore();
+  const {
+    count,
+  } = state;
 
   if (type === "password") {
-    flags = getFlags(state);
-    size = getSize(state);
+    flags = state.flags;
+    size = state.size;
     const results = [];
 
     if (tableFlags !== flags) {
@@ -59,42 +61,44 @@ export default () => (state, actions) => {
   return (
     <div>
       <Tabs>
-        <Link data-active={type === 'password'} to="/random/password">Password</Link>
-        <Link data-active={type === 'guid'} to="/random/guid">Guid</Link>
+        <NavLink to="/random/password">Password</NavLink>
+        <NavLink to="/random/guid">Guid</NavLink>
       </Tabs>
 
       <label className={styles.range}>
         <span>Count ({count})</span>
-        <input type="range" min="1" max="16" value={count} onchange={actions.random.count}/>
+        <input type="range" min="1" max="16" value={count} onChange={actions.count}/>
       </label>
 
       {type === "password" && (
         <div>
           <label className={styles.range}>
             <span>Length ({size})</span>
-            <input type="range" min="6" max="64" step="1" list="random_password_size" value={size} onchange={actions.random.size} />
+            <input type="range" min="6" max="64" step="1" list="random_password_size" value={size} onChange={actions.size} />
             {ticks}
           </label>
 
           <label>Flags</label>
           <Radio className={styles.flags}>
-            <div data-active={flags.includes('a')} data-flag="a" onclick={actions.random.flags}>a-z</div>
-            <div data-active={flags.includes('A')} data-flag="A" onclick={actions.random.flags}>A-Z</div>
-            <div data-active={flags.includes('0')} data-flag="0" onclick={actions.random.flags}>0-9</div>
-            <div data-active={flags.includes('!')} data-flag="!" onclick={actions.random.flags}>!@#...</div>
-            <div data-active={flags.includes('O')} data-flag="O" onclick={actions.random.flags}>1lIioO0</div>
+            <div data-active={flags.includes('a')||null} data-flag="a" onClick={actions.flags}>a-z</div>
+            <div data-active={flags.includes('A')||null} data-flag="A" onClick={actions.flags}>A-Z</div>
+            <div data-active={flags.includes('0')||null} data-flag="0" onClick={actions.flags}>0-9</div>
+            <div data-active={flags.includes('!')||null} data-flag="!" onClick={actions.flags}>!@#...</div>
+            <div data-active={flags.includes('O')||null} data-flag="O" onClick={actions.flags}>1lIioO0</div>
           </Radio>
         </div>
       )}
 
       <div className={styles.buttons}>
-        <button onclick={actions.app.refresh}>Regenerate</button>
+        <button onClick={actions.refresh}>Regenerate</button>
       </div>
 
       <h1>Result</h1>
       <CopyToClipboard from="random_result" />
-      <TextArea id="random_result" readonly value={result} />
+      <TextArea id="random_result" readOnly value={result} />
 
     </div>
   );
-}
+};
+
+export default PageRandom;

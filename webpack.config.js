@@ -54,6 +54,9 @@ module.exports = {
     }
   },
   resolve: {
+    alias: PRODUCTION ? {} : {
+      'react-dom': '@hot-loader/react-dom'
+    },
     modules: [ path.resolve(__dirname, 'src'), 'node_modules' ]
   },
   plugins: [

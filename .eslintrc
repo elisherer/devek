@@ -1,8 +1,21 @@
 {
   "parser": "babel-eslint",
   "extends": [
-    "eslint:recommended"
+    "eslint:recommended",
+    "plugin:react/recommended"
   ],
+  "plugins": [
+    "react"
+  ],
+  "settings": {
+    "react": {
+      "version": "16.8.0"
+    },
+    "propWrapperFunctions": [ "forbidExtraProps" ] // The names of any functions used to wrap the
+    // propTypes object, e.g. `forbidExtraProps`.
+    // If this isn't set, any propTypes wrapped in
+    // a function will be skipped.
+  },
   "parserOptions": {
     "sourceType": "module",
     "ecmaVersion": 6,
@@ -17,6 +30,12 @@
     "node": true
   },
   "rules": {
-    "no-unused-vars": [0, { "varsIgnorePattern": "^h$" }]
+    //"react/jsx-no-bind": 1
+  },
+  "globals": {
+    "__LICENSES__": true,
+    "describe": true,
+    "test": true,
+    "expect": true
   }
 }
