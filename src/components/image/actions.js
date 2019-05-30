@@ -11,7 +11,7 @@ export const initCanvas = el => {
   ctx = canvas.getContext('2d');
 };
 
-export const onMouseMove = e => {
+export const onMouseMove = () => {
 
 };
 
@@ -58,7 +58,7 @@ const actionCreators = {
       return { ...state, color };
     }
   },
-  onMouseClick: e => state => {
+  onMouseClick: () => state => {
     return { ...state, select: state.color }
   },
   file: e => (state, actions) => {
