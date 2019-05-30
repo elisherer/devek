@@ -1,14 +1,13 @@
-import actions from 'actions';
-import initialState from 'initialState';
 import getEventLocation from './getEventLocation';
+import createStore from "../../helpers/createStore";
 
 let canvas;
 let ctx;
 let base64Source;
 
 export const initCanvas = el => {
-  if (ctx) return;
-  canvas = el;
+  if (ctx || !el.current) return;
+  canvas = el.current;
   ctx = canvas.getContext('2d');
 };
 
@@ -26,21 +25,15 @@ const loadFile = (file, callback) => {
           canvas.height = img.height;
           ctx.drawImage(img,0,0);
           callback(img.src);
-      }
+      };
       img.src = event.target.result;
-  }
+  };
   reader.readAsDataURL(file);     
-};
-
-export const onDragOver = e => {
-  e.dataTransfer.dropEffect = 'link';
-  e.stopPropagation();
-  e.preventDefault();
 };
 
 const rgbToHex = (r, g, b) => "#" + ("000000" + ((r << 16) | (g << 8) | b).toString(16)).slice(-6);
 
-actions.image = {
+const actionCreators = {
   onDragEnter: e => state => {
     e.stopPropagation();
     e.preventDefault();
@@ -89,8 +82,13 @@ actions.image = {
   }
 };
 
-initialState.image = {
+const initialState = {
   dragging: false,
   color: '#dddddd',
   select: '#dddddd'
 };
+
+export const {
+  actions,
+  useStore,
+} = createStore(actionCreators, initialState);

@@ -1,12 +1,11 @@
-import actions from 'actions';
-import initialState from 'initialState';
+import createStore from "../../helpers/createStore";
 
-actions.xml = {
+const actionCreators = {
   xml: e => state => ({
     ...state,
     xml: e.target.innerText
   }),
-  xpathToggle: e => state => ({
+  xpathToggle: () => state => ({
     ...state,
     xpathEnabled: !state.xpathEnabled,
   }),
@@ -16,10 +15,13 @@ actions.xml = {
   }),
 };
 
-initialState.xml = {
-  xpath: '/*'
+const initialState = {
+  xml: '',
+  xpathEnabled: false,
+  xpath: '/*',
 };
 
-export const getXML = state => state.xml && typeof state.xml.xml === 'string' ?state.xml.xml : '';
-export const getXPath = state => state.xml && typeof state.xml.xpath === 'string' ?state.xml.xpath : '';
-export const getXPathEnabled = state => state.xml && state.xml.xpathEnabled;
+export const {
+  actions,
+  useStore,
+} = createStore(actionCreators, initialState);

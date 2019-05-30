@@ -39,7 +39,7 @@ const PageRegex = () => {
       }
 
       let msg = (c++) + '. Found ' + m[0] + ' at ' + m.index;
-      matchesResults.push(<div>{msg}</div>);
+      matchesResults.push(<div key={c}>{msg}</div>);
       lastFind = m[0];
       lastIndex = m.index;
     }

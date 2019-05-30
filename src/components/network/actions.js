@@ -1,9 +1,8 @@
-import actions from 'actions';
-import initialState from 'initialState';
 import { reduceBy, subnetToMask } from "./network";
 import {getJSONAsync} from "helpers/http";
+import createStore from "../../helpers/createStore";
 
-actions.network = {
+const actionCreators = {
   ipv4: e => state => reduceBy('ipv4', { ...state, ipv4: e.target.value }),
   subnet: e => state => ({ 
     ...state, 
@@ -22,7 +21,7 @@ actions.network = {
   setIP: ip => state => ({ ...state, ip }),
 };
 
-initialState.network = {
+const initialState = {
   ip: '',
   ipv4: '192.168.0.1',
   subnet: 24,
@@ -30,3 +29,8 @@ initialState.network = {
   parsed: 0xC0A80001,
   errors: {},
 };
+
+export const {
+  actions,
+  useStore,
+} = createStore(actionCreators, initialState);

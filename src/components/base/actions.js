@@ -2,7 +2,6 @@ import { reduceNumberBy, reduceTextBy } from './base';
 import createStore from "../../helpers/createStore";
 
 const actionCreators = {
-
   from: e => state => reduceNumberBy('from', { ...state, from: e.target.value }),
   fromBase: e => state => reduceNumberBy('from', { ...state, fromBase: parseInt(e.target.value) }),
   to: e => state => reduceNumberBy('to', { ...state, to: e.target.value }),
@@ -15,8 +14,14 @@ const actionCreators = {
 };
 
 const initialState = {
+  from: '',
   fromBase: 16,
+  to: '',
   toBase: 10,
+  utf8: '',
+  binary: '',
+  hex: '',
+  base64: '',
   errors: {}
 };
 

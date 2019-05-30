@@ -7,8 +7,8 @@ import CopyToClipboard from "../../lib/CopyToClipboard";
 
 import { useStore, actions } from './actions';
 
-export default () => {
-  const state = useStore();
+const PageJWT = () => {
+  const state = useStore('jwt');
 
   const encodeMode = state.encode;
 
@@ -47,7 +47,7 @@ export default () => {
                        invalid={state.error}
                        value={state.out_token}
                        selectOnFocus
-                       readonly />
+                       readOnly />
             </div>
           )
         }
@@ -79,8 +79,10 @@ export default () => {
       {state.alg && secretTextbox}
 
       <label>Contents:</label>
-      <TextArea readonly={!encodeMode} html className={styles.jwt}
+      <TextArea readOnly={!encodeMode} html className={styles.jwt}
                 value={resultHTML} />
     </div>
   );
-}
+};
+
+export default PageJWT;

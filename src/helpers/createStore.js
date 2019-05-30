@@ -4,15 +4,16 @@ export default (actionCreators, initialState) => {
   const store = {};
   store.actions = Object.keys(actionCreators).reduce((a, type) => {
     a[type] = function() {
-      const actionCreator = actionCreators[type].apply(this, arguments);
-      if (typeof actionCreator === 'function') {
-        store.dispatch({ type, payload: actionCreators[type].apply(this, arguments)(store.state, store.actions) });
+      const payload = actionCreators[type].apply(this, arguments)(store.state, store.actions);
+
+      if (payload && payload.then) { // Promise
+        payload.then(payload => {
+          if (typeof payload !== 'undefined')
+            store.dispatch({type, payload });
+        })
       }
-      else {
-        actionCreator.then(func =>
-          store.dispatch({ type, payload: func(store.state, store.actions) })
-        )
-      }
+      else if (typeof payload !== 'undefined')
+        store.dispatch({ type, payload });
     };
     return a;
   }, {});
@@ -20,10 +21,22 @@ export default (actionCreators, initialState) => {
     if (actionCreators[action.type]) return action.payload;
     throw new Error(`Unknown type: ${action.type}`);
   };
-  const useStore = () => {
+  const useStore = name => {
     const _store = useReducer(reducer, initialState);
     store.state = _store[0];
-    store.dispatch = _store[1];
+
+    if (process.env.NODE_ENV === 'development') {
+      let d = _store[1];
+      store.dispatch = a => {
+        const bold = 'font-weight: bold';
+        // eslint-disable-next-line
+        console.info('🐛 %c' + (name || 'no-name') + ': %cType = %c' + a.type + '%c, Payload = %c' + JSON.stringify(a.payload),
+          bold, '', bold, '', 'font-size: 8px');
+        return d(a);
+      };
+    } else
+      store.dispatch = _store[1];
+
     return _store[0];
   };
   return {

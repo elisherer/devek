@@ -42,18 +42,22 @@ const actionCreators = {
   }),
 };
 
+
+const initToken = [
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9',
+  'eyJzdWIiOiIxMjM0NTYiLCJuYW1lIjoiSm9obiBEb2UiLCJzZWNyZXQtaXMiOiJaV3hwIn0',
+  'e9H37jdA03uJoMwTPdMgTz6ITi68dUNkHMT3H1hlbS4'
+].join('.');
 const initialState = {
-  in_token: [
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9',
-    'eyJzdWIiOiIxMjM0NTYiLCJuYW1lIjoiSm9obiBEb2UiLCJzZWNyZXQtaXMiOiJaV3hwIn0',
-    'e9H37jdA03uJoMwTPdMgTz6ITi68dUNkHMT3H1hlbS4'
-  ].join('.'),
+  in_token: initToken,
+  out_token: initToken,
   header: "{\n  \"alg\": \"HS256\",\n  \"typ\": \"JWT\"\n}",
   payload: "{\n  \"sub\": \"123456\",\n  \"name\": \"John Doe\",\n  \"secret-is\": \"ZWxp\"\n}",
   in_payload: "{\n  \"sub\": \"123456\",\n  \"name\": \"John Doe\",\n  \"secret-is\": \"ZWxp\"\n}",
   sig: "e9H37jdA03uJoMwTPdMgTz6ITi68dUNkHMT3H1hlbS4",
   valid: false,
   alg: 'HS256',
+  secret: ''
 };
 
 export const {

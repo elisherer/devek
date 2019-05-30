@@ -1,7 +1,6 @@
-import actions from 'actions';
-import initialState from 'initialState';
+import createStore from "../../helpers/createStore";
 
-actions.random = {
+const actionCreators = {
   flags: e => state => ({
     ...state,
     flags: state.flags.includes(e.target.dataset.flag) ? state.flags.replace(e.target.dataset.flag, '') : state.flags + e.target.dataset.flag
@@ -14,14 +13,17 @@ actions.random = {
     ...state,
     count: parseInt(e.target.value)
   }),
+
+  refresh: () => state => ({ ...state, refresh: !state.refresh })
 };
 
-initialState.random = {
+const initialState = {
   size: 8,
   flags: 'aA0O',
   count: 1,
 };
 
-export const getFlags = state => state.random && typeof state.random.flags === 'string' ? state.random.flags : '';
-export const getSize = state => state.random && typeof state.random.size === 'number' ? state.random.size : 0;
-export const getCount = state => state.random && typeof state.random.count === 'number' ? state.random.count : 0;
+export const {
+  actions,
+  useStore,
+} = createStore(actionCreators, initialState);

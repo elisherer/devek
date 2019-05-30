@@ -1,28 +1,38 @@
-import { h } from 'hyperapp';
-import cc from 'classcat';
-import { initCanvas, onDragOver } from './actions';
+import React, { useRef } from 'react';
+import cx from 'classnames';
 import styles from './PageImage.less';
+import { useStore, actions, initCanvas } from './actions';
 
-export default () => (state, actions) => {
-  const { dragging } = state.image;
-  const disabled = !state.image.loaded;
+const onDragOver = e => {
+  e.dataTransfer.dropEffect = 'link';
+  e.stopPropagation();
+  e.preventDefault();
+};
+
+const PageImage = () => {
+  const { dragging, loaded, color, select } = useStore('image');
+  const canvas = useRef();
+  initCanvas(canvas);
+
+  const disabled = !loaded;
+
   return (
-    <div ondragenter={actions.image.onDragEnter} ondragover={onDragOver}
-    ondragleave={actions.image.onDragLeave} ondrop={actions.image.onDrop}>
-      <label className={cc([styles.dropbox, { [styles.dragging]: dragging }])}>
+    <div onDragEnter={actions.onDragEnter} onDragOver={onDragOver}
+    onDragLeave={actions.onDragLeave} onDrop={actions.onDrop}>
+      <label className={cx(styles.dropbox, { [styles.dragging]: dragging })}>
         Click and browse for an image or Drag & Drop it here
-        <input type="file" style={{display: 'none'}} onchange={actions.image.file} /> 
+        <input type="file" style={{display: 'none'}} onChange={actions.file} />
       </label>
-      <div className={cc([styles.actions, { [styles.loaded]: state.image.loaded }])}>
-        <button disabled={disabled} onclick={actions.image.open}>To Base64</button>
-        <div>Picker: <input disabled={disabled} type="color" value={state.image.color} /> ► <input disabled={disabled} type="color" value={state.image.select} /><input readOnly value={state.image.select} /></div>
+      <div className={cx(styles.actions, { [styles.loaded]: loaded })}>
+        <button disabled={disabled} onClick={actions.open}>To Base64</button>
+        <div>Picker: <input disabled={disabled} type="color" value={color} /> ► <input disabled={disabled} type="color" value={select} /><input readOnly value={select} /></div>
       </div>
-      <canvas 
-        className={cc([styles.canvas, { [styles.visible]: state.image.loaded }])} 
-        oncreate={initCanvas} 
-        onmouseup={actions.image.onMouseClick}
-        onmousemove={actions.image.onMouseMove} />
+      <canvas ref={canvas}
+        className={cx(styles.canvas, { [styles.visible]: loaded })}
+        onMouseUp={actions.onMouseClick}
+        onMouseMove={actions.onMouseMove} />
     </div>
   );
+};
 
-}
+export default PageImage;

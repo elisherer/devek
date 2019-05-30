@@ -1,17 +1,20 @@
-import { h } from 'hyperapp';
+import React from 'react';
+import Checkbox from "../../lib/Checkbox";
 import TextBox from '../../lib/TextBox';
 import TextArea from '../../lib/TextArea';
-import { getXML, getXPath, getXPathEnabled } from './actions';
+import { useStore, actions } from './actions';
 import {getXMLDoc, prettifyXml, queryXPath} from "./xml";
-import Checkbox from "../../lib/Checkbox";
 
 let xmlDocSource, xmlDoc;
 
-export default () => (state, actions) => {
+const PageXML = () => {
+  const state = useStore('xml');
 
-  const input = getXML(state),
-    xpath = getXPath(state),
-    xpathEnabled = getXPathEnabled(state);
+  const {
+    xml: input,
+    xpath,
+    xpathEnabled
+  } = state;
 
   let results, error = null;
   if (!input) {
@@ -55,8 +58,8 @@ export default () => (state, actions) => {
     else {
       resultsNode = !results || !results.length
         ? <p>No results yet</p>
-        : results.map(result =>
-          <TextArea readOnly value={result}
+        : results.map((result, i) =>
+          <TextArea key={i} readOnly value={result}
                     html={!!result && result.includes('<parsererror')} />
         );
     }
@@ -65,14 +68,16 @@ export default () => (state, actions) => {
   return (
     <div>
       <label>XML:</label>
-      <TextArea autoFocus onChange={actions.xml.xml} value={input}/>
+      <TextArea autoFocus onChange={actions.xml} value={input}/>
 
-      <Checkbox label="Use XPath" checked={xpathEnabled} onchange={actions.xml.xpathToggle} />
+      <Checkbox label="Use XPath" checked={xpathEnabled} onChange={actions.xpathToggle} />
       {xpathEnabled && <label>XPath expression:</label>}
-      {xpathEnabled && <TextBox value={xpath} onChange={actions.xml.xpath}/>}
+      {xpathEnabled && <TextBox value={xpath} onChange={actions.xpath}/>}
 
       <h1>Result</h1>
       {error ? <p style={{color:'red'}}>{error}</p> : resultsNode}
     </div>
   );
-}
+};
+
+export default PageXML;

@@ -1,17 +1,17 @@
-import actions from 'actions';
-import initialState from 'initialState';
 import webcolors from './webcolors';
 import { reduceBy } from "./color";
+import createStore from "../../helpers/createStore";
 
-actions.color = {
+const actionCreators = {
   rgba: e => state => reduceBy('rgba', { ...state, rgba: e.target.value }),
   hex: e => state => reduceBy('hex', { ...state, hex: e.target.value }),
   hsla: e => state => reduceBy('hsla', { ...state, hsla: e.target.value }),
   hwba: e => state => reduceBy('hwba', { ...state, hwba: e.target.value }),
+  cmyka: e => state => reduceBy('cmyka', { ...state, cmyka: e.target.value }),
   webcolor: e => state => reduceBy('hex', { ...state, hex: webcolors[e.target.value] }),
 };
 
-initialState.color = {
+const initialState = {
   rgba: 'rgba(85, 0, 170, 0.75)',
   hex: '#50a',
   hsla: 'hsla(270, 100%, 33.3%, 0.75)',
@@ -20,3 +20,8 @@ initialState.color = {
   parsed: { r: 85, g: 0, b: 170, a: 0.75 },
   errors: {},
 };
+
+export const {
+  actions,
+  useStore,
+} = createStore(actionCreators, initialState);

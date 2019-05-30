@@ -40,15 +40,16 @@ function replaceCaret(el) {
 
 const TextArea = ({ autoFocus, className, style, onChange, readOnly, value, html, ...more } :
                     { autoFocus?: boolean, className?: string, style?: Object, onChange?: Function, readOnly?: boolean, value?: string, html?: boolean }) => {
+  const innerProp = html ? "innerHTML" : "innerText";
 
   const inputElement = useRef();
 
   if (readOnly) {
-    more.dangerouslySetInnerHTML = { __html: value };
+    if (html) more.dangerouslySetInnerHTML = { __html: value };
+    else more.children = value;
   }
 
   useEffect(() => {
-    const innerProp = html ? "innerHTML" : "innerText";
     if (autoFocus && screen.isDesktop) {
       if (readOnly) {
         inputElement.current.focus();
