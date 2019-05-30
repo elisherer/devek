@@ -42,17 +42,11 @@ const SearchBox = ({ location } : { location: Object }) => {
 };
 
 const inputNodeNames = ['INPUT', 'TEXTAREA', 'PRE'];
-const searchShortcutHandler = e => {
-  if (e.key === "/" &&
-    !e.altKey && !e.shiftKey && !e.ctrlKey &&
-    !inputNodeNames.includes(e.target.nodeName)) {
+addEventListener('keydown', e => {
+  if (e.key === "/" && !e.altKey && !e.shiftKey && !e.ctrlKey && !inputNodeNames.includes(e.target.nodeName)) {
     actions.open();
-    setTimeout(() => {
-      document.getElementById('search_box').focus();
-    }, 0);
     e.preventDefault();
   }
-};
-addEventListener('keydown', searchShortcutHandler);
+});
 
 export default withRouter(SearchBox);
