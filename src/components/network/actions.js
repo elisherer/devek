@@ -33,4 +33,4 @@ const initialState = {
 export const {
   actions,
   useStore,
-} = createStore(actionCreators, initialState);
+} = createStore(actionCreators, initialState, 'network');

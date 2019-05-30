@@ -8,11 +8,10 @@ const actionCreators = {
 };
 
 const initialState = {
-  input: '',
-  errors: {}
+  input: ''
 };
 
 export const {
   actions,
   useStore,
-} = createStore(actionCreators, initialState);
+} = createStore(actionCreators, initialState, 'text');

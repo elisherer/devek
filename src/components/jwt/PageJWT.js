@@ -8,7 +8,7 @@ import CopyToClipboard from "../../lib/CopyToClipboard";
 import { useStore, actions } from './actions';
 
 const PageJWT = () => {
-  const state = useStore('jwt');
+  const state = useStore();
 
   const encodeMode = state.encode;
 

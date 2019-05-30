@@ -8,7 +8,7 @@ import {getXMLDoc, prettifyXml, queryXPath} from "./xml";
 let xmlDocSource, xmlDoc;
 
 const PageXML = () => {
-  const state = useStore('xml');
+  const state = useStore();
 
   const {
     xml: input,

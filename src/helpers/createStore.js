@@ -1,7 +1,17 @@
 import {useReducer} from "react";
+import createDevTools from './devtools';
 
-export default (actionCreators, initialState) => {
+const resetActionType = '__RESET';
+
+export default (actionCreators, initialState, name) => {
   const store = {};
+
+  const devTools = createDevTools({ name, initialState, store});
+
+  if (process.env.NODE_ENV === 'development') {
+    actionCreators[resetActionType] = state => () => state; // ignoring the current state and setting it to a new one
+  }
+
   store.actions = Object.keys(actionCreators).reduce((a, type) => {
     a[type] = function() {
       const payload = actionCreators[type].apply(this, arguments)(store.state, store.actions);
@@ -21,19 +31,17 @@ export default (actionCreators, initialState) => {
     if (actionCreators[action.type]) return action.payload;
     throw new Error(`Unknown type: ${action.type}`);
   };
-  const useStore = name => {
+  const useStore = () => {
     const _store = useReducer(reducer, initialState);
     store.state = _store[0];
 
     if (process.env.NODE_ENV === 'development') {
       let d = _store[1];
       store.dispatch = a => {
-        const bold = 'font-weight: bold';
-        // eslint-disable-next-line
-        console.info('🐛 %c' + (name || 'no-name') + ': %cType = %c' + a.type + '%c, Payload = %c' + JSON.stringify(a.payload),
-          bold, '', bold, '', 'font-size: 8px');
+        a.type !== resetActionType && devTools(name, a.type, a.payload);
         return d(a);
       };
+      store.setState = state => d({ type: resetActionType, payload: state});
     } else
       store.dispatch = _store[1];
 

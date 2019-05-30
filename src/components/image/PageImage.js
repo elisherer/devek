@@ -10,7 +10,7 @@ const onDragOver = e => {
 };
 
 const PageImage = () => {
-  const { dragging, loaded, color, select } = useStore('image');
+  const { dragging, loaded, color, select } = useStore();
   const canvas = useRef();
   initCanvas(canvas);
 

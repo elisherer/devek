@@ -9,7 +9,7 @@ import styles from './PageNetwork.less';
 const PageNetwork = () => {
   useEffect(actions.ip, []);
 
-  const { ip, errors, ipv4, subnet, mask, parsed } = useStore('network');
+  const { ip, errors, ipv4, subnet, mask, parsed } = useStore();
   const wildcard = 0xffffffff - mask;
   const network = (parsed & mask) >>> 0;
 

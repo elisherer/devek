@@ -39,7 +39,7 @@ const PageTime = () => {
     return clearTimer;
   }, []);
 
-  const state = useStore('time');
+  const state = useStore();
 
   if (type === "now") {
 

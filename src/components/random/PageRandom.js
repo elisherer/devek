@@ -22,7 +22,7 @@ const PageRandom = () => {
   const type = pathSegments[1];
 
   let result, flags, size;
-  const state = useStore('random');
+  const state = useStore();
   const {
     count,
   } = state;

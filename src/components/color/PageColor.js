@@ -10,7 +10,7 @@ let webcolorsDdl;
 
 const PageColor = () => {
 
-  const { errors, rgba, hex, hsla, hwba, cmyka, parsed } = useStore('color');
+  const { errors, rgba, hex, hsla, hwba, cmyka, parsed } = useStore();
 
   const preview = { background: formatters.rgba(parsed) };
 
