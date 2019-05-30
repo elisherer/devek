@@ -3,7 +3,7 @@ import TextBox from '../../lib/TextBox';
 import TextArea from '../../lib/TextArea';
 import Radio from '../../lib/Radio';
 import Checkbox from '../../lib/Checkbox';
-import { useStore, actions } from './actions';
+import { useStore, actions } from './PageRegex.store';
 import styles from './PageRegex.less'
 
 let compiledRegex = null;

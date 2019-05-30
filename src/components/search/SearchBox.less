@@ -9,6 +9,7 @@
   position: absolute;
   width: 100%;
   background: white;
+  z-index: 999;
 }
 .search_box {
   margin-top: 12px;
@@ -28,9 +29,9 @@
   border-top: none;
   outline: none;
   &:hover {
-    background: #e2e2e2;
+    background: @gui-search-item-hover;
   }
   &.active {
-    background: #f2f2f2;
+    background: @gui-search-item-active;
   }
 }

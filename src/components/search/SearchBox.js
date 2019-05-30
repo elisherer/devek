@@ -1,29 +1,25 @@
-import React, { useReducer } from 'react';
+import React, {useEffect} from 'react';
 import cx from 'classnames';
-import { Link } from 'react-router-dom';
+import { Link, withRouter } from 'react-router-dom';
 import TextBox from '../../lib/TextBox';
-import { flatMap } from '../../sitemap';
-import styles from "./SearchBox.less";
+import { actions, useStore } from './SearchBox.store';
 
-import { actions, initialState, init } from './actions';
+import styles from "./SearchBox.less";
 
 let clickedLink = false;
 const clickLinkHandler = () => clickedLink = true;
+const onBlur = () => clickedLink ? (clickedLink = false) : actions.close();
 
-const reducer = (state, action) => {
-  const reduce = actions[action.type];
-  return reduce ? reduce(state, action) : state;
-};
+const SearchBox = ({ location } : { location: Object }) => {
+  const state = useStore();
 
-const SearchBox = () => {
-  const [state, dispatch] = useReducer(reducer, initialState);
-
-  init(dispatch);
+  // location change
+  useEffect(() => {
+    actions.close();
+  }, [location.pathname]);
 
   const { search, open, index, paths } = state;
   if (!open) return null;
-
-  const searchChange = e => dispatch({ type: 'search', payload: e.target.value });
 
   return (
     <div className={styles.search_modal}>
@@ -31,13 +27,13 @@ const SearchBox = () => {
       <TextBox id="search_box" className={styles.search_box}
                placeholder="Search"
                value={search}
-               onChange={searchChange} autoFocus autoComplete="off" type="search"
-               onBlur={() => clickedLink ? (clickedLink = false) : dispatch({ type: 'close' }) }
+               onChange={actions.search} autoFocus autoComplete="off" type="search"
+               onBlur={onBlur}
       />
-      {search && paths.map((path, i) => (
-        <Link key={path} to={path} className={cx(styles.item, { [styles.active]: i === index})}
+      {search && paths.map((p, i) => (
+        <Link key={p.path} to={p.path} className={cx(styles.item, { [styles.active]: i === index})}
               onMouseDown={clickLinkHandler}>
-          <strong>{flatMap[path].title}</strong> - <span>{flatMap[path].description}</span>
+          <strong>{p.title}</strong> - <span>{p.description}</span>
         </Link>
       ))
       }
@@ -45,4 +41,18 @@ const SearchBox = () => {
   );
 };
 
-export default SearchBox;
+const inputNodeNames = ['INPUT', 'TEXTAREA', 'PRE'];
+const searchShortcutHandler = e => {
+  if (e.key === "/" &&
+    !e.altKey && !e.shiftKey && !e.ctrlKey &&
+    !inputNodeNames.includes(e.target.nodeName)) {
+    actions.open();
+    setTimeout(() => {
+      document.getElementById('search_box').focus();
+    }, 0);
+    e.preventDefault();
+  }
+};
+addEventListener('keydown', searchShortcutHandler);
+
+export default withRouter(SearchBox);

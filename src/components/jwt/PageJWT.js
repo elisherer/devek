@@ -5,7 +5,7 @@ import Tabs from '../../lib/Tabs';
 import styles from './PageJWT.less';
 import CopyToClipboard from "../../lib/CopyToClipboard";
 
-import { useStore, actions } from './actions';
+import { useStore, actions } from './PageJWT.store';
 
 const PageJWT = () => {
   const state = useStore();

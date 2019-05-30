@@ -3,7 +3,7 @@ import TextBox from '../../lib/TextBox';
 import TextArea from '../../lib/TextArea';
 import Checkbox from "../../lib/Checkbox";
 import CopyToClipboard from "../../lib/CopyToClipboard";
-import { useStore, actions } from './actions';
+import { useStore, actions } from './PageJSON.store';
 import { queryObject } from "./json";
 
 let objSource, obj;

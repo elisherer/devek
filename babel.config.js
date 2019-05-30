@@ -38,9 +38,6 @@ module.exports = function (api) {
     "@babel/preset-react",
     ["@babel/preset-env", {
       "modules": test ? "commonjs" : false,
-      "targets": {
-        "browsers": ["last 2 versions", "ie > 10"]
-      },
       "useBuiltIns": "usage",
       "corejs": 3,
     }],

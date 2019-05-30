@@ -7,7 +7,7 @@ import CopyToClipboard from '../../lib/CopyToClipboard';
 import { textCategories, textFunctions } from "./text";
 import { Redirect, NavLink } from 'react-router-dom';
 
-import { useStore, actions } from './actions';
+import { useStore, actions } from './PageText.store';
 
 import styles from './PageText.less';
 

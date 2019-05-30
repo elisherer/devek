@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import cx from 'classnames';
 import styles from './PageImage.less';
-import { useStore, actions, initCanvas } from './actions';
+import { useStore, actions, initCanvas } from './PageImage.store';
 
 const onDragOver = e => {
   e.dataTransfer.dropEffect = 'link';

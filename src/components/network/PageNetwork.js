@@ -1,7 +1,7 @@
 import React, {useEffect} from 'react';
 import TextBox from '../../lib/TextBox';
 import CopyToClipboard from "../../lib/CopyToClipboard";
-import { useStore, actions } from './actions';
+import { useStore, actions } from './PageNetwork.store';
 import { formatters, isPrivate } from './network';
 import zPad from 'helpers/zPad';
 import styles from './PageNetwork.less';

@@ -5,7 +5,7 @@ import TextBox from '../../lib/TextBox';
 import Tabs from '../../lib/Tabs';
 import CopyToClipboard from "../../lib/CopyToClipboard";
 import { getWeek } from './time.js';
-import { useStore, actions } from './actions';
+import { useStore, actions } from './PageTime.store';
 import styles from './PageTime.less';
 
 const now = new Date();

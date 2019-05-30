@@ -2,7 +2,7 @@ import React from 'react';
 import Checkbox from "../../lib/Checkbox";
 import TextBox from '../../lib/TextBox';
 import TextArea from '../../lib/TextArea';
-import { useStore, actions } from './actions';
+import { useStore, actions } from './PageXML.store';
 import {getXMLDoc, prettifyXml, queryXPath} from "./xml";
 
 let xmlDocSource, xmlDoc;

@@ -1,7 +1,7 @@
 import React from 'react';
 import TextBox from '../../lib/TextBox';
 import CopyToClipboard from "../../lib/CopyToClipboard";
-import { useStore, actions } from './actions';
+import { useStore, actions } from './PageColor.store';
 import { formatters } from './color.js';
 import styles from './PageColor.less';
 import webcolors from './webcolors';

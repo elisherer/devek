@@ -4,7 +4,7 @@ import TextArea from '../../lib/TextArea';
 import CopyToClipboard from '../../lib/CopyToClipboard';
 import Radio from "../../lib/Radio";
 import Tabs from "../../lib/Tabs";
-import { useStore, actions } from './actions';
+import { useStore, actions } from './PageRandom.store';
 import {generatePassword, generateTable, uuidv4} from "./rand";
 
 import styles from './PageRandom.less';

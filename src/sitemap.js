@@ -1,11 +1,26 @@
+import Home from "./components/Home";
+import PageText from "./components/text/PageText";
+import PageBase from "./components/base/PageBase";
+import PageRegex from "./components/regex/PageRegex";
+import PageJSON from "./components/json/PageJSON";
+import PageJWT from "./components/jwt/PageJWT";
+import PageXML from "./components/xml/PageXML";
+import PageTime from "./components/time/PageTime";
+import PageImage from "./components/image/PageImage";
+import PageRandom from "./components/random/PageRandom";
+import PageColor from "./components/color/PageColor";
+import PageNetwork from "./components/network/PageNetwork";
+
 export const siteMap = {
   "/": {
+    component: Home,
     keyword: 'home',
     title: 'Home',
     header: 'Developer Kit',
     description: 'Home'
   },
   "/text": {
+    component: PageText,
     keyword: 'text',
     title: 'Text',
     header: 'Text Conversion',
@@ -29,6 +44,7 @@ export const siteMap = {
     }
   },
   "/base": {
+    component: PageBase,
     keyword: 'base',
     title: 'Base',
     header: 'Base Conversion',
@@ -47,42 +63,61 @@ export const siteMap = {
     }
   },
   "/regex": {
+    component: PageRegex,
     keyword: 'regex',
     title: 'RegEx',
     header: 'RegEx Tester',
     description: "Regular expression testing"
   },
   "/json": {
+    component: PageJSON,
     keyword: 'json',
     title: 'JSON',
     header: 'JSON Debugger/Prettifier',
     description: "Debug, Prettify"
   },
   "/xml": {
+    component: PageXML,
     keyword: 'xml',
     title: 'XML',
     header: 'XML Debugger/Prettifier',
     description: "XML Prettify and XPath query"
   },
   "/jwt": {
+    component: PageJWT,
     keyword: 'jwt',
     title: 'JWT',
     header: 'JWT Tool',
     description: "Decode, Verify & Encode"
   },
   "/time": {
+    component: PageTime,
     keyword: 'time',
     title: 'Time',
     header: 'Time tools',
-    description: "See world time and do conversions"
+    description: "See world time and do conversions",
+    children: {
+      "/now": {
+        keyword: 'now',
+        title: "Now",
+        description: "See current time"
+      },
+      "/convert": {
+        keyword: 'convert',
+        title: "Convert time",
+        description: 'Convert between different time representations',
+      },
+    }
   },
   "/image": {
+    component: PageImage,
     keyword: 'image',
     title: 'Image',
     header: 'Image web tools',
     description: 'Convert, crop, resize, filter images',
   },
   "/random": {
+    component: PageRandom,
     keyword: 'random',
     title: 'Random',
     header: 'Random Generator',
@@ -101,34 +136,18 @@ export const siteMap = {
     }
   },
 //hash: { title: 'Hash', component: NotFound},
-//img: { title: 'Image', component: NotFound},
   "/color": {
+    component: PageColor,
     keyword: 'color',
     title: 'Color',
     header: 'Color Conversion',
     description: 'Convert between color '
   },
   "/network": {
+    component: PageNetwork,
     keyword: 'network',
     title: 'Network',
     header: 'Network tools',
     description: 'Network information utilities (IP address and more)'
   },
 };
-
-export const flatMap = Object.keys(siteMap).reduce((a,c) => {
-  a[c] = siteMap[c];
-  if (siteMap[c].children) {
-    Object.keys(siteMap[c].children).forEach(path => {
-      const child = siteMap[c].children[path];
-      a[c + path] = {
-        ...siteMap[c],
-        ...child,
-        title: siteMap[c].title + ' / ' + child.title,
-      };
-    });
-    a[c].parent = true;
-  }
-  
-  return a;
-}, {});

@@ -4,7 +4,7 @@ import Tabs from '../../lib/Tabs';
 import CopyToClipboard from '../../lib/CopyToClipboard';
 import { Redirect, NavLink } from 'react-router-dom';
 
-import { useStore, actions } from './actions';
+import { useStore, actions } from './PageBase.store';
 
 import styles from './PageBase.less';
 

@@ -1,8 +1,5 @@
-//@import '~html-material-css/less/colors';
-
 @native-font: 16px Roboto, Ubuntu, "Segoe UI", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
 
-@emoji-font-family: "Apple Color Emoji","Segoe UI Emoji","NotoColorEmoji","Segoe UI Symbol","Android Emoji","EmojiSymbols",sans-serif;
 @font-mono: SFMono-Regular,Consolas,Liberation Mono,Menlo,Courier,monospace;
 
 @screen-desktop-min: 768px;
@@ -14,12 +11,15 @@
 
 @gui-primary-color: #5500aa;
 @gui-secondary-color: #0055aa;
+@gui-third-color: #5050ff;
 
 @gui-header-height: 60px;
 @gui-header-background: @gui-primary-color;
 @gui-header-foreground: white;
 
 @gui-togglebar-background: @gui-secondary-color;
+
+@gui-radio-background: #cccccc;
 
 @gui-button-disabled: #dddddd;
 
@@ -29,7 +29,7 @@
 
 @gui-nav-width: 200px;
 @gui-nav-item-height: 40px;
-@gui-nav-background: linear-gradient(to bottom, @gui-primary-color 0%, @gui-primary-color 33%, #5050ff);
+@gui-nav-background: linear-gradient(to bottom, @gui-primary-color 0%, @gui-primary-color 33%, @gui-third-color);
 @gui-nav-foreground: white;
 
 @gui-bottom-tool-height: 300px;
@@ -37,3 +37,6 @@
 @gui-textarea-border: @gui-secondary-color;
 @gui-textarea-background: #fdfdfd;
 @gui-textarea-readonly-bg: #f6f6f6;
+
+@gui-search-item-hover: #e2e2e2;
+@gui-search-item-active: #f2f2f2;
