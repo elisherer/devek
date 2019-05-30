@@ -24,12 +24,8 @@ const SearchBox = ({ location } : { location: Object }) => {
   return (
     <div className={styles.search_modal}>
       <div className={styles.icon}>🔍</div>
-      <TextBox id="search_box" className={styles.search_box}
-               placeholder="Search"
-               value={search}
-               onChange={actions.search} autoFocus autoComplete="off" type="search"
-               onBlur={onBlur}
-      />
+      <TextBox type="search" className={styles.search_box} autoFocus autoComplete="off"
+               placeholder="Search" value={search} onChange={actions.search} onBlur={onBlur} />
       {search && paths.map((p, i) => (
         <Link key={p.path} to={p.path} className={cx(styles.item, { [styles.active]: i === index})}
               onMouseDown={clickLinkHandler}>
