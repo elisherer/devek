@@ -83,6 +83,9 @@
   display : flex;
   position: relative;
   max-width: 100%;
+  @media (min-width: @screen-desktop-min) {
+    max-width: calc(100% - @gui-nav-width);
+  }
 }
 
 .overlay {
@@ -161,7 +164,8 @@
     position: relative;
 
     @media only screen and (min-width: @screen-desktop-min) {
-      width: calc(100% - 40px);
+      width: fit-content;
+      max-width: calc(100% - 40px);
       min-width: (@screen-desktop-min - @gui-nav-width - 40px);
       padding: 20px;
       margin: 20px;
@@ -169,7 +173,6 @@
     }
     @media only screen and (min-width: 1024px) {
       min-width: 768px;
-      width: fit-content;
     }
   }
 

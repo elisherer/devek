@@ -1,20 +1,31 @@
 const cryptoAPI = window.crypto || window.msCrypto;
 
-const hmacSha256 = (str, base64Key) => cryptoAPI.subtle.importKey(
-"jwk",
-{
-  kty: "oct",
-  alg: "HS256",
-  k: base64Key,
-  ext: true,
-  key_ops: ["sign"],
-},
-{
-  name: "HMAC",
-  hash: "SHA-256"
-},
-true,
-["sign"]).then(key => {
+let lastKey, lastKeyBase64;
+
+const createHMACSHA256Key = base64Key => {
+  if (lastKeyBase64 === base64Key) {
+    return Promise.resolve(lastKey);
+  }
+  lastKeyBase64 = base64Key;
+  return cryptoAPI.subtle.importKey(
+    "jwk",
+    {
+      kty: "oct",
+      alg: "HS256",
+      k: base64Key,
+      ext: true,
+      key_ops: ["sign"],
+    },
+    {
+      name: "HMAC",
+      hash: "SHA-256"
+    },
+    true,
+    ["sign"]);
+};
+
+const hmacSha256 = (str, base64Key) => createHMACSHA256Key(base64Key).then(key => {
+  lastKey = key;
   const buf = new TextEncoder("utf-8").encode(str);
   return cryptoAPI.subtle.sign("HMAC", key, buf);
 });

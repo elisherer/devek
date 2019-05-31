@@ -10,6 +10,7 @@ import PageImage from "./components/image/PageImage";
 import PageRandom from "./components/random/PageRandom";
 import PageColor from "./components/color/PageColor";
 import PageNetwork from "./components/network/PageNetwork";
+import PageHash from "./components/hash/PageHash";
 
 export const siteMap = {
   "/": {
@@ -135,13 +136,19 @@ export const siteMap = {
       },
     }
   },
-//hash: { title: 'Hash', component: NotFound},
+  "/hash": {
+    component: PageHash,
+    keyword: 'hash',
+    title: 'Hash',
+    header: 'Hash generation',
+    description: 'Generate hash of input text'
+  },
   "/color": {
     component: PageColor,
     keyword: 'color',
     title: 'Color',
     header: 'Color Conversion',
-    description: 'Convert between color '
+    description: 'Convert between different color representations'
   },
   "/network": {
     component: PageNetwork,
