@@ -46,6 +46,6 @@ export default ({ name, initialState, store }) => {
   });
 
   return (name, type, payload) => {
-    devTools.send({ type: `${name}/${type}`, payload }, store.state, {}, instanceID)
+    devTools.send({ type: `${name}/${type}`, payload }, payload, {}, instanceID)
   }
 };

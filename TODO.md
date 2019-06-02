@@ -10,7 +10,8 @@
 * Add Commas, ticks,...
 
 # Crypto
-* Hash, ...
+* HMAC, ...
+https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/importKey#Examples
 
 ## URL debugger
 - split url into its components (including query)
