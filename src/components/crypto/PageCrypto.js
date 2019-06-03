@@ -65,13 +65,18 @@ const PageCrypto = () => {
         </Radio>
 
         <label>Output format:</label>
-        <Radio className={styles.options}>
-          <div data-active={outputFormat === "hex" || null} data-format="hex" onClick={actions.format}>Hex</div>
-          {hashAlg !== 'MD5' &&
-          <div data-active={outputFormat === "base64" || null} data-format="base64"
-               onClick={actions.format}>Base64</div>
-          }
-        </Radio>
+        {hashAlg !== 'MD5' ? (
+          <Radio className={styles.options}>
+            <div data-active={outputFormat === "hex" || null} data-format="hex" onClick={actions.format}>Hex</div>
+            <div data-active={outputFormat === "base64" || null} data-format="base64"
+                 onClick={actions.format}>Base64
+            </div>
+          </Radio>
+        ) : (
+          <Radio className={styles.options}>
+            <div data-active data-format="hex">Hex</div>
+          </Radio>
+        )}
 
         <span>Hash:</span><CopyToClipboard from="crypto_hash"/>
         <TextArea id="crypto_hash" readOnly
