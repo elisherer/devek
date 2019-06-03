@@ -10,7 +10,8 @@ import PageImage from "./components/image/PageImage";
 import PageRandom from "./components/random/PageRandom";
 import PageColor from "./components/color/PageColor";
 import PageNetwork from "./components/network/PageNetwork";
-import PageHash from "./components/hash/PageHash";
+import PageCrypto from "./components/crypto/PageCrypto";
+import PageURL from "./components/url/PageURL";
 
 export const siteMap = {
   "/": {
@@ -136,12 +137,24 @@ export const siteMap = {
       },
     }
   },
-  "/hash": {
-    component: PageHash,
-    keyword: 'hash',
-    title: 'Hash',
-    header: 'Hash generation',
-    description: 'Generate hash of input text'
+  "/crypto": {
+    component: PageCrypto,
+    keyword: 'crypto',
+    title: 'Crypto',
+    header: 'Crypto tools',
+    description: 'Cryptography tools',
+    children: {
+      "/hash": {
+        keyword: 'hash',
+        title: 'Hash generation',
+        description: 'Generate hash of input text',
+      },
+      "/asymmetric": {
+        keyword: 'asymmetric',
+        title: "Asymmetric keys generation",
+        description: 'Generate asymmetric keys for encryption/signing',
+      },
+    }
   },
   "/color": {
     component: PageColor,
@@ -156,5 +169,12 @@ export const siteMap = {
     title: 'Network',
     header: 'Network tools',
     description: 'Network information utilities (IP address and more)'
+  },
+  "/url": {
+    component: PageURL,
+    keyword: 'url',
+    title: 'URL',
+    header: 'URL parser',
+    description: 'Parse URL to its components'
   },
 };

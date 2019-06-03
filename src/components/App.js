@@ -65,4 +65,12 @@ const App = ({ location } : { location: Object }) => {
   );
 };
 
-export default withRouter(App);
+let exportedApp = withRouter(App);
+
+if (process.env.NODE_ENV !== "production") {
+  const { hot/*, setConfig*/ }  = require("react-hot-loader/root");
+  //setConfig({ logLevel: "debug"});
+  exportedApp = hot(exportedApp);
+}
+
+export default exportedApp;

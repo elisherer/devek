@@ -57,6 +57,7 @@
     "babel-loader": "8.0.6",
     "babel-plugin-transform-react-pure-class-to-function": "1.0.1",
     "babel-plugin-transform-react-remove-prop-types": "0.4.24",
+    "cbs": "0.1.1",
     "clean-webpack-plugin": "2.0.2",
     "copy-webpack-plugin": "5.0.3",
     "cross-env": "5.2.0",
