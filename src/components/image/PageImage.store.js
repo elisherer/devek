@@ -1,35 +1,44 @@
 import getEventLocation from './getEventLocation';
 import createStore from "../../helpers/createStore";
 
+let _ref;
 let canvas;
 let ctx;
 let base64Source;
 
-export const initCanvas = el => {
-  if (ctx || !el.current) return;
-  canvas = el.current;
+export const initCanvas = ref => {
+  _ref = ref;
+  if (ctx || !ref.current) return;
+  canvas = ref.current;
   ctx = canvas.getContext('2d');
 };
 
-export const onMouseMove = () => {
-
-};
-
-const loadFile = (file, callback) => {
-  if (typeof FileReader === "undefined" || !file || file.type.indexOf("image") === -1) return; // no file or not an image
-  const reader = new FileReader();
-  reader.onload = function(event){
+const loadFileAsync = file => new Promise((resolve, reject) => {
+  try {
+    if (!canvas) initCanvas(_ref);
+    if (typeof FileReader === "undefined" || !file || file.type.indexOf("image") === -1) return; // no file or not an image
+    const reader = new FileReader();
+    reader.onload = e => {
       const img = new Image();
-      img.onload = function(){
-          canvas.width = img.width;
-          canvas.height = img.height;
-          ctx.drawImage(img,0,0);
-          callback(img.src);
+      img.onload = () => {
+        canvas.width = img.width;
+        canvas.height = img.height;
+        ctx.drawImage(img, 0, 0);
+        resolve(img.src);
       };
-      img.src = event.target.result;
-  };
-  reader.readAsDataURL(file);     
-};
+      img.onerror = reject;
+      img.src = e.target.result;
+    };
+    reader.onerror = () => {
+      reject(reader.error.message);
+      reader.abort();
+    };
+    reader.readAsDataURL(file);
+  }
+  catch (e) {
+    reject(e.message);
+  }
+});
 
 const rgbToHex = (r, g, b) => "#" + ("000000" + ((r << 16) | (g << 8) | b).toString(16)).slice(-6);
 
@@ -44,8 +53,9 @@ const actionCreators = {
     e.preventDefault();
     return { ...state, dragging: false};
   },
-  onDrop: e => state => {
-    loadFile(e.dataTransfer.files && e.dataTransfer.files[0], actions.src);
+  onDrop: e => async (state, actions) => {
+    const src = await loadFileAsync(e.dataTransfer.files && e.dataTransfer.files[0]);
+    actions.src(src);
     e.stopPropagation();
     e.preventDefault();
     return { ...state, dragging: false };
@@ -61,8 +71,9 @@ const actionCreators = {
   onMouseClick: () => state => {
     return { ...state, select: state.color }
   },
-  file: e => (state, actions) => {
-    loadFile(e.target.files && e.target.files[0], actions.src);
+  file: e => async (state, actions) => {
+    const src = await loadFileAsync(e.target.files && e.target.files[0]);
+    actions.src(src);
     return state;
   },
   src: src => state => {
