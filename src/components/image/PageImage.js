@@ -2,6 +2,7 @@ import React, { useRef } from 'react';
 import cx from 'classnames';
 import styles from './PageImage.less';
 import { useStore, actions } from './PageImage.store';
+import getEventLocation from "./getEventLocation";
 
 const onDragOver = e => {
   e.dataTransfer.dropEffect = 'link';
@@ -45,6 +46,13 @@ const loadFileAsync = file => new Promise((resolve, reject) => {
   }
 });
 
+const rgbToHex = (r, g, b) => "#" + ("000000" + ((r << 16) | (g << 8) | b).toString(16)).slice(-6);
+const onMouseMove = e => {
+  const loc = getEventLocation(e);
+  const pixelData = ctx.getImageData(loc[0], loc[1], 1, 1).data;
+  actions.color(rgbToHex(pixelData[0],pixelData[1],pixelData[2]));
+};
+
 const onDrop = e => {
   const file = e.dataTransfer.files && e.dataTransfer.files[0];
   loadFileAsync(file).then(actions.src);
@@ -77,7 +85,7 @@ const PageImage = () => {
       <canvas ref={canvasRef}
         className={cx(styles.canvas, { [styles.visible]: loaded })}
         onMouseUp={actions.onMouseClick}
-        onMouseMove={actions.onMouseMove} />
+        onMouseMove={onMouseMove} />
     </div>
   );
 };

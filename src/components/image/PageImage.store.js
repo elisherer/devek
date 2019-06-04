@@ -1,12 +1,6 @@
-import getEventLocation from './getEventLocation';
 import createStore from "../../helpers/createStore";
 
-let _ref;
-let canvas;
-let ctx;
 let base64Source;
-
-const rgbToHex = (r, g, b) => "#" + ("000000" + ((r << 16) | (g << 8) | b).toString(16)).slice(-6);
 
 const actionCreators = {
   onDragEnter: e => state => {
@@ -19,10 +13,7 @@ const actionCreators = {
     e.stopPropagation();
     return { ...state, dragging: state.dragging - 1};
   },
-  onMouseMove: e => state => {
-    const loc = getEventLocation(e);
-    const pixelData = ctx.getImageData(loc[0], loc[1], 1, 1).data;
-    const color = rgbToHex(pixelData[0],pixelData[1],pixelData[2]);
+  color: color => state => {
     return { ...state, color };
   },
   onMouseClick: () => state => {
