@@ -1,34 +1,32 @@
 import MD5 from './md5';
 import createStore from "../../helpers/createStore";
-import jwkToSSH from "./jwkToSSH";
+import { jwkToSSH } from "./jwkToSSH";
 
-const cryptoAPI = window.crypto || window.msCrypto;
+const cryptoAPI = window.crypto || window['msCrypto'];
 
-const _DEL = '-'.repeat(5), _BE = 'BEGIN', _EN = 'END', _PRV = 'PRIVATE KEY', _PUB = 'PUBLIC KEY';
-const BEGIN_RSA_PRIVATE = _DEL + _BE + ' RSA ' + _PRV + _DEL, END_RSA_PRIVATE = _DEL + _EN + ' RSA ' + _PRV + _DEL,
-  BEGIN_EC_PRIVATE = _DEL + _BE + ' EC ' + _PRV + _DEL, END_EC_PRIVATE = _DEL + _EN + ' EC ' + _PRV + _DEL,
-  BEGIN_PUBLIC = _DEL + _BE + ' ' + _PUB + _DEL, END_PUBLIC = _DEL + _EN + ' ' + _PUB + _DEL;
+const _BEGIN = '-----BEGIN ', _END = '-----END ', _PRV = 'PRIVATE KEY-----', _PUB = 'PUBLIC KEY-----';
+const BEGIN_RSA_PRIVATE = _BEGIN + 'RSA ' + _PRV, END_RSA_PRIVATE = _END + 'RSA ' + _PRV,
+  BEGIN_EC_PRIVATE = _BEGIN + 'EC ' + _PRV, END_EC_PRIVATE = _END + 'EC ' + _PRV,
+  BEGIN_PUBLIC = _BEGIN + _PUB, END_PUBLIC = _END + _PUB;
 
 const toPrivateKey = async key => {
   const rsa = key.algorithm.name[0] === 'R';
-  const exported = await window.crypto.subtle.exportKey("pkcs8", key);
-  const exportedAsString = String.fromCharCode(...new Uint8Array(exported));
-  const exportedAsBase64 = window.btoa(exportedAsString);
+  const pkcs8 = await window.crypto.subtle.exportKey("pkcs8", key);
+  const pkcs8AsBase64 = window.btoa(String.fromCharCode(...new Uint8Array(pkcs8)));
   return [ rsa ? BEGIN_RSA_PRIVATE : BEGIN_EC_PRIVATE,
-    exportedAsBase64.match(/.{1,64}/g).join('\n'),
+    pkcs8AsBase64.match(/.{1,64}/g).join('\n'),
     rsa ? END_RSA_PRIVATE : END_EC_PRIVATE ].join('\n');
 };
 
 const toPublicKey = async key => {
-  const exported = await window.crypto.subtle.exportKey("spki", key);
-  const exportedAsString = String.fromCharCode(...new Uint8Array(exported));
-  const exportedAsBase64 = window.btoa(exportedAsString);
-  return [ BEGIN_PUBLIC, exportedAsBase64.match(/.{1,64}/g).join('\n'), END_PUBLIC ].join('\n');
+  const spki = await window.crypto.subtle.exportKey("spki", key);
+  const spkiAsBase64 = window.btoa(String.fromCharCode(...new Uint8Array(spki)));
+  return [ BEGIN_PUBLIC, spkiAsBase64.match(/.{1,64}/g).join('\n'), END_PUBLIC ].join('\n');
 };
 
-const toPrivateSSH = async key => {
-  const exported = await window.crypto.subtle.exportKey("jwk", key);
-  return jwkToSSH(exported);
+const toPublicSSH = async key => {
+  const jwk = await window.crypto.subtle.exportKey("jwk", key);
+  return jwkToSSH(jwk);
 };
 
 const getFamily = alg => alg.match(/^(RSA|EC)/)[0];
@@ -80,13 +78,12 @@ const actionCreators = {
           }, true, genAlg === "ECDH" ? ["deriveKey"] : ["sign", "verify"]);
           break;
         default:
-          throw new Error('Unknown generation algorithm');
+          return { ...state, genError: 'Unknown generation algorithm' };
       }
-
       const publicKey = await toPublicKey(key.extractable ? key : key.publicKey);
       const privateKey = await toPrivateKey(key.extractable ? key : key.privateKey);
-      const privateSSH = family === "RSA" ? await toPrivateSSH(key.extractable ? key : key.privateKey) : '';
-      return {...state, publicKey, privateKey, privateSSH, genError: '' };
+      const publicSSH = family === "RSA" ? await toPublicSSH(key.extractable ? key : key.publicKey) : '';
+      return {...state, publicKey, privateKey, publicSSH, genError: '' };
     }
     catch (e) {
       return { ...state, genError: e.message };

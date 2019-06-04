@@ -92,7 +92,7 @@ const PageCrypto = () => {
   }
   else if (type === 'asymmetric') {
 
-    const { genAlg, rsaModulusLength, ecNamedCurve, publicKey, privateKey, privateSSH, genError } = state;
+    const { genAlg, rsaModulusLength, ecNamedCurve, publicKey, privateKey, publicSSH, genError } = state;
 
     return (
       <div>
@@ -138,9 +138,9 @@ const PageCrypto = () => {
         <span>Private Key:</span><CopyToClipboard from="crypto_private"/>
         <TextArea id="crypto_private" readOnly value={genError ? '' : privateKey} />
 
-        {privateSSH && <>
-          <span>Private SSH:</span><CopyToClipboard from="crypto_ssh"/>
-          <TextArea id="crypto_ssh" readOnly value={genError ? '' : privateSSH} />
+        {publicSSH && <>
+          <span>Public SSH:</span><CopyToClipboard from="crypto_ssh"/>
+          <TextArea id="crypto_ssh" readOnly value={genError ? '' : publicSSH} />
         </>}
 
       </div>

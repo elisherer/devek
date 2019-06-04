@@ -6,75 +6,27 @@ let canvas;
 let ctx;
 let base64Source;
 
-export const initCanvas = ref => {
-  _ref = ref;
-  if (ctx || !ref.current) return;
-  canvas = ref.current;
-  ctx = canvas.getContext('2d');
-};
-
-const loadFileAsync = file => new Promise((resolve, reject) => {
-  try {
-    if (!canvas) initCanvas(_ref);
-    if (typeof FileReader === "undefined" || !file || file.type.indexOf("image") === -1) return; // no file or not an image
-    const reader = new FileReader();
-    reader.onload = e => {
-      const img = new Image();
-      img.onload = () => {
-        canvas.width = img.width;
-        canvas.height = img.height;
-        ctx.drawImage(img, 0, 0);
-        resolve(img.src);
-      };
-      img.onerror = reject;
-      img.src = e.target.result;
-    };
-    reader.onerror = () => {
-      reject(reader.error.message);
-      reader.abort();
-    };
-    reader.readAsDataURL(file);
-  }
-  catch (e) {
-    reject(e.message);
-  }
-});
-
 const rgbToHex = (r, g, b) => "#" + ("000000" + ((r << 16) | (g << 8) | b).toString(16)).slice(-6);
 
 const actionCreators = {
   onDragEnter: e => state => {
-    e.stopPropagation();
     e.preventDefault();
-    return { ...state, dragging: true};
+    e.stopPropagation();
+    return { ...state, dragging: state.dragging + 1};
   },
   onDragLeave: e => state => {
-    e.stopPropagation();
     e.preventDefault();
-    return { ...state, dragging: false};
-  },
-  onDrop: e => async (state, actions) => {
-    const src = await loadFileAsync(e.dataTransfer.files && e.dataTransfer.files[0]);
-    actions.src(src);
     e.stopPropagation();
-    e.preventDefault();
-    return { ...state, dragging: false };
+    return { ...state, dragging: state.dragging - 1};
   },
-  onMouseMove: function(e) { 
-    return state => {
-      const loc = getEventLocation(e);
-      const pixelData = ctx.getImageData(loc[0], loc[1], 1, 1).data;
-      const color = rgbToHex(pixelData[0],pixelData[1],pixelData[2]);
-      return { ...state, color };
-    }
+  onMouseMove: e => state => {
+    const loc = getEventLocation(e);
+    const pixelData = ctx.getImageData(loc[0], loc[1], 1, 1).data;
+    const color = rgbToHex(pixelData[0],pixelData[1],pixelData[2]);
+    return { ...state, color };
   },
   onMouseClick: () => state => {
     return { ...state, select: state.color }
-  },
-  file: e => async (state, actions) => {
-    const src = await loadFileAsync(e.target.files && e.target.files[0]);
-    actions.src(src);
-    return state;
   },
   src: src => state => {
     base64Source = src;
@@ -94,7 +46,7 @@ const actionCreators = {
 };
 
 const initialState = {
-  dragging: false,
+  dragging: 0,
   color: '#dddddd',
   select: '#dddddd'
 };
