@@ -1,7 +1,5 @@
 import React from 'react';
-import Checkbox from "../../lib/Checkbox";
-import TextBox from '../../lib/TextBox';
-import TextArea from '../../lib/TextArea';
+import { Checkbox, CopyToClipboard, TextArea, TextBox } from '../_lib';
 import { useStore, actions } from './PageXML.store';
 import {getXMLDoc, prettifyXml, queryXPath} from "./xml";
 
@@ -52,15 +50,23 @@ const PageXML = () => {
 
   if (!error) {
     if (!xpathEnabled) {
-      resultsNode = <TextArea readOnly value={results}
-                              html={!!results && results.includes('<parsererror')}/>
+      resultsNode = (
+        <>
+          <CopyToClipboard from="xml_result"/>
+          <TextArea id="xml_result" readOnly value={results}
+                  html={!!results && results.includes('<parsererror')}/>
+        </>
+      );
     }
     else {
       resultsNode = !results || !results.length
         ? <p>No results yet</p>
         : results.map((result, i) =>
-          <TextArea key={i} readOnly value={result}
+          <React.Fragment key={i}>
+            <CopyToClipboard from={`xml_result_${i}`}/>
+            <TextArea id={`xml_result_${i}`} readOnly value={result}
                     html={!!result && result.includes('<parsererror')} />
+          </React.Fragment>
         );
     }
   }

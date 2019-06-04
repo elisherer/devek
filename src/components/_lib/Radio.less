@@ -1,0 +1,34 @@
+@import '../../assets/variables';
+
+.radio {
+  display: flex;
+  flex-wrap: wrap;
+  max-width: 400px;
+  text-align: center;
+  margin-bottom: 20px;
+  overflow: hidden;
+
+  > * {
+    color: @gui-foreground-color;
+    text-decoration: none;
+    flex-basis: 50%;
+    font-size: 12px;
+    line-height: 2.5em;
+    cursor: pointer;
+    border-radius: 3px;
+    margin-right: 8px;
+    margin-bottom: 10px;
+    background-color: @gui-radio-background;
+    user-select: none;
+    &:hover {
+      background-color: lighten(@gui-togglebar-background, 30%);
+    }
+    &[aria-current], &[data-active] {
+      background-color: @gui-togglebar-background;
+      color: white;
+    }
+    &[aria-current]:hover, &[data-active]:hover {
+      background-color: lighten(@gui-togglebar-background, 10%);
+    }
+  }
+}

@@ -1,15 +1,25 @@
 import React, {useEffect} from 'react';
-import TextBox from '../../lib/TextBox';
-import CopyToClipboard from "../../lib/CopyToClipboard";
+import { CopyToClipboard, TextBox } from '../_lib';
 import { useStore, actions } from './PageNetwork.store';
 import { formatters, isPrivate } from './network';
 import zPad from 'helpers/zPad';
 import styles from './PageNetwork.less';
+import { getJSONAsync } from "../../helpers/http";
+
+const fetchIP = () => {
+  let cancelled = false;
+  getJSONAsync('/api/ip').then((res : { ip_address: string }) => {
+    !cancelled && actions.myIP(res.ip_address);
+  }).catch(e => {
+    !cancelled && actions.myIP(e.message);
+  });
+  return () => { cancelled = true };
+};
 
 const PageNetwork = () => {
-  useEffect(actions.ip, []);
+  useEffect(fetchIP, []);
 
-  const { ip, errors, ipv4, subnet, mask, parsed } = useStore();
+  const { myIP, errors, ipv4, subnet, mask, parsed } = useStore();
   const wildcard = 0xffffffff - mask;
   const network = (parsed & mask) >>> 0;
 
@@ -18,11 +28,11 @@ const PageNetwork = () => {
       <dt key="network_ip_address" />
 
       <div className={styles.my_ip}>
-        My IP Address: <strong>{ip || "fetching..."}</strong>
+        My IP Address: <strong id="ip_myip">{myIP || "fetching..."}</strong> <CopyToClipboard from="ip_myip"/>
       </div>
 
-      <span>IPv4:</span><CopyToClipboard from="network_ipv4"/>
-      <TextBox invalid={errors.ipv4} id="network_ipv4" autoFocus onChange={actions.ipv4} value={ipv4} />
+      <span>IPv4:</span>
+      <TextBox invalid={errors.ipv4} autoFocus onChange={actions.ipv4} value={ipv4} />
 
       <label>
         <span>Subnet ({subnet})</span>

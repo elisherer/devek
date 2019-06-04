@@ -1,5 +1,6 @@
 import MD5 from './md5';
 import createStore from "../../helpers/createStore";
+import jwkToSSH from "./jwkToSSH";
 
 const cryptoAPI = window.crypto || window.msCrypto;
 
@@ -23,6 +24,11 @@ const toPublicKey = async key => {
   const exportedAsString = String.fromCharCode(...new Uint8Array(exported));
   const exportedAsBase64 = window.btoa(exportedAsString);
   return [ BEGIN_PUBLIC, exportedAsBase64.match(/.{1,64}/g).join('\n'), END_PUBLIC ].join('\n');
+};
+
+const toPrivateSSH = async key => {
+  const exported = await window.crypto.subtle.exportKey("jwk", key);
+  return jwkToSSH(exported);
 };
 
 const getFamily = alg => alg.match(/^(RSA|EC)/)[0];
@@ -79,7 +85,8 @@ const actionCreators = {
 
       const publicKey = await toPublicKey(key.extractable ? key : key.publicKey);
       const privateKey = await toPrivateKey(key.extractable ? key : key.privateKey);
-      return {...state, publicKey, privateKey, genError: '' };
+      const privateSSH = family === "RSA" ? await toPrivateSSH(key.extractable ? key : key.privateKey) : '';
+      return {...state, publicKey, privateKey, privateSSH, genError: '' };
     }
     catch (e) {
       return { ...state, genError: e.message };
@@ -102,6 +109,7 @@ const initialState = {
   ecNamedCurve: 'P-384', // P-256 / P-384 / P-521
   publicKey: '',
   privateKey: '',
+  publicSSH: '',
   genError: '',
 };
 

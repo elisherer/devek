@@ -1,8 +1,5 @@
 import React from 'react';
-import TextArea from '../../lib/TextArea';
-import CopyToClipboard from '../../lib/CopyToClipboard';
-import Tabs from '../../lib/Tabs';
-import Radio from "../../lib/Radio";
+import { CopyToClipboard, Radio, Tabs, TextArea } from '../_lib';
 import { Redirect, NavLink } from 'react-router-dom';
 import { useStore, actions } from './PageCrypto.store';
 import cx from "classnames";
@@ -20,7 +17,11 @@ const subPages = [
   {
     path: 'asymmetric',
     title: 'Asymmetric Keys'
-  }
+  },
+  {
+    path: 'convert',
+    title: 'Convert formats'
+  },
 ];
 
 const PageCrypto = () => {
@@ -74,7 +75,7 @@ const PageCrypto = () => {
           </Radio>
         ) : (
           <Radio className={styles.options}>
-            <div data-active data-format="hex">Hex</div>
+            <div data-active={true} data-format="hex">Hex</div>
           </Radio>
         )}
 
@@ -91,7 +92,7 @@ const PageCrypto = () => {
   }
   else if (type === 'asymmetric') {
 
-    const { genAlg, rsaModulusLength, ecNamedCurve, publicKey, privateKey, genError } = state;
+    const { genAlg, rsaModulusLength, ecNamedCurve, publicKey, privateKey, privateSSH, genError } = state;
 
     return (
       <div>
@@ -136,8 +137,23 @@ const PageCrypto = () => {
         <TextArea id="crypto_public" readOnly className={cx({[styles.error]: genError})} value={genError || publicKey} />
         <span>Private Key:</span><CopyToClipboard from="crypto_private"/>
         <TextArea id="crypto_private" readOnly value={genError ? '' : privateKey} />
+
+        {privateSSH && <>
+          <span>Private SSH:</span><CopyToClipboard from="crypto_ssh"/>
+          <TextArea id="crypto_ssh" readOnly value={genError ? '' : privateSSH} />
+        </>}
+
       </div>
     );
+  }
+  else if (type === 'convert') {
+    return (
+      <div>
+        {tabs}
+
+        Under construction...
+      </div>
+    )
   }
 };
 

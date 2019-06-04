@@ -1,9 +1,6 @@
 import React, {useEffect} from 'react';
 import {NavLink, Redirect} from "react-router-dom";
-import Checkbox from '../../lib/Checkbox';
-import TextBox from '../../lib/TextBox';
-import Tabs from '../../lib/Tabs';
-import CopyToClipboard from "../../lib/CopyToClipboard";
+import { Checkbox, CopyToClipboard, Tabs, TextBox } from '../_lib';
 import { getWeek } from './time.js';
 import { useStore, actions } from './PageTime.store';
 import styles from './PageTime.less';

@@ -1,8 +1,5 @@
 import React from 'react';
-import TextBox from '../../lib/TextBox';
-import TextArea from '../../lib/TextArea';
-import Checkbox from "../../lib/Checkbox";
-import CopyToClipboard from "../../lib/CopyToClipboard";
+import { Checkbox, CopyToClipboard, TextArea, TextBox } from '../_lib';
 import { useStore, actions } from './PageJSON.store';
 import { queryObject } from "./json";
 

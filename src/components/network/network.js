@@ -25,7 +25,7 @@ const getIPClass = ip => {
   if (ip >= 0xe0000000 && ip <= 0xefffffff) return 'D';
   if (ip >= 0xf0000000 && ip <= 0xfefffffe) return 'E';
   return '';
-}
+};
 
 export const isPrivate = ip => 
   (ip >= 0x0a000000 && ip <= 0x0affffff) ||

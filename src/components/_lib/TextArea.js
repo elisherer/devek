@@ -3,6 +3,13 @@ import cx from 'classnames';
 import styles from "./TextArea.less";
 import screen from "helpers/screen";
 
+const blurOnEscape = e => {
+  if (e.key === "Escape") {
+    e.target.blur();
+    e.preventDefault();
+  }
+};
+
 function stripFormattingOnPaste(e) {
   const cbData = (e.originalEvent && e.originalEvent.clipboardData) || e.clipboardData;
   if (cbData && cbData.getData) {
@@ -67,6 +74,7 @@ const TextArea = ({ autoFocus, className, style, onChange, readOnly, value, html
     <pre ref={inputElement} style={style} className={cx(className, styles.textarea, {[styles.readonly]: readOnly})}
          contentEditable={!readOnly}
          onInput={onChange}
+         onKeyDown={blurOnEscape}
          onPaste={html ? undefined : stripFormattingOnPaste}
          {...more}
     />

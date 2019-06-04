@@ -1,5 +1,4 @@
 import { reduceBy, subnetToMask } from "./network";
-import {getJSONAsync} from "helpers/http";
 import createStore from "../../helpers/createStore";
 
 const actionCreators = {
@@ -9,20 +8,11 @@ const actionCreators = {
     subnet: parseInt(e.target.value), 
     mask: parseInt(subnetToMask(e.target.value), 2) 
   }),
-  ip: () => async (state, actions) => {
-    try {
-      const response = await getJSONAsync('/api/ip');
-      actions.setIP(response.ip_address);
-    }
-    catch (e) {
-      actions.setIP(e.message);
-    }
-  },
-  setIP: ip => state => ({ ...state, ip }),
+  myIP: myIP => state => ({ ...state, myIP }),
 };
 
 const initialState = {
-  ip: '',
+  myIP: '',
   ipv4: '192.168.0.1',
   subnet: 24,
   mask: 0xFFFFFF00,

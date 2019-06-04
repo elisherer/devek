@@ -2,14 +2,13 @@ import React from 'react';
 import styles from "./CopyToClipboard.less";
 
 const copyFrom = e => {
-  const el = document.getElementById(e.target.dataset.from);
-  if (typeof el.select === 'function') {
-    el.select();
+  let el = document.getElementById(e.target.dataset.from);
+  if (typeof el.select !== 'function') {
+    const textarea = e.target.firstChild;
+    textarea.value = el.innerText;
+    el = textarea;
   }
-  else {
-    e.target.childNodes[0].textContent = el.innerText;
-    e.target.childNodes[0].select();
-  }
+  el.select();
   document.execCommand("copy");
 };
 

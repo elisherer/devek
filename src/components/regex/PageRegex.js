@@ -1,8 +1,5 @@
 import React from 'react';
-import TextBox from '../../lib/TextBox';
-import TextArea from '../../lib/TextArea';
-import Radio from '../../lib/Radio';
-import Checkbox from '../../lib/Checkbox';
+import { Checkbox, Radio, TextArea, TextBox } from '../_lib';
 import { useStore, actions } from './PageRegex.store';
 import styles from './PageRegex.less'
 

@@ -57,10 +57,7 @@ const actionCreators = {
     if (state.open) return state;
     if (!closeSearchBoxHandler)
       closeSearchBoxHandler = e => {
-        if (e.key === "Escape") {
-          actions.close();
-          e.preventDefault();
-        } else if (e.key === "ArrowDown") {
+        if (e.key === "ArrowDown") {
           actions.search_down();
           e.preventDefault();
         } else if (e.key === "ArrowUp") {

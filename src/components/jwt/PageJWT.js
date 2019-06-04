@@ -1,9 +1,6 @@
 import React from 'react';
-import TextBox from '../../lib/TextBox';
-import TextArea from '../../lib/TextArea';
-import Tabs from '../../lib/Tabs';
+import { CopyToClipboard, Tabs, TextArea, TextBox } from '../_lib';
 import styles from './PageJWT.less';
-import CopyToClipboard from "../../lib/CopyToClipboard";
 
 import { useStore, actions } from './PageJWT.store';
 

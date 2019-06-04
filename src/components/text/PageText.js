@@ -1,9 +1,6 @@
 import React from 'react';
 import cx from 'classnames';
-import TextArea from '../../lib/TextArea';
-import Tabs from '../../lib/Tabs';
-import Radio from '../../lib/Radio';
-import CopyToClipboard from '../../lib/CopyToClipboard';
+import { CopyToClipboard, Radio, Tabs, TextArea } from '../_lib';
 import { textCategories, textFunctions } from "./text";
 import { Redirect, NavLink } from 'react-router-dom';
 

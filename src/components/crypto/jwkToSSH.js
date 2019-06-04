@@ -2,10 +2,6 @@ function stringToArray(s) {
   return s.split("").map(c => c.charCodeAt());
 }
 
-function arrayToPem(a) {
-  return window.btoa(a.map(c => String.fromCharCode(c)).join(""));
-}
-
 const base64UrlDecode = b64uval => {
   try {
     if (!b64uval || !b64uval.length) return b64uval;
@@ -19,29 +15,19 @@ const base64UrlDecode = b64uval => {
   }
 };
 
-
-function integerToOctet(n) {
-  const result = [];
-  for (let i = n; i > 0; i >>= 8) {
-    result.push(i & 0xff);
-  }
-  return result.reverse();
-}
-
 function lenToArray(n) {
-  const oct = integerToOctet(n);
-  let i;
-  for (i = oct.length; i < 4; i += 1) {
+  const oct = [];
+  for (let i = n; i > 0; i >>= 8) {
+    oct.unshift(i & 0xff);
+  }
+  for (let i = oct.length; i < 4; i++) {
     oct.unshift(0);
   }
   return oct;
 }
 
 function checkHighestBit(v) {
-  if (v[0] >> 7 === 1) {
-    // add leading zero if first bit is set
-    v.unshift(0);
-  }
+  if (v[0] >> 7 === 1) v.unshift(0);
   return v;
 }
 
@@ -53,15 +39,17 @@ function jwkToInternal(jwk) {
   };
 }
 
-function jwkToSSH(jwk, comment) {
-  const k = jwkToInternal(jwk);
-  const keyLenA = lenToArray(k.key.length);
-  const exponentLenA = lenToArray(k.exponent.length);
-  const typeLenA = lenToArray(k.type.length);
-  const array = [].concat(typeLenA, stringToArray(k.type), exponentLenA, k.exponent, keyLenA, k.key);
-  const encoding = arrayToPem(array);
-  return `${k.type} ${encoding} ${comment}`;
+function arrayToBase64(a) {
+  return btoa(a.map(c => String.fromCharCode(c)).join(""));
 }
 
+function jwkToSSH(jwk) {
+  const k = jwkToInternal(jwk);
+  const array = [].concat(
+    lenToArray(k.key.length), stringToArray(k.type),
+    lenToArray(k.exponent.length), k.exponent,
+    lenToArray(k.type.length), k.key);
+  return k.type + ' ' + arrayToBase64(array);
+}
 
 export default jwkToSSH;

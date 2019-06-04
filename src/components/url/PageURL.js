@@ -1,7 +1,8 @@
-import React, { Fragment } from 'react';
-import TextBox from '../../lib/TextBox';
-import CopyToClipboard from "../../lib/CopyToClipboard";
+import React from 'react';
+import { CopyToClipboard, TextBox } from '../_lib';
 import { useStore, actions } from './PageURL.store';
+
+import styles from './PageURL.less';
 
 const PageURL = () => {
 
@@ -18,21 +19,29 @@ const PageURL = () => {
 
   return (
     <div>
-      <span>URL:</span><CopyToClipboard from="url_input"/>
-      <TextBox id="url_input" autoFocus selectOnFocus
-               invalid={error}
-               value={input}
-               onChange={actions.input} />
+      <span>URL:</span>
+      <TextBox autoFocus selectOnFocus invalid={error}
+               value={input} onChange={actions.input} />
       <br />
-      <hr />
-      {["host","hostname","origin","protocol","username","password","port","pathname","search","hash"]
-        .map(name =>
-        <Fragment key={name}>
-          <span>{name}</span>
-          <CopyToClipboard from={`url_${name}`}/>
-          <TextBox id={`url_${name}`} readOnly value={parsed ? parsed[name] : ''} />
-        </Fragment>
-      )}
+
+      <table className={styles.table}>
+        <colgroup>
+          <col /><col /><col />
+        </colgroup>
+        <thead>
+        <tr><th>Name</th><th>&nbsp;</th><th>Value</th></tr>
+        </thead>
+        <tbody>
+        {["host","hostname","origin","protocol","username","password","port","pathname","search","hash"]
+          .map(name =>
+            <tr key={name}>
+              <td><b>{name}</b></td>
+              <td><CopyToClipboard from={`url_${name}`}/></td>
+              <td id={`url_${name}`}>{parsed ? parsed[name] : ''}</td>
+            </tr>
+          )}
+        </tbody>
+      </table>
     </div>
   );
 };

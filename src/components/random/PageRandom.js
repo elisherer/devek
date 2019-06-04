@@ -1,11 +1,8 @@
 import React from 'react';
-import {NavLink, Redirect} from "react-router-dom";
-import TextArea from '../../lib/TextArea';
-import CopyToClipboard from '../../lib/CopyToClipboard';
-import Radio from "../../lib/Radio";
-import Tabs from "../../lib/Tabs";
+import { NavLink, Redirect } from "react-router-dom";
+import { CopyToClipboard, Radio, Tabs, TextArea } from '../_lib';
 import { useStore, actions } from './PageRandom.store';
-import {generatePassword, generateTable, uuidv4} from "./rand";
+import { generatePassword, generateTable, uuidv4 } from "./rand";
 
 import styles from './PageRandom.less';
 

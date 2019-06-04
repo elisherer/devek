@@ -1,7 +1,5 @@
 import React from 'react';
-import TextBox from '../../lib/TextBox';
-import Tabs from '../../lib/Tabs';
-import CopyToClipboard from '../../lib/CopyToClipboard';
+import { CopyToClipboard, Tabs, TextBox } from '../_lib';
 import { Redirect, NavLink } from 'react-router-dom';
 
 import { useStore, actions } from './PageBase.store';

@@ -1,7 +1,7 @@
 import React, {useEffect} from 'react';
 import cx from 'classnames';
 import { Link, withRouter } from 'react-router-dom';
-import TextBox from '../../lib/TextBox';
+import { TextBox } from '../_lib';
 import { actions, useStore } from './SearchBox.store';
 
 import styles from "./SearchBox.less";

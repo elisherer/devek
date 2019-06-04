@@ -1,6 +1,5 @@
 import React from 'react';
-import TextBox from '../../lib/TextBox';
-import CopyToClipboard from "../../lib/CopyToClipboard";
+import { CopyToClipboard, TextBox } from '../_lib';
 import { useStore, actions } from './PageColor.store';
 import { formatters } from './color.js';
 import styles from './PageColor.less';

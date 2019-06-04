@@ -5,7 +5,7 @@ const actionCreators = {
 };
 
 const initialState = {
-  input: '',
+  input: location.href,
 };
 
 export const {
