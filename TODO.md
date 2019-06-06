@@ -4,7 +4,7 @@
 - gradients: https://www.w3schools.com/colors/colors_gradient.asp
 
 ## Image
-* Base64, crop, resize, greyscale, undo
+* Crop, resize
 
 ## List
 * Add Commas, ticks,...

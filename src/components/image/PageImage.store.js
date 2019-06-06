@@ -1,8 +1,7 @@
 import createStore from "../../helpers/createStore";
 
-let base64Source;
-
 const actionCreators = {
+  loaded: (width, height) => state => ({ ...state, loaded: true, resizeWidth: width, resizeHeight: height }),
   onDragEnter: e => state => {
     e.preventDefault();
     e.stopPropagation();
@@ -19,24 +18,12 @@ const actionCreators = {
   onMouseClick: () => state => {
     return { ...state, select: state.color }
   },
-  src: src => state => {
-    base64Source = src;
-    return { ...state, loaded: true };
-  },
-  open: () => state => {
-    const w = window.open('about:blank');
-    setTimeout(() => {
-      const pre = w.document.createElement('pre');
-      pre.style.overflowWrap = "break-word";
-      pre.style.whiteSpace = "pre-wrap";
-      pre.innerHTML = base64Source;
-      w.document.body.appendChild(pre);
-    }, 0);
-    return state;
-  }
+  resizeWidth: e => state => ({ ...state, resizeWidth: e.target.value }),
+  resizeHeight: e => state => ({ ...state, resizeHeight: e.target.value }),
 };
 
 const initialState = {
+  loaded: false,
   dragging: 0,
   color: '#dddddd',
   select: '#dddddd'
