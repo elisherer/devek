@@ -81,7 +81,7 @@ const PageCrypto = () => {
 
         <span>Hash:</span><CopyToClipboard from="crypto_hash"/>
         <TextArea id="crypto_hash" readOnly
-                  className={cx({[styles.error]: error})}
+                  className={cx(styles.long_output, {[styles.error]: error})}
                   value={error || typeof hash === 'string' ? hash : (outputFormat === 'base64' ? toBase64(hash) : toHex(hash))}
         />
         <div className={styles.input_info}>
@@ -140,7 +140,7 @@ const PageCrypto = () => {
 
         {publicSSH && <>
           <span>Public SSH:</span><CopyToClipboard from="crypto_ssh"/>
-          <TextArea id="crypto_ssh" readOnly value={genError ? '' : publicSSH} />
+          <TextArea className={styles.long_output} id="crypto_ssh" readOnly value={genError ? '' : publicSSH} />
         </>}
 
       </div>
