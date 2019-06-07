@@ -42,9 +42,9 @@ export const toBase64 = () => {
 export const greyscale = () => {
   const imageData = ctx.getImageData(0,0, ctx.canvas.width, ctx.canvas.height);
 
-  for (let j = 0; j < imageData.height ; j++)
+  for (let j = 0; j < imageData.width ; j++)
   {
-    for (let i = 0; i < imageData.width ; i++)
+    for (let i = 0; i < imageData.height ; i++)
     {
       const index=(i*4)*imageData.width+(j*4),
         red=imageData.data[index],
@@ -72,12 +72,12 @@ export const invert = () => {
   base64Source = canvas.toDataURL();
 };
 
-export const resize = e => {
+export const handleResize = e => {
   let newWidth = parseInt(e.target.dataset.width),
     newHeight = parseInt(e.target.dataset.height);
+
   const oc = document.createElement('canvas'),
     octx = oc.getContext('2d');
-
   oc.width = newWidth;
   oc.height = newHeight;
   octx.drawImage(canvas, 0, 0, newWidth, newHeight);
@@ -87,3 +87,69 @@ export const resize = e => {
   ctx.drawImage(oc, 0, 0);
   base64Source = canvas.toDataURL();
 };
+
+export const handleCrop = e => {
+  let
+    x = parseInt(e.target.dataset.x),
+    y = parseInt(e.target.dataset.y),
+    width = parseInt(e.target.dataset.width),
+    height = parseInt(e.target.dataset.height);
+
+  const oc = document.createElement('canvas'),
+    octx = oc.getContext('2d');
+  oc.width = width;
+  oc.height = height;
+  octx.drawImage(canvas, x ,y ,width, height, 0, 0, width, height);
+
+  canvas.width = width;
+  canvas.height = height;
+  ctx.drawImage(oc, 0, 0);
+  base64Source = canvas.toDataURL();
+};
+
+/**
+
+ const xorRect = (ctx,x,y,w,h, dotted = 1) => {
+  if (w < 0) {
+    x += w;
+    w = -w;
+  }
+  if (h < 0) {
+    y += h;
+    h = -h;
+  }
+
+  if (w == 0 || h == 0) return;
+  if (!dotted) dotted = 1;
+
+  const imageData = ctx.getImageData(x,y,w,h),
+        rWidth = (imageData.width-1)*4;
+        rHeight = ((imageData.height-1)*4)*imageData.width;
+
+  //top + bottom
+  for (let i = 1; i < imageData.width - 1 ; i += dotted){
+    let index=i*4;
+    imageData.data[index]= 255 - imageData.data[index];
+    imageData.data[index+1]= 255 - imageData.data[index+1];
+    imageData.data[index+2]= 255 - imageData.data[index+2];
+    index += rHeight;
+    imageData.data[index]= 255 - imageData.data[index];
+    imageData.data[index+1]= 255 - imageData.data[index+1];
+    imageData.data[index+2]= 255 - imageData.data[index+2];
+  }
+
+  //left + right
+  for (let i = dotted; i < imageData.height ; i += dotted){
+    let index=(i*4)*imageData.width;
+    imageData.data[index]= 255 - imageData.data[index];
+    imageData.data[index+1]= 255 - imageData.data[index+1];
+    imageData.data[index+2]= 255 - imageData.data[index+2];
+    index += rWidth;
+    imageData.data[index]= 255 - imageData.data[index];
+    imageData.data[index+1]= 255 - imageData.data[index+1];
+    imageData.data[index+2]= 255 - imageData.data[index+2];
+  }
+  ctx.putImageData(imageData,x + (w < 0 ? w : 0),y + (h < 0 ? h : 0));
+};
+
+ */
