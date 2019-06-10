@@ -1,4 +1,4 @@
-const parseCertificate = require('./asn1');
+const { parseCertificate } = require('./asn1');
 
 
 
@@ -62,6 +62,48 @@ rGhLV1pRG9frwDFshqD2Vaj4ENBCBh6UpeBop5+285zQ4SI7q4U9oSebUDJiuOx6
 //const ob = parseCertificate(certificateBytes);
 const asn = parseCertificate(c1);
 console.log(require('util').inspect(asn, { depth: 6, colors: true, maxArrayLength: 5 })); //eslint-disable-line
+
+const printHex = (array, width = 16, indent = 0) => {
+  let output = array.map(x => {
+    const byte = x.toString(16);
+    return byte.length === 2 ? byte : '0' + byte;
+  }).join(':');
+  if (output.length < width * 3) return output;
+  return output.match(new RegExp(`.{1,${width * 3}}`,'g')).join('\n'+' '.repeat(indent));
+};
+
+const prettyCert = (cert) => {
+
+  const publicKey = cert.subjectPublicKeyInfo.algorithm === 'rsaEncryption' ? `
+                Public-Key: ${cert.subjectPublicKeyInfo.publicKey.publicKey}
+                Modulus:
+                    ${printHex(cert.subjectPublicKeyInfo.publicKey.modulus, 15, 20)}
+                Exponent: ${cert.subjectPublicKeyInfo.publicKey.exponent} (0x${cert.subjectPublicKeyInfo.publicKey.exponent.toString(16)})`
+  : '' ;
+
+  const extensions = `
+        X509v3 extensions:
+            `;
+
+  return `Certificate:
+    Data:
+        Version: ${cert.version + 1} (0x${cert.version})
+        Serial Number:
+            ${printHex(cert.serialNumber)}
+    Signature Algorithm: ${cert.signature.algorithm}
+        Issuer: ${Object.keys(cert.issuer).map(d => d + '=' + cert.issuer[d]).join(', ')}
+        Validity
+            Not Before: ${cert.validity.notBefore}
+            Not After : ${cert.validity.notAfter}
+        Subject: ${Object.keys(cert.subject).map(d => d + '=' + cert.subject[d]).join(', ')}
+        Subject Public Key Info:
+            Public Key Algorithm: ${cert.subjectPublicKeyInfo.algorithm}${publicKey}${extensions}
+    Signature Algorithm: ${cert.signatureAlgorithm.algorithm}
+         ${printHex(cert.signatureValue, 18, 9)}`;
+};
+
+console.log(prettyCert(asn));
+
 /*
 
 const tder = require('./asn1.org');

@@ -10,11 +10,6 @@ const parsePem = buffer => {
   return parse(buffer);
 };
 
-const toHex = buffer => [...buffer].map(x=>{
-  const h = x.toString(16);
-  return h.length < 2 ? ('0' + h) : h;
-}).join('');
-
 const toASCII = buffer => String.fromCharCode.apply(null, buffer);
 const toUTF8 = buffer => {
   let s = "";
@@ -35,7 +30,7 @@ const toDate = buffer => {
 };
 const toDictionary = children => children
   .reduce((a, c) => {
-    a[c.children[0].children[0].value] = c.children[0].children[1].value;
+    a[c.value[0][0]] = c.value[0][1];
     return a;
   }, {});
 
@@ -115,16 +110,16 @@ function parse(buffer) {
         if (data.length <= 4) { // parse integer (only if 32bit or lower)
           info.value = data.reduce((a,c) => a * 0x100 + c, 0);
         } else {
-          info.value = `(${info.bitSize} bit)`;
+          info.value = [...data];
         }
         break;
       case 3: // BIT STRING
         info.numberOfUnusedBits = data[0];
         data = data.slice(1);
-        info.value = data;
+        info.value = [...data];
         break;
       case 4: // OCTET STRING
-        info.value = data;
+        info.value = [...data];
         break;
       //case 5: //NULL
       case 6: //OBJECT IDENTIFIER
@@ -205,30 +200,31 @@ const ext_subjectAltNames = ['otherName', 'rfc822Name', 'dNSName', 'x400Address'
 
 const parseExtension = (oid, ext) => {
   switch (oid.oid) {
+    case '2.5.29.35': // authority_key_identifier
+      return {
+        keyIdentifier: ext.value[0] ? ext.value[0] : undefined,
+        authorityCertIssuer: ext.value[1],
+        authorityCertSerialNumber: ext.value[2]
+      };
+    case '2.5.29.14': // subject_key_identifier
+      return { keyIdentifier: ext.value };
     case '2.5.29.15': { // key_usage
       let bitmap = ext.value[0];
       const usage = [];
       for (let i = 0; i < 8; i++) {
-        if (bitmap & (1 << (7-i))) usage.push(ext_keyUsages[i]);
+        (bitmap & (1 << (7-i))) && usage.push(ext_keyUsages[i]);
       }
       return usage;
     }
     case '2.5.29.37': // ext_key_usage
       return ext.children.map(oid => oid.value);
     case '2.5.29.17': // subject_alt_name
-      return ext.children.map(gname => {
-        return {
-          type: ext_subjectAltNames[gname.type],
-          value: toASCII(gname.value),
-        };
-      });
+    case '2.5.29.18': // issuer_alt_name
+      return ext.children.reduce((a,c) => { a[ext_subjectAltNames[c.type]] = toASCII(c.value); return a }, {});
+    case '2.5.29.19': // basic_constraints
+      return { cA: ext.value[0], pathLenConstrint: ext.value[1] };
     case '1.3.6.1.5.5.7.1.3': // qcStatements
-      return ext.children.map(qcs => {
-        return {
-          key: qcs.children[0].value,
-          value: qcs.children[1] ? qcs.children[1].value : undefined
-        };
-      });
+      return ext.children.reduce((a,c) => { a[c.value[0]] = c.value[1]; return a }, {});
     default:
       return ext;
   }
@@ -256,51 +252,57 @@ function parseCertificate(pem) {
     if (tbsCert.children[i].tagClass !== 2) return; // not context-specific
     switch (tbsCert.children[i].type) {
       case 1:
-        issuerUniqueID = tbsCert.children[i];
+        issuerUniqueID = tbsCert.children[i].children[0];
         break;
       case 2:
-        subjectUniqueID = tbsCert.children[i];
+        subjectUniqueID = tbsCert.children[i].children[0];
         break;
       case 3:
-        extensions = tbsCert.children[i];
+        extensions = tbsCert.children[i].children[0];
         break;
     }
   }
 
   return {
-    version: version.value,
-    serialNumber: toHex(serialNumber.raw),
+    version: version.value || 0,
+    serialNumber: serialNumber.value,
     signature: {
-      algorithm: signature.children[0].value,
-      parameters: signature.children[1].value,
+      algorithm: signature.value[0],
+      parameters: signature.value[1],
     },
     issuer: toDictionary(issuer.children),
     validity: {
-      notBefore: validity.children[0].value,
-      notAfter: validity.children[1].value,
+      notBefore: validity.value[0],
+      notAfter: validity.value[1],
     },
     subject: toDictionary(subject.children),
     subjectPublicKeyInfo: {
-      algorithm: subjectPublicKeyInfo.children[0].children[0].value,
-      publicKey: subjectPublicKeyInfo.children[0].children[0].value === 'rsaEncryption'
+      algorithm: subjectPublicKeyInfo.value[0][0],
+      publicKey: subjectPublicKeyInfo.value[0][0] === 'rsaEncryption'
         ? (() => {
-          const keyAsn = parse(subjectPublicKeyInfo.children[1].value);
+          const keyAsn = parse(subjectPublicKeyInfo.value[1]);
           return {
-            publicKey: keyAsn.children[0].value,
-            modulus: keyAsn.children[0].raw,
-            exponent: keyAsn.children[1].value,
+            publicKey: `(${keyAsn.children[0].bitSize} bit)`,
+            modulus: keyAsn.value[0],
+            exponent: keyAsn.value[1],
           };
         })()
         : subjectPublicKeyInfo.children[1].value // TODO: extract curve name for EC
     },
-    issuerUniqueID: issuerUniqueID ? issuerUniqueID.children[0].value : undefined,
-    subjectUniqueID: subjectUniqueID ? subjectUniqueID.children[0].value : undefined,
-    extensions: extensions ? extensions.children[0].children
+    issuerUniqueID: issuerUniqueID ? issuerUniqueID.value : undefined,
+    subjectUniqueID: subjectUniqueID ? subjectUniqueID.value : undefined,
+    extensions: extensions ? extensions.children
       .reduce((a, c) => {
-        a[c.children[0].value] = parseExtension(c.children[0], parse(c.children[1].value));
+        a[c.value[0]] = parseExtension(c.children[0], parse(c.value[1]));
         return a;
       }, {}): undefined,
+    signatureAlgorithm: {
+      algorithm: info.value[1][0],
+      parameters: info.value[1][1],
+    },
+    signatureValue: info.value[2],
   }
 }
 
 export { parseCertificate };
+//exports.parseCertificate = parseCertificate;
