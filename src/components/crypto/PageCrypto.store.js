@@ -1,6 +1,7 @@
 import MD5 from './md5';
 import createStore from "../../helpers/createStore";
 import { jwkToSSH } from "./jwkToSSH";
+import { parseCertificate } from './asn1';
 
 const cryptoAPI = window.crypto || window['msCrypto'];
 
@@ -89,6 +90,21 @@ const actionCreators = {
       return { ...state, genError: e.message };
     }
   },
+  loaded: (pem) => state => {
+    const certOutput = JSON.stringify(parseCertificate(pem),null,2);
+
+    return {...state, loaded: true, pem, certOutput};
+  },
+  onDragEnter: e => state => {
+    e.preventDefault();
+    e.stopPropagation();
+    return { ...state, dragging: state.dragging + 1};
+  },
+  onDragLeave: e => state => {
+    e.preventDefault();
+    e.stopPropagation();
+    return { ...state, dragging: state.dragging - 1};
+  },
 };
 
 const initialState = {
@@ -108,6 +124,12 @@ const initialState = {
   privateKey: '',
   publicSSH: '',
   genError: '',
+
+  // cert
+  dragging: false,
+  loaded: false,
+  pem: '',
+  certOutput: '',
 };
 
 export const {

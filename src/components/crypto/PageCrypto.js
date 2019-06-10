@@ -3,6 +3,7 @@ import { CopyToClipboard, Radio, Tabs, TextArea } from '../_lib';
 import { Redirect, NavLink } from 'react-router-dom';
 import { useStore, actions } from './PageCrypto.store';
 import cx from "classnames";
+import { loadFileAsync} from "./cert";
 
 import styles from './PageCrypto.less';
 
@@ -19,10 +20,27 @@ const subPages = [
     title: 'Asymmetric Keys'
   },
   {
-    path: 'convert',
-    title: 'Convert formats'
+    path: 'cert',
+    title: 'Certificate parser'
   },
 ];
+
+const onDragOver = e => {
+  e.dataTransfer.dropEffect = 'link';
+  e.stopPropagation();
+  e.preventDefault();
+};
+
+const onDrop = e => {
+  const file = e.dataTransfer.files && e.dataTransfer.files[0];
+  loadFileAsync(file, actions.loaded);
+  actions.onDragLeave(e);
+};
+const onFileChange = e => {
+  const file = e.target.files && e.target.files[0];
+  loadFileAsync(file, actions.loaded);
+};
+
 
 const PageCrypto = () => {
   const pathSegments = location.pathname.substr(1).split('/');
@@ -146,12 +164,25 @@ const PageCrypto = () => {
       </div>
     );
   }
-  else if (type === 'convert') {
+  else if (type === 'cert') {
+
+    const { pem, certOutput, dragging } = state;
+
     return (
-      <div>
+      <div onDragEnter={actions.onDragEnter} onDragOver={onDragOver}
+           onDragLeave={actions.onDragLeave} onDrop={onDrop}>
         {tabs}
 
-        Under construction...
+        <label className={cx(styles.dropbox, { [styles.dragging]: dragging })}>
+          Click and browse for a certificate or Drag & Drop it here
+          <input type="file" style={{display: 'none'}} onChange={onFileChange} />
+        </label>
+
+        <label>PEM Certificate</label>
+        <TextArea readOnly value={pem} />
+
+        <label>Certificate fields</label>
+        <TextArea readOnly value={certOutput} />
       </div>
     )
   }
