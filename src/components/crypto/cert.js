@@ -10,34 +10,68 @@ export const loadFileAsync = (file, callback) => {
   reader.readAsText(file);
 };
 
-const printHex = (array, width, indent) => {
-  let output = '';
-  for (let i=0 ; i < array.length ; i++) {
-    if (i && i % width === 0) output += ' '.repeat(indent);
-    let byte = array[i].toString(16);
-    if (byte.length < 2) byte = '0' + byte;
-    output += byte + ':';
-  }
-  return output;
+const printHex = (array, width = -1, indent = 0) => {
+  if (!Array.isArray(array)) return `${array} (0x${array.toString(16)})`;
+  let output = array.map(x => {
+    const byte = x.toString(16);
+    return byte.length === 2 ? byte : '0' + byte;
+  }).join(':');
+  if (width === -1 || output.length < width * 3) return output;
+  return output.match(new RegExp(`.{1,${width * 3}}`,'g')).join('\n'+' '.repeat(indent));
 };
+
+const openSslAliases = {
+  "countryName": "C",
+  "stateOrProvinceName": "ST",
+  "localityName": "L",
+  "organizationName": "O",
+  "organizationalUnitName": "OU",
+  "commonName": "CN",
+  "pkcs9_emailAddress": "emailAddress",
+};
+
+function replacer(key, value) {
+  if (Array.isArray(value) && typeof value[0] === 'number') {
+    return printHex(value);
+  }
+  return value;
+}
+
 
 export const prettyCert = (cert) => {
 
-  let output = `
-Certificate:
+  const publicKey = cert.subjectPublicKeyInfo.algorithm === 'rsaEncryption'
+    ? `
+                Public-Key: ${cert.subjectPublicKeyInfo.publicKey.publicKey}
+                Modulus:
+                    ${printHex(cert.subjectPublicKeyInfo.publicKey.modulus, 15, 20)}
+                Exponent: ${printHex(cert.subjectPublicKeyInfo.publicKey.exponent)}`
+    : `
+                Public-Key: ${cert.subjectPublicKeyInfo.publicKey.publicKey}
+                pub:
+                    ${printHex(cert.subjectPublicKeyInfo.publicKey.pub, 15, 20)}
+                ASN1 OID: ${cert.subjectPublicKeyInfo.publicKey.asn1Oid}
+                NIST CURVE: ${cert.subjectPublicKeyInfo.publicKey.nistCurve}`;
+
+  const extensions = cert.extensions
+    ? `
+        X509v3 extensions:
+            ${JSON.stringify(cert.extensions, replacer ,2).replace(/\n/g,'\n            ')}`
+    : '';
+
+  return `Certificate:
     Data:
         Version: ${cert.version + 1} (0x${cert.version})
         Serial Number:
             ${printHex(cert.serialNumber)}
     Signature Algorithm: ${cert.signature.algorithm}
-        Issuer: ${Object.keys(cert.issuer).map(d => d + '=' + cert.issuer[d]).join(', ')}
+        Issuer: ${Object.keys(cert.issuer).map(d => (openSslAliases[d] || d) + '=' + cert.issuer[d]).join(', ')}
         Validity
             Not Before: ${cert.validity.notBefore}
             Not After : ${cert.validity.notAfter}
-        Subject: ${Object.keys(cert.subject).map(d => d + '=' + cert.subject[d]).join(', ')}
+        Subject: ${Object.keys(cert.subject).map(d => (openSslAliases[d] || d) + '=' + cert.subject[d]).join(', ')}
         Subject Public Key Info:
-            Public Key Algorithm: ${cert.subjectPublicKeyInfo.algorithm}
-                Public-Key: (4096 bit)
-                Modulus:`;
-  return output;
+            Public Key Algorithm: ${cert.subjectPublicKeyInfo.algorithm}${publicKey}${extensions}
+    Signature Algorithm: ${cert.signatureAlgorithm.algorithm}
+         ${printHex(cert.signatureValue, 18, 9)}`;
 };

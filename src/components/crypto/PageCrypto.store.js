@@ -2,6 +2,7 @@ import MD5 from './md5';
 import createStore from "../../helpers/createStore";
 import { jwkToSSH } from "./jwkToSSH";
 import { parseCertificate } from './asn1';
+import { prettyCert } from './cert';
 
 const cryptoAPI = window.crypto || window['msCrypto'];
 
@@ -91,7 +92,9 @@ const actionCreators = {
     }
   },
   loaded: (pem) => state => {
-    const certOutput = JSON.stringify(parseCertificate(pem),null,2);
+    const cert = parseCertificate(pem);
+    console.log(cert); // eslint-disable-line
+    const certOutput = prettyCert(cert);
 
     return {...state, loaded: true, pem, certOutput};
   },

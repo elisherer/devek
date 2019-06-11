@@ -56,8 +56,8 @@ function parse(buffer) {
 
   const tagClass = (octet1 & 0b11000000) >> 6;
   const tagClassName = tagClasses[tagClass];
-  const type = octet1 & 0b00011111;
-  const typeName = tagTypes[tagClass] ? tagTypes[tagClass][type] : 'N/A';
+  const tagNumber = octet1 & 0b00011111;
+  const tagName = tagTypes[tagClass] ? tagTypes[tagClass][tagNumber] : 'N/A';
   const constructed = !!(octet1 & 0b00100000);
 
   const lengthBytes = octet2 & 0b01111111,
@@ -80,8 +80,8 @@ function parse(buffer) {
     return {
       tagClassName,
       tagClass,
-      typeName,
-      type,
+      tagName,
+      tagNumber,
       constructed,
       headerLength,
       dl: data.length,
@@ -96,17 +96,22 @@ function parse(buffer) {
   }
 
   const info = {
+    dl: data.length,
     raw: data,
     value: data,
+    headerLength,
   };
 
   if (tagClass === 0) { // UNIVERSAL
-    switch (type) {
+    switch (tagNumber) {
       case 1: // BOOLEAN
         info.value = !!(data[0]);
         break;
       case 2: // INTEGER
-        info.bitSize = (data.length > 1 && data[1] > 0x7f ? data.length - 1 : data.length) * 8;
+        if (data[0] === 0 && data.length > 1 && data[1] > 0x7f) {
+          data = data.slice(1);
+        }
+        info.bitSize = data.length * 8;
         if (data.length <= 4) { // parse integer (only if 32bit or lower)
           info.value = data.reduce((a,c) => a * 0x100 + c, 0);
         } else {
@@ -116,6 +121,7 @@ function parse(buffer) {
       case 3: // BIT STRING
         info.numberOfUnusedBits = data[0];
         data = data.slice(1);
+        info.bitSize = data.length * 8 - info.numberOfUnusedBits;
         info.value = [...data];
         break;
       case 4: // OCTET STRING
@@ -172,12 +178,10 @@ function parse(buffer) {
   Object.assign(info, {
     tagClassName,
     tagClass,
-    typeName,
-    type,
+    tagName,
+    tagNumber,
     constructed,
     children,
-    headerLength,
-    dl: data.length,
   });
 
   return info;
@@ -220,13 +224,37 @@ const parseExtension = (oid, ext) => {
       return ext.children.map(oid => oid.value);
     case '2.5.29.17': // subject_alt_name
     case '2.5.29.18': // issuer_alt_name
-      return ext.children.reduce((a,c) => { a[ext_subjectAltNames[c.type]] = toASCII(c.value); return a }, {});
+      return ext.children.reduce((a,c) => { a[ext_subjectAltNames[c.tagNumber]] = toASCII(c.value); return a }, {});
     case '2.5.29.19': // basic_constraints
-      return { cA: ext.value[0], pathLenConstrint: ext.value[1] };
+      return { cA: !!(ext.value[0]), pathLenConstraint: ext.value[1] };
     case '1.3.6.1.5.5.7.1.3': // qcStatements
       return ext.children.reduce((a,c) => { a[c.value[0]] = c.value[1]; return a }, {});
+    case '2.16.840.1.113730.1.13': // netscape_comment
+      return ext.value;
     default:
       return ext;
+  }
+};
+
+const parsePublicKey = (algorithm, publicKey) => {
+  switch (algorithm.value[0]) {
+    case 'rsaEncryption': {
+      const keyAsn = parse(publicKey.value);
+      return {
+        publicKey: `(${keyAsn.children[0].bitSize} bit)`,
+        modulus: keyAsn.value[0],
+        exponent: keyAsn.value[1],
+      };
+    }
+    case 'X9_62_id_ecPublicKey': {
+      const size = algorithm.value[1].match(/\d{3}/)[0];
+      return {
+        publicKey: `(${size} bit)`,
+        pub: publicKey.value,
+        asn1Oid: algorithm.value[1],
+        nistCurve: `P-${size}`,
+      };
+    }
   }
 };
 
@@ -235,8 +263,8 @@ function parseCertificate(pem) {
   const tbsCert = info.children[0];
 
   let idx = -1;
-  const version = tbsCert.children[0].tagClass === 2/*context*/ && tbsCert.children[0].type === 0 /*version*/
-    ?  tbsCert.children[++idx].children[0]
+  const version = tbsCert.children[0].tagClass === 2/*context*/ && tbsCert.children[0].tagNumber === 0 /*version*/
+    ?  tbsCert.children[++idx].children[0].value
     : 0, // default is v1
     serialNumber = tbsCert.children[++idx],
     signature = tbsCert.children[++idx],
@@ -250,7 +278,7 @@ function parseCertificate(pem) {
     extensions = null;
   for (let i = 7; i < tbsCert.children.length; i++) {
     if (tbsCert.children[i].tagClass !== 2) return; // not context-specific
-    switch (tbsCert.children[i].type) {
+    switch (tbsCert.children[i].tagNumber) {
       case 1:
         issuerUniqueID = tbsCert.children[i].children[0];
         break;
@@ -264,7 +292,7 @@ function parseCertificate(pem) {
   }
 
   return {
-    version: version.value || 0,
+    version: version.value || version || 0,
     serialNumber: serialNumber.value,
     signature: {
       algorithm: signature.value[0],
@@ -278,16 +306,7 @@ function parseCertificate(pem) {
     subject: toDictionary(subject.children),
     subjectPublicKeyInfo: {
       algorithm: subjectPublicKeyInfo.value[0][0],
-      publicKey: subjectPublicKeyInfo.value[0][0] === 'rsaEncryption'
-        ? (() => {
-          const keyAsn = parse(subjectPublicKeyInfo.value[1]);
-          return {
-            publicKey: `(${keyAsn.children[0].bitSize} bit)`,
-            modulus: keyAsn.value[0],
-            exponent: keyAsn.value[1],
-          };
-        })()
-        : subjectPublicKeyInfo.children[1].value // TODO: extract curve name for EC
+      publicKey: parsePublicKey(subjectPublicKeyInfo.children[0], subjectPublicKeyInfo.children[1]),
     },
     issuerUniqueID: issuerUniqueID ? issuerUniqueID.value : undefined,
     subjectUniqueID: subjectUniqueID ? subjectUniqueID.value : undefined,
