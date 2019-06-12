@@ -15,6 +15,17 @@ const hue2rgb = (p, q, t) => {
   return p;
 };
 
+const fromHSL = (h,s,l) => {
+  if (s === 0) return { r: l, g:l, b:l };
+  const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+  const p = 2 * l - q;
+  return {
+    r: Math.round(hue2rgb(p, q, h + 1/3) * 255),
+    g: Math.round(hue2rgb(p, q, h) * 255),
+    b: Math.round(hue2rgb(p, q, h - 1/3) * 255),
+  };
+};
+
 const parsers = {
   rgba: str => {
     const match = str.match(rgbaRegex);
@@ -38,16 +49,8 @@ const parsers = {
     h = (h % 360) / 360;
     s = s / 100;
     l = l / 100;
-    if (s === 0) {
-      return RGBA(l,l,l,a || 1);
-    }
-    const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
-    const p = 2 * l - q;
-    return RGBA(
-      Math.round(hue2rgb(p, q, h + 1/3) * 255), 
-      Math.round(hue2rgb(p, q, h) * 255), 
-      Math.round(hue2rgb(p, q, h - 1/3) * 255),
-      a || 1);
+    const c = fromHSL(h, s, l);
+    return RGBA(c.r, c.g, c.b, a || 1);
   },
   hwba: str => {
     const match = str.match(hwbaRegex);
@@ -61,18 +64,9 @@ const parsers = {
     let v = 1 - b;
     // HSV to HSL
     let l = v - v*sv/2;
-    let s = l == 0 || l == 1 ? 0 : (v - l)/Math.min(l, 1-l);
-    // Same algorithm as HSL
-    if (s === 0) {
-      return RGBA(l,l,l,a || 1);
-    }
-    const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
-    const p = 2 * l - q;
-    return RGBA(
-      Math.round(hue2rgb(p, q, h + 1/3) * 255), 
-      Math.round(hue2rgb(p, q, h) * 255), 
-      Math.round(hue2rgb(p, q, h - 1/3) * 255),
-      a || 1);
+    let s = l === 0 || l === 1 ? 0 : (v - l)/Math.min(l, 1-l);
+    const c = fromHSL(h, s, l);
+    return RGBA(c.r, c.g, c.b, a || 1);
   },
   cmyka: str => {
     const match = str.match(cmykaRegex);
@@ -120,14 +114,11 @@ export const formatters = {
     return `hsl${c.a < 1 ? 'a' : ''}(${fix(hsl.h * 360)}, ${fix(hsl.s * 100)}%, ${fix(hsl.l * 100)}%${c.a < 1 ? ', ' + c.a : ''})`;
   },
   hwba: c => {
-    const hsl = toHSL(c);
-    // HSL to HSV
-    const v = hsl.l + hsl.s * Math.min(hsl.l, 1 - hsl.l);
-    const s = v === 0 ? hsl.s : 2 - (2 * hsl.l / v); 
-    // HSV to HWB
-    const w = s * (1 - v);
-    const b = 1 - v;
-    return `hwb${c.a < 1 ? 'a' : ''}(${fix(hsl.h * 360)}, ${fix(w * 100)}%, ${fix(b * 100)}%${c.a < 1 ? ', ' + c.a : ''})`;
+    const r = c.r / 255, g = c.g / 255, b = c.b / 255;
+    const max = Math.max(r, g, b), min = Math.min(r, g, b);
+    const h = toHSL(c).h;
+    let w = min, bl = 1 - max;
+    return `hwb${c.a < 1 ? 'a' : ''}(${fix(h * 360)}, ${fix(w * 100)}%, ${fix(bl * 100)}%${c.a < 1 ? ', ' + c.a : ''})`;
   },
   cmyka: c => {
     const r = c.r / 255, g = c.g / 255, b = c.b / 255;
