@@ -67,8 +67,8 @@ export const prettyCert = (cert) => {
     Signature Algorithm: ${cert.signature.algorithm}
         Issuer: ${Object.keys(cert.issuer).map(d => (openSslAliases[d] || d) + '=' + cert.issuer[d]).join(', ')}
         Validity
-            Not Before: ${cert.validity.notBefore}
-            Not After : ${cert.validity.notAfter}
+            Not Before: ${cert.validity.notBefore.toGMTString()}
+            Not After : ${cert.validity.notAfter.toGMTString()}
         Subject: ${Object.keys(cert.subject).map(d => (openSslAliases[d] || d) + '=' + cert.subject[d]).join(', ')}
         Subject Public Key Info:
             Public Key Algorithm: ${cert.subjectPublicKeyInfo.algorithm}${publicKey}${extensions}
