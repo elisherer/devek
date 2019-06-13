@@ -7,12 +7,37 @@
   margin-bottom: 30px;
   padding: 5px;
   > div {
-    width: 80px;
+    width: 100px;
     height: 30px;
     margin: 0 auto;
+  }
+  &.gradient {
+    height: 120px;
+    padding: 12px;
+    margin-bottom: 0;
+    > div {
+      width: 96px;
+      height: 96px;
+    }
   }
 }
 
 .predefined {
   margin-bottom: 20px;
+}
+
+.gradients {
+  div {
+    border: 2px solid white;
+    flex-basis: 20%;
+    font-size: 20px;
+    width: 48px;
+    height: 48px;
+    &:hover {
+      border-color: grey;
+    }
+    &[data-active]{
+      border-color: black;
+    }
+  }
 }

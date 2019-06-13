@@ -117,6 +117,28 @@ export const siteMap = {
     title: 'Image',
     header: 'Image web tools',
     description: 'Convert, crop, resize, filter images',
+    children: {
+      "/": {
+        keyword: 'image',
+        title: "Image filters and extraction",
+        description: "Apply image filters"
+      },
+      "/crop": {
+        keyword: 'crop',
+        title: "Image crop",
+        description: "Convert between numbers bases"
+      },
+      "/resize": {
+        keyword: 'resize',
+        title: "Image resizer",
+        description: 'Resize images',
+      },
+      "/pickere": {
+        keyword: 'picker',
+        title: "Image color picker",
+        description: 'Pick color from an image',
+      },
+    }
   },
   "/random": {
     component: PageRandom,
@@ -160,8 +182,20 @@ export const siteMap = {
     component: PageColor,
     keyword: 'color',
     title: 'Color',
-    header: 'Color Conversion',
-    description: 'Convert between different color representations'
+    header: 'Color tools',
+    description: 'Convert between different color representations',
+    children: {
+      "/convert": {
+        keyword: 'convert',
+        title: 'Color conversion',
+        description: 'Convert between different color representations',
+      },
+      "/gradient": {
+        keyword: 'gradient',
+        title: "Gradient generator",
+        description: 'Create CSS gradients',
+      },
+    }
   },
   "/network": {
     component: PageNetwork,
