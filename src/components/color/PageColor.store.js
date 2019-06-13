@@ -12,13 +12,17 @@ const actionCreators = {
     const {index, field} = e.target.dataset;
     return {
       ...state,
-      gradientStop: [
-        {...state.gradientStop[0], [field]: index === '0' ? e.target.value : state.gradientStop[0][field]},
-        {...state.gradientStop[1], [field]: index === '1' ? e.target.value : state.gradientStop[1][field]}
-      ]
+      gradientStop: state.gradientStop.map((c, i) => i != index ? c : ({ // index is string while i is number
+        ...c,
+        [field]: e.target.value
+      }))
     };
   },
   gradientType: e => state => ({...state, gradientType: e.target.dataset.gt}),
+  switchColors: () => state => ({
+    ...state,
+    gradientStop: state.gradientStop.slice().reverse().map((c, i)=>({...c, pos: state.gradientStop[i].pos }))
+  })
 };
 
 const initialState = {

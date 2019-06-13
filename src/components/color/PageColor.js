@@ -2,11 +2,24 @@ import React from 'react';
 import {CopyToClipboard, Radio, Tabs, TextBox} from '../_lib';
 import { NavLink, Redirect}  from "react-router-dom";
 import { useStore, actions } from './PageColor.store';
-import { formatters } from './color.js';
+import { formatters, parsers } from './color.js';
 import styles from './PageColor.less';
 import x11 from './x11';
 
 let webcolorsDdl;
+
+const hexRegex = /#[a-z0-9]{6}/i;
+const fixValue = value => {
+  if (hexRegex.test(value)) return value;
+  let el = document.createElement('div');
+  el.style.color = value;
+  let hex = window.getComputedStyle(document.body.appendChild(el)).color;
+  document.body.removeChild(el);
+  if (!hexRegex.test(hex)) {
+    hex = formatters.hex(parsers.rgba(hex));
+  }
+  return hex;
+};
 
 const PageColor = () => {
   const pathSegments = location.pathname.substr(1).split('/');
@@ -85,15 +98,24 @@ const PageColor = () => {
 
     const preview = { background: gradientCss };
 
+    const colorInput = index => (
+      <>
+        <span>Color {index+1}:</span> <input type="color" data-index={index} data-field="color" onChange={actions.gradientStop} value={fixValue(gradientStop[index].color)}/>
+        <TextBox data-index={index} data-field="color" onChange={actions.gradientStop} value={gradientStop[index].color}/>
+        <label>
+          <span className={styles.positionLabel}>Position ({gradientStop[index].pos}%)</span>
+          <input type="range" min="0" max="100" data-index={index} data-field="pos" value={gradientStop[index].pos} onChange={actions.gradientStop}/>
+        </label>
+      </>
+    );
+
     return (
       <div>
         {tabs}
 
-        <span>Color 1:</span>
-        <TextBox data-index={0} data-field="color" onChange={actions.gradientStop} value={gradientStop[0].color}/>
-
-        <span>Color 2:</span>
-        <TextBox data-index={1} data-field="color" onChange={actions.gradientStop} value={gradientStop[1].color}/>
+        {colorInput(0)}
+        {colorInput(1)}
+        <button onClick={actions.switchColors}>Reverse order</button>
 
         <label>Gradient type</label>
         <Radio className={styles.gradients}>

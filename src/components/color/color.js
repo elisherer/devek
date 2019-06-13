@@ -26,7 +26,7 @@ const fromHSL = (h,s,l) => {
   };
 };
 
-const parsers = {
+export const parsers = {
   rgba: str => {
     const match = str.match(rgbaRegex);
     if (!match) return null;

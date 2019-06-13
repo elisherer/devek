@@ -4,7 +4,9 @@ import createDevTools from './devtools';
 const resetActionType = '__RESET';
 
 export default (actionCreators, initialState, name) => {
-  const store = {};
+  const store = {
+    dispatch: () => throw new Error("Don't call actions before calling useStore")
+  };
 
   const devTools = createDevTools({ name, initialState, store});
 
@@ -15,15 +17,15 @@ export default (actionCreators, initialState, name) => {
   store.actions = Object.keys(actionCreators).reduce((a, type) => {
     a[type] = function() {
       const payload = actionCreators[type].apply(this, arguments)(store.state, store.actions);
+      const dispatch = payload => {
+        if (typeof payload !== 'undefined')
+          store.dispatch({type, payload });
+      };
 
       if (payload && payload.then) { // Promise
-        payload.then(payload => {
-          if (typeof payload !== 'undefined')
-            store.dispatch({type, payload });
-        })
+        return payload.then(dispatch)
       }
-      else if (typeof payload !== 'undefined')
-        store.dispatch({ type, payload });
+      return dispatch(payload);
     };
     return a;
   }, {});

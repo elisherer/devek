@@ -6,14 +6,14 @@ import { useStore, actions } from './PageTime.store';
 import styles from './PageTime.less';
 
 const now = new Date();
-let timer;
-const refresh = () => actions.refresh && actions.refresh();
+
 const startTimer = () => {
-  timer = setInterval(refresh, 1000);
+  let timer = setInterval(actions.refresh, 1000);
+  return () => {
+    clearTimeout(timer);
+  };
 };
-const clearTimer = () => {
-  clearTimeout(timer);
-};
+
 
 const PageTime = () => {
   const pathSegments = location.pathname.substr(1).split('/');
@@ -31,10 +31,7 @@ const PageTime = () => {
     </Tabs>
   );
 
-  useEffect(() => {
-    startTimer();
-    return clearTimer;
-  }, []);
+  useEffect(startTimer, []);
 
   const state = useStore();
 
