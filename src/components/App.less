@@ -14,7 +14,8 @@
   height: 100%;
   color: rgba(255,255,255,0.5);
   background: @gui-nav-background;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: scroll;
   position: absolute;
   z-index:998;
 
@@ -36,6 +37,7 @@
 
   @media (min-width: @screen-desktop-min) {
     position: relative;
+    overflow-y: hidden;
     width: @gui-nav-width;
   }
   &.open {
@@ -188,5 +190,20 @@
   label {
     display: block;
     margin-bottom: 6px;
+  }
+}
+
+.github {
+  position: absolute;
+  bottom: 0;
+  text-align: right;
+  padding-bottom: 10px;
+  right: 10px;
+  left: 10px;
+  @media only screen and (min-width: @screen-desktop-min) {
+    text-align: center;
+  }
+  svg {
+    fill: white;
   }
 }

@@ -41,17 +41,10 @@ module.exports = {
   devServer: {
     historyApiFallback: true,
     before: (app, server) => {
-
+      app.use(require('./api.mock'));
       // Be sure to pass the server argument from the arguments
       app.use(webpackDevServerWaitpage(server));
     },
-    proxy: {
-      '/api': {
-        target: 'https://devek.app',
-        changeOrigin: true,
-        secure: false,
-      },
-    }
   },
   resolve: {
     alias: PRODUCTION ? {} : {
@@ -92,17 +85,16 @@ module.exports = {
     rules: [
       { test: /\.(c|le)ss$/,
         use: [
-          PRODUCTION ? MiniCssExtractPlugin.loader : "style-loader",
-          {
+          PRODUCTION ? MiniCssExtractPlugin.loader : "style-loader", {
             loader: "css-loader",
             options: {
               sourceMap: true,
-              modules: true,
+              modules: {
+                localIdentName: PRODUCTION ? '[hash:base64:8]' : '[local]__[hash:base64:5]',
+              },
               importLoaders: 1,
-              localIdentName: PRODUCTION ? '[hash:base64:8]' : '[local]__[hash:base64:5]',
             }
-          },
-          {
+          }, {
             loader: "less-loader",
             options: {
               sourceMap: true,
