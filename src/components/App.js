@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Switch, Route, Link, NavLink, withRouter } from 'react-router-dom';
+import { Switch, Route, Link, NavLink, Redirect, withRouter } from 'react-router-dom';
 import cx from 'classnames';
 import SearchBox from './search/SearchBox';
 import NotFound from './NotFound';
@@ -10,6 +10,10 @@ import screen from '../helpers/screen';
 import styles from './App.less';
 
 const App = ({ location } : { location: Object }) => {
+  if (location.pathname === '/' && location.search) {
+    return <Redirect to="/" />;
+  }
+
   const state = useStore();
 
   let header = null;
