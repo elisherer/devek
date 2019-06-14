@@ -20,6 +20,9 @@ function http_res_code( $code , $text ) {
 }
 
 header('Content-Type: application/json');
+header('Access-Control-Allow-Origin: https://devek.app');
+header('Access-Control-Allow-Methods: GET, OPTIONS');
+header('Access-Control-Allow-Headers: Content-Type, X-Requested-With');
 
 if ($method == 'GET' && $pathname == '/api/ip') {
   echo '{"ip_address":"' . get_ip_addr() . '"}';
