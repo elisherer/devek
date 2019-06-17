@@ -25,7 +25,7 @@ const toUTF8 = buffer => {
   return s;
 };
 const toDate = buffer => {
-  const p = toASCII(buffer).match(/.{1,2}/g);
+  const p = toASCII(buffer).match(/.{2}/g);
   return new Date(`${p[0] >= 70 ? '19' : '20'}${p[0]}-${p[1]}-${p[2]}T${p[3]}:${p[4]}:${p[5]}`);
 };
 const toDictionary = children => children

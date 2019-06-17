@@ -103,7 +103,6 @@ const PageImage = () => {
     return <Redirect to={`/${pathSegments[0]}`} />;
   }
 
-
   const { dragging, loaded, color, select, resize, crop } = useStore();
   const canvasRef = useRef();
   initCanvas(canvasRef);
@@ -146,6 +145,7 @@ const PageImage = () => {
           <TextBox disabled={disabled} className={styles.inline} type="number" value={crop.height} data-input="height" onChange={actions.cropInput} /> )
           &nbsp;
           <button disabled={disabled} data-x={crop.x} data-y={crop.y} data-width={crop.width} data-height={crop.height} onClick={onCropButtonClick}>Crop</button>
+          <div>* You can draw a rectangle on the image to set the coordinates before cropping</div>
         </div>
       )}
       { type === 'resize' && (
@@ -161,7 +161,7 @@ const PageImage = () => {
         </div>
       )}
       <div className={styles.canvas_wrapper}>
-        {cropper && <div className={styles.rubber_band} style={{ left: crop.x, top: crop.y, width: crop.width, height: crop.height }} />}
+        {cropper && loaded && <div className={styles.rubber_band} style={{ left: crop.x, top: crop.y, width: crop.width, height: crop.height }} />}
         <canvas ref={canvasRef}
           className={cx(styles.canvas, { [styles.visible]: loaded })}
           onMouseUp={picker ? actions.onMouseClick : cropper ? onCropMouseUp: undefined}

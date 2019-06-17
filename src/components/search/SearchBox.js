@@ -15,7 +15,9 @@ const SearchBox = ({ location } : { location: Object }) => {
 
   // location change
   useEffect(() => {
-    actions.close();
+    if (state.open) {
+      actions.close();
+    }
   }, [location.pathname]);
 
   const { search, open, index, paths } = state;

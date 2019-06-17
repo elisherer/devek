@@ -110,12 +110,14 @@ const actionCreators = {
   },
 };
 
+const hexToHash = hex => new Uint8Array(hex.match(/.{2}/g).map(x=>parseInt(x,16)));
+
 const initialState = {
   // hash
   input: '',
   hashAlg: 'SHA-256',
   error: '',
-  hash: 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855',
+  hash: hexToHash('e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'),
   outputFormat: 'hex',
 
   //generate keys

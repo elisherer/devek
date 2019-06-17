@@ -87,9 +87,7 @@ const PageCrypto = () => {
         {hashAlg !== 'MD5' ? (
           <Radio className={styles.options}>
             <div data-active={outputFormat === "hex" || null} data-format="hex" onClick={actions.format}>Hex</div>
-            <div data-active={outputFormat === "base64" || null} data-format="base64"
-                 onClick={actions.format}>Base64
-            </div>
+            <div data-active={outputFormat === "base64" || null} data-format="base64" onClick={actions.format}>Base64</div>
           </Radio>
         ) : (
           <Radio className={styles.options}>
