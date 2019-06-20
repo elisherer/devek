@@ -4,7 +4,7 @@ import {Tabs, TextBox} from '../_lib';
 import { NavLink, Redirect}  from "react-router-dom";
 import { useStore, actions } from './PageImage.store';
 import getEventLocation from "./getEventLocation";
-import {toBase64, loadFileAsync, initCanvas, greyscale, invert, handleResize, handleCrop} from './image';
+import {toBase64, loadFileAsync, initCanvas, greyscale, invert, handleRotate, handleResize, handleCrop} from './image';
 
 import styles from './PageImage.less';
 
@@ -134,6 +134,8 @@ const PageImage = () => {
         <div className={cx(styles.actions, { [styles.loaded]: loaded })}>
           <button disabled={disabled} onClick={greyscale}>Greyscale</button>
           <button disabled={disabled} onClick={invert}>Invert</button>
+          <button disabled={disabled} onClick={handleRotate} data-angle="90">Rotate right</button>
+          <button disabled={disabled} onClick={handleRotate} data-angle="270">Rotate left</button>
           <button disabled={disabled} onClick={toBase64}>To Base64</button>
         </div>
       )}

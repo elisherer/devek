@@ -2,7 +2,7 @@ let _ref, canvas, ctx, base64Source;
 
 export const initCanvas = ref => {
   _ref = ref;
-  if (ref.current === canvas) return;
+  if (ref.current === canvas || !ref.current) return;
   canvas = ref.current;
   ctx = canvas.getContext('2d');
 };
@@ -104,6 +104,51 @@ export const handleCrop = e => {
   canvas.width = width;
   canvas.height = height;
   ctx.drawImage(oc, 0, 0);
+  base64Source = canvas.toDataURL();
+};
+
+export const handleRotate = e => {
+  let angle_rad = +e.target.dataset.angle * Math.PI / 180,
+    w = canvas.width,
+    h = canvas.height;
+
+  const oc = document.createElement('canvas'),
+    octx = oc.getContext('2d');
+  oc.width = w;
+  oc.height = h;
+  octx.drawImage(canvas, 0 ,0);
+
+  canvas.width = h;
+  canvas.height = w;
+  ctx.save();
+  ctx.translate(h/2, w/2);
+  ctx.rotate(angle_rad);
+  ctx.drawImage(oc, - w/2, - h/2);
+  ctx.restore();
+ // ctx.canvas.width = h;
+//  ctx.canvas.height = w;
+  /*
+  ctx.save();
+  // prep canvas for rotation
+  //ctx.translate(ctx.canvas.width, ctx.canvas.height);                   // translate to canvas center
+  ctx.rotate(Math.PI*0.5);                 // add rotation transform
+  ctx.globalCompositeOperation = "copy";   // set comp. mode to "copy"
+  ctx.drawImage(ctx.canvas,  0, 0, ctx.canvas.width, ctx.canvas.height,  -ctx.canvas.width, -ctx.canvas.height, 150, 150);
+  ctx.restore();
+  */
+  /*
+  let dir = +e.target.dataset.dir * Math.PI / 180,
+    w = canvas.width,
+    h = canvas.height;
+
+  //const imageData = ctx.getImageData(0,0, ctx.canvas.width, ctx.canvas.height);
+  ctx.globalCompositeOperation = "copy";
+  ctx.translate(w/2,h/2);
+  ctx.rotate(dir);
+  canvas.width = h;
+  canvas.height = w;
+  ctx.drawImage(ctx.canvas, 0, 0);
+*/
   base64Source = canvas.toDataURL();
 };
 
