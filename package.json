@@ -7,7 +7,7 @@
     "analyze": "cross-env ANALYZE=true npm run build",
     "analyze:profile": "npm run build -- --profile --json > stats.json",
     "build": "cross-env NODE_ENV=production webpack -p",
-    "start": "webpack-dev-server --hot",
+    "start": "cross-env NODE_ENV=development webpack-dev-server --hot",
     "test": "echo Not Implemented!",
     "predeploy": "npm run build",
     "deploy": "node deploy"
