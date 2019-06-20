@@ -3,6 +3,9 @@ const password = "world";
 
 let enc = new TextEncoder();
 
+const salt = enc.encode("salt");
+const iv = enc.encode("X".repeat(32));
+
 window.crypto.subtle.importKey(
   "raw",
   enc.encode(password),
@@ -12,7 +15,7 @@ window.crypto.subtle.importKey(
 ).then(keyMaterial => window.crypto.subtle.deriveKey(
   {
     "name": "PBKDF2",
-    //salt: salt,
+    "salt": salt,
     "iterations": 100000,
     "hash": "SHA-256"
   },
@@ -23,10 +26,10 @@ window.crypto.subtle.importKey(
 )).then(key => window.crypto.subtle.encrypt(
   {
     name: "AES-GCM",
-    //iv: iv
+    iv: iv
   },
   key,
-  plaintext
+  enc.encode(plaintext)
 )).then(text => {
   console.log(text);
 });
