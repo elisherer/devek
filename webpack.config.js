@@ -26,6 +26,10 @@ module.exports = {
     devtoolModuleFilenameTemplate: info =>
       path.resolve(info.absoluteResourcePath).replace(/\\/g, '/'),
   },
+  node: {
+    Buffer: false,
+    setImmediate: false,
+  },
   devtool: ANALYZE ? 'source-map' : (PRODUCTION ? false : 'cheap-module-source-map'),
   optimization: {
     splitChunks: {
@@ -71,7 +75,7 @@ module.exports = {
       template: 'src/index.ejs',
     }),
 
-    !PRODUCTION && new CleanWebpackPlugin(), // Cleanup before each build
+    PRODUCTION && new CleanWebpackPlugin(), // Cleanup before each build
 
     new StyleExtHtmlWebpackPlugin({ enabled: !ANALYZE && PRODUCTION }), // Inline CSS in HTML
 

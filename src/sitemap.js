@@ -1,3 +1,5 @@
+import React from 'react';
+
 import Home from "./components/Home";
 import PageText from "./components/text/PageText";
 import PageBase from "./components/base/PageBase";
@@ -10,8 +12,11 @@ import PageImage from "./components/image/PageImage";
 import PageRandom from "./components/random/PageRandom";
 import PageColor from "./components/color/PageColor";
 import PageNetwork from "./components/network/PageNetwork";
-import PageCrypto from "./components/crypto/PageCrypto";
+//import PageCrypto from "./components/crypto/PageCrypto"; // Lazy loaded
 import PageURL from "./components/url/PageURL";
+
+const PageCryptoLazy = React.lazy(() => import(/* webpackChunkName: "crypto" */"./components/crypto/PageCrypto"));
+const PageCryptoAsync = () => <React.Suspense fallback="Loading..."><PageCryptoLazy /></React.Suspense>;
 
 export const siteMap = {
   "/": {
@@ -160,7 +165,7 @@ export const siteMap = {
     }
   },
   "/crypto": {
-    component: PageCrypto,
+    component: PageCryptoAsync,
     keyword: 'crypto',
     title: 'Crypto',
     header: 'Crypto tools',
