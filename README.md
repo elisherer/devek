@@ -1,4 +1,4 @@
-# Devek
+![Devek](design/devek_text.svg?raw=true&sanitize=true "Devek")
 
 Developer Kit - helping utilities for developers
 
