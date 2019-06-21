@@ -39,29 +39,33 @@ export const toBase64 = () => {
   }, 0);
 };
 
-export const greyscale = () => {
-  const imageData = ctx.getImageData(0,0, ctx.canvas.width, ctx.canvas.height);
+const createFilter = filter => {
+  return () => {
+    const imageData = ctx.getImageData(0,0, ctx.canvas.width, ctx.canvas.height);
 
-  for (let j = 0; j < imageData.width ; j++)
-  {
-    for (let i = 0; i < imageData.height ; i++)
-    {
-      const index=(i*4)*imageData.width+(j*4),
-        red=imageData.data[index],
-        green=imageData.data[index+1],
-        blue=imageData.data[index+2],
-        alpha=imageData.data[index+3],
-        average=(red+green+blue)/3;
-      imageData.data[index]=average;
-      imageData.data[index+1]=average;
-      imageData.data[index+2]=average;
-      imageData.data[index+3]=alpha;
-    }
+    for (let j = 0; j < imageData.width ; j++)
+      for (let i = 0; i < imageData.height ; i++)
+        filter(imageData.data, (i*4)*imageData.width+(j*4));
+
+    ctx.putImageData(imageData,0, 0);
+
+    base64Source = canvas.toDataURL();
   }
-  ctx.putImageData(imageData,0, 0);
-
-  base64Source = canvas.toDataURL();
 };
+
+export const greyscale = createFilter((data, index) => {
+  const grey = (0.2126 * data[index]) + (0.7152 * data[index+1]) + (0.0722 * data[index+2]);
+  data[index]= grey;
+  data[index+1]= grey;
+  data[index+2]= grey;
+});
+
+export const sepia = createFilter((data, index) => {
+  const grey = (0.2126 * data[index]) + (0.7152 * data[index+1]) + (0.0722 * data[index+2]);
+  data[index]= grey+96;
+  data[index+1]= grey+48;
+  data[index+2]= grey;
+});
 
 export const invert = () => {
 
@@ -71,6 +75,24 @@ export const invert = () => {
 
   base64Source = canvas.toDataURL();
 };
+
+export const flipH = () => {
+  ctx.save();
+  ctx.translate(canvas.width, 0);
+  ctx.scale(-1, 1);
+  ctx.drawImage(canvas, 0, 0);
+  ctx.restore();
+  base64Source = canvas.toDataURL();
+};
+export const flipV = () => {
+  ctx.save();
+  ctx.translate(0, canvas.height);
+  ctx.scale(1, -1);
+  ctx.drawImage(canvas, 0, 0);
+  ctx.restore();
+  base64Source = canvas.toDataURL();
+};
+
 
 export const handleResize = e => {
   let newWidth = parseInt(e.target.dataset.width),
@@ -125,30 +147,7 @@ export const handleRotate = e => {
   ctx.rotate(angle_rad);
   ctx.drawImage(oc, - w/2, - h/2);
   ctx.restore();
- // ctx.canvas.width = h;
-//  ctx.canvas.height = w;
-  /*
-  ctx.save();
-  // prep canvas for rotation
-  //ctx.translate(ctx.canvas.width, ctx.canvas.height);                   // translate to canvas center
-  ctx.rotate(Math.PI*0.5);                 // add rotation transform
-  ctx.globalCompositeOperation = "copy";   // set comp. mode to "copy"
-  ctx.drawImage(ctx.canvas,  0, 0, ctx.canvas.width, ctx.canvas.height,  -ctx.canvas.width, -ctx.canvas.height, 150, 150);
-  ctx.restore();
-  */
-  /*
-  let dir = +e.target.dataset.dir * Math.PI / 180,
-    w = canvas.width,
-    h = canvas.height;
 
-  //const imageData = ctx.getImageData(0,0, ctx.canvas.width, ctx.canvas.height);
-  ctx.globalCompositeOperation = "copy";
-  ctx.translate(w/2,h/2);
-  ctx.rotate(dir);
-  canvas.width = h;
-  canvas.height = w;
-  ctx.drawImage(ctx.canvas, 0, 0);
-*/
   base64Source = canvas.toDataURL();
 };
 
