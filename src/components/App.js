@@ -8,6 +8,7 @@ import { useStore, actions } from "./App.store";
 import screen from '../helpers/screen';
 
 import styles from './App.less';
+import Spinner from "./_lib/Spinner";
 
 const App = ({ location } : { location: Object }) => {
   if (location.pathname === '/' && location.search) {
@@ -63,14 +64,16 @@ const App = ({ location } : { location: Object }) => {
           {header && <span className={styles.description}>{header}</span>}
         </header>
         <SearchBox />
-        <article className={styles.article}>
-          <Switch>
-            {Object.keys(siteMap).map(path => (
-              <Route key={path} path={path} exact={path === "/"} component={siteMap[path].component} />
-            ))}
-            <Route component={NotFound} />
-          </Switch>
-        </article>
+        <React.Suspense fallback={<Spinner />}>
+          <article className={styles.article}>
+            <Switch>
+              {Object.keys(siteMap).map(path => (
+                <Route key={path} path={path} exact={path === "/"} component={siteMap[path].component}/>
+              ))}
+              <Route component={NotFound}/>
+            </Switch>
+          </article>
+        </React.Suspense>
       </main>
     </div>
   );

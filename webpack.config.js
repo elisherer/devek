@@ -8,7 +8,8 @@ const
   CleanWebpackPlugin = require('clean-webpack-plugin'),
   BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin,
   webpackDevServerWaitpage = require('webpack-dev-server-waitpage'),
-  CopyWebpackPlugin = require('copy-webpack-plugin');
+  CopyWebpackPlugin = require('copy-webpack-plugin'),
+  OptimizeCssnanoPlugin = require('@intervolga/optimize-cssnano-plugin');
 
 const mode = process.env.NODE_ENV || 'development';
 const node_modules = /[\\/]node_modules[\\/]/;
@@ -67,7 +68,20 @@ module.exports = {
     }),
 
     new MiniCssExtractPlugin({ // Minify and create one css file
-      filename: "assets/style.[contenthash].css"
+      filename: 'assets/style-[contenthash].css',
+      chunkFilename: 'assets/[name]-style-[contenthash].css',
+    }),
+
+    // Minify CSS
+    PRODUCTION && new OptimizeCssnanoPlugin({
+      sourceMap: true,
+      cssnanoOptions: {
+        preset: ['default', {
+          discardComments: {
+            removeAll: true,
+          },
+        }],
+      },
     }),
 
     new HtmlWebpackPlugin({ // Create index.html file
