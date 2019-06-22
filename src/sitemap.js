@@ -13,6 +13,7 @@ import PageRandom from "./components/random/PageRandom";
 import PageColor from "./components/color/PageColor";
 import PageNetwork from "./components/network/PageNetwork";
 //import PageCrypto from "./components/crypto/PageCrypto"; // Lazy loaded
+import PageList from "./components/list/PageList";
 import PageURL from "./components/url/PageURL";
 
 const PageCryptoLazy = React.lazy(() => import(/* webpackChunkName: "crypto" */"./components/crypto/PageCrypto"));
@@ -208,6 +209,13 @@ export const siteMap = {
     title: 'Network',
     header: 'Network tools',
     description: 'Network information utilities (IP address and more)'
+  },
+  "/list": {
+    component: PageList,
+    keyword: 'list',
+    title: 'List',
+    header: 'List tools',
+    description: 'List / data manipulation tools'
   },
   "/url": {
     component: PageURL,

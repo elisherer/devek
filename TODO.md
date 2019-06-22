@@ -1,8 +1,6 @@
 # TODO
 
 * Dev Joke of the day
-* List
-  * Add Commas, ticks,...
 * Crypto
   * Convert, Generate Self-Signed, ...
   * https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/importKey#Examples
