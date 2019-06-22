@@ -3,13 +3,13 @@ const webpack = require('webpack');
 
 const
   HtmlWebpackPlugin = require('html-webpack-plugin'),
-  StyleExtHtmlWebpackPlugin = require('style-ext-html-webpack-plugin'),
   MiniCssExtractPlugin = require("mini-css-extract-plugin"),
   CleanWebpackPlugin = require('clean-webpack-plugin'),
   BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin,
   webpackDevServerWaitpage = require('webpack-dev-server-waitpage'),
   CopyWebpackPlugin = require('copy-webpack-plugin'),
-  OptimizeCssnanoPlugin = require('@intervolga/optimize-cssnano-plugin');
+  TerserJSPlugin = require('terser-webpack-plugin'),
+  OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 
 const mode = process.env.NODE_ENV || 'development';
 const node_modules = /[\\/]node_modules[\\/]/;
@@ -33,6 +33,7 @@ module.exports = {
   },
   devtool: ANALYZE ? 'source-map' : (PRODUCTION ? false : 'cheap-module-source-map'),
   optimization: {
+    minimizer: [new TerserJSPlugin({}), new OptimizeCSSAssetsPlugin({})],
     splitChunks: {
       cacheGroups: {
         commons: {
@@ -72,18 +73,6 @@ module.exports = {
       chunkFilename: 'assets/[name]-style-[contenthash].css',
     }),
 
-    // Minify CSS
-    PRODUCTION && new OptimizeCssnanoPlugin({
-      sourceMap: true,
-      cssnanoOptions: {
-        preset: ['default', {
-          discardComments: {
-            removeAll: true,
-          },
-        }],
-      },
-    }),
-
     new HtmlWebpackPlugin({ // Create index.html file
       cache: PRODUCTION,
       template: 'src/index.ejs',
@@ -91,9 +80,7 @@ module.exports = {
 
     PRODUCTION && new CleanWebpackPlugin(), // Cleanup before each build
 
-    new StyleExtHtmlWebpackPlugin({ enabled: !ANALYZE && PRODUCTION }), // Inline CSS in HTML
-
-    new CopyWebpackPlugin([{ from: 'src/www', to: '' }]), // Copy root domain files
+    new CopyWebpackPlugin([{ from: 'public', to: '' }]), // Copy root domain files
 
     ANALYZE && new BundleAnalyzerPlugin({ analyzerMode: 'static', openAnalyzer: false }),
     
@@ -103,14 +90,19 @@ module.exports = {
     rules: [
       { test: /\.(c|le)ss$/,
         use: [
-          PRODUCTION ? MiniCssExtractPlugin.loader : "style-loader", {
+          {
+            loader: MiniCssExtractPlugin.loader,
+            options: {
+              hmr: !PRODUCTION,
+            },
+          }, {
             loader: "css-loader",
             options: {
+              importLoaders: 1,
               sourceMap: true,
               modules: {
                 localIdentName: PRODUCTION ? '[hash:base64:8]' : '[local]__[hash:base64:5]',
               },
-              importLoaders: 1,
             }
           }, {
             loader: "less-loader",
