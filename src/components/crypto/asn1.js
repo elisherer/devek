@@ -224,11 +224,20 @@ const parseExtension = (oid, ext) => {
       return ext.children.map(oid => oid.value);
     case '2.5.29.17': // subject_alt_name
     case '2.5.29.18': // issuer_alt_name
-      return ext.children.reduce((a,c) => { a[ext_subjectAltNames[c.tagNumber]] = toASCII(c.value); return a }, {});
+      return ext.children.reduce((a,c) => { a[ext_subjectAltNames[c.tagNumber]] = toASCII(c.value); return a; }, {});
     case '2.5.29.19': // basic_constraints
       return { cA: !!(ext.value[0]), pathLenConstraint: ext.value[1] };
     case '1.3.6.1.5.5.7.1.3': // qcStatements
-      return ext.children.reduce((a,c) => { a[c.value[0]] = c.value[1]; return a }, {});
+      return ext.children.reduce((a,c) => {
+        if (c.children[0].oid === '0.4.0.19495.2') // PSD2 qcStatement
+          a[c.value[0]] = {
+            rolesOfPSP: c.value[1][0].reduce((b,d) => { b[fieldNames[d[0]] || d[0]] = d[1]; return b; }, {}),
+            ncaName: c.value[1][1],
+            ncaId: c.value[1][2],
+          };
+        else a[c.value[0]] = fieldNames[c.value[1]] || c.value[1];
+        return a;
+      }, {});
     case '2.16.840.1.113730.1.13': // netscape_comment
       return ext.value;
     default:
