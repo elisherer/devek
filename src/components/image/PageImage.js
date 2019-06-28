@@ -105,12 +105,35 @@ const onResizeButtonClick = e => {
   actions.loaded(width, height);
 };
 
+const subPages = [
+  {
+    path: '',
+    title: 'Actions',
+  },
+  {
+    path: 'filters',
+    title: 'Filters',
+  },
+  {
+    path: 'crop',
+    title: 'Crop',
+  },
+  {
+    path: 'resize',
+    title: 'Resize',
+  },
+  {
+    path: 'picker',
+    title: 'Color Picker',
+  },
+];
+
 const PageImage = () => {
   const pathSegments = location.pathname.substr(1).split('/');
 
   const type = pathSegments[1];
-  if (type && !['picker','resize','crop'].includes(type)) {
-    return <Redirect to={`/${pathSegments[0]}`} />;
+  if (type && !subPages.find(sp => sp.path === type)) {
+    return <Redirect to={`/${pathSegments[0]}/${subPages[0].path}`} />;
   }
 
   const { dragging, loaded, color, select, resize, crop } = useStore();
@@ -121,12 +144,12 @@ const PageImage = () => {
 
   const tabs = (
     <Tabs>
-      <NavLink to={`/${pathSegments[0]}`} exact>Actions</NavLink>
-      <NavLink to={`/${pathSegments[0]}/crop`}>Crop</NavLink>
-      <NavLink to={`/${pathSegments[0]}/resize`}>Resize</NavLink>
-      <NavLink to={`/${pathSegments[0]}/picker`}>Color Picker</NavLink>
+      {subPages.map(subPage => (
+        <NavLink key={subPage.path} to={`/${pathSegments[0]}/${subPage.path}`} exact={!subPage.path}>{subPage.title}</NavLink>
+      ))}
     </Tabs>
   );
+
 
   const picker = type === 'picker',
     cropper = type === 'crop';
@@ -142,14 +165,18 @@ const PageImage = () => {
 
       {!type && (
         <div className={cx(styles.actions, { [styles.loaded]: loaded })}>
-          <button disabled={disabled} onClick={greyscale}>Greyscale</button>
-          <button disabled={disabled} onClick={invert}>Invert</button>
-          <button disabled={disabled} onClick={sepia}>Sepia</button>
           <button disabled={disabled} onClick={handleRotate} data-angle="90">Rotate right</button>
           <button disabled={disabled} onClick={handleRotate} data-angle="270">Rotate left</button>
           <button disabled={disabled} onClick={flipH}>Flip H</button>
           <button disabled={disabled} onClick={flipV}>Flip V</button>
           <button disabled={disabled} onClick={toBase64}>To Base64</button>
+        </div>
+      )}
+      {type === 'filters' && (
+        <div className={cx(styles.actions, { [styles.loaded]: loaded })}>
+          <button disabled={disabled} onClick={greyscale}>Greyscale</button>
+          <button disabled={disabled} onClick={invert}>Invert</button>
+          <button disabled={disabled} onClick={sepia}>Sepia</button>
         </div>
       )}
       { type === 'crop' && (

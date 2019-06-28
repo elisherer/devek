@@ -54,17 +54,17 @@ const createFilter = filter => {
 };
 
 export const greyscale = createFilter((data, index) => {
-  const grey = (0.2126 * data[index]) + (0.7152 * data[index+1]) + (0.0722 * data[index+2]);
+  const grey = 0.2989 * data[index] + 0.587 * data[index + 1] + 0.114 * data[index + 2];
   data[index]= grey;
   data[index+1]= grey;
   data[index+2]= grey;
 });
 
 export const sepia = createFilter((data, index) => {
-  const grey = (0.2126 * data[index]) + (0.7152 * data[index+1]) + (0.0722 * data[index+2]);
-  data[index]= grey+96;
-  data[index+1]= grey+48;
-  data[index+2]= grey;
+  const r = data[index], g = data[index + 1], b = data[index + 2];
+  data[index] = Math.min(255, r * 0.393 + g * 0.769 + b * 0.189);
+  data[index + 1] = Math.min(255, r * 0.349 + g * 0.686 + b * 0.168);
+  data[index + 2] = Math.min(255, r * 0.272 + g * 0.534 + b * 0.131);
 });
 
 export const invert = () => {
