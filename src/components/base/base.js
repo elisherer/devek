@@ -28,20 +28,18 @@ export const reduceNumberBy = (field, fields) => {
   return newState;
 };
 
-const id = x => x,
-  binaryRegex = /^[01\s]+$/,
-  hexRegex = /^\s*([0-9a-f]\s*[0-9a-f]\s*)*$/i,
-  whiteSpaceRegex = /\s+/g;
+const binaryRegex = /^[01\s]+$/,
+  hexRegex = /^\s*([0-9a-f]\s*[0-9a-f]\s*)*$/i;
 
 const parsers = {
-  utf8: id,
+  utf8: devek.stringToUint8Array,
   binary: binary => binary && !binaryRegex.test(binary) ? NaN :
-    binary.replace(whiteSpaceRegex, '').match(/.{1,8}/g).map(x=>String.fromCharCode(parseInt(x,2))).join(''),
+    devek.binaryStringToArray(binary),
   hex: hex => hex && !hexRegex.test(hex) ? NaN :
-    devek.arrayToString(devek.hexStringToArray(hex)),
+    devek.hexStringToArray(hex),
   base64: b64 => {
     try {
-      return atob(b64);
+      return devek.base64ToUint8Array(b64);
     }
     catch (e) {
       return NaN;
@@ -50,10 +48,10 @@ const parsers = {
 };
 
 const serializers = {
-  utf8: id,
-  binary: utf8 => utf8.split('').map(c => c.charCodeAt(0).toString(2).padStart(8, '0')).join(' '),
-  hex: utf8 => utf8.split('').map(c => c.charCodeAt(0).toString(16).padStart(2, '0')).join(''),
-  base64: utf8 => btoa(utf8),
+  utf8: devek.arrayToString,
+  binary: arr => [...arr].map(x => x.toString(2).padStart(8, '0')).join(' '),
+  hex: devek.arrayToHexString,
+  base64: devek.arrayToBase64,
 };
 
 const allFields = Object.keys(parsers);
@@ -63,7 +61,7 @@ export const reduceTextBy = (field, fields) => {
 
   // calc new field (and determine if is valid)
   const parsedValue = parsers[field](fields[field]);
-  const invalid = typeof parsedValue !== 'string' && isNaN(parsedValue);
+  const invalid = !parsedValue || (!parsedValue.buffer && !Array.isArray(parsedValue));
 
   // if the new value is valid, then calc the others fields new values
   const otherFields = allFields.filter(x => x !== field);

@@ -34,7 +34,7 @@ const hmacSha256 = (str, base64Key) => createHMACSHA256Key(base64Key).then(key =
 const base64UrlDecode = b64uval => {
   try {
     if (!b64uval || !b64uval.length) return b64uval;
-    return devek.arrayToString(devek.base64UrlDecodeToUint8Array(b64uval));
+    return devek.arrayToString(devek.base64UrlToUint8Array(b64uval));
   }
   catch(e) {
     return {
@@ -64,8 +64,8 @@ const encodeAsync = async (alg, payload, key) => {
   }
 
   try {
-    const encodedHeader = devek.base64UrlEncode(JSON.stringify(header)),
-      encodedPayload = devek.base64UrlEncode(JSON.stringify(JSON.parse(payload)));
+    const encodedHeader = devek.stringToBase64Url(JSON.stringify(header)),
+      encodedPayload = devek.stringToBase64Url(JSON.stringify(JSON.parse(payload)));
 
     const prefix = encodedHeader + '.' + encodedPayload;
     const sig = await sign(alg, prefix, key);

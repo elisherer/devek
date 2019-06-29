@@ -189,11 +189,27 @@ const PageCrypto = () => {
     )
   }
   else if (type === 'cipher') {
-    const { cipherInput, passphrase, useSalt, salt, cipherOutput } = state;
+    const { cipherAlg, cipherType, cipherInput, passphrase, useSalt, salt, cipherOutput } = state;
 
     return (
       <div>
         {tabs}
+
+        <label>Algorithm:</label>
+        <Radio className={styles.options2}>
+          <div data-active={cipherAlg === "AES-CBC" || null} data-value="AES-CBC" onClick={actions.cipherAlg}>AES-CBC</div>
+          <div data-active={cipherAlg === "AES-CTR" || null} data-value="AES-CTR" onClick={actions.cipherAlg}>AES-CTR</div>
+          <div data-active={cipherAlg === "AES-GCM" || null} data-value="AES-GCM" onClick={actions.cipherAlg}>AES-GCM</div>
+          <div data-active={cipherAlg === "RSA-OAEP" || null} data-value="RSA-OAEP" onClick={actions.cipherAlg}>RSA-OAEP</div>
+        </Radio>
+
+        <label>Type: </label>
+        <Radio className={styles.options2}>
+          <div data-active={cipherType === "OpenSSL" || null} data-value="OpenSSL" onClick={actions.cipherType}>OpenSSL KDF</div>
+          <div data-active={cipherType === "OpenSSL" || null} data-value="OpenSSL" onClick={actions.cipherType}>PBKDF2</div>
+          <div data-active={cipherType === "OpenSSL" || null} data-value="OpenSSL" onClick={actions.cipherType}>Key Data</div>
+        </Radio>
+
 
         <label>Input:</label>
         <TextArea autoFocus onChange={actions.cipherInput} value={cipherInput}/>

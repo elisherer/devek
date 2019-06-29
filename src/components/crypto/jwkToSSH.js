@@ -16,8 +16,8 @@ const checkHighestBit = v => {
 
 function jwkToSSH(jwk) {
   const type = "ssh-rsa",
-    exponent = checkHighestBit(devek.base64UrlDecodeToUint8Array(jwk.e)),
-    key = checkHighestBit(devek.base64UrlDecodeToUint8Array(jwk.n));
+    exponent = checkHighestBit(devek.base64UrlToUint8Array(jwk.e)),
+    key = checkHighestBit(devek.base64UrlToUint8Array(jwk.n));
   const array = devek.concatUint8Array(
     len32(type.length), devek.stringToArray(type),
     len32(exponent.length), [...exponent],

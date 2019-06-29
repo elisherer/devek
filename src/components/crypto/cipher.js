@@ -10,16 +10,23 @@ const OPENSSL_MAGIC = devek.stringToUint8Array("Salted__");
  * @param salt {Uint8Array}
  * @param keySize {Number}
  * @param ivSize {Number}
+ * @param count (Number) number of iterations to run hash functions
  * @returns {{rawKey: Uint8Array, iv: Uint8Array}}
  */
-const kdfMD5 = (passphrase, salt, keySize, ivSize) => {
+const EVP_BytesToKey = (passphrase, salt, keySize, ivSize, count) => {
   const pass = devek.stringToUint8Array(passphrase);
 
   let passAndSalt = salt ? devek.concatUint8Array(pass, salt) : pass;
   let hash = MD5(passAndSalt);
+  for (let i = 1; i < count ; i++) {
+    hash = MD5(hash);
+  }
   let keyAndIv = hash;
   while (keyAndIv.byteLength < keySize + ivSize) {
     hash = MD5(devek.concatUint8Array(hash, passAndSalt));
+    for (let i = 1; i < count ; i++) {
+      hash = MD5(hash);
+    }
     keyAndIv = devek.concatUint8Array(keyAndIv, hash);
   }
 
@@ -32,15 +39,15 @@ const kdfMD5 = (passphrase, salt, keySize, ivSize) => {
 export const cipherEncrypt = async (data, passphrase, salt) => {
   try {
     if (salt === '') salt = crypto.getRandomValues(new Uint8Array(8));
-    if ((salt.length || salt.byteLength) < 8) {
+    if (salt && (salt.length || salt.byteLength) < 8) {
       const paddedSalt = new Uint8Array(Array.from({ length: 8 }, () => 0) );
       paddedSalt.set(salt, 0);
       salt = paddedSalt;
     }
-    if ((salt.length || salt.byteLength) > 8) {
+    else if (salt && (salt.length || salt.byteLength) > 8) {
       salt = salt.slice(0, 8);
     }
-    const { rawKey, iv } = kdfMD5(passphrase, salt, 32, 16);
+    const { rawKey, iv } = EVP_BytesToKey(passphrase, salt, 32, 16, 1);
 
     const cryptoKey = await crypto.subtle.importKey(
       "raw",
@@ -86,7 +93,7 @@ export const cipherDecrypt = async (data, passphrase, salt) => {
 
     if (salted) salt = decoded.slice(OPENSSL_MAGIC.byteLength, OPENSSL_MAGIC.byteLength + 8);
 
-    const {rawKey, iv} = kdfMD5(passphrase, salt, 32, 16);
+    const {rawKey, iv} = EVP_BytesToKey(passphrase, salt, 32, 16, 1);
 
     const encrypted = salted ? decoded.slice(OPENSSL_MAGIC.byteLength + 8) : decoded;
 
@@ -107,7 +114,8 @@ export const cipherDecrypt = async (data, passphrase, salt) => {
       encrypted
     ));
 
-    const output = devek.arrayToString(decrypted);
+    const de = new TextDecoder();
+    const output = de.decode(decrypted);
     const key = new Uint8Array(await crypto.subtle.exportKey('raw', cryptoKey));
 
     const meta = [
