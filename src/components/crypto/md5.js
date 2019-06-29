@@ -1,3 +1,5 @@
+import devek from 'devek';
+
 function add32(a, b) {
   return (a + b) & 0xFFFFFFFF;
 }
@@ -92,17 +94,20 @@ const ii = (a, b, c, d, x, s, t) => cmn(c ^ (b | (~d)), a, b, x, s, t);
 function md51(s) {
   const n = s.length,
     state = [0x67452301, 0xEFCDAB89, 0x98BADCFE, 0x10325476];
+  if (typeof s === 'string') {
+    s = new Uint8Array([...s].map(c => c.charCodeAt()));
+  }
   let i;
   for (i = 64; i<=n; i += 64) {
-    const q = s.substring(i - 64, i), md5bulks = [];
+    const q = s.slice(i - 64, i), md5bulks = [];
     for (let j = 0; j < 64; j += 4)
-      md5bulks[j >> 2] = q.charCodeAt(j) + (q.charCodeAt(j+1) << 8) + (q.charCodeAt(j+2) << 16) + (q.charCodeAt(j+3) << 24);
+      md5bulks[j >> 2] = q[j] + (q[j+1] << 8) + (q[j+2] << 16) + (q[j+3] << 24);
     md5cycle(state, md5bulks);
   }
-  s = s.substring(i-64);
+  s = s.slice(i-64);
   const tail = [0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0];
   for (i=0; i < s.length; i++)
-    tail[i >> 2] |= s.charCodeAt(i) << ((i%4) << 3);
+    tail[i >> 2] |= s[i] << ((i%4) << 3);
   tail[i >> 2] |= 0x80 << ((i % 4) << 3);
   if (i > 55) {
     md5cycle(state, tail);
@@ -124,8 +129,17 @@ function hex(x) {
   return x.join('');
 }
 
-function md5(s) {
-  return hex(md51(s));
+function arr(x) {
+  return new Uint8Array([].concat(...x.map(int => [int & 0xff, (int >> 8) & 0xff, (int >> 16) & 0xff, int >> 24])));
 }
+
+function md5(s, encoding) {
+  const hash = md51(s);
+  if (encoding === 'hex')
+    return hex(hash);
+  return arr(hash);
+}
+
+devek.md5 = md5;
 
 export default md5;

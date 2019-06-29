@@ -22,6 +22,7 @@ const TextBox = ({
                    startAddon,
                    endAddon,
                    invalid,
+                   disabled,
                    ...more
                  } : {
   autoFocus?: boolean,
@@ -35,6 +36,7 @@ const TextBox = ({
   startAddon?: any,
   endAddon?: any,
   invalid?: boolean,
+  disabled?: boolean,
 }) => {
   const inputElement = useRef();
 
@@ -50,12 +52,13 @@ const TextBox = ({
   }, []);
 
   return (
-    <section style={style} className={cx(className, styles.textbox, { [styles.readonly]: readOnly, [styles.error]: invalid })}>
+    <section style={style} className={cx(className, styles.textbox, { [styles.readonly]: readOnly, [styles.disabled]: disabled, [styles.error]: invalid })}>
       {startAddon}
       <input ref={inputElement} readOnly={readOnly} placeholder={placeholder}
              className={inputClassName}
              value={value}
              onKeyDown={blurOnEscape}
+             disabled={disabled}
              {...more}
       />
       {endAddon}

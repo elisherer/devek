@@ -1,10 +1,12 @@
+import devek from 'devek';
 import MD5 from './md5';
 import createStore from "../../helpers/createStore";
 import { jwkToSSH } from "./jwkToSSH";
 import { parseCertificate } from './asn1';
 import { prettyCert } from './cert';
+import { cipherEncrypt, cipherDecrypt } from './cipher';
 
-const cryptoAPI = window.crypto || window['msCrypto'];
+const crypto = devek.crypto;
 
 const _BEGIN = '-----BEGIN ', _END = '-----END ', _PRV = 'PRIVATE KEY-----', _PUB = 'PUBLIC KEY-----';
 const BEGIN_RSA_PRIVATE = _BEGIN + 'RSA ' + _PRV, END_RSA_PRIVATE = _END + 'RSA ' + _PRV,
@@ -13,7 +15,7 @@ const BEGIN_RSA_PRIVATE = _BEGIN + 'RSA ' + _PRV, END_RSA_PRIVATE = _END + 'RSA 
 
 const toPrivateKey = async key => {
   const rsa = key.algorithm.name[0] === 'R';
-  const pkcs8 = await window.crypto.subtle.exportKey("pkcs8", key);
+  const pkcs8 = await crypto.subtle.exportKey("pkcs8", key);
   const pkcs8AsBase64 = window.btoa(String.fromCharCode(...new Uint8Array(pkcs8)));
   return [ rsa ? BEGIN_RSA_PRIVATE : BEGIN_EC_PRIVATE,
     pkcs8AsBase64.match(/.{1,64}/g).join('\n'),
@@ -21,7 +23,7 @@ const toPrivateKey = async key => {
 };
 
 const toPublicKey = async key => {
-  const spki = await window.crypto.subtle.exportKey("spki", key);
+  const spki = await crypto.subtle.exportKey("spki", key);
   const spkiAsBase64 = window.btoa(String.fromCharCode(...new Uint8Array(spki)));
   return [ BEGIN_PUBLIC, spkiAsBase64.match(/.{1,64}/g).join('\n'), END_PUBLIC ].join('\n');
 };
@@ -49,13 +51,28 @@ const actionCreators = {
   },
   hash: ({ input, hashAlg }) => async state => {
     const buf = new TextEncoder('utf-8').encode(input);
-    const hash = hashAlg === 'MD5' ? MD5(input): await cryptoAPI.subtle.digest(hashAlg, buf);
+    const hash = hashAlg === 'MD5' ? MD5(input, 'hex'): await crypto.subtle.digest(hashAlg, buf);
     return { ...state, input, hashAlg, hash };
   },
   format: e => state => ({
     ...state,
     outputFormat: e.target.dataset.format
   }),
+
+  cipherInput: e => state => ({ ...state, cipherInput: e.target.innerText }),
+  passphrase: e => state => ({ ...state, passphrase: e.target.value }),
+  useSalt: e => state => ({ ...state, useSalt: e.target.checked }),
+  salt: e => state => ({ ...state, salt: e.target.value }),
+  encrypt: () => async state => ({
+    ...state,
+    cipherOutput: await cipherEncrypt(
+      state.cipherInput,
+      state.passphrase,
+      state.useSalt ? (state.salt ? devek.hexStringToArray(state.salt) : state.salt) : null
+    )
+  }),
+  decrypt: () => async state => ({ ...state, cipherOutput: await cipherDecrypt(state.cipherInput, state.passphrase, state.salt ? devek.hexStringToArray(state.salt) : state.salt)}),
+
   genAlg: e => state => ({ ...state, genAlg: e.target.dataset.alg }),
   rsaModulusLength: e => state => ({ ...state, rsaModulusLength: parseInt(e.target.dataset.value) }),
   ecNamedCurve: e => state => ({ ...state, ecNamedCurve: e.target.dataset.value }),
@@ -66,7 +83,7 @@ const actionCreators = {
       let key;
       switch (family) {
         case 'RSA':
-          key = await cryptoAPI.subtle.generateKey({
+          key = await crypto.subtle.generateKey({
             name: genAlg,
             modulusLength: rsaModulusLength,
             publicExponent: new Uint8Array([1, 0, 1]),
@@ -74,7 +91,7 @@ const actionCreators = {
           }, true,  genAlg === "RSA-OAEP" ? ["encrypt", "decrypt"] : ["sign", "verify"]);
           break;
         case 'EC':
-          key = await cryptoAPI.subtle.generateKey({
+          key = await crypto.subtle.generateKey({
             name: genAlg,
             namedCurve: ecNamedCurve
           }, true, genAlg === "ECDH" ? ["deriveKey"] : ["sign", "verify"]);
@@ -119,6 +136,12 @@ const initialState = {
   error: '',
   hash: hexToHash('e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'),
   outputFormat: 'hex',
+
+  // cipher
+  cipherInput: '',
+  passphrase: '',
+  useSalt: true,
+  salt: '',
 
   //generate keys
   genAlg: 'RSA-OAEP', // RSASSA-PKCS1-v1_5 / RSA-PSS / RSA-OAEP / ECDH / ECDSA

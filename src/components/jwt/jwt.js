@@ -1,4 +1,5 @@
-const cryptoAPI = window.crypto || window.msCrypto;
+import devek from 'devek';
+const crypto = devek.crypto;
 
 let lastKey, lastKeyBase64;
 
@@ -7,7 +8,7 @@ const createHMACSHA256Key = base64Key => {
     return Promise.resolve(lastKey);
   }
   lastKeyBase64 = base64Key;
-  return cryptoAPI.subtle.importKey(
+  return crypto.subtle.importKey(
     "jwk",
     {
       kty: "oct",
@@ -27,24 +28,13 @@ const createHMACSHA256Key = base64Key => {
 const hmacSha256 = (str, base64Key) => createHMACSHA256Key(base64Key).then(key => {
   lastKey = key;
   const buf = new TextEncoder("utf-8").encode(str);
-  return cryptoAPI.subtle.sign("HMAC", key, buf);
+  return crypto.subtle.sign("HMAC", key, buf);
 });
-
-const emptyB64 = btoa('');
-
-const base64UrlEncodeWeb = value => {
-  if (!value) return emptyB64;
-  return btoa(value).replace(/=+/g, "").replace(/\+/g, '-').replace(/\//g, '_');
-};
-
-const arrayToBase64Url = a => base64UrlEncodeWeb(String.fromCharCode(...new Uint8Array(a)));
-
 
 const base64UrlDecode = b64uval => {
   try {
     if (!b64uval || !b64uval.length) return b64uval;
-    const b64val = b64uval.replace(/-/g, '+').replace(/_/g, '/');
-    return atob(b64val);
+    return devek.arrayToString(devek.base64UrlDecodeToUint8Array(b64uval));
   }
   catch(e) {
     return {
@@ -58,7 +48,7 @@ const sign = async (alg, token, secret) => {
     switch (alg) {
       case 'HS256': {
         const array = await hmacSha256(token, secret);
-        return arrayToBase64Url(array);
+        return devek.arrayToBase64Url(array);
       }
     }
   }
@@ -74,8 +64,8 @@ const encodeAsync = async (alg, payload, key) => {
   }
 
   try {
-    const encodedHeader = base64UrlEncodeWeb(JSON.stringify(header)),
-      encodedPayload = base64UrlEncodeWeb(JSON.stringify(JSON.parse(payload)));
+    const encodedHeader = devek.base64UrlEncode(JSON.stringify(header)),
+      encodedPayload = devek.base64UrlEncode(JSON.stringify(JSON.parse(payload)));
 
     const prefix = encodedHeader + '.' + encodedPayload;
     const sig = await sign(alg, prefix, key);

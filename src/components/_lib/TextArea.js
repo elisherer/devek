@@ -45,8 +45,8 @@ function replaceCaret(el) {
   }
 }
 
-const TextArea = ({ autoFocus, className, style, onChange, readOnly, value, html, ...more } :
-                    { autoFocus?: boolean, className?: string, style?: Object, onChange?: Function, readOnly?: boolean, value?: string, html?: boolean }) => {
+const TextArea = ({ autoFocus, className, style, onChange, readOnly, value, html, disabled, ...more } :
+                    { autoFocus?: boolean, className?: string, style?: Object, onChange?: Function, readOnly?: boolean, value?: string, html?: boolean, disabled?: boolean }) => {
   const innerProp = html ? "innerHTML" : "innerText";
 
   const inputElement = useRef();
@@ -71,8 +71,11 @@ const TextArea = ({ autoFocus, className, style, onChange, readOnly, value, html
   }, []);
 
   return (
-    <pre ref={inputElement} style={style} className={cx(className, styles.textarea, {[styles.readonly]: readOnly})}
-         contentEditable={!readOnly}
+    <pre ref={inputElement} style={style} className={cx(className, styles.textarea, {
+      [styles.readonly]: readOnly,
+      [styles.disabled]: disabled,
+    })}
+         contentEditable={!readOnly && !disabled}
          onInput={onChange}
          onKeyDown={blurOnEscape}
          onPaste={html ? undefined : stripFormattingOnPaste}

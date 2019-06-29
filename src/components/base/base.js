@@ -1,4 +1,4 @@
-import zPad from 'helpers/zPad';
+import devek from 'devek';
 
 const radixStr = "0123456789abcdefghijklmnopqrstuvwxyz";
 const radixRegex = Array.from({ length: 36 - 2 + 1 },
@@ -30,31 +30,29 @@ export const reduceNumberBy = (field, fields) => {
 
 const id = x => x,
   binaryRegex = /^[01\s]+$/,
-  hexRegex = /^[0-9a-f\s]+$/i,
+  hexRegex = /^\s*([0-9a-f]\s*[0-9a-f]\s*)*$/i,
   whiteSpaceRegex = /\s+/g;
 
 const parsers = {
   utf8: id,
   binary: binary => binary && !binaryRegex.test(binary) ? NaN :
-    binary.trim().replace(whiteSpaceRegex, ' ').split(' ')
-      .map(b => String.fromCharCode(parseInt(b, 2))).join(''),
+    binary.replace(whiteSpaceRegex, '').match(/.{1,8}/g).map(x=>String.fromCharCode(parseInt(x,2))).join(''),
   hex: hex => hex && !hexRegex.test(hex) ? NaN :
-    hex.trim().replace(whiteSpaceRegex, ' ').split(' ')
-      .map(hx => String.fromCharCode(parseInt(hx, 16))).join(''),
-      base64: b64 => {
-        try {
-          return atob(b64);
-        }
-        catch (e) {
-          return NaN;
-        }
-      }
+    devek.arrayToString(devek.hexStringToArray(hex)),
+  base64: b64 => {
+    try {
+      return atob(b64);
+    }
+    catch (e) {
+      return NaN;
+    }
+  }
 };
 
 const serializers = {
   utf8: id,
-  binary: utf8 => utf8.split('').map(char => zPad(char.charCodeAt(0).toString(2), 8)).join(' '),
-  hex: utf8 => utf8.split('').map(char => zPad(char.charCodeAt(0).toString(16), 2)).join(' '),
+  binary: utf8 => utf8.split('').map(c => c.charCodeAt(0).toString(2).padStart(8, '0')).join(' '),
+  hex: utf8 => utf8.split('').map(c => c.charCodeAt(0).toString(16).padStart(2, '0')).join(''),
   base64: utf8 => btoa(utf8),
 };
 

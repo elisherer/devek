@@ -1,12 +1,3 @@
-import zPad from 'helpers/zPad';
-
-/**
- * Convert to base2 padded to 8 bits
- * @param num {Number}
- * @returns {string}
- */
-//const to8Bit = num => zPad(num.toString(2), 8);
-
 const ipv4Regex = /^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/;
 const 
   zeros = '00000000', 
@@ -43,8 +34,8 @@ const parsers = {
 };
 
 export const formatters = {
-  ipv4: ip => zPad(ip.toString(2), 32).replace(/[01]{8}/g, num => parseInt(num, 2) + '.').slice(0,-1),
-  ipv4_binary: ip => zPad(ip.toString(2), 32).replace(/[01]{8}/g,'$&.').slice(0,-1),
+  ipv4: ip => ip.toString(2).padStart(32, '0').replace(/[01]{8}/g, num => parseInt(num, 2) + '.').slice(0,-1),
+  ipv4_binary: ip => ip.toString(2).padStart(32, '0').replace(/[01]{8}/g,'$&.').slice(0,-1),
   class: getIPClass,
 };
 

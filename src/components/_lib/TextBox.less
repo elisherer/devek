@@ -21,14 +21,14 @@
     overflow-wrap: break-word;
     word-wrap: break-word;
     word-break: break-all;
-    &[readonly] {
+    &[readonly], &[disabled] {
       background: @gui-textarea-readonly-bg;
     }
   }
   &:focus-within {
     border-color: @gui-secondary-color;
   }
-  &.readonly {
+  &.readonly, &.disabled {
     background: @gui-textarea-readonly-bg;
   }
   &.error, &.error:focus-within {

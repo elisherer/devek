@@ -2,7 +2,6 @@ import React, {useEffect} from 'react';
 import { CopyToClipboard, TextBox } from '../_lib';
 import { useStore, actions } from './PageNetwork.store';
 import { formatters, isPrivate } from './network';
-import zPad from 'helpers/zPad';
 import styles from './PageNetwork.less';
 import { getJSONAsync } from "../../helpers/http";
 
@@ -60,7 +59,7 @@ const PageNetwork = () => {
           <tr><td>Hosts</td><td>{Math.pow(2, 32 - subnet) - 2}</td><td /></tr>
           <tr><td>Private</td><td>{isPrivate(parsed) ? "Yes" : "No"}</td><td /></tr>
           <tr><td>Int/Hex</td><td>{parsed}</td><td>0x{parsed.toString(16)}</td></tr>
-          <tr><td>IPv6</td><td /><td>0:0:0:0:0:ffff:{zPad((parsed >>> 16).toString(16), 4)}:{zPad((parsed & 0xff).toString(16), 4)}</td></tr>
+          <tr><td>IPv6</td><td /><td>0:0:0:0:0:ffff:{(parsed >>> 16).toString(16).padStart(4, '0')}:{(parsed & 0xff).toString(16).padStart(4, '0')}</td></tr>
           </tbody>
         </table>
       )}

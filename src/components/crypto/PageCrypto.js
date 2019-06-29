@@ -1,5 +1,5 @@
 import React from 'react';
-import { CopyToClipboard, Radio, Tabs, TextArea } from '../_lib';
+import {Checkbox, CopyToClipboard, Radio, Tabs, TextArea, TextBox} from '../_lib';
 import { Redirect, NavLink } from 'react-router-dom';
 import { useStore, actions } from './PageCrypto.store';
 import cx from "classnames";
@@ -16,13 +16,17 @@ const subPages = [
     title: 'Hash'
   },
   {
+    path: 'cipher',
+    title: 'Cipher'
+  },
+  {
     path: 'asymmetric',
     title: 'Asymmetric Keys'
   },
   {
     path: 'cert',
     title: 'Certificate parser'
-  },
+  }
 ];
 
 const onDragOver = e => {
@@ -182,6 +186,40 @@ const PageCrypto = () => {
         <label>Certificate fields</label>
         <TextArea readOnly value={certOutput} />
       </div>
+    )
+  }
+  else if (type === 'cipher') {
+    const { cipherInput, passphrase, useSalt, salt, cipherOutput } = state;
+
+    return (
+      <div>
+        {tabs}
+
+        <label>Input:</label>
+        <TextArea autoFocus onChange={actions.cipherInput} value={cipherInput}/>
+
+        <label>Passphrase:</label>
+        <TextBox type="password" autoComplete="off" onChange={actions.passphrase} value={passphrase}/>
+
+        <Checkbox label="Salt: (Hex)" checked={useSalt} onChange={actions.useSalt}/>
+        <TextBox disabled={!useSalt} onChange={actions.salt} value={salt} placeholder="Leave empty to generate salt"/>
+
+        <div className={styles.actions}>
+          <button onClick={actions.encrypt}>Encrypt</button>
+          <button onClick={actions.decrypt}>Decrypt</button>
+        </div>
+
+        {cipherOutput && (
+          <>
+            <label>Encryption data:</label>
+            <TextArea readOnly value={cipherOutput.meta} />
+
+            <label>Output:</label>
+            <TextArea readOnly value={cipherOutput.output} />
+          </>
+        )}
+
+        </div>
     )
   }
 };
