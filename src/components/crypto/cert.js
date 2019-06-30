@@ -39,7 +39,6 @@ function replacer(key, value) {
 
 
 export const prettyCert = (cert) => {
-
   const publicKey = cert.subjectPublicKeyInfo.algorithm === 'rsaEncryption'
     ? `
                 Public-Key: ${cert.subjectPublicKeyInfo.publicKey.publicKey}

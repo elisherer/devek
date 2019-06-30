@@ -28,12 +28,16 @@ const toPublicKey = async key => {
   return [ BEGIN_PUBLIC, spkiAsBase64.match(/.{1,64}/g).join('\n'), END_PUBLIC ].join('\n');
 };
 
+const toRawKey = async key => {
+  const rawBuffer = await crypto.subtle.exportKey("raw", key);
+  return devek.arrayToHexString(new Uint8Array(rawBuffer));
+};
 const toPublicSSH = async key => {
   const jwk = await window.crypto.subtle.exportKey("jwk", key);
   return jwkToSSH(jwk);
 };
 
-const getFamily = alg => alg.match(/^(RSA|EC)/)[0];
+const getFamily = alg => alg.match(/^(RSA|EC|AES|HMAC)/)[0];
 
 
 const actionCreators = {
@@ -44,7 +48,7 @@ const actionCreators = {
     return newState;
   },
   hashAlg: e => (state, actions) => {
-    const hashAlg = e.target.dataset.alg;
+    const hashAlg = e.target.dataset.value;
     const newState = { ...state, hashAlg };
     actions.hash(newState);
     return newState;
@@ -54,11 +58,10 @@ const actionCreators = {
     const hash = hashAlg === 'MD5' ? MD5(input, 'hex'): await crypto.subtle.digest(hashAlg, buf);
     return { ...state, input, hashAlg, hash };
   },
-  format: e => state => ({
-    ...state,
-    outputFormat: e.target.dataset.format
-  }),
+  format: e => state => ({ ...state, outputFormat: e.target.dataset.value }),
 
+  cipherAlg: e => state => ({ ...state, cipherAlg: e.target.dataset.value }),
+  cipherType: e => state => ({ ...state, cipherType: e.target.dataset.value }),
   cipherInput: e => state => ({ ...state, cipherInput: e.target.innerText }),
   passphrase: e => state => ({ ...state, passphrase: e.target.value }),
   useSalt: e => state => ({ ...state, useSalt: e.target.checked }),
@@ -73,36 +76,59 @@ const actionCreators = {
   }),
   decrypt: () => async state => ({ ...state, cipherOutput: await cipherDecrypt(state.cipherInput, state.passphrase, state.salt ? devek.hexStringToArray(state.salt) : state.salt)}),
 
-  genAlg: e => state => ({ ...state, genAlg: e.target.dataset.alg }),
+  genType: e => state => ({ ...state, genType: e.target.dataset.value }),
+  genAsymAlg: e => state => ({ ...state, genAsymAlg: e.target.dataset.value }),
+  genSymmAlg: e => state => ({ ...state, genSymmAlg: e.target.dataset.value }),
+  genHashAlg: e => state => ({ ...state, genHashAlg: e.target.dataset.value }),
   rsaModulusLength: e => state => ({ ...state, rsaModulusLength: parseInt(e.target.dataset.value) }),
   ecNamedCurve: e => state => ({ ...state, ecNamedCurve: e.target.dataset.value }),
+  aesKeyLength: e => state => ({ ...state, aesKeyLength: parseInt(e.target.dataset.value) }),
   genKey: () => async state => {
     try {
-      const {genAlg, genHashAlg, rsaModulusLength, ecNamedCurve } = state;
-      const family = getFamily(genAlg);
+      const {genType, genAsymAlg, genSymmAlg, genHashAlg, rsaModulusLength, ecNamedCurve, aesKeyLength } = state;
+      const symm = genType === 'symmetric';
+      const family = getFamily(symm ? genSymmAlg : genAsymAlg);
       let key;
       switch (family) {
         case 'RSA':
           key = await crypto.subtle.generateKey({
-            name: genAlg,
+            name: genAsymAlg,
             modulusLength: rsaModulusLength,
             publicExponent: new Uint8Array([1, 0, 1]),
             hash: genHashAlg
-          }, true,  genAlg === "RSA-OAEP" ? ["encrypt", "decrypt"] : ["sign", "verify"]);
+          }, true,  genAsymAlg === "RSA-OAEP" ? ["encrypt", "decrypt"] : ["sign", "verify"]);
           break;
         case 'EC':
           key = await crypto.subtle.generateKey({
-            name: genAlg,
+            name: genAsymAlg,
             namedCurve: ecNamedCurve
-          }, true, genAlg === "ECDH" ? ["deriveKey"] : ["sign", "verify"]);
+          }, true, genAsymAlg === "ECDH" ? ["deriveKey"] : ["sign", "verify"]);
+          break;
+        case 'HMAC':
+          key = await crypto.subtle.generateKey({
+            name: genSymmAlg,
+            hash: {name: genHashAlg}
+          }, true, ["sign", "verify"]);
+          break;
+        case 'AES':
+          key = await crypto.subtle.generateKey({
+            name: genSymmAlg,
+            length: aesKeyLength
+          }, true, genSymmAlg === 'AES-KW' ? ["wrapKey", "unwrapKey"] : ["encrypt", "decrypt"]);
           break;
         default:
           return { ...state, genError: 'Unknown generation algorithm' };
       }
-      const publicKey = await toPublicKey(key.extractable ? key : key.publicKey);
-      const privateKey = await toPrivateKey(key.extractable ? key : key.privateKey);
-      const publicSSH = family === "RSA" ? await toPublicSSH(key.extractable ? key : key.publicKey) : '';
-      return {...state, publicKey, privateKey, publicSSH, genError: '' };
+      if (symm) {
+        const symmKey = await toRawKey(key);
+        return {...state, symmKey, genError: ''};
+      }
+      else {
+        const publicKey = await toPublicKey(key.extractable ? key : key.publicKey);
+        const privateKey = await toPrivateKey(key.extractable ? key : key.privateKey);
+        const publicSSH = family === "RSA" ? await toPublicSSH(key.extractable ? key : key.publicKey) : '';
+        return {...state, publicKey, privateKey, publicSSH, genError: ''};
+      }
     }
     catch (e) {
       return { ...state, genError: e.message };
@@ -110,10 +136,15 @@ const actionCreators = {
   },
   loaded: (pem) => state => {
     const cert = parseCertificate(pem);
-    console.log(cert); // eslint-disable-line
-    const certOutput = prettyCert(cert);
+    if (cert.error) {
+      return {...state, loaded: false, pem: 'Error reading certificate\n\nMessage: ' + cert.error , certOutput: ''};
+    }
+    else {
+      console.log(cert); // eslint-disable-line
+      const certOutput = prettyCert(cert);
 
-    return {...state, loaded: true, pem, certOutput};
+      return {...state, loaded: true, pem, certOutput};
+    }
   },
   onDragEnter: e => state => {
     e.preventDefault();
@@ -138,16 +169,21 @@ const initialState = {
   outputFormat: 'hex',
 
   // cipher
+  cipherAlg: 'AES-CBC',
+  cipherType: 'OpenSSL',
   cipherInput: '',
   passphrase: '',
   useSalt: true,
   salt: '',
 
   //generate keys
-  genAlg: 'RSA-OAEP', // RSASSA-PKCS1-v1_5 / RSA-PSS / RSA-OAEP / ECDH / ECDSA
-  genHashAlg: 'SHA-256',
+  genType: 'symmetric', // symmetric / asymmetric
+  genAsymAlg: 'RSA-OAEP', // RSASSA-PKCS1-v1_5 / RSA-PSS / RSA-OAEP / ECDH / ECDSA
+  genSymmAlg: 'AES-CBC', // HMAC / AES-CTR / AES-CBC / AES-GCM / AES-KW
+  genHashAlg: 'SHA-256', // SHA-1 / SHA-256 / SHA-384 / SHA-512
   rsaModulusLength: 2048, // 2048 / 4096
   ecNamedCurve: 'P-384', // P-256 / P-384 / P-521
+  aesKeyLength: 256, // 128 / 192 / 256
   publicKey: '',
   privateKey: '',
   publicSSH: '',

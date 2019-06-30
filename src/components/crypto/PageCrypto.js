@@ -20,8 +20,8 @@ const subPages = [
     title: 'Cipher'
   },
   {
-    path: 'asymmetric',
-    title: 'Asymmetric Keys'
+    path: 'generate',
+    title: 'Generate Keys'
   },
   {
     path: 'cert',
@@ -80,18 +80,18 @@ const PageCrypto = () => {
 
         <label>Algorithm:</label>
         <Radio className={styles.options}>
-          <div data-active={hashAlg === "SHA-1" || null} data-alg="SHA-1" onClick={actions.hashAlg}>SHA-1</div>
-          <div data-active={hashAlg === "SHA-256" || null} data-alg="SHA-256" onClick={actions.hashAlg}>SHA-256</div>
-          <div data-active={hashAlg === "SHA-384" || null} data-alg="SHA-384" onClick={actions.hashAlg}>SHA-384</div>
-          <div data-active={hashAlg === "SHA-512" || null} data-alg="SHA-512" onClick={actions.hashAlg}>SHA-512</div>
-          <div data-active={hashAlg === "MD5" || null} data-alg="MD5" onClick={actions.hashAlg}>MD5</div>
+          <div data-active={hashAlg === "SHA-1" || null} data-value="SHA-1" onClick={actions.hashAlg}>SHA-1</div>
+          <div data-active={hashAlg === "SHA-256" || null} data-value="SHA-256" onClick={actions.hashAlg}>SHA-256</div>
+          <div data-active={hashAlg === "SHA-384" || null} data-value="SHA-384" onClick={actions.hashAlg}>SHA-384</div>
+          <div data-active={hashAlg === "SHA-512" || null} data-value="SHA-512" onClick={actions.hashAlg}>SHA-512</div>
+          <div data-active={hashAlg === "MD5" || null} data-value="MD5" onClick={actions.hashAlg}>MD5</div>
         </Radio>
 
         <label>Output format:</label>
         {hashAlg !== 'MD5' ? (
           <Radio className={styles.options}>
-            <div data-active={outputFormat === "hex" || null} data-format="hex" onClick={actions.format}>Hex</div>
-            <div data-active={outputFormat === "base64" || null} data-format="base64" onClick={actions.format}>Base64</div>
+            <div data-active={outputFormat === "hex" || null} data-value="hex" onClick={actions.format}>Hex</div>
+            <div data-active={outputFormat === "base64" || null} data-value="base64" onClick={actions.format}>Base64</div>
           </Radio>
         ) : (
           <Radio className={styles.options}>
@@ -110,58 +110,124 @@ const PageCrypto = () => {
       </div>
     );
   }
-  else if (type === 'asymmetric') {
+  else if (type === 'generate') {
 
-    const { genAlg, rsaModulusLength, ecNamedCurve, publicKey, privateKey, publicSSH, genError } = state;
+    const { genType, genSymmAlg, genAsymAlg, genHashAlg, rsaModulusLength, ecNamedCurve, aesKeyLength, publicKey, privateKey, publicSSH, symmKey, genError } = state;
 
     return (
       <div>
         {tabs}
 
-        <label>Algorithm:</label>
-        <Radio className={styles.options2}>
-          <div data-active={genAlg === "RSA-OAEP" || null} data-alg="RSA-OAEP" onClick={actions.genAlg}>RSA-OAEP</div>
-          <div data-active={genAlg === "RSA-PSS" || null} data-alg="RSA-PSS" onClick={actions.genAlg}>RSA-PSS</div>
-          <div data-active={genAlg === "RSASSA-PKCS1-v1_5" || null} data-alg="RSASSA-PKCS1-v1_5" onClick={actions.genAlg}>RSASSA PKCS1 v1.5</div>
-          <div data-active={genAlg === "ECDSA" || null} data-alg="ECDSA" onClick={actions.genAlg}>ECDSA</div>
-          <div data-active={genAlg === "ECDH" || null} data-alg="ECDH" onClick={actions.genAlg}>ECDH</div>
+        <label>Type:</label>
+        <Radio className={styles.options}>
+          <div data-active={genType === 'symmetric' || null} data-value="symmetric" onClick={actions.genType}>Symmetric</div>
+          <div data-active={genType === 'asymmetric' || null} data-value="asymmetric" onClick={actions.genType}>Asymmetric</div>
         </Radio>
 
-        <div>
-          {genAlg[0] === 'R' ? (
+        { genType === 'symmetric' ? (
+          <>
+            <label>Algorithm:</label>
+            <Radio className={styles.options2}>
+              <div data-active={genSymmAlg === "HMAC" || null} data-value="HMAC" onClick={actions.genSymmAlg}>HMAC</div>
+              <div data-active={genSymmAlg === "AES-CTR" || null} data-value="AES-CTR" onClick={actions.genSymmAlg}>AES-CTR</div>
+              <div data-active={genSymmAlg === "AES-CBC" || null} data-value="AES-CBC" onClick={actions.genSymmAlg}>AES-CBC</div>
+              <div data-active={genSymmAlg === "AES-GCM" || null} data-value="AES-GCM" onClick={actions.genSymmAlg}>AES-GCM</div>
+              <div data-active={genSymmAlg === "AES-KW" || null} data-value="AES-KW" onClick={actions.genSymmAlg}>AES-KW</div>
+            </Radio>
+
             <div>
-              <label>Modulus Length:</label>
-              <Radio className={styles.options}>
-                <div data-active={rsaModulusLength === 2048 || null} data-value={2048} onClick={actions.rsaModulusLength}>2048</div>
-                <div data-active={rsaModulusLength === 4096 || null} data-value={4096} onClick={actions.rsaModulusLength}>4096</div>
-              </Radio>
+              {genSymmAlg[0] === 'H' ? (
+                <>
+                  <label>Hash function:</label>
+                  <Radio className={styles.options}>
+                    <div data-active={genHashAlg === 'SHA-1' || null} data-value="SHA-1" onClick={actions.genHashAlg}>SHA-1</div>
+                    <div data-active={genHashAlg === 'SHA-256' || null} data-value="SHA-256" onClick={actions.genHashAlg}>SHA-256</div>
+                    <div data-active={genHashAlg === 'SHA-384' || null} data-value="SHA-384" onClick={actions.genHashAlg}>SHA-384</div>
+                    <div data-active={genHashAlg === 'SHA-512' || null} data-value="SHA-512" onClick={actions.genHashAlg}>SHA-512</div>
+                  </Radio>
+                </>
+              ) : (
+                <>
+                  <label>Length (Bits):</label>
+                  <Radio className={styles.options}>
+                    <div data-active={aesKeyLength === 128 || null} data-value="128" onClick={actions.aesKeyLength}>128</div>
+                    <div data-active={aesKeyLength === 192 || null} data-value="192" onClick={actions.aesKeyLength}>192</div>
+                    <div data-active={aesKeyLength === 256 || null} data-value="256" onClick={actions.aesKeyLength}>256</div>
+                  </Radio>
+                </>
+              )}
             </div>
-          ) : (
+
+            <div className={styles.actions}>
+              <button onClick={actions.genKey}>Generate</button>
+            </div>
+
+            <hr />
+
+            <span>Key:</span><CopyToClipboard from="crypto_key"/>
+            <TextArea id="crypto_key" readOnly className={cx({[styles.error]: genError})} value={genError || symmKey} />
+            <div className={styles.input_info}>
+              <sup>&nbsp;{!genError ? (symmKey.length > 0 ? 'Length: ' + symmKey.length : '') : ''}</sup>
+            </div>
+          </>
+        ) : (
+          <>
+            <label>Algorithm:</label>
+            <Radio className={styles.options2}>
+              <div data-active={genAsymAlg === "RSA-OAEP" || null} data-value="RSA-OAEP" onClick={actions.genAsymAlg}>RSA-OAEP</div>
+              <div data-active={genAsymAlg === "RSA-PSS" || null} data-value="RSA-PSS" onClick={actions.genAsymAlg}>RSA-PSS</div>
+              <div data-active={genAsymAlg === "RSASSA-PKCS1-v1_5" || null} data-value="RSASSA-PKCS1-v1_5" onClick={actions.genAsymAlg}>RSASSA PKCS1 v1.5</div>
+              <div data-active={genAsymAlg === "ECDSA" || null} data-value="ECDSA" onClick={actions.genAsymAlg}>ECDSA</div>
+              <div data-active={genAsymAlg === "ECDH" || null} data-value="ECDH" onClick={actions.genAsymAlg}>ECDH</div>
+            </Radio>
+
             <div>
-              <label>Named Curve:</label>
-              <Radio className={styles.options}>
-                <div data-active={ecNamedCurve === "P-256" || null} data-value="P-256" onClick={actions.ecNamedCurve}>P-256</div>
-                <div data-active={ecNamedCurve === "P-384" || null} data-value="P-384" onClick={actions.ecNamedCurve}>P-384</div>
-                <div data-active={ecNamedCurve === "P-521" || null} data-value="P-521" onClick={actions.ecNamedCurve}>P-521</div>
-              </Radio>
+              {genAsymAlg[0] === 'R' ? (
+                <>
+                  <label>Hash function:</label>
+                  <Radio className={styles.options}>
+                    <div data-active={genHashAlg === 'SHA-1' || null} data-value="SHA-1" onClick={actions.genHashAlg}>SHA-1</div>
+                    <div data-active={genHashAlg === 'SHA-256' || null} data-value="SHA-256" onClick={actions.genHashAlg}>SHA-256</div>
+                    <div data-active={genHashAlg === 'SHA-384' || null} data-value="SHA-384" onClick={actions.genHashAlg}>SHA-384</div>
+                    <div data-active={genHashAlg === 'SHA-512' || null} data-value="SHA-512" onClick={actions.genHashAlg}>SHA-512</div>
+                  </Radio>
+
+                  <label>Modulus Length:</label>
+                  <Radio className={styles.options}>
+                    <div data-active={rsaModulusLength === 2048 || null} data-value={2048} onClick={actions.rsaModulusLength}>2048</div>
+                    <div data-active={rsaModulusLength === 4096 || null} data-value={4096} onClick={actions.rsaModulusLength}>4096</div>
+                  </Radio>
+
+                </>
+              ) : (
+                <>
+                  <label>Named Curve:</label>
+                  <Radio className={styles.options}>
+                    <div data-active={ecNamedCurve === "P-256" || null} data-value="P-256" onClick={actions.ecNamedCurve}>P-256</div>
+                    <div data-active={ecNamedCurve === "P-384" || null} data-value="P-384" onClick={actions.ecNamedCurve}>P-384</div>
+                    <div data-active={ecNamedCurve === "P-521" || null} data-value="P-521" onClick={actions.ecNamedCurve}>P-521</div>
+                  </Radio>
+                </>
+              )}
             </div>
-          )}
-        </div>
 
-        <hr />
+            <div className={styles.actions}>
+              <button onClick={actions.genKey}>Generate</button>
+            </div>
 
-        <div className={styles.actions}>
-          <button onClick={actions.genKey}>Generate</button>
-        </div>
-        <span>Public Key:</span><CopyToClipboard from="crypto_public"/>
-        <TextArea id="crypto_public" readOnly className={cx({[styles.error]: genError})} value={genError || publicKey} />
-        <span>Private Key:</span><CopyToClipboard from="crypto_private"/>
-        <TextArea id="crypto_private" readOnly value={genError ? '' : privateKey} />
+            <hr />
 
-        {publicSSH && <>
-          <span>Public SSH:</span><CopyToClipboard from="crypto_ssh"/>
-          <TextArea className={styles.long_output} id="crypto_ssh" readOnly value={genError ? '' : publicSSH} />
-        </>}
+            <span>Public Key:</span><CopyToClipboard from="crypto_public"/>
+            <TextArea id="crypto_public" readOnly className={cx({[styles.error]: genError})} value={genError || publicKey} />
+            <span>Private Key:</span><CopyToClipboard from="crypto_private"/>
+            <TextArea id="crypto_private" readOnly value={genError ? '' : privateKey} />
+
+            {publicSSH && <>
+              <span>Public SSH:</span><CopyToClipboard from="crypto_ssh"/>
+              <TextArea className={styles.long_output} id="crypto_ssh" readOnly value={genError ? '' : publicSSH} />
+            </>}
+          </>
+        )}
 
       </div>
     );
@@ -206,8 +272,8 @@ const PageCrypto = () => {
         <label>Type: </label>
         <Radio className={styles.options2}>
           <div data-active={cipherType === "OpenSSL" || null} data-value="OpenSSL" onClick={actions.cipherType}>OpenSSL KDF</div>
-          <div data-active={cipherType === "OpenSSL" || null} data-value="OpenSSL" onClick={actions.cipherType}>PBKDF2</div>
-          <div data-active={cipherType === "OpenSSL" || null} data-value="OpenSSL" onClick={actions.cipherType}>Key Data</div>
+          <div data-active={cipherType === "PBKDF2" || null} data-value="PBKDF2" onClick={actions.cipherType}>PBKDF2</div>
+          <div data-active={cipherType === "Key Data" || null} data-value="Key Data" onClick={actions.cipherType}>Key Data</div>
         </Radio>
 
 

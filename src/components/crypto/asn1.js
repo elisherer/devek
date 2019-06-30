@@ -1,12 +1,11 @@
+import devek from 'devek';
 const fieldNames = require('./fieldNames');
 
 const parsePem = buffer => {
-  buffer = new Uint8Array(
-    Buffer.from(
-    (buffer + '').split('\r').join('')
-      .split('\n')
-      .filter(line => line.indexOf('-----'))
-      .join(''), 'base64').toString('binary').split('').map(c => c.charCodeAt()));
+  buffer = devek.base64ToUint8Array((buffer + '').split('\r').join('')
+    .split('\n')
+    .filter(line => line.indexOf('-----'))
+    .join(''));
   return parse(buffer);
 };
 
@@ -268,67 +267,72 @@ const parsePublicKey = (algorithm, publicKey) => {
 };
 
 function parseCertificate(pem) {
-  const info = parsePem(pem);
-  const tbsCert = info.children[0];
+  try {
+    const info = parsePem(pem);
+    const tbsCert = info.children[0];
 
-  let idx = -1;
-  const version = tbsCert.children[0].tagClass === 2/*context*/ && tbsCert.children[0].tagNumber === 0 /*version*/
-    ?  tbsCert.children[++idx].children[0].value
-    : 0, // default is v1
-    serialNumber = tbsCert.children[++idx],
-    signature = tbsCert.children[++idx],
-    issuer = tbsCert.children[++idx],
-    validity = tbsCert.children[++idx],
-    subject = tbsCert.children[++idx],
-    subjectPublicKeyInfo = tbsCert.children[++idx];
+    let idx = -1;
+    const version = tbsCert.children[0].tagClass === 2/*context*/ && tbsCert.children[0].tagNumber === 0 /*version*/
+      ? tbsCert.children[++idx].children[0].value
+      : 0, // default is v1
+      serialNumber = tbsCert.children[++idx],
+      signature = tbsCert.children[++idx],
+      issuer = tbsCert.children[++idx],
+      validity = tbsCert.children[++idx],
+      subject = tbsCert.children[++idx],
+      subjectPublicKeyInfo = tbsCert.children[++idx];
 
-  let issuerUniqueID = null,
-    subjectUniqueID = null,
-    extensions = null;
-  for (let i = 7; i < tbsCert.children.length; i++) {
-    if (tbsCert.children[i].tagClass !== 2) return; // not context-specific
-    switch (tbsCert.children[i].tagNumber) {
-      case 1:
-        issuerUniqueID = tbsCert.children[i].children[0];
-        break;
-      case 2:
-        subjectUniqueID = tbsCert.children[i].children[0];
-        break;
-      case 3:
-        extensions = tbsCert.children[i].children[0];
-        break;
+    let issuerUniqueID = null,
+      subjectUniqueID = null,
+      extensions = null;
+    for (let i = 7; i < tbsCert.children.length; i++) {
+      if (tbsCert.children[i].tagClass !== 2) return; // not context-specific
+      switch (tbsCert.children[i].tagNumber) {
+        case 1:
+          issuerUniqueID = tbsCert.children[i].children[0];
+          break;
+        case 2:
+          subjectUniqueID = tbsCert.children[i].children[0];
+          break;
+        case 3:
+          extensions = tbsCert.children[i].children[0];
+          break;
+      }
+    }
+
+    return {
+      version: version.value || version || 0,
+      serialNumber: serialNumber.value,
+      signature: {
+        algorithm: signature.value[0],
+        parameters: signature.value[1],
+      },
+      issuer: toDictionary(issuer.children),
+      validity: {
+        notBefore: validity.value[0],
+        notAfter: validity.value[1],
+      },
+      subject: toDictionary(subject.children),
+      subjectPublicKeyInfo: {
+        algorithm: subjectPublicKeyInfo.value[0][0],
+        publicKey: parsePublicKey(subjectPublicKeyInfo.children[0], subjectPublicKeyInfo.children[1]),
+      },
+      issuerUniqueID: issuerUniqueID ? issuerUniqueID.value : undefined,
+      subjectUniqueID: subjectUniqueID ? subjectUniqueID.value : undefined,
+      extensions: extensions ? extensions.children
+        .reduce((a, c) => {
+          a[c.value[0]] = parseExtension(c.children[0], parse(c.value[1]));
+          return a;
+        }, {}) : undefined,
+      signatureAlgorithm: {
+        algorithm: info.value[1][0],
+        parameters: info.value[1][1],
+      },
+      signatureValue: info.value[2],
     }
   }
-
-  return {
-    version: version.value || version || 0,
-    serialNumber: serialNumber.value,
-    signature: {
-      algorithm: signature.value[0],
-      parameters: signature.value[1],
-    },
-    issuer: toDictionary(issuer.children),
-    validity: {
-      notBefore: validity.value[0],
-      notAfter: validity.value[1],
-    },
-    subject: toDictionary(subject.children),
-    subjectPublicKeyInfo: {
-      algorithm: subjectPublicKeyInfo.value[0][0],
-      publicKey: parsePublicKey(subjectPublicKeyInfo.children[0], subjectPublicKeyInfo.children[1]),
-    },
-    issuerUniqueID: issuerUniqueID ? issuerUniqueID.value : undefined,
-    subjectUniqueID: subjectUniqueID ? subjectUniqueID.value : undefined,
-    extensions: extensions ? extensions.children
-      .reduce((a, c) => {
-        a[c.value[0]] = parseExtension(c.children[0], parse(c.value[1]));
-        return a;
-      }, {}): undefined,
-    signatureAlgorithm: {
-      algorithm: info.value[1][0],
-      parameters: info.value[1][1],
-    },
-    signatureValue: info.value[2],
+  catch (e) {
+    return { error: e.message };
   }
 }
 
