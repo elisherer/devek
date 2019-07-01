@@ -55,7 +55,7 @@ const actionCreators = {
   },
   hash: ({ input, hashAlg }) => async state => {
     const buf = new TextEncoder('utf-8').encode(input);
-    const hash = hashAlg === 'MD5' ? MD5(input, 'hex'): await crypto.subtle.digest(hashAlg, buf);
+    const hash = hashAlg === 'MD5' ? devek.arrayToHexString(MD5(input)) : await crypto.subtle.digest(hashAlg, buf);
     return { ...state, input, hashAlg, hash };
   },
   format: e => state => ({ ...state, outputFormat: e.target.dataset.value }),

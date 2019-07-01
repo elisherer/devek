@@ -1,6 +1,7 @@
 import devek from 'devek';
-import MD5 from './md5';
+import md5 from './md5';
 const crypto = devek.crypto;
+devek.md5 = md5;
 
 const OPENSSL_MAGIC = devek.stringToUint8Array("Salted__");
 
@@ -17,15 +18,15 @@ const EVP_BytesToKey = (passphrase, salt, keySize, ivSize, count) => {
   const pass = devek.stringToUint8Array(passphrase);
 
   let passAndSalt = salt ? devek.concatUint8Array(pass, salt) : pass;
-  let hash = MD5(passAndSalt);
+  let hash = md5(passAndSalt);
   for (let i = 1; i < count ; i++) {
-    hash = MD5(hash);
+    hash = md5(hash);
   }
   let keyAndIv = hash;
   while (keyAndIv.byteLength < keySize + ivSize) {
-    hash = MD5(devek.concatUint8Array(hash, passAndSalt));
+    hash = md5(devek.concatUint8Array(hash, passAndSalt));
     for (let i = 1; i < count ; i++) {
-      hash = MD5(hash);
+      hash = md5(hash);
     }
     keyAndIv = devek.concatUint8Array(keyAndIv, hash);
   }
