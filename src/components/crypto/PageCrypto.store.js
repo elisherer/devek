@@ -1,199 +1,141 @@
 import devek from 'devek';
 import MD5 from './md5';
 import createStore from "../../helpers/createStore";
-import { jwkToSSH } from "./jwkToSSH";
 import { parseCertificate } from './asn1';
 import { prettyCert } from './cert';
 import { cipherEncrypt, cipherDecrypt } from './cipher';
+import { generate } from './generate';
 
 const crypto = devek.crypto;
 
-const _BEGIN = '-----BEGIN ', _END = '-----END ', _PRV = 'PRIVATE KEY-----', _PUB = 'PUBLIC KEY-----';
-const BEGIN_RSA_PRIVATE = _BEGIN + 'RSA ' + _PRV, END_RSA_PRIVATE = _END + 'RSA ' + _PRV,
-  BEGIN_EC_PRIVATE = _BEGIN + 'EC ' + _PRV, END_EC_PRIVATE = _END + 'EC ' + _PRV,
-  BEGIN_PUBLIC = _BEGIN + _PUB, END_PUBLIC = _END + _PUB;
-
-const toPrivateKey = async key => {
-  const rsa = key.algorithm.name[0] === 'R';
-  const pkcs8 = await crypto.subtle.exportKey("pkcs8", key);
-  const pkcs8AsBase64 = window.btoa(String.fromCharCode(...new Uint8Array(pkcs8)));
-  return [ rsa ? BEGIN_RSA_PRIVATE : BEGIN_EC_PRIVATE,
-    pkcs8AsBase64.match(/.{1,64}/g).join('\n'),
-    rsa ? END_RSA_PRIVATE : END_EC_PRIVATE ].join('\n');
-};
-
-const toPublicKey = async key => {
-  const spki = await crypto.subtle.exportKey("spki", key);
-  const spkiAsBase64 = window.btoa(String.fromCharCode(...new Uint8Array(spki)));
-  return [ BEGIN_PUBLIC, spkiAsBase64.match(/.{1,64}/g).join('\n'), END_PUBLIC ].join('\n');
-};
-
-const toRawKey = async key => {
-  const rawBuffer = await crypto.subtle.exportKey("raw", key);
-  return devek.arrayToHexString(new Uint8Array(rawBuffer));
-};
-const toPublicSSH = async key => {
-  const jwk = await window.crypto.subtle.exportKey("jwk", key);
-  return jwkToSSH(jwk);
-};
-
-const getFamily = alg => alg.match(/^(RSA|EC|AES|HMAC)/)[0];
-
-
 const actionCreators = {
-  input: e => (state, actions) => {
+  //hash
+  hashInput: e => (state, actions) => {
     const input = e.target.innerText;
-    const newState = { ...state, input };
-    actions.hash(newState);
+    const newState = { ...state, hash: { ...state.hash, input } };
+    actions.hash(newState.hash);
     return newState;
   },
   hashAlg: e => (state, actions) => {
-    const hashAlg = e.target.dataset.value;
-    const newState = { ...state, hashAlg };
-    actions.hash(newState);
+    const alg = e.target.dataset.value;
+    const newState = { ...state, hash: { ...state.hash, alg } };
+    actions.hash(newState.hash);
     return newState;
   },
-  hash: ({ input, hashAlg }) => async state => {
-    const buf = new TextEncoder('utf-8').encode(input);
-    const hash = hashAlg === 'MD5' ? devek.arrayToHexString(MD5(input)) : await crypto.subtle.digest(hashAlg, buf);
-    return { ...state, input, hashAlg, hash };
+  hash: ({ input, alg }) => async state => {
+    const buf = devek.stringToUint8Array(input);
+    const hash = alg === 'MD5' ? devek.arrayToHexString(MD5(input)) : await crypto.subtle.digest(alg, buf);
+    return { ...state, hash: { ...state.hash, input, alg, hash } };
   },
-  format: e => state => ({ ...state, outputFormat: e.target.dataset.value }),
+  hashFormat: e => state => ({ ...state, hash: { ...state.hash, format: e.target.dataset.value } }),
 
-  cipherAlg: e => state => ({ ...state, cipherAlg: e.target.dataset.value }),
-  cipherType: e => state => ({ ...state, cipherType: e.target.dataset.value }),
-  cipherInput: e => state => ({ ...state, cipherInput: e.target.innerText }),
-  passphrase: e => state => ({ ...state, passphrase: e.target.value }),
-  useSalt: e => state => ({ ...state, useSalt: e.target.checked }),
-  salt: e => state => ({ ...state, salt: e.target.value }),
+  // cipher
+  cipherAlg: e => state => ({ ...state, cipher: { ...state.cipher, alg: e.target.dataset.value }}),
+  cipherKDF: e => state => ({ ...state, cipher: { ...state.cipher, kdf: e.target.dataset.value }}),
+  cipherInput: e => state => ({ ...state, cipher: { ...state.cipher, input: e.target.innerText }}),
+  passphrase: e => state => ({ ...state, cipher: { ...state.cipher, passphrase: e.target.value }}),
+  useSalt: e => state => ({ ...state, cipher: { ...state.cipher, useSalt: e.target.checked }}),
+  salt: e => state => ({ ...state, cipher: { ...state.cipher, salt: e.target.value }}),
   encrypt: () => async state => ({
     ...state,
-    cipherOutput: await cipherEncrypt(
-      state.cipherInput,
-      state.passphrase,
-      state.useSalt ? (state.salt ? devek.hexStringToArray(state.salt) : state.salt) : null
-    )
+    cipher: {
+      ...state.cipher,
+      output: await cipherEncrypt(
+        state.cipher.input,
+        state.cipher.passphrase,
+        state.cipher.useSalt ? (state.cipher.salt ? devek.hexStringToArray(state.cipher.salt) : state.cipher.salt) : null
+      )
+    }
   }),
-  decrypt: () => async state => ({ ...state, cipherOutput: await cipherDecrypt(state.cipherInput, state.passphrase, state.salt ? devek.hexStringToArray(state.salt) : state.salt)}),
+  decrypt: () => async state => ({
+    ...state,
+    cipher: {
+      ...state.cipher,
+      output: await cipherDecrypt(
+        state.cipher.input,
+        state.cipher.passphrase,
+        state.cipher.salt ? devek.hexStringToArray(state.cipher.salt) : state.cipher.salt)
+    }
+  }),
 
-  genType: e => state => ({ ...state, genType: e.target.dataset.value }),
-  genAsymAlg: e => state => ({ ...state, genAsymAlg: e.target.dataset.value }),
-  genSymmAlg: e => state => ({ ...state, genSymmAlg: e.target.dataset.value }),
-  genHashAlg: e => state => ({ ...state, genHashAlg: e.target.dataset.value }),
-  rsaModulusLength: e => state => ({ ...state, rsaModulusLength: parseInt(e.target.dataset.value) }),
-  ecNamedCurve: e => state => ({ ...state, ecNamedCurve: e.target.dataset.value }),
-  aesKeyLength: e => state => ({ ...state, aesKeyLength: parseInt(e.target.dataset.value) }),
-  genKey: () => async state => {
-    try {
-      const {genType, genAsymAlg, genSymmAlg, genHashAlg, rsaModulusLength, ecNamedCurve, aesKeyLength } = state;
-      const symm = genType === 'symmetric';
-      const family = getFamily(symm ? genSymmAlg : genAsymAlg);
-      let key;
-      switch (family) {
-        case 'RSA':
-          key = await crypto.subtle.generateKey({
-            name: genAsymAlg,
-            modulusLength: rsaModulusLength,
-            publicExponent: new Uint8Array([1, 0, 1]),
-            hash: genHashAlg
-          }, true,  genAsymAlg === "RSA-OAEP" ? ["encrypt", "decrypt"] : ["sign", "verify"]);
-          break;
-        case 'EC':
-          key = await crypto.subtle.generateKey({
-            name: genAsymAlg,
-            namedCurve: ecNamedCurve
-          }, true, genAsymAlg === "ECDH" ? ["deriveKey"] : ["sign", "verify"]);
-          break;
-        case 'HMAC':
-          key = await crypto.subtle.generateKey({
-            name: genSymmAlg,
-            hash: {name: genHashAlg}
-          }, true, ["sign", "verify"]);
-          break;
-        case 'AES':
-          key = await crypto.subtle.generateKey({
-            name: genSymmAlg,
-            length: aesKeyLength
-          }, true, genSymmAlg === 'AES-KW' ? ["wrapKey", "unwrapKey"] : ["encrypt", "decrypt"]);
-          break;
-        default:
-          return { ...state, genError: 'Unknown generation algorithm' };
-      }
-      if (symm) {
-        const symmKey = await toRawKey(key);
-        return {...state, symmKey, genError: ''};
-      }
-      else {
-        const publicKey = await toPublicKey(key.extractable ? key : key.publicKey);
-        const privateKey = await toPrivateKey(key.extractable ? key : key.privateKey);
-        const publicSSH = family === "RSA" ? await toPublicSSH(key.extractable ? key : key.publicKey) : '';
-        return {...state, publicKey, privateKey, publicSSH, genError: ''};
-      }
-    }
-    catch (e) {
-      return { ...state, genError: e.message };
-    }
-  },
+  //generate
+  genAlgType: e => state => ({ ...state, generate: { ...state.generate, algType: e.target.dataset.value }}),
+  genAsymAlg: e => state => ({ ...state, generate: { ...state.generate, asymAlg: e.target.dataset.value }}),
+  genSymmAlg: e => state => ({ ...state, generate: { ...state.generate, symmAlg: e.target.dataset.value }}),
+  genHashAlg: e => state => ({ ...state, generate: { ...state.generate, hashAlg: e.target.dataset.value }}),
+  rsaModulusLength: e => state => ({ ...state, generate: { ...state.generate, rsaModulusLength: parseInt(e.target.dataset.value) }}),
+  ecNamedCurve: e => state => ({ ...state, generate: { ...state.generate, ecNamedCurve: e.target.dataset.value }}),
+  aesKeyLength: e => state => ({ ...state, generate: { ...state.generate, aesKeyLength: parseInt(e.target.dataset.value) }}),
+  genKey: () => generate,
+
+  // cert
   loaded: (pem) => state => {
     const cert = parseCertificate(pem);
     if (cert.error) {
-      return {...state, loaded: false, pem: 'Error reading certificate\n\nMessage: ' + cert.error , certOutput: ''};
+      return {...state, cert: { ...state.cert, loaded: false, pem: 'Error reading certificate\n\nMessage: ' + cert.error , certOutput: '' }};
     }
     else {
       console.log(cert); // eslint-disable-line
       const certOutput = prettyCert(cert);
 
-      return {...state, loaded: true, pem, certOutput};
+      return {...state, cert: { ...state.cert, loaded: true, pem, certOutput} };
     }
   },
   onDragEnter: e => state => {
     e.preventDefault();
     e.stopPropagation();
-    return { ...state, dragging: state.dragging + 1};
+    return { ...state, cert: { ...state.cert, dragging: state.dragging + 1 } };
   },
   onDragLeave: e => state => {
     e.preventDefault();
     e.stopPropagation();
-    return { ...state, dragging: state.dragging - 1};
+    return { ...state, cert: { ...state.cert, dragging: state.dragging - 1} } ;
   },
 };
 
-const hexToHash = hex => new Uint8Array(hex.match(/.{2}/g).map(x=>parseInt(x,16)));
-
 const initialState = {
   // hash
-  input: '',
-  hashAlg: 'SHA-256',
-  error: '',
-  hash: hexToHash('e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'),
-  outputFormat: 'hex',
+  hash: {
+    input: '',
+    alg: 'SHA-256',
+    hash: devek.hexStringToArray('e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'),
+    outputFormat: 'Hex',
+  },
 
   // cipher
-  cipherAlg: 'AES-CBC',
-  cipherType: 'OpenSSL',
-  cipherInput: '',
-  passphrase: '',
-  useSalt: true,
-  salt: '',
+  cipher: {
+    alg: 'AES-CBC',
+    kdf: 'OpenSSL',
+    input: '',
+    passphrase: '',
+    useSalt: true,
+    salt: '',
+    output: null,
+  },
 
   //generate keys
-  genType: 'symmetric', // symmetric / asymmetric
-  genAsymAlg: 'RSA-OAEP', // RSASSA-PKCS1-v1_5 / RSA-PSS / RSA-OAEP / ECDH / ECDSA
-  genSymmAlg: 'AES-CBC', // HMAC / AES-CTR / AES-CBC / AES-GCM / AES-KW
-  genHashAlg: 'SHA-256', // SHA-1 / SHA-256 / SHA-384 / SHA-512
-  rsaModulusLength: 2048, // 2048 / 4096
-  ecNamedCurve: 'P-384', // P-256 / P-384 / P-521
-  aesKeyLength: 256, // 128 / 192 / 256
-  publicKey: '',
-  privateKey: '',
-  publicSSH: '',
-  genError: '',
+  generate: {
+    algType: 'Symmetric', // Symmetric / Asymmetric
+    asymAlg: 'RSA-OAEP', // RSASSA-PKCS1-v1_5 / RSA-PSS / RSA-OAEP / ECDH / ECDSA
+    symmAlg: 'AES-CBC', // HMAC / AES-CTR / AES-CBC / AES-GCM / AES-KW
+    hashAlg: 'SHA-256', // SHA-1 / SHA-256 / SHA-384 / SHA-512
+    rsaModulusLength: 2048, // 2048 / 4096
+    ecNamedCurve: 'P-384', // P-256 / P-384 / P-521
+    aesKeyLength: 256, // 128 / 192 / 256
+    publicKey: '',
+    privateKey: '',
+    symmKey: '',
+    publicSSH: '',
+    error: '',
+  },
 
   // cert
-  dragging: false,
-  loaded: false,
-  pem: '',
-  certOutput: '',
+  cert: {
+    dragging: false,
+    loaded: false,
+    pem: '',
+    certOutput: '',
+  },
 };
 
 export const {

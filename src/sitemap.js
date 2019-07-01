@@ -176,10 +176,10 @@ export const siteMap = {
         title: 'Hash generation',
         description: 'Generate hash of input text',
       },
-      "/asymmetric": {
-        keyword: 'asymmetric',
-        title: "Asymmetric keys generation",
-        description: 'Generate asymmetric keys for encryption/signing',
+      "/generate": {
+        keyword: 'generate',
+        title: "Generate encryption keys",
+        description: 'Generate symmetric/asymmetric keys for encryption/signing',
       },
     }
   },
