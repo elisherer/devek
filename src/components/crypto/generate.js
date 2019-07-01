@@ -1,40 +1,38 @@
 import devek from "../../devek";
-import {jwkToSSH} from "./jwkToSSH";
+import {publicKeyJWKToSSH, privateKeyJWKToPKCS1} from "./ssh";
 
 const _BEGIN = '-----BEGIN ', _END = '-----END ', _PRV = 'PRIVATE KEY-----', _PUB = 'PUBLIC KEY-----';
 const BEGIN_RSA_PRIVATE = _BEGIN + 'RSA ' + _PRV, END_RSA_PRIVATE = _END + 'RSA ' + _PRV,
   BEGIN_EC_PRIVATE = _BEGIN + 'EC ' + _PRV, END_EC_PRIVATE = _END + 'EC ' + _PRV,
   BEGIN_PUBLIC = _BEGIN + _PUB, END_PUBLIC = _END + _PUB;
 
+const prettify = b64 => b64.match(/.{1,64}/g).join('\n');
+
 const toPrivateKey = async key => {
   const rsa = key.algorithm.name[0] === 'R';
   const pkcs8 = await crypto.subtle.exportKey("pkcs8", key);
   const pkcs8AsBase64 = window.btoa(String.fromCharCode(...new Uint8Array(pkcs8)));
   return [ rsa ? BEGIN_RSA_PRIVATE : BEGIN_EC_PRIVATE,
-    pkcs8AsBase64.match(/.{1,64}/g).join('\n'),
+    prettify(pkcs8AsBase64),
     rsa ? END_RSA_PRIVATE : END_EC_PRIVATE ].join('\n');
 };
 
 const toPublicKey = async key => {
   const spki = await crypto.subtle.exportKey("spki", key);
   const spkiAsBase64 = window.btoa(String.fromCharCode(...new Uint8Array(spki)));
-  return [ BEGIN_PUBLIC, spkiAsBase64.match(/.{1,64}/g).join('\n'), END_PUBLIC ].join('\n');
+  return [ BEGIN_PUBLIC, prettify(spkiAsBase64), END_PUBLIC ].join('\n');
 };
 
 const toRawKey = async key => {
   const rawBuffer = await crypto.subtle.exportKey("raw", key);
   return devek.arrayToHexString(new Uint8Array(rawBuffer));
 };
-const toPublicSSH = async key => {
-  const jwk = await window.crypto.subtle.exportKey("jwk", key);
-  return jwkToSSH(jwk);
-};
 
 const getFamily = alg => alg.match(/^(RSA|EC|AES|HMAC)/)[0];
 
 export const generate = async state => {
   try {
-    const {algType, asymAlg, symmAlg, hashAlg, rsaModulusLength, ecNamedCurve, aesKeyLength } = state.generate;
+    const {algType, asymAlg, symmAlg, hashAlg, rsaModulusLength, ecNamedCurve, aesKeyLength, format } = state.generate;
     const symmetric = algType[0] === 'S';
     const family = getFamily(symmetric ? symmAlg : asymAlg);
     let key;
@@ -73,10 +71,26 @@ export const generate = async state => {
       return {...state, generate: { ...state.generate, symmKey, error: '' }};
     }
     else {
-      const publicKey = await toPublicKey(key.extractable ? key : key.publicKey);
-      const privateKey = await toPrivateKey(key.extractable ? key : key.privateKey);
-      const publicSSH = family === "RSA" ? await toPublicSSH(key.extractable ? key : key.publicKey) : '';
-      return {...state, generate: { ...state.generate, publicKey, privateKey, publicSSH, error: '' }};
+      let publicKey, privateKey;
+      switch (format) {
+        case 'JWK':
+          publicKey = JSON.stringify(await window.crypto.subtle.exportKey("jwk", key.publicKey), null,2);
+          privateKey = JSON.stringify(await window.crypto.subtle.exportKey("jwk", key.privateKey), null,2)
+          break;
+        case 'SSH (PKCS1)':
+          publicKey = publicKeyJWKToSSH(await window.crypto.subtle.exportKey("jwk", key.publicKey));
+          privateKey = [
+            BEGIN_RSA_PRIVATE,
+            prettify(privateKeyJWKToPKCS1(await window.crypto.subtle.exportKey("jwk", key.privateKey))),
+            END_RSA_PRIVATE].join('\n');
+          break;
+        default: //case 'X.509 (PKCS8+SPKI)': // just in case ssh is picked when not supported
+          publicKey = await toPublicKey(key.extractable ? key : key.publicKey, format);
+          privateKey = await toPrivateKey(key.extractable ? key : key.privateKey, format);
+          break;
+      }
+
+      return {...state, generate: { ...state.generate, publicKey, privateKey, error: '' }};
     }
   }
   catch (e) {

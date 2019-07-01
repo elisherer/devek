@@ -63,6 +63,7 @@ const actionCreators = {
   genAsymAlg: e => state => ({ ...state, generate: { ...state.generate, asymAlg: e.target.dataset.value }}),
   genSymmAlg: e => state => ({ ...state, generate: { ...state.generate, symmAlg: e.target.dataset.value }}),
   genHashAlg: e => state => ({ ...state, generate: { ...state.generate, hashAlg: e.target.dataset.value }}),
+  genFormat: e => state => ({ ...state, generate: { ...state.generate, format: e.target.dataset.value }}),
   rsaModulusLength: e => state => ({ ...state, generate: { ...state.generate, rsaModulusLength: parseInt(e.target.dataset.value) }}),
   ecNamedCurve: e => state => ({ ...state, generate: { ...state.generate, ecNamedCurve: e.target.dataset.value }}),
   aesKeyLength: e => state => ({ ...state, generate: { ...state.generate, aesKeyLength: parseInt(e.target.dataset.value) }}),
@@ -125,7 +126,7 @@ const initialState = {
     publicKey: '',
     privateKey: '',
     symmKey: '',
-    publicSSH: '',
+    format: 'X.509 (PKCS8+SPKI)', // JWK / SSH (PKCS1) / X.509 (PKCS8+SPKI)
     error: '',
   },
 

@@ -4,8 +4,8 @@ import styles from "./PageCrypto.less";
 import {actions} from "./PageCrypto.store";
 import cx from "classnames";
 
-const CryptoGenerate = ({ tabs, algType, symmAlg, asymAlg, hashAlg, rsaModulusLength, ecNamedCurve, aesKeyLength, publicKey, privateKey, publicSSH, symmKey, error } :
-                        { tabs: any, algType: string, symmAlg: string, asymAlg: string, hashAlg: string, rsaModulusLength: number, ecNamedCurve: string, aesKeyLength: number, publicKey: string, privateKey: string, publicSSH: string, symmKey: string, error: string }) => (
+const CryptoGenerate = ({ tabs, algType, symmAlg, asymAlg, hashAlg, rsaModulusLength, ecNamedCurve, aesKeyLength, publicKey, privateKey, format, symmKey, error } :
+                        { tabs: any, algType: string, symmAlg: string, asymAlg: string, hashAlg: string, rsaModulusLength: number, ecNamedCurve: string, aesKeyLength: number, publicKey: string, privateKey: string, format: string, symmKey: string, error: string }) => (
   <div>
     {tabs}
 
@@ -64,6 +64,9 @@ const CryptoGenerate = ({ tabs, algType, symmAlg, asymAlg, hashAlg, rsaModulusLe
           )}
         </div>
 
+        <label>Format:</label>
+        <Radio className={styles.options2} options={["JWK","X.509 (PKCS8+SPKI)",asymAlg === "RSASSA-PKCS1-v1_5"? "SSH (PKCS1)" : null]} value={format} onClick={actions.genFormat} />
+
         <div className={styles.actions}>
           <button onClick={actions.genKey}>Generate</button>
         </div>
@@ -75,12 +78,6 @@ const CryptoGenerate = ({ tabs, algType, symmAlg, asymAlg, hashAlg, rsaModulusLe
         <span>Private Key:</span><CopyToClipboard from="crypto_private"/>
         <TextArea id="crypto_private" readOnly value={error ? '' : privateKey} />
 
-        {publicSSH && (
-          <>
-            <span>Public SSH:</span><CopyToClipboard from="crypto_ssh"/>
-            <TextArea className={styles.long_output} id="crypto_ssh" readOnly value={error ? '' : publicSSH} />
-          </>
-        )}
       </>
     )}
 

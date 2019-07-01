@@ -6,7 +6,7 @@ const Radio = ({ className, children, options, value, onClick } : { className?: 
   <div className={cx(className, styles.radio)}>
     {options
       ? options.map(o => (
-        <div key={o} data-active={value === o || null} data-value={o} onClick={onClick}>{o}</div>
+        o && <div key={o} data-active={value === o || null} data-value={o} onClick={onClick}>{o}</div>
       ))
       : children}
   </div>
