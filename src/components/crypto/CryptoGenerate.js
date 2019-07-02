@@ -10,7 +10,7 @@ const CryptoGenerate = ({ tabs, algType, symmAlg, asymAlg, hashAlg, rsaModulusLe
     {tabs}
 
     <label>Type:</label>
-    <Radio className={styles.options} options={["Symmetric", "Asymmetric"]} value={algType} onClick={actions.genAlgType} />
+    <Radio className={styles.options2} options={["Symmetric", "Asymmetric"]} value={algType} onClick={actions.genAlgType} />
 
     { algType === 'Symmetric' ? (
       <>

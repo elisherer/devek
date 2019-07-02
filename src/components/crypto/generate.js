@@ -32,7 +32,7 @@ const getFamily = alg => alg.match(/^(RSA|EC|AES|HMAC)/)[0];
 
 export const generate = async state => {
   try {
-    const {algType, asymAlg, symmAlg, hashAlg, rsaModulusLength, ecNamedCurve, aesKeyLength, format } = state.generate;
+    let {algType, asymAlg, symmAlg, hashAlg, rsaModulusLength, ecNamedCurve, aesKeyLength, format } = state.generate;
     const symmetric = algType[0] === 'S';
     const family = getFamily(symmetric ? symmAlg : asymAlg);
     let key;
@@ -72,6 +72,9 @@ export const generate = async state => {
     }
     else {
       let publicKey, privateKey;
+      if (format === 'SSH (PKCS1)' && asymAlg !== 'RSASSA-PKCS1-v1_5') {
+        format = 'X.509 (PKCS8+SPKI)'; // switch to default
+      }
       switch (format) {
         case 'JWK':
           publicKey = JSON.stringify(await window.crypto.subtle.exportKey("jwk", key.publicKey), null,2);
@@ -84,13 +87,13 @@ export const generate = async state => {
             prettify(privateKeyJWKToPKCS1(await window.crypto.subtle.exportKey("jwk", key.privateKey))),
             END_RSA_PRIVATE].join('\n');
           break;
-        default: //case 'X.509 (PKCS8+SPKI)': // just in case ssh is picked when not supported
+        case 'X.509 (PKCS8+SPKI)':
           publicKey = await toPublicKey(key.extractable ? key : key.publicKey, format);
           privateKey = await toPrivateKey(key.extractable ? key : key.privateKey, format);
           break;
       }
 
-      return {...state, generate: { ...state.generate, publicKey, privateKey, error: '' }};
+      return {...state, generate: { ...state.generate, format, publicKey, privateKey, error: '' }};
     }
   }
   catch (e) {

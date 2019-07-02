@@ -1,10 +1,11 @@
 import React from "react";
 import {Checkbox, Radio, TextArea, TextBox} from "../_lib";
+import { Link } from 'react-router-dom';
 import styles from "./PageCrypto.less";
 import {actions} from "./PageCrypto.store";
 
-const CryptoCipher = ({ tabs, alg, kdf, input, passphrase, useSalt, salt, output } :
-                        { tabs: any, alg: string, kdf: string, input: string, passphrase: string, useSalt: boolean, salt: string, output: string }) => (
+const CryptoCipher = ({ tabs, alg, kdf, input, passphrase, useSalt, salt, cipherKey, iv, aesCounter, jwk, output } :
+                        { tabs: any, alg: string, kdf: string, input: string, passphrase: string, useSalt: boolean, salt: string, cipherKey: string, iv: string, aesCounter: string, jwk: string, output: string }) => (
   <div>
     {tabs}
 
@@ -14,16 +15,53 @@ const CryptoCipher = ({ tabs, alg, kdf, input, passphrase, useSalt, salt, output
     <label>Input:</label>
     <TextArea autoFocus onChange={actions.cipherInput} value={input}/>
 
-    <label>KDF:</label>
-    <Radio className={styles.options2} options={["None", "OpenSSL", "PBKDF2"]} value={kdf} onClick={actions.cipherKDF} />
+    {alg === 'RSA-OAEP' ? (
+      <>
+        <label>JWK:</label>
+        <TextArea autoComplete="off" onChange={actions.cipherJWK} value={jwk}/>
 
-    {kdf === "OpenSSL" && <div className={styles.note}>* Uses MD5 with one iteration</div>}
+        <div className={styles.note}>* You can use the <Link to="/crypto/generate">generate</Link> page to generate a suitable key</div>
+      </>
+    ) : (
+      <>
+        <label>KDF:</label>
+        <Radio className={styles.options2} options={["None", "OpenSSL"]} value={kdf} onClick={actions.cipherKDF} />
 
-    <label>Passphrase:</label>
-    <TextBox type="password" autoComplete="off" onChange={actions.passphrase} value={passphrase}/>
+        { kdf === 'None' && (
+          <>
+            <div className={styles.note}>* You can use the <Link to="/crypto/generate">generate</Link> page to generate a suitable key</div>
 
-    <Checkbox label="Salt: (Hex)" checked={useSalt} onChange={actions.useSalt}/>
-    <TextBox disabled={!useSalt} onChange={actions.salt} value={salt} placeholder="Leave empty to generate salt"/>
+            <label>Key: (Hex)</label>
+            <TextBox autoComplete="off" onChange={actions.cipherKey} value={cipherKey}/>
+            {(alg === 'AES-CTR') && (
+              <>
+                <label>Counter: (Hex, 16 bytes, 64 bits x 2)</label>
+                <TextBox autoComplete="off" onChange={actions.cipherAESCounter} value={aesCounter} placeholder="Leave blank to generate" />
+              </>
+            )}
+            {(alg === 'AES-CBC' || alg === 'AES-GCM') && (
+              <>
+                <label>IV: (Hex, 16 bytes)</label>
+                <TextBox autoComplete="off" onChange={actions.cipherIV} value={iv} placeholder="Leave blank to generate" />
+              </>
+            )}
+          </>
+        )}
+        { kdf === 'OpenSSL' && (
+          <>
+            <div className={styles.note}>* Uses MD5 with one iteration</div>
+
+            <label>Passphrase:</label>
+            <TextBox autoComplete="off" onChange={actions.passphrase} value={passphrase}/>
+
+            <Checkbox label="Salt: (Hex)" checked={useSalt} onChange={actions.useSalt}/>
+            <TextBox autoComplete="off" disabled={!useSalt} onChange={actions.salt} value={salt} placeholder="Leave blank to generate"/>
+          </>
+        )}
+      </>
+    )}
+
+
 
     <div className={styles.actions}>
       <button onClick={actions.encrypt}>Encrypt</button>
@@ -32,8 +70,8 @@ const CryptoCipher = ({ tabs, alg, kdf, input, passphrase, useSalt, salt, output
 
     {output && (
       <>
-        <label>Encryption data:</label>
-        <TextArea readOnly value={output.meta} />
+        {output.meta && <label>Encryption data:</label>}
+        {output.meta && <TextArea readOnly value={output.meta} />}
 
         <label>Output:</label>
         <TextArea readOnly value={output.output} />

@@ -36,14 +36,20 @@ const actionCreators = {
   passphrase: e => state => ({ ...state, cipher: { ...state.cipher, passphrase: e.target.value }}),
   useSalt: e => state => ({ ...state, cipher: { ...state.cipher, useSalt: e.target.checked }}),
   salt: e => state => ({ ...state, cipher: { ...state.cipher, salt: e.target.value }}),
+  cipherIV: e => state => ({ ...state, cipher: { ...state.cipher, iv: e.target.value }}),
+  cipherKey: e => state => ({ ...state, cipher: { ...state.cipher, cipherKey: e.target.value }}),
+  cipherAESCounter: e => state => ({ ...state, cipher: { ...state.cipher, aesCounter: e.target.value }}),
+  cipherJWK: e => state => ({ ...state, cipher: { ...state.cipher, jwk: e.target.innerText }}),
   encrypt: () => async state => ({
     ...state,
     cipher: {
       ...state.cipher,
       output: await cipherEncrypt(
+        state.cipher.alg,
         state.cipher.input,
         state.cipher.passphrase,
-        state.cipher.useSalt ? (state.cipher.salt ? devek.hexStringToArray(state.cipher.salt) : state.cipher.salt) : null
+        state.cipher.useSalt ? (state.cipher.salt ? devek.hexStringToArray(state.cipher.salt) : state.cipher.salt) : null,
+        state.cipher.jwk
       )
     }
   }),
@@ -52,9 +58,12 @@ const actionCreators = {
     cipher: {
       ...state.cipher,
       output: await cipherDecrypt(
+        state.cipher.alg,
         state.cipher.input,
         state.cipher.passphrase,
-        state.cipher.salt ? devek.hexStringToArray(state.cipher.salt) : state.cipher.salt)
+        state.cipher.salt ? devek.hexStringToArray(state.cipher.salt) : state.cipher.salt,
+        state.cipher.jwk
+      )
     }
   }),
 
@@ -111,6 +120,10 @@ const initialState = {
     passphrase: '',
     useSalt: true,
     salt: '',
+    cipherKey: '',
+    iv: '',
+    jwk: '',
+    aesCounter: '',
     output: null,
   },
 

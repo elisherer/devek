@@ -37,8 +37,13 @@ const EVP_BytesToKey = (passphrase, salt, keySize, ivSize, count) => {
   return { rawKey, iv };
 };
 
-export const cipherEncrypt = async (data, passphrase, salt) => {
+export const cipherEncrypt = async (alg, data, passphrase, salt, jwk) => {
   try {
+    const aes = alg.startsWith('AES');
+    if (!aes) {
+      salt = null;
+      jwk = JSON.parse(jwk);
+    }
     if (salt === '') salt = crypto.getRandomValues(new Uint8Array(8));
     if (salt && (salt.length || salt.byteLength) < 8) {
       const paddedSalt = new Uint8Array(Array.from({ length: 8 }, () => 0) );
@@ -49,35 +54,50 @@ export const cipherEncrypt = async (data, passphrase, salt) => {
       salt = salt.slice(0, 8);
     }
     const { rawKey, iv } = EVP_BytesToKey(passphrase, salt, 32, 16, 1);
-
-    const cryptoKey = await crypto.subtle.importKey(
-      "raw",
-      rawKey,
-      "AES-CBC",
-      true,
-      ["encrypt", "decrypt"]
-    );
+    const cryptoKey = aes
+    ? await crypto.subtle.importKey(
+        "raw",
+        rawKey,
+        alg,
+        true,
+        ["encrypt"]
+      ) //
+    : await crypto.subtle.importKey( // RSA requires JWK
+        "jwk",
+        jwk,
+        {
+          name: alg,
+          hash: "SHA" + (jwk.alg.substr(8) || "-1")
+        },
+        true,
+        ["encrypt"]
+      ) ;
 
     const encrypted = new Uint8Array(await crypto.subtle.encrypt(
-      {
-        name: "AES-CBC",
+      (alg === 'AES-CBC' || alg === 'AES-GCM') ? {
+        name: alg,
         iv
-      },
+      } : (alg === 'AES-CTR' ? {
+          name: alg,
+          counter: iv,
+          length: 64
+        } : /* alg === 'RSA-OAEP' */ {
+          name: alg
+        }
+      ),
       cryptoKey,
       devek.stringToUint8Array(data)
     ));
 
+    const meta = aes ? [
+      salt && ('salt    = ' + devek.arrayToHexString(salt)),
+      'key     = ' + devek.arrayToHexString(new Uint8Array(await crypto.subtle.exportKey('raw', cryptoKey))),
+      (alg === 'AES-CTR' ? 'counter = ' : 'iv      = ') + devek.arrayToHexString(iv)
+    ].filter(Boolean).join('\n') : '';
+
     const output = devek.arrayToBase64(salt
       ? devek.concatUint8Array(OPENSSL_MAGIC, salt, encrypted)
       : encrypted);
-
-    const key = new Uint8Array(await crypto.subtle.exportKey('raw', cryptoKey));
-
-    const meta = [
-      salt ? ('salt = ' + devek.arrayToHexString(salt)) : null,
-      'key  = ' + devek.arrayToHexString(key),
-      'iv   = ' + devek.arrayToHexString(iv)
-    ].filter(Boolean).join('\n');
 
     return { meta, output };
   }
@@ -86,8 +106,12 @@ export const cipherEncrypt = async (data, passphrase, salt) => {
   }
 };
 
-export const cipherDecrypt = async (data, passphrase, salt) => {
+export const cipherDecrypt = async (alg, data, passphrase, salt, jwk) => {
   try {
+    const aes = alg.startsWith('AES');
+    if (!aes) {
+      jwk = JSON.parse(jwk);
+    }
     const decoded = devek.base64ToUint8Array(data);
     const salted = decoded.byteLength > OPENSSL_MAGIC.byteLength
       && OPENSSL_MAGIC.every((x, i) => decoded[i] === x);
@@ -98,32 +122,48 @@ export const cipherDecrypt = async (data, passphrase, salt) => {
 
     const encrypted = salted ? decoded.slice(OPENSSL_MAGIC.byteLength + 8) : decoded;
 
-    const cryptoKey = await crypto.subtle.importKey(
-      "raw",
-      rawKey,
-      "AES-CBC",
-      true,
-      ["encrypt", "decrypt"]
-    );
+    const cryptoKey = aes
+      ? await crypto.subtle.importKey(
+        "raw",
+        rawKey,
+        alg,
+        true,
+        ["decrypt"]
+      ) //
+      : await crypto.subtle.importKey( // RSA requires JWK
+        "jwk",
+        jwk,
+        {
+          name: alg,
+          hash: "SHA" + (jwk.alg.substr(8) || "-1")
+        },
+        true,
+        ["decrypt"]
+      ) ;
 
     const decrypted = new Uint8Array(await crypto.subtle.decrypt(
-      {
-        name: "AES-CBC",
+      (alg === 'AES-CBC' || alg === 'AES-GCM') ? {
+        name: alg,
         iv
-      },
+      } : (alg === 'AES-CTR' ? {
+          name: alg,
+          counter: iv,
+          length: 64
+        } : /* alg === 'RSA-OAEP*/ {
+          name: alg
+        }
+      ),
       cryptoKey,
       encrypted
     ));
 
-    const de = new TextDecoder();
-    const output = de.decode(decrypted);
-    const key = new Uint8Array(await crypto.subtle.exportKey('raw', cryptoKey));
-
-    const meta = [
+    const meta = aes ? [
       salt ? ('salt = ' + devek.arrayToHexString(salt)) : null,
-      'key  = ' + devek.arrayToHexString(key),
+      'key  = ' + devek.arrayToHexString(new Uint8Array(await crypto.subtle.exportKey('raw', cryptoKey))),
       'iv   = ' + devek.arrayToHexString(iv)
-    ].filter(Boolean).join('\n');
+    ].filter(Boolean).join('\n') : '';
+
+    const output = devek.arrayToAscii(decrypted);
 
     return {meta, output};
   }

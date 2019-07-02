@@ -11,19 +11,23 @@ import CryptoGenerate from "./CryptoGenerate";
 const subPages = [
   {
     path: 'hash',
-    title: 'Hash'
+    title: 'Hash',
+    Component: CryptoHash,
   },
   {
     path: 'cipher',
-    title: 'Cipher'
+    title: 'Cipher',
+    Component: CryptoCipher,
   },
   {
     path: 'generate',
-    title: 'Generate Keys'
+    title: 'Generate Keys',
+    Component: CryptoGenerate,
   },
   {
     path: 'cert',
-    title: 'Certificate parser'
+    title: 'Certificate parser',
+    Component: CryptoCert,
   }
 ];
 
@@ -44,19 +48,8 @@ const PageCrypto = () => {
   );
 
   const state = useStore();
-
-  if (type === 'hash') {
-    return <CryptoHash tabs={tabs} {...state.hash} />;
-  }
-  else if (type === 'generate') {
-    return <CryptoGenerate tabs={tabs} {...state.generate} />
-  }
-  else if (type === 'cert') {
-    return <CryptoCert tabs={tabs} {...state.cert} />;
-  }
-  else if (type === 'cipher') {
-    return <CryptoCipher tabs={tabs} {...state.cipher} />;
-  }
+  const subPage = subPages.find(s => s.path === type);
+  return <subPage.Component tabs={tabs} {...state[type]} />;
 };
 
 export default PageCrypto;
