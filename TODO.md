@@ -1,8 +1,8 @@
 # TODO
 
 * Crypto
-  * Add all ciphers
-   * implement ssh 
+  * tidy up cipher algorithm (common code etc..)
+  * implement ssh
 
 * Dev Joke of the day
   * Knock knock.
