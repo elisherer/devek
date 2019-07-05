@@ -57,7 +57,7 @@ function publicKeyJWKToSSH(jwk) {
       );
     }
     break;
-    case 'EC': { // ECDSA (P-256 / P-384)
+    case 'EC': { // ECDSA
       const curveNumber = jwk.crv.substr(2),
         len = Math.ceil(parseInt(curveNumber) / 8);
       type = 'ecdsa-sha2-nistp' + curveNumber;
