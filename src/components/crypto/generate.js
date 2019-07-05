@@ -1,31 +1,18 @@
 import devek from "../../devek";
-import {publicKeyJWKToSSH, privateKeyJWKToPKCS1} from "./ssh";
-
-const _BEGIN = '-----BEGIN ', _END = '-----END ', _PRV = 'PRIVATE KEY-----', _PUB = 'PUBLIC KEY-----';
-const BEGIN_RSA_PRIVATE = _BEGIN + 'RSA ' + _PRV, END_RSA_PRIVATE = _END + 'RSA ' + _PRV,
-  BEGIN_EC_PRIVATE = _BEGIN + 'EC ' + _PRV, END_EC_PRIVATE = _END + 'EC ' + _PRV,
-  BEGIN_PUBLIC = _BEGIN + _PUB, END_PUBLIC = _END + _PUB;
-
-const prettify = b64 => b64.match(/.{1,64}/g).join('\n');
+import {publicKeyJWKToSSH, privateKeyJWKToSSHNew} from "./ssh";
+const crypto = devek.crypto;
 
 const toPrivateKey = async key => {
   const rsa = key.algorithm.name[0] === 'R';
-  const pkcs8 = await crypto.subtle.exportKey("pkcs8", key);
-  const pkcs8AsBase64 = window.btoa(String.fromCharCode(...new Uint8Array(pkcs8)));
-  return [ rsa ? BEGIN_RSA_PRIVATE : BEGIN_EC_PRIVATE,
-    prettify(pkcs8AsBase64),
-    rsa ? END_RSA_PRIVATE : END_EC_PRIVATE ].join('\n');
+  return devek.arrayToPEM(new Uint8Array(await crypto.subtle.exportKey("pkcs8", key)), rsa ? 'RSA PRIVATE KEY' : 'EC PRIVATE KEY');
 };
 
 const toPublicKey = async key => {
-  const spki = await crypto.subtle.exportKey("spki", key);
-  const spkiAsBase64 = window.btoa(String.fromCharCode(...new Uint8Array(spki)));
-  return [ BEGIN_PUBLIC, prettify(spkiAsBase64), END_PUBLIC ].join('\n');
+  return devek.arrayToPEM(new Uint8Array(await crypto.subtle.exportKey("spki", key)), 'PUBLIC KEY');
 };
 
 const toRawKey = async key => {
-  const rawBuffer = await crypto.subtle.exportKey("raw", key);
-  return devek.arrayToHexString(new Uint8Array(rawBuffer));
+  return devek.arrayToHexString(new Uint8Array(await crypto.subtle.exportKey("raw", key)));
 };
 
 const getFamily = alg => alg.match(/^(RSA|EC|AES|HMAC)/)[0];
@@ -71,29 +58,31 @@ export const generate = async state => {
       return {...state, generate: { ...state.generate, symmKey, error: '' }};
     }
     else {
-      let publicKey, privateKey;
-      if (format === 'SSH (PKCS1)' && asymAlg !== 'RSASSA-PKCS1-v1_5') {
+      let publicKey, privateKey, privateSSH = '';
+      if (format === 'SSH' && (asymAlg !== 'RSASSA-PKCS1-v1_5' && asymAlg !== 'ECDSA')) {
         format = 'X.509 (PKCS8+SPKI)'; // switch to default
       }
       switch (format) {
         case 'JWK':
-          publicKey = JSON.stringify(await window.crypto.subtle.exportKey("jwk", key.publicKey), null,2);
-          privateKey = JSON.stringify(await window.crypto.subtle.exportKey("jwk", key.privateKey), null,2)
+          publicKey = JSON.stringify(await crypto.subtle.exportKey("jwk", key.publicKey), null,2);
+          privateKey = JSON.stringify(await crypto.subtle.exportKey("jwk", key.privateKey), null,2);
           break;
-        case 'SSH (PKCS1)':
-          publicKey = publicKeyJWKToSSH(await window.crypto.subtle.exportKey("jwk", key.publicKey));
-          privateKey = [
-            BEGIN_RSA_PRIVATE,
-            prettify(privateKeyJWKToPKCS1(await window.crypto.subtle.exportKey("jwk", key.privateKey))),
-            END_RSA_PRIVATE].join('\n');
-          break;
+        case 'SSH': {
+          const pubssh = publicKeyJWKToSSH(await crypto.subtle.exportKey("jwk", key.publicKey));
+          const shaFingerprint = new Uint8Array(await crypto.subtle.digest('SHA-256', pubssh.decoded));
+          publicKey = pubssh.type + ' ' + pubssh.encoded + ' ' + pubssh.comment + '\n\nFingerprints:\n' +
+            'SHA256:' + devek.arrayToBase64(shaFingerprint) + '\n' + devek.arrayToHexString(devek.md5(pubssh.decoded), ':');
+          privateKey = await toPrivateKey(key.extractable ? key : key.privateKey, format);
+          privateSSH = privateKeyJWKToSSHNew(pubssh, await crypto.subtle.exportKey("jwk", key.privateKey));
+        }
+        break;
         case 'X.509 (PKCS8+SPKI)':
           publicKey = await toPublicKey(key.extractable ? key : key.publicKey, format);
           privateKey = await toPrivateKey(key.extractable ? key : key.privateKey, format);
           break;
       }
 
-      return {...state, generate: { ...state.generate, format, publicKey, privateKey, error: '' }};
+      return {...state, generate: { ...state.generate, format, publicKey, privateKey, privateSSH, error: '' }};
     }
   }
   catch (e) {

@@ -24,7 +24,7 @@ const actionCreators = {
   },
   hash: ({ input, alg }) => async state => {
     const buf = devek.stringToUint8Array(input);
-    const hash = alg === 'MD5' ? devek.arrayToHexString(MD5(input)) : await crypto.subtle.digest(alg, buf);
+    const hash = alg === 'MD5' ? devek.arrayToHexString(MD5(input)) : new Uint8Array(await crypto.subtle.digest(alg, buf));
     return { ...state, hash: { ...state.hash, input, alg, hash } };
   },
   hashFormat: e => state => ({ ...state, hash: { ...state.hash, format: e.target.dataset.value } }),
@@ -82,13 +82,13 @@ const actionCreators = {
   loaded: (pem) => state => {
     const cert = parseCertificate(pem);
     if (cert.error) {
-      return {...state, cert: { ...state.cert, loaded: false, pem: 'Error reading certificate\n\nMessage: ' + cert.error , certOutput: '' }};
+      return {...state, cert: { ...state.cert, loaded: false, pem: 'Error reading certificate\n\nMessage: ' + cert.error , output: '' }};
     }
     else {
       console.log(cert); // eslint-disable-line
-      const certOutput = prettyCert(cert);
+      const output = prettyCert(cert);
 
-      return {...state, cert: { ...state.cert, loaded: true, pem, certOutput} };
+      return {...state, cert: { ...state.cert, loaded: true, pem, output} };
     }
   },
   onDragEnter: e => state => {
@@ -108,8 +108,8 @@ const initialState = {
   hash: {
     input: '',
     alg: 'SHA-256',
-    hash: devek.hexStringToArray('e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'),
-    outputFormat: 'Hex',
+    hash: devek.base64ToUint8Array('47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU='),
+    format: 'Base64',
   },
 
   // cipher
@@ -138,8 +138,9 @@ const initialState = {
     aesKeyLength: 256, // 128 / 192 / 256
     publicKey: '',
     privateKey: '',
+    privateSSH: '',
     symmKey: '',
-    format: 'X.509 (PKCS8+SPKI)', // JWK / SSH (PKCS1) / X.509 (PKCS8+SPKI)
+    format: 'X.509 (PKCS8+SPKI)', // JWK / SSH / X.509 (PKCS8+SPKI)
     error: '',
   },
 
@@ -148,7 +149,7 @@ const initialState = {
     dragging: false,
     loaded: false,
     pem: '',
-    certOutput: '',
+    output: '',
   },
 };
 

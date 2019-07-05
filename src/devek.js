@@ -6,11 +6,13 @@ const encoder = new TextEncoder();
 const decoder = new TextDecoder();
 
 devek.concatUint8Array = (...args) => {
-  const o = new Uint8Array(args.reduce((a,c) => a + (c.length || c.byteLength), 0));
+  const o = new Uint8Array(args.reduce((a,c) => a + (c ? c.length : 0), 0));
+  if (!o.length) return o;
   let offset = 0;
   args.forEach(c => {
+    if (!c || !c.length) return;
     o.set(c, offset);
-    offset += c.length || c.byteLength;
+    offset += c.length;
   });
   return o;
 };
@@ -32,6 +34,10 @@ devek.stringToArray = s => !s ? [] : [...s].map(c => c.codePointAt());
 devek.stringToUint8Array = s => encoder.encode(s);
 
 devek.base64ToUint8Array = base64 =>  {
+  base64 = base64.replace(/[\s\t\n]/g, '');
+  if (base64.length % 4 !== 0) {
+    base64 = base64 + '='.repeat(4 - (base64.length % 4));
+  }
   const bytesString = atob(base64);
   const length = bytesString.length;
   const bytes = new Uint8Array(length);
@@ -53,7 +59,7 @@ devek.binaryStringToArray = s => {
 
 devek.arrayToBase64 = value => !value ? emptyB64 : btoa(String.fromCharCode.apply(null, value));
 devek.arrayToBase64Url = value => !value ? emptyB64 : toB64Url(btoa(String.fromCharCode.apply(null, value)));
-devek.arrayToHexString = a => (Array.isArray(a) ? a : [...a]).map(x => x.toString(16).padStart(2, '0')).join('');
+devek.arrayToHexString = (a, j = '') => (Array.isArray(a) ? a : [...a]).map(x => x.toString(16).padStart(2, '0')).join(j);
 devek.arrayToAscii = a => decoder.decode(Array.isArray(a) ? new Uint8Array(a).buffer : a);
 const charCache = new Array(128);
 devek.arrayToString = array => {
@@ -61,7 +67,7 @@ devek.arrayToString = array => {
   const result = [];
   const charFromCodePt = String.fromCodePoint || String.fromCharCode;
   let codePt, byte1;
-  const buffLen = array.length || array.byteLength;
+  const buffLen = array.length;
 
   for (let i = 0; i < buffLen;) {
     byte1 = array[i++];
@@ -77,10 +83,27 @@ devek.arrayToString = array => {
       codePt = 63; // '?'
       i += 3;
     }
-    result.push(charCache[codePt] || (charCache[codePt] = charFromCodePt(codePt)));
+    if (charCache[codePt]) {
+      result.push(charCache[codePt]);
+    }
+    else {
+      try {
+        result.push(charCache[codePt] = charFromCodePt(codePt));
+      } catch (e) {
+        console.error(e); // eslint-disable-line
+        result.push('?');
+        charCache[codePt] = '?';
+      }
+    }
   }
   return result.join('');
 };
+
+devek.arrayToPEM = (array, type) => [
+  '-----BEGIN ' + type + '-----',
+  devek.arrayToBase64(array).match(/.{1,64}/g).join('\n'),
+  '-----END ' + type + '-----\n'
+].join('\n');
 
 window.devek = devek;
 

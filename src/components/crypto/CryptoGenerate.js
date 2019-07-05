@@ -4,8 +4,8 @@ import styles from "./PageCrypto.less";
 import {actions} from "./PageCrypto.store";
 import cx from "classnames";
 
-const CryptoGenerate = ({ tabs, algType, symmAlg, asymAlg, hashAlg, rsaModulusLength, ecNamedCurve, aesKeyLength, publicKey, privateKey, format, symmKey, error } :
-                        { tabs: any, algType: string, symmAlg: string, asymAlg: string, hashAlg: string, rsaModulusLength: number, ecNamedCurve: string, aesKeyLength: number, publicKey: string, privateKey: string, format: string, symmKey: string, error: string }) => (
+const CryptoGenerate = ({ tabs, algType, symmAlg, asymAlg, hashAlg, rsaModulusLength, ecNamedCurve, aesKeyLength, publicKey, privateKey, privateSSH, format, symmKey, error } :
+                        { tabs: any, algType: string, symmAlg: string, asymAlg: string, hashAlg: string, rsaModulusLength: number, ecNamedCurve: string, aesKeyLength: number, publicKey: string, privateKey: string, privateSSH: string, format: string, symmKey: string, error: string }) => (
   <div>
     {tabs}
 
@@ -65,7 +65,7 @@ const CryptoGenerate = ({ tabs, algType, symmAlg, asymAlg, hashAlg, rsaModulusLe
         </div>
 
         <label>Format:</label>
-        <Radio className={styles.options2} options={["JWK","X.509 (PKCS8+SPKI)",asymAlg === "RSASSA-PKCS1-v1_5"? "SSH (PKCS1)" : null]} value={format} onClick={actions.genFormat} />
+        <Radio className={styles.options2} options={["JWK","X.509 (PKCS8+SPKI)",asymAlg === "RSASSA-PKCS1-v1_5" || asymAlg === "ECDSA" ? "SSH" : null]} value={format} onClick={actions.genFormat} />
 
         <div className={styles.actions}>
           <button onClick={actions.genKey}>Generate</button>
@@ -77,7 +77,10 @@ const CryptoGenerate = ({ tabs, algType, symmAlg, asymAlg, hashAlg, rsaModulusLe
         <TextArea id="crypto_public" readOnly className={cx({[styles.error]: error})} value={error || publicKey} />
         <span>Private Key:</span><CopyToClipboard from="crypto_private"/>
         <TextArea id="crypto_private" readOnly value={error ? '' : privateKey} />
-
+        {!error && privateSSH && <>
+          <span>Private Key (OpenSSH):</span><CopyToClipboard from="crypto_private_ssh"/>
+          <TextArea id="crypto_private_ssh" readOnly value={error ? '' : privateSSH} />
+        </>}
       </>
     )}
 

@@ -23,7 +23,7 @@ const EVP_BytesToKey = (passphrase, salt, keySize, ivSize, count) => {
     hash = md5(hash);
   }
   let keyAndIv = hash;
-  while (keyAndIv.byteLength < keySize + ivSize) {
+  while (keyAndIv.length < keySize + ivSize) {
     hash = md5(devek.concatUint8Array(hash, passAndSalt));
     for (let i = 1; i < count ; i++) {
       hash = md5(hash);
@@ -45,12 +45,12 @@ export const cipherEncrypt = async (alg, data, passphrase, salt, jwk) => {
       jwk = JSON.parse(jwk);
     }
     if (salt === '') salt = crypto.getRandomValues(new Uint8Array(8));
-    if (salt && (salt.length || salt.byteLength) < 8) {
+    if (salt && salt.length < 8) {
       const paddedSalt = new Uint8Array(Array.from({ length: 8 }, () => 0) );
       paddedSalt.set(salt, 0);
       salt = paddedSalt;
     }
-    else if (salt && (salt.length || salt.byteLength) > 8) {
+    else if (salt && salt.length > 8) {
       salt = salt.slice(0, 8);
     }
     const { rawKey, iv } = EVP_BytesToKey(passphrase, salt, 32, 16, 1);
@@ -113,14 +113,14 @@ export const cipherDecrypt = async (alg, data, passphrase, salt, jwk) => {
       jwk = JSON.parse(jwk);
     }
     const decoded = devek.base64ToUint8Array(data);
-    const salted = decoded.byteLength > OPENSSL_MAGIC.byteLength
+    const salted = decoded.length > OPENSSL_MAGIC.length
       && OPENSSL_MAGIC.every((x, i) => decoded[i] === x);
 
-    if (salted) salt = decoded.slice(OPENSSL_MAGIC.byteLength, OPENSSL_MAGIC.byteLength + 8);
+    if (salted) salt = decoded.slice(OPENSSL_MAGIC.length, OPENSSL_MAGIC.length + 8);
 
     const {rawKey, iv} = EVP_BytesToKey(passphrase, salt, 32, 16, 1);
 
-    const encrypted = salted ? decoded.slice(OPENSSL_MAGIC.byteLength + 8) : decoded;
+    const encrypted = salted ? decoded.slice(OPENSSL_MAGIC.length + 8) : decoded;
 
     const cryptoKey = aes
       ? await crypto.subtle.importKey(

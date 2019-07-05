@@ -21,7 +21,7 @@ const onFileChange = e => {
   loadFileAsync(file, actions.loaded);
 };
 
-const CryptoHash = ({ tabs, pem, certOutput, dragging } : { tabs: any, pem: string, certOutput: string, dragging: boolean }) => (
+const CryptoHash = ({ tabs, pem, output, dragging } : { tabs: any, pem: string, output: string, dragging: boolean }) => (
   <div onDragEnter={actions.onDragEnter} onDragOver={onDragOver}
        onDragLeave={actions.onDragLeave} onDrop={onDrop}>
     {tabs}
@@ -35,7 +35,7 @@ const CryptoHash = ({ tabs, pem, certOutput, dragging } : { tabs: any, pem: stri
     <TextArea readOnly value={pem} />
 
     <label>Certificate fields</label>
-    <TextArea readOnly value={certOutput} />
+    <TextArea readOnly value={output} />
   </div>
 );
 

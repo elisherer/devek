@@ -1,10 +1,9 @@
 import React from 'react';
 import {CopyToClipboard, Radio, TextArea} from "../_lib";
 import {actions} from "./PageCrypto.store";
-import styles from "./PageCrypto.less";
+import devek from 'devek';
 
-const toBase64 = buf => window.btoa(String.fromCharCode(...new Uint8Array(buf)));
-const toHex = buf => [...new Uint8Array(buf)].map(value => value.toString(16).padStart(2, '0')).join('');
+import styles from "./PageCrypto.less";
 
 const CryptoHash = ({ tabs, input, alg, hash, format } : { tabs: any, input: string, alg: string, hash: Object, format: string }) => (
   <div>
@@ -29,10 +28,10 @@ const CryptoHash = ({ tabs, input, alg, hash, format } : { tabs: any, input: str
     <span>Hash:</span><CopyToClipboard from="crypto_hash"/>
     <TextArea id="crypto_hash" readOnly
               className={styles.long_output}
-              value={typeof hash === 'string' ? hash : (format === 'Base64' ? toBase64(hash) : toHex(hash))}
+              value={typeof hash === 'string' ? hash : (format === 'Base64' ? devek.arrayToBase64(hash) : devek.arrayToHexString(hash))}
     />
     <div className={styles.input_info}>
-      <sup>&nbsp;{hash.length > 0 ? 'Length: ' + hash.length : hash.byteLength > 0 ? hash.byteLength + " Bytes" : ''}</sup>
+      <sup>&nbsp;{(alg === 'MD5' ? hash.length / 2 : hash.byteLength) + " Bytes"}</sup>
     </div>
   </div>
 );
