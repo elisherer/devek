@@ -47,8 +47,13 @@ const actionCreators = {
       output: await cipherEncrypt(
         state.cipher.alg,
         state.cipher.input,
+        state.cipher.kdf !== 'None',
+        state.cipher.cipherKey,
+        state.cipher.iv,
         state.cipher.passphrase,
-        state.cipher.useSalt ? (state.cipher.salt ? devek.hexStringToArray(state.cipher.salt) : state.cipher.salt) : null,
+        state.cipher.useSalt,
+        !state.cipher.salt,
+        devek.hexStringToArray(state.cipher.salt),
         state.cipher.jwk
       )
     }
@@ -60,8 +65,13 @@ const actionCreators = {
       output: await cipherDecrypt(
         state.cipher.alg,
         state.cipher.input,
+        state.cipher.kdf !== 'None',
+        state.cipher.cipherKey,
+        state.cipher.iv,
         state.cipher.passphrase,
-        state.cipher.salt ? devek.hexStringToArray(state.cipher.salt) : state.cipher.salt,
+        state.cipher.useSalt,
+        !state.cipher.salt,
+        devek.hexStringToArray(state.cipher.salt),
         state.cipher.jwk
       )
     }

@@ -24,7 +24,7 @@ const CryptoCipher = ({ tabs, alg, kdf, input, passphrase, useSalt, salt, cipher
       </>
     ) : (
       <>
-        <label>KDF:</label>
+        <label>Standard KDF:</label>
         <Radio className={styles.options2} options={["None", "OpenSSL"]} value={kdf} onClick={actions.cipherKDF} />
 
         { kdf === 'None' && (
@@ -70,8 +70,8 @@ const CryptoCipher = ({ tabs, alg, kdf, input, passphrase, useSalt, salt, cipher
 
     {output && (
       <>
-        {output.meta && <label>Encryption data:</label>}
-        {output.meta && <TextArea readOnly value={output.meta} />}
+        {output.kdf && <label>KDF output:</label>}
+        {output.kdf && <TextArea readOnly value={output.kdf} />}
 
         <label>Output:</label>
         <TextArea readOnly value={output.output} />

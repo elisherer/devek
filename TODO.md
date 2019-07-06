@@ -1,9 +1,8 @@
 # TODO
 
 * Crypto
-  * tidy up cipher algorithm (common code etc..)
   * generate - allow output format to be after generation (allow switching between the formats for the same key)
-  * new tab - derive key
+  * generate - derive key
 
 * Dev Joke of the day
   * Knock knock.
