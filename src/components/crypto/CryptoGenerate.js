@@ -2,7 +2,7 @@ import React from "react";
 import {CopyToClipboard, Radio, TextArea, TextBox} from "../_lib";
 import styles from "./PageCrypto.less";
 import {actions} from "./PageCrypto.store";
-import cx from "classnames";
+
 import {SSH_SUPPORT} from "./generate";
 
 const CryptoGenerate = ({ tabs, algType, symmAlg, asymAlg, hashAlg, rsaModulusLength, ecNamedCurve, aesKeyLength, publicKey, privateKey, privateSSH, format, source, kdf, symmKey, outputKey, error } :
