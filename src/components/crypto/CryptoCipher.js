@@ -1,8 +1,9 @@
 import React from "react";
 import {Checkbox, CopyToClipboard, Radio, TextArea, TextBox} from "../_lib";
 import { Link } from 'react-router-dom';
-import styles from "./PageCrypto.less";
 import {actions} from "./PageCrypto.store";
+
+import styles from "./PageCrypto.less";
 
 const CryptoCipher = ({ tabs, alg, kdf, input, passphrase, useSalt, salt, cipherKey, iv, aesCounter, jwk, output } :
                         { tabs: any, alg: string, kdf: string, input: string, passphrase: string, useSalt: boolean, salt: string, cipherKey: string, iv: string, aesCounter: string, jwk: string, output: string }) => (
@@ -61,22 +62,25 @@ const CryptoCipher = ({ tabs, alg, kdf, input, passphrase, useSalt, salt, cipher
       </>
     )}
 
-
-
     <div className={styles.actions}>
       <button onClick={actions.encrypt}>Encrypt</button>
       <button onClick={actions.decrypt}>Decrypt</button>
     </div>
 
-    {output && (
+    <hr />
+
+    {output && (output.error ? <span className={styles.error}>{output.error}</span> : (
       <>
         {output.kdf && <label>KDF output:</label>}
         {output.kdf && <TextArea readOnly value={output.kdf} />}
 
+        <label>Format:</label>
+        <Radio className={styles.options2} options={["Base64", "Hex", "UTF-8"]} value={output.format} onClick={actions.cipherFormat} />
+
         <span>Output:</span><CopyToClipboard from="crypto_cipher_out"/>
-        <TextArea id="crypto_cipher_out" readOnly value={output.output} />
+        <TextArea id="crypto_cipher_out" readOnly value={output.formatted} />
       </>
-    )}
+    ))}
 
   </div>
 );

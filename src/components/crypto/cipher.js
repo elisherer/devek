@@ -100,7 +100,7 @@ export const cipherEncrypt = async (alg, data, useKDF, key, iv, passphrase, useS
         iv = keyAndIV.iv;
         salt = keyAndIV.salt;
       } else {
-        cryptoKey = await crypto.subtle.importKey("raw", new Uint8Array(devek.hexStringToArray(key)), alg, true, ['encrypt']);
+        cryptoKey = await crypto.subtle.importKey("raw", new Uint8Array(devek.hexStringToArray(key)), alg, false, ['encrypt']);
         iv = new Uint8Array(devek.hexStringToArray(iv));
       }
       options = getAesParams(alg, iv);
@@ -116,11 +116,11 @@ export const cipherEncrypt = async (alg, data, useKDF, key, iv, passphrase, useS
 
     return {
       kdf: useKDF && isAES ? await buildKDFOutputAsync(alg, iv, useSalt, salt, cryptoKey) : '',
-      output: devek.arrayToBase64(isAES && useKDF && useSalt ? devek.concatUint8Array(OPENSSL_MAGIC, salt, encrypted) : encrypted)
+      output: isAES && useKDF && useSalt ? devek.concatUint8Array(OPENSSL_MAGIC, salt, encrypted) : encrypted
     };
   }
   catch (e) {
-    return {kdf: '', output: e.name + ': ' + e.message};
+    return {kdf: '', error: e.name + ': ' + e.message};
   }
 };
 
@@ -160,10 +160,17 @@ export const cipherDecrypt = async (alg, data, useKDF, key, iv, passphrase, useS
 
     return {
       kdf: useKDF && isAES ? await buildKDFOutputAsync(alg, iv, useSalt, salt, cryptoKey) : '',
-      output: devek.arrayToAscii(decrypted)
+      output: decrypted
     };
   }
   catch (e) {
-    return {kdf: '', output: e.name + ': ' + e.message};
+    return {kdf: '', error: e.name + ': ' + e.message};
   }
 };
+
+export const cipherFormat = (array, format) =>
+  format === 'Base64'
+    ? devek.arrayToBase64(array)
+    : format === 'UTF-8'
+    ? devek.arrayToString(array)
+    : devek.arrayToHexString(array);

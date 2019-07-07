@@ -3,7 +3,7 @@ import MD5 from './md5';
 import createStore from "../../helpers/createStore";
 import { parseCertificate } from './asn1';
 import { prettyCert } from './cert';
-import { cipherEncrypt, cipherDecrypt } from './cipher';
+import {cipherEncrypt, cipherDecrypt, cipherFormat} from './cipher';
 import {formatOutput, generate} from './generate';
 
 const crypto = devek.crypto;
@@ -40,42 +40,67 @@ const actionCreators = {
   cipherKey: e => state => ({ ...state, cipher: { ...state.cipher, cipherKey: e.target.value }}),
   cipherAESCounter: e => state => ({ ...state, cipher: { ...state.cipher, aesCounter: e.target.value }}),
   cipherJWK: e => state => ({ ...state, cipher: { ...state.cipher, jwk: e.target.innerText }}),
-  encrypt: () => async state => ({
-    ...state,
-    cipher: {
-      ...state.cipher,
-      output: await cipherEncrypt(
-        state.cipher.alg,
-        state.cipher.input,
-        state.cipher.kdf !== 'None',
-        state.cipher.cipherKey,
-        state.cipher.iv,
-        state.cipher.passphrase,
-        state.cipher.useSalt,
-        !state.cipher.salt,
-        devek.hexStringToArray(state.cipher.salt),
-        state.cipher.jwk
-      )
-    }
-  }),
-  decrypt: () => async state => ({
-    ...state,
-    cipher: {
-      ...state.cipher,
-      output: await cipherDecrypt(
-        state.cipher.alg,
-        state.cipher.input,
-        state.cipher.kdf !== 'None',
-        state.cipher.cipherKey,
-        state.cipher.iv,
-        state.cipher.passphrase,
-        state.cipher.useSalt,
-        !state.cipher.salt,
-        devek.hexStringToArray(state.cipher.salt),
-        state.cipher.jwk
-      )
-    }
-  }),
+  cipherFormat: e => state => {
+    const format = e.target.dataset.value;
+    return {
+      ...state,
+      cipher: {
+        ...state.cipher,
+        output: {
+          ...state.cipher.output,
+          format,
+          formatted: cipherFormat(state.cipher.output.output, format),
+        }
+      }
+    };
+  },
+  encrypt: () => async state => {
+    const output = await cipherEncrypt(
+      state.cipher.alg,
+      state.cipher.input,
+      state.cipher.kdf !== 'None',
+      state.cipher.cipherKey,
+      state.cipher.iv,
+      state.cipher.passphrase,
+      state.cipher.useSalt,
+      !state.cipher.salt,
+      devek.hexStringToArray(state.cipher.salt),
+      state.cipher.jwk
+    );
+    output.format = 'Base64';
+    output.formatted = cipherFormat(output.output, output.format);
+
+    return {
+      ...state,
+      cipher: {
+        ...state.cipher,
+        output,
+      }
+    };
+  },
+  decrypt: () => async state => {
+    const output = await cipherDecrypt(
+      state.cipher.alg,
+      state.cipher.input,
+      state.cipher.kdf !== 'None',
+      state.cipher.cipherKey,
+      state.cipher.iv,
+      state.cipher.passphrase,
+      state.cipher.useSalt,
+      !state.cipher.salt,
+      devek.hexStringToArray(state.cipher.salt),
+      state.cipher.jwk
+    );
+    output.format = 'UTF-8';
+    output.formatted = cipherFormat(output.output, output.format);
+    return {
+      ...state,
+      cipher: {
+        ...state.cipher,
+        output,
+      }
+    };
+  },
 
   //generate
   genAlgType: e => state => ({ ...state, generate: { ...state.generate, algType: e.target.dataset.value }}),
@@ -141,7 +166,9 @@ const initialState = {
     iv: '',
     jwk: '',
     aesCounter: '',
+    format: '',
     output: null,
+    error: '',
   },
 
   //generate keys
