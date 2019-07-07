@@ -125,7 +125,12 @@ export const siteMap = {
     children: {
       "/": {
         keyword: 'image',
-        title: "Image filters and extraction",
+        title: "Image transformations and extraction",
+        description: "Transform image and export"
+      },
+      "/filters": {
+        keyword: 'image',
+        title: "Image filters",
         description: "Apply image filters"
       },
       "/crop": {
@@ -138,7 +143,7 @@ export const siteMap = {
         title: "Image resizer",
         description: 'Resize images',
       },
-      "/pickere": {
+      "/picker": {
         keyword: 'picker',
         title: "Image color picker",
         description: 'Pick color from an image',
@@ -176,10 +181,20 @@ export const siteMap = {
         title: 'Hash generation',
         description: 'Generate hash of input text',
       },
+      "/cipher": {
+        keyword: 'cipher',
+        title: "Encrypt or Decrypt",
+        description: 'Encrypt or decrypt information',
+      },
       "/generate": {
         keyword: 'generate',
         title: "Generate encryption keys",
-        description: 'Generate symmetric/asymmetric keys for encryption/signing',
+        description: 'Generate/derive symmetric/asymmetric keys for encryption/signing',
+      },
+      "/cert": {
+        keyword: 'certificate',
+        title: "Parse certificates",
+        description: 'Parse PEM (X.509 / ASN.1) certificates',
       },
     }
   },
