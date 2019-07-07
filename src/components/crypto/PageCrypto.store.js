@@ -4,7 +4,7 @@ import createStore from "../../helpers/createStore";
 import { parseCertificate } from './asn1';
 import { prettyCert } from './cert';
 import { cipherEncrypt, cipherDecrypt } from './cipher';
-import { generate } from './generate';
+import {formatOutput, generate} from './generate';
 
 const crypto = devek.crypto;
 
@@ -82,7 +82,14 @@ const actionCreators = {
   genAsymAlg: e => state => ({ ...state, generate: { ...state.generate, asymAlg: e.target.dataset.value }}),
   genSymmAlg: e => state => ({ ...state, generate: { ...state.generate, symmAlg: e.target.dataset.value }}),
   genHashAlg: e => state => ({ ...state, generate: { ...state.generate, hashAlg: e.target.dataset.value }}),
-  genFormat: e => state => ({ ...state, generate: { ...state.generate, format: e.target.dataset.value }}),
+  genFormat: e => async state => {
+    return { ...state, generate: { ...state.generate, ...(await formatOutput(state.generate.outputKey, e.target.dataset.value)) } };
+  },
+  genSource: e => state => ({ ...state, generate: { ...state.generate, source: e.target.dataset.value }}),
+  genKdfPassphrase: e => state => ({ ...state, generate: { ...state.generate, kdf: { ...state.generate.kdf, passphrase: e.target.value } }}),
+  genKdfSalt: e => state => ({ ...state, generate: { ...state.generate, kdf: { ...state.generate.kdf, salt: e.target.value } }}),
+  genKdfIterations: e => state => ({ ...state, generate: { ...state.generate, kdf: { ...state.generate.kdf, iterations: parseInt(e.target.value) } }}),
+  genKdfHashAlg: e => state => ({ ...state, generate: { ...state.generate, kdf: { ...state.generate.kdf, hash: e.target.dataset.value } }}),
   rsaModulusLength: e => state => ({ ...state, generate: { ...state.generate, rsaModulusLength: parseInt(e.target.dataset.value) }}),
   ecNamedCurve: e => state => ({ ...state, generate: { ...state.generate, ecNamedCurve: e.target.dataset.value }}),
   aesKeyLength: e => state => ({ ...state, generate: { ...state.generate, aesKeyLength: parseInt(e.target.dataset.value) }}),
@@ -150,8 +157,16 @@ const initialState = {
     privateKey: '',
     privateSSH: '',
     symmKey: '',
-    format: 'X.509 (PKCS8+SPKI)', // JWK / SSH / X.509 (PKCS8+SPKI)
+    format: 'JWK', // JWK / SSH / X.509 (PKCS8+SPKI)
+    source: 'Random', // Random / PBKDF2
+    kdf: {
+      passphrase: '',
+      salt: '',
+      hash: 'SHA-256',
+      iterations: 10000,
+    },
     error: '',
+    outputKey: null,
   },
 
   // cert

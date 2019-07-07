@@ -1,9 +1,5 @@
 # TODO
 
-* Crypto
-  * generate - allow output format to be after generation (allow switching between the formats for the same key)
-  * generate - derive key
-
 * Dev Joke of the day
   * Knock knock.
     Race condition.

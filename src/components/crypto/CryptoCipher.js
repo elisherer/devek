@@ -1,5 +1,5 @@
 import React from "react";
-import {Checkbox, Radio, TextArea, TextBox} from "../_lib";
+import {Checkbox, CopyToClipboard, Radio, TextArea, TextBox} from "../_lib";
 import { Link } from 'react-router-dom';
 import styles from "./PageCrypto.less";
 import {actions} from "./PageCrypto.store";
@@ -73,8 +73,8 @@ const CryptoCipher = ({ tabs, alg, kdf, input, passphrase, useSalt, salt, cipher
         {output.kdf && <label>KDF output:</label>}
         {output.kdf && <TextArea readOnly value={output.kdf} />}
 
-        <label>Output:</label>
-        <TextArea readOnly value={output.output} />
+        <span>Output:</span><CopyToClipboard from="crypto_cipher_out"/>
+        <TextArea id="crypto_cipher_out" readOnly value={output.output} />
       </>
     )}
 
