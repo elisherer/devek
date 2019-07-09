@@ -2,7 +2,9 @@ const parser = new DOMParser(),
   serializer = new XMLSerializer(),
   xmlMime = "application/xml";
 
-const getXMLDoc = xml => parser.parseFromString(xml, xmlMime);
+const XMLParse = xml => parser.parseFromString(xml, xmlMime);
+
+const XMLserialize = xmlDoc => serializer.serializeToString(xmlDoc);
 
 const queryXPath = (xmlDoc, xpath) =>
   xmlDoc.evaluate(xpath, xmlDoc, null, XPathResult.ANY_TYPE,  null);
@@ -19,18 +21,19 @@ let prettifyProcessor;
 const getProcessor = () => {
   if (!prettifyProcessor) {
       prettifyProcessor = new XSLTProcessor();
-      prettifyProcessor.importStylesheet(getXMLDoc(prettifyXSLT));
+      prettifyProcessor.importStylesheet(XMLParse(prettifyXSLT));
   }
   return prettifyProcessor;
 };
 
 const prettifyXml = xmlDoc => {
   const resultDoc = getProcessor().transformToDocument(xmlDoc);
-  return serializer.serializeToString(resultDoc);
+  return XMLserialize(resultDoc);
 };
 
 export {
-  getXMLDoc,
+  XMLParse,
+  XMLserialize,
   queryXPath,
   prettifyXml
 };

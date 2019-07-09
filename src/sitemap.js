@@ -87,8 +87,20 @@ export const siteMap = {
     component: PageXML,
     keyword: 'xml',
     title: 'XML',
-    header: 'XML Debugger/Prettifier',
-    description: "XML Prettify and XPath query"
+    header: 'XML Tools',
+    description: "Prettify, Query by XPath and Transform",
+    children: {
+      "/": {
+        keyword: 'xpath',
+        title: "Debug and prettify XML",
+        description: "Debug XML using XPath, and apply prettify"
+      },
+      "/filters": {
+        keyword: 'transform',
+        title: "Transform XML",
+        description: "Transform XML using XSLT"
+      },
+    }
   },
   "/jwt": {
     component: PageJWT,
@@ -129,7 +141,7 @@ export const siteMap = {
         description: "Transform image and export"
       },
       "/filters": {
-        keyword: 'image',
+        keyword: 'filters',
         title: "Image filters",
         description: "Apply image filters"
       },
