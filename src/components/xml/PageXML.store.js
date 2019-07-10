@@ -13,7 +13,7 @@ const actionCreators = {
       const processor = new XSLTProcessor();
       processor.importStylesheet(xslt);
       const result = processor.transformToDocument(xml);
-      return { ...state, xsltResult: XMLserialize(result), error: '' };
+      return { ...state, xsltResult: result ? XMLserialize(result) : '<!-- No result -->', error: '' };
     }
     catch (e) {
       return { ...state, xsltResult: '', error: e.name + ': ' + e.message };
