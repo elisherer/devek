@@ -1,8 +1,8 @@
-export const getJSONAsync = url => new Promise((resolve, reject) => {
+export const getAsync = (url, type = 'json') => new Promise((resolve, reject) => {
   try {
     const xhr = new XMLHttpRequest();
     xhr.open('GET', url, true);
-    xhr.responseType = 'json';
+    xhr.responseType = type;
     xhr.onload = function () {
       const status = xhr.status;
       if (Math.floor(status / 100) === 2) {

@@ -3,11 +3,11 @@ import { CopyToClipboard, TextBox } from '../_lib';
 import { useStore, actions } from './PageNetwork.store';
 import { formatters, isPrivate } from './network';
 import styles from './PageNetwork.less';
-import { getJSONAsync } from "../../helpers/http";
+import { getAsync } from "../../helpers/http";
 
 const fetchIP = () => {
   let cancelled = false;
-  getJSONAsync('/api/ip').then((res : { ip_address: string }) => {
+  getAsync('/api/ip', 'json').then((res : { ip_address: string }) => {
     !cancelled && actions.myIP(res.ip_address);
   }).catch(e => {
     !cancelled && actions.myIP(e.message);

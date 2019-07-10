@@ -140,7 +140,7 @@ const PageXML = () => {
           <>
             <CopyToClipboard from="xml_xslt_result"/>
             <TextArea id="xml_xslt_result" readOnly value={xsltResult}
-                      html={!!xsltResult && xsltResult.includes('<parsererror')}/>
+                      html={!!xsltResult && (xsltResult.includes('<parsererror') || xsltResult.includes('<html'))}/>
           </>
         )}
       </div>

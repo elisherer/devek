@@ -6,12 +6,19 @@ const actionCreators = {
   xpathEnabled: e => state => ({ ...state, xpathEnabled: e.target.checked }),
   xpath: e => state => ({ ...state, xpath: e.target.value, }),
   xslt: e => state => ({ ...state, xslt: e.target.innerText }),
-  applyXSLT: () => state => {
+  applyXSLT: () => async state => {
     try {
       const xml = XMLParse(state.xmlInput),
         xslt = XMLParse(state.xslt);
       const processor = new XSLTProcessor();
       processor.importStylesheet(xslt);
+/*    // example of adding a stylesheet based on import
+      const doc = await getAsync('http://exslt.github.io/str/str.xsl', 'arraybuffer').then(ab => {
+        const str = devek.arrayToString(new Uint8Array(ab));
+        return XMLParse(str);
+      });
+      processor.importStylesheet(doc);
+*/
       const result = processor.transformToDocument(xml);
       return { ...state, xsltResult: result ? XMLserialize(result) : '<!-- No result -->', error: '' };
     }
