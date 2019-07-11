@@ -1,30 +1,21 @@
 import createStore from "../../helpers/createStore";
-import {XMLParse, XMLserialize} from './xml';
+import {transform, XMLserialize, prettifyXSLT} from './xml';
 
 const actionCreators = {
   xml: e => state => ({ ...state, xmlInput: e.target.innerText }),
   xpathEnabled: e => state => ({ ...state, xpathEnabled: e.target.checked }),
   xpath: e => state => ({ ...state, xpath: e.target.value, }),
   xslt: e => state => ({ ...state, xslt: e.target.innerText }),
-  applyXSLT: () => async state => {
+  applyXSLT: () => state => {
+    let xsltResult = '', error = '';
     try {
-      const xml = XMLParse(state.xmlInput),
-        xslt = XMLParse(state.xslt);
-      const processor = new XSLTProcessor();
-      processor.importStylesheet(xslt);
-/*    // example of adding a stylesheet based on import
-      const doc = await getAsync('http://exslt.github.io/str/str.xsl', 'arraybuffer').then(ab => {
-        const str = devek.arrayToString(new Uint8Array(ab));
-        return XMLParse(str);
-      });
-      processor.importStylesheet(doc);
-*/
-      const result = processor.transformToDocument(xml);
-      return { ...state, xsltResult: result ? XMLserialize(result) : '<!-- No result -->', error: '' };
+      const result = transform(state.xmlInput, state.xslt);
+      xsltResult = result ? XMLserialize(result) : '<!-- No result -->';
     }
     catch (e) {
-      return { ...state, xsltResult: '', error: e.name + ': ' + e.message };
+      error = e.name + ': ' + e.message;
     }
+    return { ...state, xsltResult, error };
   }
 };
 
@@ -32,13 +23,7 @@ const initialState = {
   xmlInput: '<root><record>one</record><record>two</record></root>',
   xpathEnabled: false,
   xpath: '/*',
-  xslt: `<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-  <xsl:output method="xml" indent="yes"/>
-  <xsl:strip-space elements="*"/>
-  <xsl:template match="/">
-    <xsl:copy-of select="."/>
-  </xsl:template>
-</xsl:stylesheet>`,
+  xslt: prettifyXSLT,
   xsltResult: '',
   error: ''
 };
