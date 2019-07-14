@@ -1,6 +1,8 @@
 import React, { useEffect, useRef } from 'react';
+import devek from 'devek';
 import cx from 'classnames';
 import styles from "./TextArea.less";
+
 import screen from "helpers/screen";
 
 const blurOnEscape = e => {
@@ -45,15 +47,27 @@ function replaceCaret(el) {
   }
 }
 
-const TextArea = ({ autoFocus, className, style, onChange, readOnly, value, html, disabled, ...more } :
-                    { autoFocus?: boolean, className?: string, style?: Object, onChange?: Function, readOnly?: boolean, value?: string, html?: boolean, disabled?: boolean }) => {
+const TextArea = ({ autoFocus, className, style, onChange, readOnly, value, html, disabled, lineNumbers, ...more } :
+                    { autoFocus?: boolean, className?: string, style?: Object, onChange?: Function, readOnly?: boolean, value?: string, html?: boolean, disabled?: boolean, lineNumbers?: boolean }) => {
   const innerProp = html ? "innerHTML" : "innerText";
 
   const inputElement = useRef();
 
   if (readOnly) {
     if (html) more.dangerouslySetInnerHTML = { __html: value };
-    else more.children = value;
+    else {
+      more.children = value;
+    }
+  }
+
+  let lineNumbersDiv = false;
+  if (lineNumbers && readOnly && !html) {
+    const numberOfLines = devek.numberOfLines(value.endsWith('\n') ? value.slice(0,-1) : value);
+    lineNumbersDiv = (
+      <div className={styles.ln}>
+        {Array.from({ length: numberOfLines }).map((x,k)=>k+1).join('\n')}
+      </div>
+    );
   }
 
   useEffect(() => {
@@ -71,16 +85,20 @@ const TextArea = ({ autoFocus, className, style, onChange, readOnly, value, html
   }, []);
 
   return (
-    <pre ref={inputElement} style={style} className={cx(className, styles.textarea, {
-      [styles.readonly]: readOnly,
-      [styles.disabled]: disabled,
-    })}
-         contentEditable={!readOnly && !disabled}
-         onInput={onChange}
-         onKeyDown={blurOnEscape}
-         onPaste={html ? undefined : stripFormattingOnPaste}
-         {...more}
-    />
+    <div className={styles.wrapper}>
+      {lineNumbersDiv}
+      <pre ref={inputElement} style={style} className={cx(className, styles.textarea, {
+        [styles.has_ln]: lineNumbers,
+        [styles.readonly]: readOnly,
+        [styles.disabled]: disabled,
+      })}
+           contentEditable={!readOnly && !disabled}
+           onInput={onChange}
+           onKeyDown={blurOnEscape}
+           onPaste={html ? undefined : stripFormattingOnPaste}
+           {...more}
+      />
+    </div>
   );
 };
 

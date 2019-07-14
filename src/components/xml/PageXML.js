@@ -35,7 +35,7 @@ const PageXML = () => {
     </Tabs>
   );
 
-  if (type === '') {
+  if (!type) {
 
     const {
       xmlInput,
@@ -80,7 +80,7 @@ const PageXML = () => {
         resultsNode = (
           <>
             <CopyToClipboard from="xml_result"/>
-            <TextArea id="xml_result" readOnly value={results}
+            <TextArea id="xml_result" readOnly lineNumbers value={results}
                       html={!!results && results.includes('<parsererror')}/>
           </>
         );
@@ -114,7 +114,7 @@ const PageXML = () => {
     );
   }
 
-  else {
+  else if (type === 'transform') {
 
     const {
       xmlInput,
@@ -139,7 +139,7 @@ const PageXML = () => {
         {error ? <p style={{color: 'red'}}>{error}</p> : (
           <>
             <CopyToClipboard from="xml_xslt_result"/>
-            <TextArea id="xml_xslt_result" readOnly value={xsltResult}
+            <TextArea id="xml_xslt_result" readOnly lineNumbers value={xsltResult}
                       html={!!xsltResult && (xsltResult.includes('<parsererror') || xsltResult.includes('<html'))}/>
           </>
         )}

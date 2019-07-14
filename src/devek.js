@@ -105,6 +105,15 @@ devek.arrayToPEM = (array, type) => [
   '-----END ' + type + '-----\n'
 ].join('\n');
 
+devek.numberOfLines = text => {
+  if (!text) return 0;
+  let length = 1, p = -1;
+  while ((p = text.indexOf('\n', p + 1)) !== -1) {
+    length++;
+  }
+  return length;
+};
+
 window.devek = devek;
 
 export default devek;

@@ -5,15 +5,13 @@ const textCategories = [
   { category: "case", title: 'Case' },
   { category: "url", title: 'URL' },
   { category: "html", title: 'HTML' },
-  //{ category: "base64", title: 'Base64' },
-  //{ category: "base36", title: 'Base36' },
 ];
 
 const textFunctions = {
   case: {
-    uppercase: { title: 'Uppercase', func: input => input, style: { textTransform: 'uppercase'} },//input => input.toUpperCase() },
-    lowercase: { title: 'Lowercase', func: input => input, style: { textTransform: 'lowercase'} },//input => input.toLowerCase() },
-    capitalize: { title: 'Capitalize', func: input => input, style: { textTransform: 'capitalize'} },
+    uppercase: { title: 'Uppercase', func: input => input.toUpperCase() },
+    lowercase: { title: 'Lowercase', func: input => input.toLowerCase() },
+    capitalize: { title: 'Capitalize', func: input => input.replace(/(?:^|\s)\S/g, a => a.toUpperCase()) },
   },
   url: {
     encode: { title: 'Encode', func: input => encodeURIComponent(input)  },

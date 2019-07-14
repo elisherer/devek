@@ -3,13 +3,17 @@ import styles from "./CopyToClipboard.less";
 
 const copyFrom = e => {
   let el = document.getElementById(e.target.dataset.from);
-  if (typeof el.select !== 'function') {
-    const textarea = e.target.firstChild;
-    textarea.value = el.innerText;
-    el = textarea;
+  let ta;
+  if (el.nodeName === 'PRE') {
+    ta = e.target.firstChild;
+    ta.value = el.textContent || '\0';
+    el = ta;
   }
   el.select();
-  document.execCommand("copy");
+  document.execCommand("copy", false, null);
+  if (ta) {
+    ta.value = '';
+  }
 };
 
 const CopyToClipboard = ({ from } : { from: string }) => (

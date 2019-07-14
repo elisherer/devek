@@ -1,10 +1,7 @@
 import createStore from "../../helpers/createStore";
 
 const actionCreators = {
-  input: e => state => ({
-    ...state,
-    input: e.target.innerText
-  }),
+  input: e => state => ({ ...state, input: e.target.innerText }),
 };
 
 const initialState = {

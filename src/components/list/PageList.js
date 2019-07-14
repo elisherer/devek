@@ -22,7 +22,7 @@ const PageList = () => {
       </div>
 
       <span>Output:</span><CopyToClipboard from="list_output"/>
-      <TextArea id="list_output" readOnly value={output} />
+      <TextArea id="list_output" readOnly lineNumbers value={output} />
       <button onClick={actions.copy} data-copyto="list_input">Copy output to source</button>
     </div>
   );

@@ -1,18 +1,9 @@
 import createStore from "../../helpers/createStore";
 
 const actionCreators = {
-  set: e => state => ({
-    ...state,
-    input: e.target.innerText
-  }),
-  path: e => state => ({
-    ...state,
-    path: e.target.value
-  }),
-  parse: e => state => ({
-    ...state,
-    parse: e.target.checked
-  })
+  set: e => state => ({ ...state, input: e.target.innerText }),
+  path: e => state => ({ ...state, path: e.target.value }),
+  parse: e => state => ({ ...state, parse: e.target.checked })
 };
 
 export const initialState = {
