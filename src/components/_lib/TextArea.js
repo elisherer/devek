@@ -88,7 +88,7 @@ const TextArea = ({ autoFocus, className, style, onChange, readOnly, value, html
     <div className={styles.wrapper}>
       {lineNumbersDiv}
       <pre ref={inputElement} style={style} className={cx(className, styles.textarea, {
-        [styles.has_ln]: lineNumbers,
+        //[styles.has_ln]: lineNumbers,
         [styles.readonly]: readOnly,
         [styles.disabled]: disabled,
       })}

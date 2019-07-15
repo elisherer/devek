@@ -34,14 +34,12 @@ function createDiffs(dataA, dataB) {
     lineB = 0;
 
   while (lineA < dataA.length || lineB < dataB.length) {
-    if (lineA < dataA.length && !dataA.modified[lineA]
-      && lineB < dataB.length && !dataB.modified[lineB]) {
-      // equal lines
+
+    if (lineA < dataA.length && !dataA.modified[lineA] && lineB < dataB.length && !dataB.modified[lineB]) { // equal lines
       lineA++;
       lineB++;
 
-    } else {
-      // maybe deleted and/or inserted lines
+    } else { // maybe deleted and/or inserted lines
       startA = lineA;
       startB = lineB;
 
@@ -51,9 +49,7 @@ function createDiffs(dataA, dataB) {
       while (lineB < dataB.length && (lineA >= dataA.length || dataB.modified[lineB]))
         lineB++;
 
-      if ((startA < lineA) || (startB < lineB)) {
-        // store a new difference-item
-
+      if ((startA < lineA) || (startB < lineB)) { // store a new difference-item
         a.push({ startA, startB, deletedA: lineA - startA, insertedB: lineB - startB });
       }
     }
@@ -210,18 +206,18 @@ function SMS(dataA, lowerA, upperA, dataB, lowerB, upperB, downVector, upVector)
 }
 
 /**
- * This function converts all textlines of the text into unique numbers for every unique textline
+ * This function converts all text lines of the text into unique numbers for every unique text line
  * so further work can work only with simple numbers.
  * @param lines {string[]}
- * @param h {Object}
+ * @param hash {Object}
  * @param trimSpace {boolean}
  * @param ignoreSpace {boolean}
  * @param ignoreCase {boolean}
  * @returns {Int32Array}
  */
-function diffCodes(lines, h, trimSpace, ignoreSpace, ignoreCase) {
+function diffCodes(lines, hash, trimSpace, ignoreSpace, ignoreCase) {
   // get all codes of the text
-  let lastUsedCode = Object.keys(h).length;
+  let lastUsedCode = Object.keys(hash).length;
 
   const codes = new Int32Array(lines.length);
 
@@ -237,12 +233,12 @@ function diffCodes(lines, h, trimSpace, ignoreSpace, ignoreCase) {
     if (ignoreCase)
       s = s.toLowerCase();
 
-    if (!h.hasOwnProperty(s)) {
+    if (!hash.hasOwnProperty(s)) {
       lastUsedCode++;
-      h[s] = lastUsedCode;
+      hash[s] = lastUsedCode;
       codes[i] = lastUsedCode;
     } else {
-      codes[i] = parseInt(h[s]);
+      codes[i] = parseInt(hash[s]);
     }
   }
   return codes;
@@ -308,21 +304,22 @@ function optimize(data) {
  * @param trimSpace {boolean}
  * @param ignoreSpace {boolean}
  * @param ignoreCase {boolean}
+ * @param separator
  * @returns {Item[]}
  */
-function diffText(textA, textB, trimSpace, ignoreSpace, ignoreCase) {
+function diffText(textA, textB, trimSpace, ignoreSpace, ignoreCase, separator) {
   // prepare the input-text and convert to comparable numbers.
-  let h = {};
+  let hash = {};
 
   // The A-Version of the data (original data) to be compared.
-  const aLines = textA.replace(/\r/g, '').split('\n');
-  const dataA = new DiffData(diffCodes(aLines, h, trimSpace, ignoreSpace, ignoreCase));
+  const a = textA.replace(/\r/g, '').split(separator);
+  const dataA = new DiffData(diffCodes(a, hash, trimSpace, ignoreSpace, ignoreCase));
 
   // The B-Version of the data (modified data) to be compared.
-  const bLines = textB.replace(/\r/g, '').split('\n');
-  const dataB = new DiffData(diffCodes(bLines, h, trimSpace, ignoreSpace, ignoreCase));
+  const b = textB.replace(/\r/g, '').split(separator);
+  const dataB = new DiffData(diffCodes(b, hash, trimSpace, ignoreSpace, ignoreCase));
 
-  h = null; // free up hashtable memory (maybe)
+  hash = null; // free up hashtable memory (maybe)
 
   const MAX = dataA.length + dataB.length + 1;
   /// vector for the (0,0) to (x,y) search
@@ -335,10 +332,12 @@ function diffText(textA, textB, trimSpace, ignoreSpace, ignoreCase) {
   optimize(dataA);
   optimize(dataB);
 
+  const diff = createDiffs(dataA, dataB);
+
   return {
-    a: aLines,
-    b: bLines,
-    diff: createDiffs(dataA, dataB)
+    a,
+    b,
+    diff
   };
 }
 

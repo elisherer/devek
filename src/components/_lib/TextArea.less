@@ -9,6 +9,7 @@
   border-radius: 5px;
   min-height: 4em;
   max-height: 450px;
+  overflow: auto;
   &:focus-within {
     border-color: @gui-secondary-color;
   }
@@ -31,14 +32,12 @@
   outline: none;
   width: 100%;
   white-space: pre; // use pre-wrap to wrap words
-  overflow: auto;
   margin-bottom: 10px;
 
-
-
+/*
   &.has_ln {
-    padding-left: (@line_numbers_width + 4px);
-    /*
+    //padding-left: (@line_numbers_width + 4px);
+
     counter-reset: line;
 
     div:before {
@@ -51,10 +50,12 @@
       min-width: 32px;
       text-align: right;
       color: #888
-    }*/
+    }
   }
+  */
 }
 .ln {
+  font-family: monospace;
   white-space: pre;
   padding-top:8px;
   padding-right: 8px;

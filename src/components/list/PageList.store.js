@@ -6,6 +6,12 @@ const transformations = {
   singleQuotes: row => "'" + row + "'",
 };
 
+const sorts = {
+  numberasc: (a, b) => a - b,
+  numberdesc: (a, b) => b - a,
+  textdesc: (a, b) => b.localeCompare(a),
+};
+
 const actionCreators = {
   input: e => state => ({ ...state, input: e.target.innerText }),
   transform: e => state => {
@@ -18,6 +24,7 @@ const actionCreators = {
   },
   removeNewLines: () => state => ({ ...state, output: state.input.split('\n').join('') }),
   splitByComma: () => state => ({ ...state, output: state.input.split(',').join('\n') }),
+  sort: e => state => ({ ...state, output: state.input.split('\n').sort(sorts[e.target.dataset.sort + e.target.dataset.order]).join('\n') }),
 };
 
 const initialState = {

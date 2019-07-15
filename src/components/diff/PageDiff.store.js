@@ -7,9 +7,13 @@ const actionCreators = {
   trimSpace: e => state => ({ ...state, trimSpace: e.target.checked }),
   ignoreSpace: e => state => ({ ...state, ignoreSpace: e.target.checked }),
   ignoreCase: e => state => ({ ...state, ignoreCase: !e.target.checked }),
-  diff: () => state => {
-    const result = diffText(state.inputA, state.inputB, state.trimSpace, state.ignoreSpace, state.ignoreCase);
-    return { ...state, result };
+  lineDiff: () => state => {
+    const result = diffText(state.inputA, state.inputB, state.trimSpace, state.ignoreSpace, state.ignoreCase, '\n');
+    return { ...state, result, type: 'line' };
+  },
+  blockDiff: () => state => {
+    const result = diffText(state.inputA, state.inputB, state.trimSpace, state.ignoreSpace, state.ignoreCase, /\b/g);
+    return { ...state, result, type: 'block' };
   }
 };
 
@@ -20,6 +24,7 @@ export const initialState = {
   ignoreSpace: false,
   ignoreCase: false,
   result: '',
+  type: '',
 };
 
 export const {

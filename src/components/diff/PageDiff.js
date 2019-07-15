@@ -5,12 +5,82 @@ import { textFunctions } from '../text/text';
 
 import styles from './PageDiff.less';
 
+const he = textFunctions.html.encode.func;
+
 const prepareLine = (nr, typ, aText) => {
   let output = "<tr><td>" + (nr >= 0 ? (nr+1) : "&nbsp;") + "<td><span style='width:100%'";
   if (typ) output += " class=\"" + typ + "\"";
-  output += ">" + textFunctions.html.encode.func(aText) + "</span></td></tr>";
+  output += ">" + he(aText) + "</span></td></tr>";
   return output;
 };
+
+const prepareLines = (diff, a, b) => {
+  let n = 0,
+    output = `<table class="${styles.output_table}"><tbody>`;
+
+  for (let fdx = 0; fdx < diff.length; fdx++) {
+    const item = diff[fdx];
+
+    // write unchanged lines
+    while (n < item.startB && n < b.length) {
+      output += prepareLine(n, null, b[n]);
+      n++;
+    }
+
+    // write deleted lines
+    for (let m = 0; m < item.deletedA; m++) {
+      output += prepareLine(-1, styles.d, a[item.startA + m]);
+    }
+
+    // write inserted lines
+    while (n < item.startB + item.insertedB) {
+      output += prepareLine(n, styles.i, b[n]);
+      n++;
+    }
+  }
+
+  // write rest of unchanged lines
+  while (n < b.length) {
+    output += prepareLine(n, null, b[n]);
+    n++;
+  }
+  output += `</tbody></table>`;
+  return output;
+};
+
+const prepareBlocks = (diff, a, b) => {
+  let n = 0,
+    output = ``;
+
+  for (let fdx = 0; fdx < diff.length; fdx++) {
+    const item = diff[fdx];
+
+    // write unchanged blocks
+    while (n < item.startB && n < b.length) {
+      output += he(b[n]);
+      n++;
+    }
+
+    // write deleted blocks
+    for (let m = 0; m < item.deletedA; m++) {
+      output += `<span class="${styles.d}">${he(a[item.startA + m])}</span>`;
+    }
+
+    // write inserted blocks
+    while (n < item.startB + item.insertedB) {
+      output += `<span class="${styles.i}">${he(b[n])}</span>`;
+      n++;
+    }
+  }
+
+  // write rest of unchanged lines
+  while (n < b.length) {
+    output += he(b[n]);
+    n++;
+  }
+  return output;
+};
+
 
 const PageDiff = () => {
   const state = useStore();
@@ -22,55 +92,25 @@ const PageDiff = () => {
     ignoreSpace,
     ignoreCase,
     result,
+    type,
     error
   } = state;
 
-  let output = '';
-
-  if (result) {
-    let n = 0;
-    output = `<table class="${styles.output_table}">
-      <colgroup>
-        <col align="right" width="40">
-        <col align="left" width="*">
-      </colgroup>
-      <tbody>`;
-    for (let fdx = 0; fdx < result.diff.length; fdx++) {
-      const item = result.diff[fdx];
-
-      // write unchanged lines
-      while ((n < item.startB) && (n < result.b.length)) {
-        output += prepareLine(n, null, result.b[n]);
-        n++;
-      }
-
-      // write deleted lines
-      for (let m = 0; m < item.deletedA; m++) {
-        output += prepareLine(-1, styles.d, result.a[item.startA + m]);
-      }
-
-      // write inserted lines
-      while (n < item.startB + item.insertedB) {
-        output += prepareLine(n, styles.i, result.b[n]);
-        n++;
-      }
-    }
-
-    // write rest of unchanged lines
-    while (n < result.b.length) {
-      output += prepareLine(n, null, result.b[n]);
-      n++;
-    }
-    output += `</tbody></table>`;
-  }
+  const output = !result
+    ? ''
+    : type === 'line'
+      ? prepareLines(result.diff, result.a, result.b)
+      : prepareBlocks(result.diff, result.a, result.b);
 
   return (
     <div>
       <label>Input A (&quot;old&quot;):</label>
       <TextArea autoFocus onChange={actions.inputA} value={inputA}/>
 
-      <label>Input B (&quot;new&quot;):</label>
-      <TextArea onChange={actions.inputB} value={inputB}/>
+      <div className={styles.b}>
+        <label>Input B (&quot;new&quot;):</label>
+        <TextArea onChange={actions.inputB} value={inputB}/>
+      </div>
 
       <div className={styles.flags}>
         <Checkbox label="Trim spaces" checked={trimSpace} onChange={actions.trimSpace} />
@@ -78,7 +118,10 @@ const PageDiff = () => {
         <Checkbox label="Case sensitive" checked={!ignoreCase} onChange={actions.ignoreCase} />
       </div>
 
-      <button onClick={actions.diff}>Diff</button>
+      <div className={styles.actions}>
+        <button onClick={actions.lineDiff}>Line Diff</button>
+        <button onClick={actions.blockDiff}>Block Diff</button>
+      </div>
 
       <h1>Result</h1>
       {!error && <CopyToClipboard from="diff_result" />}
