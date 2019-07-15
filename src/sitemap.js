@@ -13,10 +13,12 @@ import PageRandom from "./components/random/PageRandom";
 import PageColor from "./components/color/PageColor";
 import PageNetwork from "./components/network/PageNetwork";
 //import PageCrypto from "./components/crypto/PageCrypto"; // Lazy loaded
+//import PageDiff from "./components/diff/PageDiff"; // Lazy loaded
 import PageList from "./components/list/PageList";
 import PageURL from "./components/url/PageURL";
 
 const PageCryptoLazy = lazy(() => import(/* webpackChunkName: "crypto" */"./components/crypto/PageCrypto"));
+const PageDiffLazy = lazy(() => import(/* webpackChunkName: "diff" */"./components/diff/PageDiff"));
 
 export const siteMap = {
   "/": {
@@ -209,6 +211,13 @@ export const siteMap = {
         description: 'Parse PEM (X.509 / ASN.1) certificates',
       },
     }
+  },
+  "/diff": {
+    component: PageDiffLazy,
+    keyword: 'diff',
+    title: 'Diff',
+    header: 'Difference finder',
+    description: 'Find differences between two texts'
   },
   "/color": {
     component: PageColor,

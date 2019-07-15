@@ -5,36 +5,6 @@
 /// Source: https://www.mathertel.de/Diff/ViewSrc.aspx
 
 /**
- * details of one difference.
- * @param startA {number}
- * @param startB {number}
- * @param deletedA {number}
- * @param insertedB {number}
- * @returns {Item}
- * @constructor
- */
-function Item(startA, startB, deletedA, insertedB) {
-  this.startA = startA;
-  this.startB = startB;
-  this.deletedA = deletedA;
-  this.insertedB = insertedB;
-  return this;
-}
-
-/**
- * Shortest Middle Snake Return Data
- * @param x {number}
- * @param y {number}
- * @returns {SMSRD}
- * @constructor
- */
-function SMSRD(x, y) {
-  this.x = x;
-  this.y = y;
-  return this;
-}
-
-/**
  * Data on one input file being compared.
  * @param data
  * @returns {DiffData}
@@ -55,7 +25,7 @@ function DiffData(data) {
  * @returns {Item[]}
  * @constructor
  */
-function CreateDiffs(dataA, dataB) {
+function createDiffs(dataA, dataB) {
   const a = [];
 
   let startA = 0,
@@ -84,7 +54,7 @@ function CreateDiffs(dataA, dataB) {
       if ((startA < lineA) || (startB < lineB)) {
         // store a new difference-item
 
-        a.push(new Item(startA, startB, lineA - startA, lineB - startB));
+        a.push({ startA, startB, deletedA: lineA - startA, insertedB: lineB - startB });
       }
     }
   }
@@ -120,12 +90,12 @@ function LCS(dataA, lowerA, upperA, dataB, lowerB, upperB, downVector, upVector)
   if (lowerA === upperA) {
     // mark as inserted lines.
     while (lowerB < upperB)
-      dataB.modified[lowerB++] = true;
+      dataB.modified[lowerB++] = 1;
 
   } else if (lowerB === upperB) {
     // mark as deleted lines.
     while (lowerA < upperA)
-      dataA.modified[lowerA++] = true;
+      dataA.modified[lowerA++] = 1;
 
   } else {
     // Find the middle snakea and length of an optimal path for A and B
@@ -147,11 +117,11 @@ function LCS(dataA, lowerA, upperA, dataB, lowerB, upperB, downVector, upVector)
  * @param upperB {number}
  * @param downVector {Int32Array}
  * @param upVector {Int32Array}
- * @returns {SMSRD} a MiddleSnakeData record containing x,y
+ * @returns {{x: number, y: number}} a MiddleSnakeData record containing x,y
  */
 function SMS(dataA, lowerA, upperA, dataB, lowerB, upperB, downVector, upVector) {
 
-  const ret = new SMSRD(0, 0);
+  const ret = { x: 0, y: 0 };
   const MAX = dataA.length + dataB.length + 1;
 
   const downK = lowerA - lowerB; // the k-line to start the forward search
@@ -182,23 +152,23 @@ function SMS(dataA, lowerA, upperA, dataB, lowerB, upperB, downVector, upVector)
         x = downVector[downOffset + k + 1]; // down
       } else {
         x = downVector[downOffset + k - 1] + 1; // a step to the right
-        if ((k < downK + D) && (downVector[downOffset + k + 1] >= x))
+        if (k < downK + D && downVector[downOffset + k + 1] >= x)
           x = downVector[downOffset + k + 1]; // down
       }
       y = x - k;
 
       // find the end of the furthest reaching forward D-path in diagonal k.
-      while ((x < upperA) && (y < upperB) && (dataA.data[x] === dataB.data[y])) {
+      while (x < upperA && y < upperB && dataA.data[x] === dataB.data[y]) {
         x++; y++;
       }
       downVector[downOffset + k] = x;
 
       // overlap ?
-      if (oddDelta && (upK - D < k) && (k < upK + D)) {
+      if (oddDelta && upK - D < k && k < upK + D) {
         if (upVector[upOffset + k] <= downVector[downOffset + k]) {
           ret.x = downVector[downOffset + k];
           ret.y = downVector[downOffset + k] - k;
-          return (ret);
+          return ret;
         }
       }
 
@@ -213,22 +183,22 @@ function SMS(dataA, lowerA, upperA, dataB, lowerB, upperB, downVector, upVector)
         x = upVector[upOffset + k - 1]; // up
       } else {
         x = upVector[upOffset + k + 1] - 1; // left
-        if ((k > upK - D) && (upVector[upOffset + k - 1] < x))
+        if (k > upK - D && upVector[upOffset + k - 1] < x)
           x = upVector[upOffset + k - 1]; // up
       }
       y = x - k;
 
-      while ((x > lowerA) && (y > lowerB) && (dataA.data[x - 1] == dataB.data[y - 1])) {
+      while (x > lowerA && y > lowerB && dataA.data[x - 1] === dataB.data[y - 1]) {
         x--; y--; // diagonal
       }
       upVector[upOffset + k] = x;
 
       // overlap ?
-      if (!oddDelta && (downK - D <= k) && (k <= downK + D)) {
+      if (!oddDelta && downK - D <= k && k <= downK + D) {
         if (upVector[upOffset + k] <= downVector[downOffset + k]) {
           ret.x = downVector[downOffset + k];
           ret.y = downVector[downOffset + k] - k;
-          return (ret);
+          return ret;
         }
       }
 
@@ -242,20 +212,16 @@ function SMS(dataA, lowerA, upperA, dataB, lowerB, upperB, downVector, upVector)
 /**
  * This function converts all textlines of the text into unique numbers for every unique textline
  * so further work can work only with simple numbers.
- * @param aText {string}
+ * @param lines {string[]}
  * @param h {Object}
  * @param trimSpace {boolean}
  * @param ignoreSpace {boolean}
  * @param ignoreCase {boolean}
  * @returns {Int32Array}
  */
-function diffCodes(aText, h, trimSpace, ignoreSpace, ignoreCase) {
+function diffCodes(lines, h, trimSpace, ignoreSpace, ignoreCase) {
   // get all codes of the text
   let lastUsedCode = Object.keys(h).length;
-
-  // strip off all cr, only use lf as textline separator.
-  aText = aText.replace(/\r/g, '');
-  const lines = aText.split('\n');
 
   const codes = new Int32Array(lines.length);
 
@@ -271,13 +237,12 @@ function diffCodes(aText, h, trimSpace, ignoreSpace, ignoreCase) {
     if (ignoreCase)
       s = s.toLowerCase();
 
-    const aCode = h[s];
-    if (!h.hasOwnProperty(aCode)) {
+    if (!h.hasOwnProperty(s)) {
       lastUsedCode++;
       h[s] = lastUsedCode;
       codes[i] = lastUsedCode;
     } else {
-      codes[i] = parseInt(aCode);
+      codes[i] = parseInt(h[s]);
     }
   }
   return codes;
@@ -303,7 +268,7 @@ function diffInt(arrayA, arrayB) {
   const upVector = new Int32Array(2 * MAX + 2);
 
   LCS(dataA, 0, dataA.length, dataB, 0, dataB.length, downVector, upVector);
-  return CreateDiffs(dataA, dataB);
+  return createDiffs(dataA, dataB);
 }
 
 /**
@@ -333,11 +298,11 @@ function optimize(data) {
 }
 
 /**
- * Find the difference in 2 text documents, comparing by textlines.
+ * Find the difference in 2 text documents, comparing by text lines.
  * The algorithm itself is comparing 2 arrays of numbers so when comparing 2 text documents
  * each line is converted into a (hash) number. This hash-value is computed by storing all
- * textlines into a common hashtable so i can find dublicates in there, and generating a
- * new number each time a new textline is inserted.
+ * text lines into a common hashtable so i can find duplicates in there, and generating a
+ * new number each time a new text line is inserted.
  * @param textA {string}
  * @param textB {string}
  * @param trimSpace {boolean}
@@ -350,10 +315,12 @@ function diffText(textA, textB, trimSpace, ignoreSpace, ignoreCase) {
   let h = {};
 
   // The A-Version of the data (original data) to be compared.
-  const dataA = new DiffData(diffCodes(textA, h, trimSpace, ignoreSpace, ignoreCase));
+  const aLines = textA.replace(/\r/g, '').split('\n');
+  const dataA = new DiffData(diffCodes(aLines, h, trimSpace, ignoreSpace, ignoreCase));
 
   // The B-Version of the data (modified data) to be compared.
-  const dataB = new DiffData(diffCodes(textB, h, trimSpace, ignoreSpace, ignoreCase));
+  const bLines = textB.replace(/\r/g, '').split('\n');
+  const dataB = new DiffData(diffCodes(bLines, h, trimSpace, ignoreSpace, ignoreCase));
 
   h = null; // free up hashtable memory (maybe)
 
@@ -367,108 +334,15 @@ function diffText(textA, textB, trimSpace, ignoreSpace, ignoreCase) {
 
   optimize(dataA);
   optimize(dataB);
-  return CreateDiffs(dataA, dataB);
+
+  return {
+    a: aLines,
+    b: bLines,
+    diff: createDiffs(dataA, dataB)
+  };
 }
 
-/*
 export {
   diffText,
   diffInt
 };
-*/
-
-function TestHelper(f) {
-  let ret = '';
-  for (let n = 0; n < f.length; n++) {
-    ret += f[n].deletedA.toString() + "." + f[n].insertedB.toString() + "." + f[n].startA.toString() + "." + f[n].startB.toString() + "*";
-  }
-  return ret;
-}
-
-
-
-
-
-let a, b;
-
-console.log("Diff Self Test...");
-
-const myStrictEqual = (actual, expected, message) => {
-  if (actual === expected) {
-    console.log('PASS' + message);
-  }
-  else {
-    console.error(message +  ', Actual: ' + actual + ', Expected: ' + expected);
-  }
-};
-
-// test all changes
-a = "a,b,c,d,e,f,g,h,i,j,k,l".replace(/,/g,'\n');
-b = "0,1,2,3,4,5,6,7,8,9".replace(/,/g,'\n');
-myStrictEqual(TestHelper(diffText(a, b, false, false, false))
-  ,"12.10.0.0*",
-  "all-changes test failed.");
-//console.log("Assertion passed: all-changes test passed.");
-
-
-// test all same
-a = "a,b,c,d,e,f,g,h,i,j,k,l".replace(/,/g,'\n');
-b = a;
-myStrictEqual(TestHelper(diffText(a, b, false, false, false))
-  ,"",
-  "all-same test failed.");
-//console.log("Assertion passed: all-same test passed.");
-
-
-// test snake
-a = "a,b,c,d,e,f".replace(/,/g,'\n');
-b = "b,c,d,e,f,x".replace(/,/g,'\n');
-myStrictEqual(TestHelper(diffText(a, b, false, false, false))
-  ,"1.0.0.0*0.1.6.5*",
-  "snake test failed.");
-//console.log("Assertion passed: snake test passed.");
-
-// 2002.09.20 - repro
-a = "c1,a,c2,b,c,d,e,g,h,i,j,c3,k,l".replace(/,/g,'\n');
-b = "C1,a,C2,b,c,d,e,I1,e,g,h,i,j,C3,k,I2,l".replace(/,/g,'\n');
-myStrictEqual(TestHelper(diffText(a, b, false, false, false))
-  ,"1.1.0.0*1.1.2.2*0.2.7.7*1.1.11.13*0.1.13.15*",
-  "repro20020920 test failed.");
-//console.log("Assertion passed: repro20020920 test passed.");
-
-
-// 2003.02.07 - repro
-a = "F".replace(/,/g,'\n');
-b = "0,F,1,2,3,4,5,6,7".replace(/,/g,'\n');
-myStrictEqual(TestHelper(diffText(a, b, false, false, false))
-  ,"0.1.0.0*0.7.1.2*",
-  "repro20030207 test failed.");
-//console.log("Assertion passed: repro20030207 test passed.");
-
-
-// Muegel - repro
-a = "HELLO\nWORLD";
-b = "\n\nhello\n\n\n\nworld\n";
-myStrictEqual(TestHelper(diffText(a, b, false, false, false))
-  , "2.8.0.0*",
-  "repro20030409 test failed.");
-//console.log("Assertion passed: repro20030409 test passed.");
-
-
-// test some differences
-a = "a,b,-,c,d,e,f,f".replace(/,/g,'\n');
-b = "a,b,x,c,e,f".replace(/,/g,'\n');
-myStrictEqual(TestHelper(diffText(a, b, false, false, false))
-  ,"1.1.2.2*1.0.4.4*1.0.7.6*",
-  "some-changes test failed.");
-//console.log("Assertion passed: some-changes test passed.");
-
-// test one change within long chain of repeats
-a = "a,a,a,a,a,a,a,a,a,a".replace(/,/g,'\n');
-b = "a,a,a,a,-,a,a,a,a,a".replace(/,/g,'\n');
-myStrictEqual(TestHelper(diffText(a, b, false, false, false))
-  ,"0.1.4.4*1.0.9.10*",
-  "long chain of repeats test failed.");
-//console.log("Assertion passed: long chain of repeats test passed.");
-
-console.log("End.");
