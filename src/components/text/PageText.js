@@ -29,7 +29,7 @@ const PageText = ({ location } : { location: Object }) => {
   let output, error = null;
   const ctf = textFunctions[category][textFunc];
   try {
-    output = ctf.func(input);
+    output = input ? ctf.func(input) : '';
   }
   catch (e) {
     error = e.message;
