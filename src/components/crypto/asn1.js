@@ -221,7 +221,16 @@ const parseExtension = (oid, ext) => {
     case '2.5.29.19': // basicConstraints
       return { cA: !!(ext.value[0]), pathLenConstraint: ext.value[1] };
     case '2.5.29.31': // CRLDistributionPoints
-      return ext.children.map(oid => devek.arrayToAscii(oid.value[0]));
+      return ext.children.map(distPoints => distPoints.children.reduce((result, distPoint) => {
+        switch (distPoint.tagClass) {
+          case 0: //result.distributionPoint; // TODO: add result.distributionPoint
+          break;
+          case 1: //result.reasons; // TODO: add result.reasons
+          break;
+          case 2: result.cRLIssuer = devek.arrayToAscii(distPoint.children[0].children[0].value);
+        }
+        return result;
+      }, {}));
     case '2.5.29.35': // authorityKeyIdentifier
       return {
         keyIdentifier: ext.value[0] ? ext.value[0] : undefined,
@@ -230,6 +239,8 @@ const parseExtension = (oid, ext) => {
       };
     case '2.5.29.37': // extKeyUsage
       return ext.children.map(oid => oid.value);
+    case '1.3.6.1.5.5.7.1.1': // authorityInfoAccess
+      return ext.children.map(c => ({ accessMethod: c.value[0], accessLocation: devek.arrayToAscii(c.value[1]) }));
     case '1.3.6.1.5.5.7.1.3': // qcStatements
       return ext.children.reduce((a,c) => {
         if (c.children[0].oid === '0.4.0.19495.2') // PSD2 qcStatement

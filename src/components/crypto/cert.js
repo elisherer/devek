@@ -52,11 +52,15 @@ export const prettyCert = (cert) => {
                 ASN1 OID: ${cert.subjectPublicKeyInfo.publicKey.asn1Oid}
                 NIST CURVE: ${cert.subjectPublicKeyInfo.publicKey.nistCurve}`;
 
-  const extensions = cert.extensions
-    ? `
-        X509v3 extensions:
-            ${JSON.stringify(cert.extensions, replacer ,2).replace(/\n/g,'\n            ')}`
-    : '';
+  let extensions = '';
+  if (cert.extensions) {
+    extensions = `
+        X509v3 extensions:\n`;
+    Object.keys(cert.extensions).forEach(ext => {
+      extensions += `            ${ext}: ${cert.extensions[ext].critical ? 'critical' : ''}
+                ${JSON.stringify(cert.extensions[ext].value, replacer, 2).replace(/\n/g, '\n                ')}\n`;
+    });
+  }
 
   return `Certificate:
     Data:
