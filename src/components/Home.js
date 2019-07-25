@@ -4,6 +4,7 @@ import jokes from '../jokes';
 import styles from "./Home.less";
 
 import logo from '../assets/devek_text.svg';
+import DevekCube from "./webgl/DevekCube";
 
 const dayOfTheYear = ~~((Date.now() - (new Date(new Date().getFullYear() + '-01-01'))) / 864e5);
 const jokeOfTheDay = jokes[(dayOfTheYear % jokes.length)];
@@ -11,6 +12,9 @@ const jokeOfTheDay = jokes[(dayOfTheYear % jokes.length)];
 const Home = () => (
   <div className={styles.page}>
     <img alt="Logo" src={logo} />
+
+    <DevekCube/>
+
     <p>
       <strong>Helping tools for developers</strong><br />
       <strong>Everything</strong> is done on the client side,<br/>
