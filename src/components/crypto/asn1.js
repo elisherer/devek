@@ -25,11 +25,13 @@ const toUTF8 = buffer => {
 };
 const toDate = buffer => {
   const p = toASCII(buffer).match(/.{2}/g);
-  return new Date(`${p[0] >= 70 ? '19' : '20'}${p[0]}-${p[1]}-${p[2]}T${p[3]}:${p[4]}:${p[5]}`);
+  return new Date(`${p[0] >= 70 ? '19' : '20'}${p[0]}-${p[1]}-${p[2]}T${p[3]}:${p[4]}:${p[5]}Z`);
 };
 const toDictionary = children => children
   .reduce((a, c) => {
-    a[c.value[0][0]] = c.value[0][1];
+    c.value.forEach(val => {
+      a[val[0]] = val[1];
+    });
     return a;
   }, {});
 
@@ -203,15 +205,9 @@ const ext_subjectAltNames = ['otherName', 'rfc822Name', 'dNSName', 'x400Address'
 
 const parseExtension = (oid, ext) => {
   switch (oid.oid) {
-    case '2.5.29.35': // authority_key_identifier
-      return {
-        keyIdentifier: ext.value[0] ? ext.value[0] : undefined,
-        authorityCertIssuer: ext.value[1],
-        authorityCertSerialNumber: ext.value[2]
-      };
-    case '2.5.29.14': // subject_key_identifier
+    case '2.5.29.14': // subjectKeyIdentifier
       return { keyIdentifier: ext.value };
-    case '2.5.29.15': { // key_usage
+    case '2.5.29.15': { // keyUsage
       let bitmap = ext.value[0];
       const usage = [];
       for (let i = 0; i < 8; i++) {
@@ -219,13 +215,21 @@ const parseExtension = (oid, ext) => {
       }
       return usage;
     }
-    case '2.5.29.37': // ext_key_usage
-      return ext.children.map(oid => oid.value);
-    case '2.5.29.17': // subject_alt_name
-    case '2.5.29.18': // issuer_alt_name
+    case '2.5.29.17': // subjectAltName
+    case '2.5.29.18': // issuerAltName
       return ext.children.reduce((a,c) => { a[ext_subjectAltNames[c.tagNumber]] = toASCII(c.value); return a; }, {});
-    case '2.5.29.19': // basic_constraints
+    case '2.5.29.19': // basicConstraints
       return { cA: !!(ext.value[0]), pathLenConstraint: ext.value[1] };
+    case '2.5.29.31': // CRLDistributionPoints
+      return ext.children.map(oid => devek.arrayToAscii(oid.value[0]));
+    case '2.5.29.35': // authorityKeyIdentifier
+      return {
+        keyIdentifier: ext.value[0] ? ext.value[0] : undefined,
+        authorityCertIssuer: ext.value[1],
+        authorityCertSerialNumber: ext.value[2]
+      };
+    case '2.5.29.37': // extKeyUsage
+      return ext.children.map(oid => oid.value);
     case '1.3.6.1.5.5.7.1.3': // qcStatements
       return ext.children.reduce((a,c) => {
         if (c.children[0].oid === '0.4.0.19495.2') // PSD2 qcStatement
@@ -237,10 +241,8 @@ const parseExtension = (oid, ext) => {
         else a[c.value[0]] = fieldNames[c.value[1]] || c.value[1];
         return a;
       }, {});
-    case '2.16.840.1.113730.1.13': // netscape_comment
-      return ext.value;
     default:
-      return ext;
+      return ext && ext.hasOwnProperty('value') ? ext.value : ext;
   }
 };
 
@@ -250,7 +252,7 @@ const parsePublicKey = (algorithm, publicKey) => {
       const keyAsn = parse(publicKey.value);
       return {
         publicKey: `(${keyAsn.children[0].bitSize} bit)`,
-        modulus: keyAsn.value[0],
+        modulus: keyAsn.children[0].raw,
         exponent: keyAsn.value[1],
       };
     }
@@ -285,8 +287,8 @@ function parseCertificate(pem) {
     let issuerUniqueID = null,
       subjectUniqueID = null,
       extensions = null;
-    for (let i = 7; i < tbsCert.children.length; i++) {
-      if (tbsCert.children[i].tagClass !== 2) return; // not context-specific
+    for (let i = idx; i < tbsCert.children.length; i++) {
+      if (tbsCert.children[i].tagClass !== 2) continue; // not context-specific
       switch (tbsCert.children[i].tagNumber) {
         case 1:
           issuerUniqueID = tbsCert.children[i].children[0];
@@ -321,7 +323,10 @@ function parseCertificate(pem) {
       subjectUniqueID: subjectUniqueID ? subjectUniqueID.value : undefined,
       extensions: extensions ? extensions.children
         .reduce((a, c) => {
-          a[c.value[0]] = parseExtension(c.children[0], parse(c.value[1]));
+          a[c.value[0]] = {
+            critical: c.value.length > 2 && typeof c.value[1] === 'boolean' && c.value[1],
+            value: parseExtension(c.children[0], parse(c.value[c.value.length - 1]))
+          };
           return a;
         }, {}) : undefined,
       signatureAlgorithm: {

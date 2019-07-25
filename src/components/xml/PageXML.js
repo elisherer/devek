@@ -59,11 +59,11 @@ const PageXML = () => {
     if (xmlDoc && !error) {
       try {
         if (xpathEnabled) {
-          const xPathEesult = queryXPath(xmlDoc, xpath);
+          const xPathResult = queryXPath(xmlDoc, xpath);
           results = [];
           let node;
-          while ((node = xPathEesult.iterateNext())) {
-            results.push(node.outerHTML);
+          while ((node = xPathResult.iterateNext())) {
+            results.push(node.nodeName === '#text' ? node.textContent : node.outerHTML);
           }
         } else {
           results = prettifyXml(xmlDoc);
