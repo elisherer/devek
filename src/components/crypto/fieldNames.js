@@ -1504,5 +1504,6 @@ module.exports = {
   "2.23.133.2.14": "tcpa_at_foundationSecurityTarget",
   "2.23.133.2.15": "tcpa_at_tpmIdLabel",
   "2.23.133.3": "tcpa_protocol",
-  "2.23.133.3.1": "tcpa_prtt_tpmIdProtocol"
+  "2.23.133.3.1": "tcpa_prtt_tpmIdProtocol",
+  "2.23.140.1.2.1": "domain-validated"
 };

@@ -34,7 +34,7 @@ const hmacSha256 = (str, base64Key) => createHMACSHA256Key(base64Key).then(key =
 const base64UrlDecode = b64uval => {
   try {
     if (!b64uval || !b64uval.length) return b64uval;
-    return devek.arrayToString(devek.base64UrlToUint8Array(b64uval));
+    return devek.arrayToUTF8(devek.base64UrlToUint8Array(b64uval));
   }
   catch(e) {
     return {

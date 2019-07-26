@@ -1,15 +1,3 @@
-export const loadFileAsync = (file, callback) => {
-  if (typeof FileReader === "undefined" || !file) return; // no file
-  const reader = new FileReader();
-  reader.onload = e => {
-    callback(e.target.result);
-  };
-  reader.onerror = () => {
-    reader.abort();
-  };
-  reader.readAsText(file);
-};
-
 const printHex = (array, width = -1, indent = 0) => {
   if (!Array.isArray(array)) return `${array} (0x${array.toString(16)})`;
   let output = array.map(x => {

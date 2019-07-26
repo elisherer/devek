@@ -9,22 +9,8 @@ const parsePem = buffer => {
   return parse(buffer);
 };
 
-const toASCII = buffer => String.fromCharCode.apply(null, buffer);
-const toUTF8 = buffer => {
-  let s = "";
-  for (let i = 0; i < buffer.length ; i++) {
-    const c = buffer[i];
-    if (c < 128)
-      s += String.fromCharCode(c);
-    else if ((c > 191) && (c < 224))
-      s += String.fromCharCode(((c & 0x1F) << 6) | (buffer[i++] & 0x3F));
-    else
-      s += String.fromCharCode(((c & 0x0F) << 12) | ((buffer[i++] & 0x3F) << 6) | (buffer[i++] & 0x3F));
-  }
-  return s;
-};
 const toDate = buffer => {
-  const p = toASCII(buffer).match(/.{2}/g);
+  const p = devek.arrayToAscii(buffer).match(/.{2}/g);
   return new Date(`${p[0] >= 70 ? '19' : '20'}${p[0]}-${p[1]}-${p[2]}T${p[3]}:${p[4]}:${p[5]}Z`);
 };
 const toDictionary = children => children
@@ -85,7 +71,6 @@ function parse(buffer) {
       tagNumber,
       constructed,
       headerLength,
-      dl: data.length,
       raw: data,
       value: data
     };
@@ -97,7 +82,6 @@ function parse(buffer) {
   }
 
   const info = {
-    dl: data.length,
     raw: data,
     value: data,
     headerLength,
@@ -147,7 +131,7 @@ function parse(buffer) {
       //case 10: // ENUMERATED
       //case 11: // EMBEDDED PDV
       case 12: // UTF8String
-        info.value = toUTF8(data);
+        info.value = devek.arrayToUTF8(data);
         break;
       case 16: //SEQUENCE
       case 17: //SET
@@ -158,7 +142,7 @@ function parse(buffer) {
       case 20: // TeletexString
       case 21: // VideotexString
       case 22: // IA5String
-        info.value = toASCII(data);
+        info.value = devek.arrayToAscii(data);
         break;
       case 23: // UTCTime
       case 24: // GeneralizedTime
@@ -166,11 +150,15 @@ function parse(buffer) {
         break;
       //case 25: // GraphicString
       case 26: // VisibleString
-        info.value = toASCII(data);
+        info.value = devek.arrayToAscii(data);
         break;
       //case 27: // GeneralString
-      //case 28: // UniversalString
-      //case 30: // BMPString
+      case 28: // UniversalString
+        info.value = devek.arrayToUnicode(data, true);
+        break;
+      case 30: // BMPString
+        info.value = devek.arrayToUnicode(data);
+        break;
       default:
         info.value = null;
     }
@@ -194,7 +182,7 @@ function parseChildren(buffer) {
   do {
     lastPos = pos;
     const info = parse(buffer.slice(pos));
-    pos += info.dl + info.headerLength;
+    pos += info.raw.length + info.headerLength;
     parts.push(info);
   } while (pos < buffer.length && pos > lastPos);
   return parts;
@@ -217,7 +205,7 @@ const parseExtension = (oid, ext) => {
     }
     case '2.5.29.17': // subjectAltName
     case '2.5.29.18': // issuerAltName
-      return ext.children.reduce((a,c) => { a[ext_subjectAltNames[c.tagNumber]] = toASCII(c.value); return a; }, {});
+      return ext.children.reduce((a,c) => { a[ext_subjectAltNames[c.tagNumber]] = devek.arrayToAscii(c.value); return a; }, {});
     case '2.5.29.19': // basicConstraints
       return { cA: !!(ext.value[0]), pathLenConstraint: ext.value[1] };
     case '2.5.29.31': // CRLDistributionPoints

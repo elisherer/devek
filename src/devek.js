@@ -62,7 +62,7 @@ devek.arrayToBase64Url = value => !value ? emptyB64 : toB64Url(btoa(String.fromC
 devek.arrayToHexString = (a, j = '') => (Array.isArray(a) ? a : [...a]).map(x => x.toString(16).padStart(2, '0')).join(j);
 devek.arrayToAscii = a => decoder.decode(Array.isArray(a) ? new Uint8Array(a).buffer : a);
 const charCache = new Array(128);
-devek.arrayToString = array => {
+devek.arrayToUTF8 = array => {
   if (!array) return '';
   const result = [];
   const charFromCodePt = String.fromCodePoint || String.fromCharCode;
@@ -94,6 +94,26 @@ devek.arrayToString = array => {
         result.push('?');
         charCache[codePt] = '?';
       }
+    }
+  }
+  return result.join('');
+};
+devek.arrayToUnicode = (array, utf32 = false) => {
+  if (!array) return '';
+  const result = [];
+  let msb, lsb, b2, b3;
+  const buffLen = array.length;
+
+  for (let i = 0; i < buffLen;) {
+    msb = array[i++];
+    if (utf32) {
+      b2 = array[i++];
+      b3 = array[i++];
+      lsb = array[i++];
+      result.push(String.fromCodePoint((msb << 24) | (b2 << 16) | (b3 << 8) | lsb));
+    } else {
+      lsb = array[i++];
+      result.push(String.fromCharCode((msb << 8) | lsb));
     }
   }
   return result.join('');

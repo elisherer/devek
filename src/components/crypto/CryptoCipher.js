@@ -13,7 +13,7 @@ const CryptoCipher = ({ tabs, alg, kdf, input, passphrase, useSalt, salt, cipher
     <label>Algorithm:</label>
     <Radio className={styles.options2} options={["AES-CBC","AES-CTR","AES-GCM","RSA-OAEP"]} value={alg} onClick={actions.cipherAlg} />
 
-    <label>Input:</label>
+    <label>Input: (UTF-8 for encrypt, Base64 for decrypt)</label>
     <TextArea autoFocus onChange={actions.cipherInput} value={input}/>
 
     {alg === 'RSA-OAEP' ? (

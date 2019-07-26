@@ -48,7 +48,7 @@ const parsers = {
 };
 
 const serializers = {
-  utf8: devek.arrayToString,
+  utf8: devek.arrayToUTF8,
   binary: arr => [...arr].map(x => x.toString(2).padStart(8, '0')).join(' '),
   hex: devek.arrayToHexString,
   base64: devek.arrayToBase64,

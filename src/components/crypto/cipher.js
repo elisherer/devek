@@ -172,5 +172,5 @@ export const cipherFormat = (array, format) =>
   format === 'Base64'
     ? devek.arrayToBase64(array)
     : format === 'UTF-8'
-    ? devek.arrayToString(array)
+    ? devek.arrayToUTF8(array)
     : devek.arrayToHexString(array);

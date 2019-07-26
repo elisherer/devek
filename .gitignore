@@ -1,5 +1,6 @@
 .idea
 dist
 node_modules
+temp
 
 deploy.config.json

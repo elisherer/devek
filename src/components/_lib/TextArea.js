@@ -47,8 +47,8 @@ function replaceCaret(el) {
   }
 }
 
-const TextArea = ({ autoFocus, className, style, onChange, readOnly, value, html, disabled, lineNumbers, ...more } :
-                    { autoFocus?: boolean, className?: string, style?: Object, onChange?: Function, readOnly?: boolean, value?: string, html?: boolean, disabled?: boolean, lineNumbers?: boolean }) => {
+const TextArea = ({ autoFocus, className, wrapperClassName, style, onChange, readOnly, value, html, disabled, lineNumbers, ...more } :
+                    { autoFocus?: boolean, className?: string, wrapperClassName?: string, style?: Object, onChange?: Function, readOnly?: boolean, value?: string, html?: boolean, disabled?: boolean, lineNumbers?: boolean }) => {
   const innerProp = html ? "innerHTML" : "innerText";
 
   const inputElement = useRef();
@@ -85,7 +85,7 @@ const TextArea = ({ autoFocus, className, style, onChange, readOnly, value, html
   }, []);
 
   return (
-    <div className={styles.wrapper}>
+    <div className={cx(styles.wrapper, wrapperClassName)}>
       {lineNumbersDiv}
       <pre ref={inputElement} style={style} className={cx(className, styles.textarea, {
         //[styles.has_ln]: lineNumbers,

@@ -127,7 +127,6 @@ const actionCreators = {
       return {...state, cert: { ...state.cert, loaded: false, pem: 'Error reading certificate\n\nMessage: ' + cert.error , output: '' }};
     }
     else {
-      console.log(cert); // eslint-disable-line
       const output = prettyCert(cert);
 
       return {...state, cert: { ...state.cert, loaded: true, pem, output} };
@@ -136,12 +135,12 @@ const actionCreators = {
   onDragEnter: e => state => {
     e.preventDefault();
     e.stopPropagation();
-    return { ...state, cert: { ...state.cert, dragging: state.dragging + 1 } };
+    return { ...state, cert: { ...state.cert, dragging: state.cert.dragging + 1 } };
   },
   onDragLeave: e => state => {
     e.preventDefault();
     e.stopPropagation();
-    return { ...state, cert: { ...state.cert, dragging: state.dragging - 1} } ;
+    return { ...state, cert: { ...state.cert, dragging: state.cert.dragging - 1} } ;
   },
 };
 
@@ -198,7 +197,7 @@ const initialState = {
 
   // cert
   cert: {
-    dragging: false,
+    dragging: 0,
     loaded: false,
     pem: '',
     output: '',

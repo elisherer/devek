@@ -1,5 +1,12 @@
 @import '../../assets/variables';
 
+.upload {
+  display: inline-block !important;
+  text-decoration: underline;
+  font-weight: bold;
+  cursor: pointer;
+}
+
 .error {
   color: red;
 }
@@ -37,10 +44,6 @@
   max-width: 728px;
 }
 
-.dropbox {
-  border: 2px dashed #888;
-  padding: 20px;
-}
 .dragging {
-  border-color: #333;
+  border-color: @gui-secondary-color;
 }
