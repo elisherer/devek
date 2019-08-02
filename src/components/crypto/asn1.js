@@ -192,62 +192,75 @@ const ext_keyUsages = ['digitalSignature', 'nonRepudiation', 'keyEncipherment', 
 const ext_subjectAltNames = ['otherName', 'rfc822Name', 'dNSName', 'x400Address', 'directoryName', 'ediPartyName', 'uniformResourceIdentifier', 'iPAddress', 'registeredID'];
 
 const parseExtension = (oid, ext) => {
-  switch (oid.oid) {
-    case '2.5.29.14': // subjectKeyIdentifier
-      return { keyIdentifier: ext.value };
-    case '2.5.29.15': { // keyUsage
-      let bitmap = ext.value[0];
-      const usage = [];
-      for (let i = 0; i < 8; i++) {
-        (bitmap & (1 << (7-i))) && usage.push(ext_keyUsages[i]);
-      }
-      return usage;
-    }
-    case '2.5.29.17': // subjectAltName
-    case '2.5.29.18': // issuerAltName
-      return ext.children.reduce((a,c) => { a[ext_subjectAltNames[c.tagNumber]] = devek.arrayToAscii(c.value); return a; }, {});
-    case '2.5.29.19': // basicConstraints
-      return { cA: !!(ext.value[0]), pathLenConstraint: ext.value[1] };
-    case '2.5.29.31': // CRLDistributionPoints
-      return ext.children.map(distPoints => distPoints.children.reduce((result, distPoint) => {
-        switch (distPoint.tagClass) {
-          case 0: //result.distributionPoint; // TODO: add result.distributionPoint
-          break;
-          case 1: //result.reasons; // TODO: add result.reasons
-          break;
-          case 2: result.cRLIssuer = devek.arrayToAscii(distPoint.children[0].children[0].value);
+  try {
+    switch (oid.oid) {
+      case '2.5.29.14': // subjectKeyIdentifier
+        return {keyIdentifier: ext.value};
+      case '2.5.29.15': { // keyUsage
+        let bitmap = ext.value[0];
+        const usage = [];
+        for (let i = 0; i < 8; i++) {
+          (bitmap & (1 << (7 - i))) && usage.push(ext_keyUsages[i]);
         }
-        return result;
-      }, {}));
-    case '2.5.29.35': // authorityKeyIdentifier
-      return {
-        keyIdentifier: ext.value[0] ? ext.value[0] : undefined,
-        authorityCertIssuer: ext.value[1],
-        authorityCertSerialNumber: ext.value[2]
-      };
-    case '2.5.29.37': // extKeyUsage
-      return ext.children.map(oid => oid.value);
-    case '1.3.6.1.5.5.7.1.1': // authorityInfoAccess
-      return ext.children.map(c => ({ accessMethod: c.value[0], accessLocation: devek.arrayToAscii(c.value[1]) }));
-    case '1.3.6.1.5.5.7.1.3': // qcStatements
-      return ext.children.reduce((a,c) => {
-        if (c.children[0].oid === '0.4.0.19495.2') // PSD2 qcStatement
-          a[c.value[0]] = {
-            rolesOfPSP: c.value[1][0].reduce((b,d) => { b[fieldNames[d[0]] || d[0]] = d[1]; return b; }, {}),
-            ncaName: c.value[1][1],
-            ncaId: c.value[1][2],
-          };
-        else a[c.value[0]] = fieldNames[c.value[1]] || c.value[1];
-        return a;
-      }, {});
-    default:
-      return ext && ext.hasOwnProperty('value') ? ext.value : ext;
+        return usage;
+      }
+      case '2.5.29.17': // subjectAltName
+      case '2.5.29.18': // issuerAltName
+        return ext.children.reduce((a, c) => {
+          a[ext_subjectAltNames[c.tagNumber]] = devek.arrayToAscii(c.value);
+          return a;
+        }, {});
+      case '2.5.29.19': // basicConstraints
+        return {cA: !!(ext.value[0]), pathLenConstraint: ext.value[1]};
+      case '2.5.29.31': // CRLDistributionPoints
+        return ext.children.map(distPoints => distPoints.children.reduce((result, distPoint) => {
+          switch (distPoint.tagClass) {
+            case 0: //result.distributionPoint; // TODO: add result.distributionPoint
+              break;
+            case 1: //result.reasons; // TODO: add result.reasons
+              break;
+            case 2:
+              result.cRLIssuer = devek.arrayToAscii(distPoint.children[0].children[0].value);
+          }
+          return result;
+        }, {}));
+      case '2.5.29.35': // authorityKeyIdentifier
+        return {
+          keyIdentifier: ext.value[0] ? ext.value[0] : undefined,
+          authorityCertIssuer: ext.value[1],
+          authorityCertSerialNumber: ext.value[2]
+        };
+      case '2.5.29.37': // extKeyUsage
+        return ext.children.map(oid => oid.value);
+      case '1.3.6.1.5.5.7.1.1': // authorityInfoAccess
+        return ext.children.map(c => ({accessMethod: c.value[0], accessLocation: devek.arrayToAscii(c.value[1])}));
+      case '1.3.6.1.5.5.7.1.3': // qcStatements
+        return ext.children.reduce((a, c) => {
+          if (c.children[0].oid === '0.4.0.19495.2') // PSD2 qcStatement
+            a[c.value[0]] = {
+              rolesOfPSP: c.value[1][0].reduce((b, d) => {
+                b[fieldNames[d[0]] || d[0]] = d[1];
+                return b;
+              }, {}),
+              ncaName: c.value[1][1],
+              ncaId: c.value[1][2],
+            };
+          else a[c.value[0]] = c.value.length === 1 ? true : (fieldNames[c.value[1]] || c.value[1]);
+          return a;
+        }, {});
+      default:
+        return ext && ext.hasOwnProperty('value') ? ext.value : ext;
+    }
+  }
+  catch (err) {
+    console.error(err); // eslint-disable-line
+    return ext && ext.hasOwnProperty('value') ? ext.value : ext;
   }
 };
 
 const parsePublicKey = (algorithm, publicKey) => {
-  switch (algorithm.value[0]) {
-    case 'rsaEncryption': {
+  switch (algorithm.children[0].oid) {
+    case '1.2.840.113549.1.1.1': { // rsaEncryption
       const keyAsn = parse(publicKey.value);
       return {
         publicKey: `(${keyAsn.children[0].bitSize} bit)`,
@@ -255,7 +268,7 @@ const parsePublicKey = (algorithm, publicKey) => {
         exponent: keyAsn.value[1],
       };
     }
-    case 'X9_62_id_ecPublicKey': {
+    case '1.2.840.10045.2.1': { // ecPublicKey
       const size = algorithm.value[1].match(/\d{3}/)[0];
       return {
         publicKey: `(${size} bit)`,
