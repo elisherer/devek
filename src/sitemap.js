@@ -16,6 +16,7 @@ import PageNetwork from "./components/network/PageNetwork";
 import PageDiff from "./components/diff/PageDiff"; // Lazy loaded
 import PageList from "./components/list/PageList";
 import PageURL from "./components/url/PageURL";
+import PageChecksum from "./components/checksum/PageChecksum";
 
 const PageCryptoLazy = lazy(() => import(/* webpackChunkName: "crypto" */"./components/crypto/PageCrypto"));
 
@@ -257,5 +258,24 @@ export const siteMap = {
     title: 'URL',
     header: 'URL parser',
     description: 'Parse URL to its components'
+  },
+  "/checksum": {
+    component: PageChecksum,
+    keyword: 'checksum',
+    title: 'Checksum',
+    header: 'Checksum tools',
+    description: 'Calculate various checksums',
+    children: {
+      "/crc": {
+        keyword: 'crc',
+        title: "CRC checksum",
+        description: "Calculate cyclic redundancy check for a given input"
+      },
+      "/luhn": {
+        keyword: 'luhn',
+        title: "Luhn (mod 10) validation",
+        description: "Validate using the Luhn Algorithm (Mod 10)"
+      },
+    }
   },
 };
