@@ -26,11 +26,11 @@ const App = ({ location } : { location: Object }) => {
 
     return path === '/' ? (
       <React.Fragment key={path}>
-        <Link to="/" className={styles.logo}/>
+        <Link to="/" className={styles.logo} aria-label="Homepage"/>
         <div className={styles.search_hint}>Press <kbd>/</kbd> to search</div>
       </React.Fragment>
     ) : (
-      <NavLink key={path} to={path} className={styles.menuitem} activeClassName={styles.active}>
+      <NavLink key={path} to={path} className={styles.menuitem} activeClassName={styles.active} aria-label={siteMap[path].title}>
         {siteMap[path].title}
       </NavLink>
     );
