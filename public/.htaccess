@@ -1,5 +1,6 @@
 # 404 fallback
 <ifModule mod_rewrite.c>
+    # Rewrite /api/* to /api.php
     RewriteEngine On
     RewriteCond %{REQUEST_URI} ^.*/api/.*$
     RewriteRule (.*) api.php [QSA,L]
@@ -13,3 +14,8 @@
 <ifModule mod_deflate.c>
     AddOutputFilterByType DEFLATE text/text text/html text/plain text/xml text/css application/x-javascript application/javascript text/javascript
 </ifModule>
+
+# Cache-Control
+<filesMatch ".(css|jpg|jpeg|png|gif|js|ico|webp)$">
+    Header set Cache-Control "max-age=2628000, public"
+</filesMatch>
