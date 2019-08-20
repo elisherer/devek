@@ -31,7 +31,7 @@ const getModelCacheKey = (width, polynomial, initialVal, xorOut, inputReflected,
 
 const compute = (bytes, width, polynomial, initialVal, xorOut, inputReflected, outputReflected) => {
   const key = getModelCacheKey(width, polynomial, initialVal, xorOut, inputReflected, outputReflected);
-  if (!modelCache.hasOwnProperty(key)) {
+  if (!Object.prototype.hasOwnProperty.call(modelCache, key)) {
     const model = { polynomial, initialVal, xorOut, inputReflected, outputReflected };
     let castMask, crcTable;
     const msbMask = width === 64 ? 0x80000000 : 1 << (width - 1);

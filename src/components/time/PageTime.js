@@ -4,6 +4,8 @@ import { Checkbox, CopyToClipboard, Tabs, TextBox } from '../_lib';
 import { getWeek } from './time.js';
 import { useStore, actions } from './PageTime.store';
 import styles from './PageTime.less';
+import Clock from './Clock';
+import Stopwatch from './Stopwatch';
 
 const now = new Date();
 
@@ -28,6 +30,7 @@ const PageTime = () => {
     <Tabs>
       <NavLink to={`/${pathSegments[0]}/now`}>Now</NavLink>
       <NavLink to={`/${pathSegments[0]}/convert`}>Convert</NavLink>
+      <NavLink to={`/${pathSegments[0]}/stopwatch`}>Stopwatch</NavLink>
     </Tabs>
   );
 
@@ -56,7 +59,9 @@ const PageTime = () => {
 
         {tabs}
 
-        <div className={styles.local_time}>
+        <div className={styles.center}>
+          <Clock width="240" height="240" />
+
           <div className={styles.bold}>{localTime}</div>
           <div className={styles.big}>{now.toDateString()}</div>
           <div>Week {week}<br/>GMT{local[1]}</div>
@@ -73,6 +78,15 @@ const PageTime = () => {
       </div>
     );
 
+  }
+
+  if (type === "stopwatch") {
+    return (
+      <div>
+        {tabs}
+        <Stopwatch />
+      </div>
+    );
   }
 
   // convert

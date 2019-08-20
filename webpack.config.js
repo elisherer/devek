@@ -4,7 +4,7 @@ const webpack = require('webpack');
 const
   HtmlWebpackPlugin = require('html-webpack-plugin'),
   MiniCssExtractPlugin = require("mini-css-extract-plugin"),
-  CleanWebpackPlugin = require('clean-webpack-plugin'),
+  CleanWebpackPlugin = require('clean-webpack-plugin').CleanWebpackPlugin,
   BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin,
   webpackDevServerWaitpage = require('webpack-dev-server-waitpage'),
   CopyWebpackPlugin = require('copy-webpack-plugin'),
@@ -20,10 +20,10 @@ module.exports = {
   mode,
   entry: './src/index.js',
   output: {
-    filename: '[name].[hash].js',
+    filename: '[name]-[hash].js',
     path: path.resolve(__dirname, 'dist'),
     publicPath : "/",
-    chunkFilename: "[name].[chunkhash].js",
+    chunkFilename: "[name]-[chunkhash].js",
     devtoolModuleFilenameTemplate: info =>
       path.resolve(info.absoluteResourcePath).replace(/\\/g, '/'),
   },
@@ -35,6 +35,7 @@ module.exports = {
   optimization: {
     minimizer: [new TerserJSPlugin({}), new OptimizeCSSAssetsPlugin({})],
     splitChunks: {
+      minSize: 30000,
       cacheGroups: {
         commons: {
           test: node_modules, // Create a vendor chunk with all the imported node_modules in it

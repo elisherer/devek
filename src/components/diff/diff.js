@@ -233,7 +233,7 @@ function diffCodes(lines, hash, trimSpace, ignoreSpace, ignoreCase) {
     if (ignoreCase)
       s = s.toLowerCase();
 
-    if (!hash.hasOwnProperty(s)) {
+    if (!Object.prototype.hasOwnProperty.call(hash, s)) {
       lastUsedCode++;
       hash[s] = lastUsedCode;
       codes[i] = lastUsedCode;

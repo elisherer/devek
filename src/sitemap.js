@@ -13,6 +13,7 @@ import PageRandom from "./components/random/PageRandom";
 import PageColor from "./components/color/PageColor";
 import PageNetwork from "./components/network/PageNetwork";
 //import PageCrypto from "./components/crypto/PageCrypto"; // Lazy loaded
+import './components/crypto/PageCrypto.less'; // this is to prevent lazy loading of the css file (too small)
 import PageDiff from "./components/diff/PageDiff"; // Lazy loaded
 import PageList from "./components/list/PageList";
 import PageURL from "./components/url/PageURL";
@@ -127,6 +128,11 @@ export const siteMap = {
         keyword: 'convert',
         title: "Convert time",
         description: 'Convert between different time representations',
+      },
+      "/stopwatch": {
+        keyword: 'stopwatch',
+        title: "Stopwatch",
+        description: 'Stopwatch with laps',
       },
     }
   },

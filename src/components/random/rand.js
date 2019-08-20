@@ -1,4 +1,7 @@
-/* global crypto, msCrypto */
+import devek from 'devek';
+
+const crypto = devek.crypto;
+
 const similarLetters=/[1lIioO0]/g;
 
 const generateTable = flags => {
@@ -21,15 +24,12 @@ const generateTable = flags => {
   return table;
 };
 
-const getRandomValues = (typeof crypto !== 'undefined' && crypto.getRandomValues && crypto.getRandomValues.bind(crypto)) ||
-  (typeof msCrypto !== 'undefined' && typeof msCrypto.getRandomValues == 'function' && msCrypto.getRandomValues.bind(msCrypto));
-
 let get16Bytes;
 
-if (getRandomValues) {
+if (crypto.getRandomValues) {
   let rnds = new Uint8Array(16);
   get16Bytes = () => {
-    getRandomValues(rnds);
+    crypto.getRandomValues(rnds);
     return rnds;
   }
 } else {

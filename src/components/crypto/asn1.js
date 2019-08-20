@@ -249,12 +249,12 @@ const parseExtension = (oid, ext) => {
           return a;
         }, {});
       default:
-        return ext && ext.hasOwnProperty('value') ? ext.value : ext;
+        return ext && Object.prototype.hasOwnProperty.call(ext, 'value') ? ext.value : ext;
     }
   }
   catch (err) {
     console.error(err); // eslint-disable-line
-    return ext && ext.hasOwnProperty('value') ? ext.value : ext;
+    return ext && Object.prototype.hasOwnProperty.call(ext, 'value') ? ext.value : ext;
   }
 };
 
