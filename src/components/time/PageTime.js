@@ -3,9 +3,11 @@ import {NavLink, Redirect} from "react-router-dom";
 import { Checkbox, CopyToClipboard, Tabs, TextBox } from '../_lib';
 import { getWeek } from './time.js';
 import { useStore, actions } from './PageTime.store';
-import styles from './PageTime.less';
+import getHebrewDate from './hebrew';
 import Clock from './Clock';
 import Stopwatch from './Stopwatch';
+
+import styles from './PageTime.less';
 
 const now = new Date();
 
@@ -50,6 +52,7 @@ const PageTime = () => {
     const utcTime = utc.substr(utc.indexOf(':') - 2, 8);
     const local = now.toTimeString().split(' GMT');
     const localTime = ampm ? now.toLocaleTimeString() : local[0];
+    const hebrewDate = getHebrewDate(now);
 
     return (
       <div>
@@ -65,6 +68,7 @@ const PageTime = () => {
           <div className={styles.bold}>{localTime}</div>
           <div className={styles.big}>{now.toDateString()}</div>
           <div>Week {week}<br/>GMT{local[1]}</div>
+          <div>{hebrewDate}</div>
         </div>
 
         <div className={styles.utc_time}>
