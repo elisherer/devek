@@ -18,7 +18,7 @@ const ANALYZE = process.env.ANALYZE;
 
 module.exports = {
   mode,
-  entry: './src/index.js',
+  entry: PRODUCTION ? './src/index.js' : ['react-hot-loader/patch', './src/index.js'],
   output: {
     filename: '[name]-[hash].js',
     path: path.resolve(__dirname, 'dist'),

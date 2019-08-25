@@ -137,7 +137,19 @@ button {
     color: @gui-button-disabled-text;
     cursor: default;
   }
+  :global(&.emoji) {
+    background: white;
+    padding: 8px;
+    border: 1px solid @gui-grey-border;
+    width: 40px;
+    height: 40px;
+    &:hover, &:active, &:focus {
+      border-color: @gui-secondary-color;
+    }
+  }  
 }
+
+
 
 kbd {
   background-color: #fafbfc;

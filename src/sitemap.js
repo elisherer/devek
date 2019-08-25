@@ -16,6 +16,7 @@ import PageNetwork from "./components/network/PageNetwork";
 import './components/crypto/PageCrypto.less'; // this is to prevent lazy loading of the css file (too small)
 import PageDiff from "./components/diff/PageDiff"; // Lazy loaded
 import PageList from "./components/list/PageList";
+import PageData from "./components/data/PageData";
 import PageURL from "./components/url/PageURL";
 import PageChecksum from "./components/checksum/PageChecksum";
 
@@ -257,6 +258,13 @@ export const siteMap = {
     title: 'List',
     header: 'List tools',
     description: 'List / data manipulation tools'
+  },
+  "/data": {
+    component: PageData,
+    keyword: 'data',
+    title: 'Data',
+    header: 'Data tools',
+    description: 'Data manipulation tools'
   },
   "/url": {
     component: PageURL,

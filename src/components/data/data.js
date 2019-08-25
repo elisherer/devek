@@ -17,19 +17,22 @@ const actions = {
 
   "Split": {
     description: "Split each item (as string) by a specified separator",
-    parameters: { by: 'string' },
-    func: (input, by) => flat(parseArrayOrString(input).map(x => x.split(parseString(by)))),
+    parameters: { By: 'string' },
+    defaults: { By: '' },
+    func: (input, By) => flat(parseArrayOrString(input).map(x => x.split(parseString(By)))),
   },
 
   "Wrap": {
     description: "Wrap each item with a prefix and suffix (e.g. quotes, commas, etc)",
     parameters: { Prefix: 'string', Suffix: 'string' },
+    defaults: { Prefix: '', Suffix: '' },
     func: (input, { Prefix, Suffix }) => parseArrayOrString(input).map(x => Prefix + x + Suffix),
   },
 
   "Replace": {
     description: "Replace each item using a regular expression and substitution expression",
     parameters: { Pattern: 'string', Flags: [ "g", "gm", "gi", "gmi", "m", "mi", "i"], Substitution: 'string' },
+    defaults: { Pattern: '', Flags: 'gi', Substitution: ''},
     func: (input, { Pattern, Flags, Substitution }) => {
       const regexp = new RegExp(Pattern, Flags);
       return parseArrayOrString(input).map(x => x.replace(regexp, Substitution));
@@ -39,6 +42,7 @@ const actions = {
   "Filter": {
     description: "Filter items that do/don't match the specified regular expression",
     parameters: { Pattern: 'string', Flags: [ "g", "gm", "gi", "gmi", "m", "mi", "i"], Remove: ["Matching", "Non Matching"] },
+    defaults: { Pattern: '', Flags: 'gi', Remove: 'Matching'},
     func: (input, { Pattern, Flags, Remove }) => {
       const regexp = new RegExp(Pattern, Flags);
       const removeMatching = Remove === 'Matching';
@@ -55,12 +59,14 @@ const actions = {
   "Sort": {
     description: "Sort the items by a specified type and order",
     parameters: { Type: ["Text", "Number"], Order: ["Asc", "Desc"] },
+    defaults: { Type: "Text", Order: "Asc" },
     func: (input, { Type, Order }) => parseArrayOrString(input).sort(sorts[Type + Order]),
   },
 
   "Join": {
     description: "Join all items with a specified separator",
     parameters: { With: 'string' },
+    defaults: { With: "" },
     func: (input, { With }) => parseArrayOrString(input).join(parseString(With)),
   },
 
