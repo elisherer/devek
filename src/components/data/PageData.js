@@ -27,7 +27,7 @@ const PageData = () => {
           options={options} />
         <div className={styles.parameters}>
           <div className={styles.action_title}>
-            <button className="emoji" onClick={actions.pipe}>➕</button>
+            <button className="emoji" onClick={actions.pipe} title="Add command">➕</button>
             <div><strong>{pickedAction}</strong> - {pick.description}</div>
           </div>
           {pick.parameters && Object.keys(pick.parameters).map(param => (
@@ -45,24 +45,28 @@ const PageData = () => {
       <div className={styles.actions}>
         <ListBox className={styles.pipe}
             onChange={actions.selectAction}
-            size={Math.max(2, pipe.length)}
+            size={Math.max(6, pipe.length)}
             value={selected}
-            options={pipe} />
+            options={pipe} numbered/>
         <div className={styles.pipe_actions}>
-          <button className="emoji">🔺</button>
-          <button className="emoji">🔻</button>
-          <button className="emoji" onClick={actions.remove}>❌</button>
+          <button className="emoji" disabled={!selected} title="Move up">🔺</button>
+          <button className="emoji" disabled={!selected} title="Move down">🔻</button>
+          <br/>
+          <button className="emoji" disabled={!selected} onClick={actions.remove} title="Remove">❌</button>
         </div>
       </div>
 
-      <button onClick={actions.run}>Run</button>
+      <button onClick={actions.run} disabled={!pipe.length}>Run</button>
 
+      {output && (
+      <>
+        <h1>Result</h1>
 
-      <h1>Result</h1>
-
-      <span>Output:</span><CopyToClipboard from="data_output"/>
-      <TextArea id="data_output" readOnly lineNumbers value={output} />
-    </div>
+        <span>Output:</span><CopyToClipboard from="data_output"/>
+        <TextArea id="data_output" readOnly lineNumbers value={output} />
+      </>
+      )}
+  </div>
   );
 };
 

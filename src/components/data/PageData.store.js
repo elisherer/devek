@@ -6,8 +6,10 @@ const filterParameters = (action, parameters) => data.actions[action].parameters
   return a;
 }, {}) : null;
 
-let counter = 0;
+let counter = 1;
 const keyCount = () => counter++;
+
+const stringify = obj => Object.keys(obj).reduce((a,c) => a + (a ? ", " : '') + c + '=' + obj[c], '');
 
 const actionCreators = {
   input: e => state => ({ ...state, input: e.target.innerText }),
@@ -15,24 +17,39 @@ const actionCreators = {
   parameter: e => state => ({ ...state, parameters: { ...state.parameters, [e.target.dataset.name]: e.target.value }}),
   pipe: () => state => { 
     const actionParameters = filterParameters(state.pickedAction, state.parameters);
+    const pipe = state.pipe.concat({ 
+      name: `${state.pickedAction}(${actionParameters ? stringify(actionParameters) : ''})`,
+      value: keyCount(),
+      action: state.pickedAction, 
+      parameters: actionParameters 
+    });
     return { 
       ...state, 
-      pipe: state.pipe.concat({ 
-        name: `${state.pickedAction}(${actionParameters ? Object.values(actionParameters) : ''})`,
-        value: keyCount(),
-        action: state.pickedAction, 
-        parameters: actionParameters 
-      }),
-      selected: state.pipe.length,
+      pipe,
+      selected: pipe[pipe.length - 1].value,
     };
   },
-  selectAction: e => state => ({ ...state, selected: e.target.selectedIndex }),
-  remove: () => state => ({ 
-    ...state, 
-    pipe: state.pipe.filter((a,i) => i !== state.selected), 
-    selected: state.selected < state.pipe.length - 1 ? state.selected : state.pipe.length - 1
-  }),
+  selectAction: e => state => ({ ...state, selected: parseInt(e.target.value) }),
+  remove: () => state => { 
+    if (state.selected === null) return state;
+    let removedIndex = -1;
+    const pipe = state.pipe.filter((a, i) => { 
+      if (a.value !== state.selected) return true; // leave it
+      removedIndex = i;
+      return false;
+    });
+    const newIndex = Math.min(removedIndex, pipe.length - 1);
+    return { 
+      ...state, 
+      pipe, 
+      selected: newIndex < 0 ? initialState.selected : pipe[newIndex].value,
+    }; 
+  },
+  run: () => state => {
+    const result = state.pipe.reduce((a, c) => data.actions[c.action].func(a, c.parameters), state.input);
 
+    return { ...state, output: Array.isArray(result) ? (result.length === 1 ? result[0] : JSON.stringify(result, null, 2)) : result };
+  },
 };
 
 const initialState = {
@@ -40,7 +57,7 @@ const initialState = {
   pickedAction: 'Split',
   parameters: {},
   pipe: [],
-  selected: -1,
+  selected: 0,
   output: '',
 };
 

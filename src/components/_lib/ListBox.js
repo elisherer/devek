@@ -16,6 +16,7 @@ const ListBox = ({
                    readOnly,
                    value,
                    disabled,
+                   numbered,
                    ...more
                  } : {
   className?: string,
@@ -24,6 +25,7 @@ const ListBox = ({
   readOnly?: boolean,
   value: string,
   disabled?: boolean,
+  numbered?: boolean
 }) => {
 
   return (
@@ -35,7 +37,11 @@ const ListBox = ({
             disabled={disabled}
             {...more}
       >
-        {options.map(x => <option key={x.value || x} value={x.value || x}>{x.name || x.value || x}</option>)}
+        {options.map((x, i) => (
+          <option key={x.value || x} value={x.value || x}>
+            {numbered ? (i+1) + ' - ' : ''}{x.name || x.value || x}
+          </option>
+        ))}
       </select>
     </section>
   );

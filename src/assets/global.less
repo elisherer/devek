@@ -146,6 +146,10 @@ button {
     &:hover, &:active, &:focus {
       border-color: @gui-secondary-color;
     }
+    &[disabled] {
+      border-color: #444444;
+      opacity: 0.3;
+    }
   }  
 }
 
