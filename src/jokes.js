@@ -28,4 +28,6 @@ Take one down and fix it at once. 100 bugs exists on the code.`,
 those who understand binary, and those who don't.`,
 
   `!false - It's funny because it's true.`,
+
+  `Not everything is #000000 and #ffffff`,
 ];
