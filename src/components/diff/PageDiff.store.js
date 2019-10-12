@@ -1,5 +1,5 @@
-import createStore from "../../helpers/createStore";
-import { diffText } from "./diff";
+import createStore from 'helpers/createStore';
+import { diffText } from './diff';
 
 const actionCreators = {
   inputA: e => state => ({ ...state, inputA: e.target.innerText }),

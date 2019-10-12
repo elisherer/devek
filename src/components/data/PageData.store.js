@@ -1,4 +1,4 @@
-import createStore from "../../helpers/createStore";
+import createStore from 'helpers/createStore';
 import * as data from './data';
 
 const filterParameters = (action, parameters) => data.actions[action].parameters ? Object.keys(data.actions[action].parameters).reduce((a,c) => {

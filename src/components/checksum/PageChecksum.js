@@ -1,36 +1,28 @@
 import React from 'react';
-import {Radio, Tabs, TextArea, TextBox} from '../_lib';
-import { Redirect, NavLink } from 'react-router-dom';
+import {Radio, TextArea, TextBox} from '../_lib';
+import { Redirect } from 'react-router-dom';
 
 import { useStore, actions } from './PageChecksum.store';
-import crcDatabase from "./crcDatabase";
+import crcDatabase from './crcDatabase';
 
 import styles from './PageChecksum.less';
 
+const pageRoutes = ['crc', 'luhn'];
+
 const PageChecksum = ({ location } : { location: Object }) => {
   const pathSegments = location.pathname.substr(1).split('/');
-
   const type = pathSegments[1];
-  if (!type) {
-    return <Redirect to={`/${pathSegments[0]}/crc`}/>;
+  if (!pageRoutes.includes(type || '')) {
+    return <Redirect to={'/' + pathSegments[0] + '/' + pageRoutes[0]} />;
   }
 
   const state = useStore();
-
-  const tabs = (
-    <Tabs>
-      <NavLink to={"/" + pathSegments[0] + "/crc"}>CRC</NavLink>
-      <NavLink to={"/" + pathSegments[0] + "/luhn"}>Luhn</NavLink>
-    </Tabs>
-  );
 
   if (type === 'luhn') {
     const { input, valid, error } = state.luhn;
 
     return (
       <div>
-        {tabs}
-
         <span>Input: (Digits)</span>
         <TextBox invalid={error} autoFocus onChange={actions.luhnInput} value={input} />
 
@@ -49,8 +41,6 @@ const PageChecksum = ({ location } : { location: Object }) => {
 
     return (
       <div>
-        {tabs}
-
         <span>Input:</span>
         <TextArea autoFocus onChange={actions.crcInput} value={input} />
 

@@ -1,27 +1,21 @@
 import React from 'react';
-import { CopyToClipboard, Tabs, TextBox } from '../_lib';
-import { Redirect, NavLink } from 'react-router-dom';
+import { CopyToClipboard, TextBox } from '../_lib';
+import { Redirect } from 'react-router-dom';
 
 import { useStore, actions } from './PageBase.store';
 
 import styles from './PageBase.less';
 
+const pageRoutes = ['numbers', 'text'];
+
 const PageBase = ({ location } : { location: Object }) => {
   const pathSegments = location.pathname.substr(1).split('/');
-
   const type = pathSegments[1];
-  if (!type) {
-    return <Redirect to={`/${pathSegments[0]}/numbers`}/>;
+  if (!pageRoutes.includes(type || '')) {
+    return <Redirect to={'/' + pathSegments[0] + '/' + pageRoutes[0]} />;
   }
 
   const state = useStore();
-
-  const tabs = (
-    <Tabs>
-      <NavLink to={"/" + pathSegments[0] + "/numbers"}>Numbers</NavLink>
-      <NavLink to={"/" + pathSegments[0] + "/text"}>Text</NavLink>
-    </Tabs>
-  );
 
   const { errors } = state;
 
@@ -30,8 +24,6 @@ const PageBase = ({ location } : { location: Object }) => {
 
     return (
       <div>
-        {tabs}
-
         <span>UTF8:</span><CopyToClipboard from="base_text_utf8"/>
         <div className={styles.wrap}>
           <TextBox className={styles.number} invalid={errors.utf8} id="base_text_utf8" autoFocus onChange={actions.utf8} value={utf8} />
@@ -64,8 +56,6 @@ const PageBase = ({ location } : { location: Object }) => {
 
   return (
     <div>
-      {tabs}
-
       <span>From:</span><CopyToClipboard from="base_number_to"/><span className={styles.base_label}>Base:</span>
       <div className={styles.wrap}>
         <TextBox className={styles.number} invalid={errors.from} id="base_number_from" autoFocus onChange={actions.from} value={from} />

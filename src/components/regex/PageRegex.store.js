@@ -1,4 +1,4 @@
-import createStore from "../../helpers/createStore";
+import createStore from 'helpers/createStore';
 
 const composeFlags = on => ["g","m","i"].filter(flag => on.includes(flag)).join('');
 

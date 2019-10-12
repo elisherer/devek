@@ -1,4 +1,4 @@
-import Uint64 from "../../helpers/Uint64";
+import Uint64 from 'helpers/Uint64';
 
 const CRC64_ECMA = new Uint64(0x42f0e1eb,0xa9ea3693),
   CRC64_FF = new Uint64(0xFFFFFFFF, 0xFFFFFFFF);

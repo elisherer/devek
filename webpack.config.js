@@ -91,12 +91,8 @@ module.exports = {
     rules: [
       { test: /\.(c|le)ss$/,
         use: [
+          !PRODUCTION ? 'style-loader' : MiniCssExtractPlugin.loader, 
           {
-            loader: MiniCssExtractPlugin.loader,
-            options: {
-              hmr: !PRODUCTION,
-            },
-          }, {
             loader: "css-loader",
             options: {
               importLoaders: 1,
@@ -105,7 +101,8 @@ module.exports = {
                 localIdentName: PRODUCTION ? '[hash:base64:8]' : '[local]__[hash:base64:5]',
               },
             }
-          }, {
+          },
+          {
             loader: "less-loader",
             options: {
               sourceMap: true,

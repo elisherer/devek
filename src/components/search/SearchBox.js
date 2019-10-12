@@ -1,17 +1,32 @@
 import React, {useEffect} from 'react';
 import cx from 'classnames';
-import { Link, withRouter } from 'react-router-dom';
+import { Link, useLocation, useHistory } from 'react-router-dom';
 import { TextBox } from '../_lib';
 import { actions, useStore } from './SearchBox.store';
 
-import styles from "./SearchBox.less";
+import styles from './SearchBox.less';
+
+const inputNodeNames = ['INPUT', 'TEXTAREA', 'PRE'];
 
 let clickedLink = false;
 const clickLinkHandler = () => clickedLink = true;
 const onBlur = () => clickedLink ? (clickedLink = false) : actions.close();
 
-const SearchBox = ({ location } : { location: Object }) => {
+const SearchBox = () => {
+  const location = useLocation();
   const state = useStore();
+
+  const history = useHistory();
+  // on mount
+  useEffect(() => {
+    window.devek.openSearch = () => actions.open(history);
+    addEventListener('keydown', e => {
+      if (e.key === "/" && !e.altKey && !e.shiftKey && !e.ctrlKey && !inputNodeNames.includes(e.target.nodeName)) {
+        actions.open(history);
+        e.preventDefault();
+      }
+    });
+  }, []);
 
   // location change
   useEffect(() => {
@@ -39,12 +54,4 @@ const SearchBox = ({ location } : { location: Object }) => {
   );
 };
 
-const inputNodeNames = ['INPUT', 'TEXTAREA', 'PRE'];
-addEventListener('keydown', e => {
-  if (e.key === "/" && !e.altKey && !e.shiftKey && !e.ctrlKey && !inputNodeNames.includes(e.target.nodeName)) {
-    actions.open();
-    e.preventDefault();
-  }
-});
-
-export default withRouter(SearchBox);
+export default SearchBox;

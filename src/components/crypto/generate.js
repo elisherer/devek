@@ -1,5 +1,5 @@
-import devek from "../../devek";
-import {publicKeyJWKToSSH, privateKeyJWKToSSHNew} from "./ssh";
+import devek from 'devek';
+import {publicKeyJWKToSSH, privateKeyJWKToSSHNew} from './ssh';
 const crypto = devek.crypto;
 
 const toPrivateKey = async key => {

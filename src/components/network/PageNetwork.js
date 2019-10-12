@@ -3,7 +3,7 @@ import { CopyToClipboard, TextBox } from '../_lib';
 import { useStore, actions } from './PageNetwork.store';
 import { formatters, isPrivate } from './network';
 import styles from './PageNetwork.less';
-import { getAsync } from "../../helpers/http";
+import { getAsync } from 'helpers/http';
 
 const fetchIP = () => {
   let cancelled = false;

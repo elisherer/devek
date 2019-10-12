@@ -1,7 +1,7 @@
 import React from 'react';
 import cx from 'classnames';
-import { CopyToClipboard, Radio, Tabs, TextArea } from '../_lib';
-import { textCategories, textFunctions } from "./text";
+import { CopyToClipboard, Radio, TextArea } from '../_lib';
+import { textCategories, textFunctions } from './text';
 import { Redirect, NavLink } from 'react-router-dom';
 
 import { useStore, actions } from './PageText.store';
@@ -37,13 +37,6 @@ const PageText = ({ location } : { location: Object }) => {
 
   return (
     <div>
-      <Tabs>
-        {textCategories.map(c => (
-          <NavLink key={c.category}
-                to={"/" + pathSegments[0] + '/' + c.category}>{c.title}</NavLink>
-        ))}
-      </Tabs>
-
       <Radio className={styles.funcs}>
         {
           Object.keys(textFunctions[category]).map(tf =>{

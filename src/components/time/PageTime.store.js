@@ -1,5 +1,5 @@
-import { reduceBy } from "./time";
-import createStore from "../../helpers/createStore";
+import { reduceBy } from './time';
+import createStore from 'helpers/createStore';
 
 const actionCreators = {
   utc: () => state => reduceBy('epoch', { ...state, epoch: state.parsed.getTime(), timezone: 0 }),

@@ -1,16 +1,19 @@
-import React, { useEffect } from 'react';
-import { Switch, Route, Link, NavLink, Redirect, withRouter } from 'react-router-dom';
+import React, { Fragment, Suspense, useEffect } from 'react';
+import { Switch, Route, Link, NavLink, Redirect, useLocation } from 'react-router-dom';
 import cx from 'classnames';
 import SearchBox from './search/SearchBox';
 import NotFound from './NotFound';
 import { siteMap } from '../sitemap';
-import { useStore, actions } from "./App.store";
-import screen from '../helpers/screen';
+import { useStore, actions } from './App.store';
+import screen from 'helpers/screen';
 
 import styles from './App.less';
-import Spinner from "./_lib/Spinner";
+import Spinner from './_lib/Spinner';
 
-const App = ({ location } : { location: Object }) => {
+const devekSearch = () => window.devek.openSearch();
+
+const App = () => {
+  const location = useLocation();
   if (location.pathname === '/' && location.search) {
     return <Redirect to="/" />;
   }
@@ -25,16 +28,20 @@ const App = ({ location } : { location: Object }) => {
     }
 
     return path === '/' ? (
-      <React.Fragment key={path}>
+      <Fragment key={path}>
         <Link to="/" className={styles.logo} aria-label="Homepage"/>
-        <div className={styles.search_hint}>Press <kbd>/</kbd> to search</div>
-      </React.Fragment>
+        <div className={styles.search_hint}>Press <kbd onClick={devekSearch}>/</kbd> to search</div>
+      </Fragment>
     ) : (
-      <NavLink key={path} to={path} className={styles.menuitem} activeClassName={styles.active} aria-label={siteMap[path].title}>
+      <NavLink key={path} to={path} className={styles.navitem} activeClassName={styles.active} aria-label={siteMap[path].title}>
         {siteMap[path].title}
       </NavLink>
     );
   });
+
+  // locate parent on siteMap
+  const parentPath = '/' + location.pathname.split('/')[1];
+  const siteMapParent = siteMap[parentPath];
 
   // location change
   useEffect(() => {
@@ -48,7 +55,6 @@ const App = ({ location } : { location: Object }) => {
     <div className={styles.app}>
       <nav className={cx(styles.nav,{ [styles.open]: state.drawer })}>
         <div className={styles.menu} onClick={actions.drawerClose}/>
-        {navLinks}
         <div className={styles.github} >
           <a href="https://github.com/elisherer/devek" target="_blank" rel="noopener noreferrer" title="GitHub">
             <svg width="28" height="28" viewBox="0 0 16 16" aria-hidden="true">
@@ -56,6 +62,7 @@ const App = ({ location } : { location: Object }) => {
             </svg>
           </a>
         </div>
+        {navLinks}
       </nav>
       <main className={styles.main}>
         {state.drawer && <div className={styles.overlay} onClick={actions.drawerClose} /> }
@@ -64,7 +71,14 @@ const App = ({ location } : { location: Object }) => {
           {header && <span className={styles.description}>{header}</span>}
         </header>
         <SearchBox />
-        <React.Suspense fallback={<Spinner />}>
+        <Suspense fallback={<Spinner />}>
+          {siteMapParent && siteMapParent.children && (
+          <nav className={styles.tabs}>
+            {Object.keys(siteMapParent.children).map(path => 
+              <NavLink key={path} to={parentPath + path} exact={path === '/' || path === ''}>{siteMapParent.children[path].title}</NavLink>
+            )}
+          </nav>
+          )}
           <article className={styles.article}>
             <Switch>
               {Object.keys(siteMap).map(path => (
@@ -73,13 +87,13 @@ const App = ({ location } : { location: Object }) => {
               <Route component={NotFound}/>
             </Switch>
           </article>
-        </React.Suspense>
+        </Suspense>
       </main>
     </div>
   );
 };
 
-let exportedApp = withRouter(App);
+let exportedApp = App;
 
 if (process.env.NODE_ENV !== "production") {
   const { hot/*, setConfig*/ }  = require("react-hot-loader/root");

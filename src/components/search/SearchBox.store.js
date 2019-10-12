@@ -1,6 +1,5 @@
-import {getHistory} from "../../helpers/history";
-import createStore from "../../helpers/createStore";
-import {siteMap} from "../../sitemap";
+import createStore from 'helpers/createStore';
+import {siteMap} from 'sitemap';
 
 const flatMap = Object.keys(siteMap).reduce((a,c) => {
   a[c] = siteMap[c];
@@ -53,7 +52,7 @@ const actionCreators = {
     ...state,
     index: Math.max(state.index - 1, 0)
   }),
-  open: () => (state, actions) => {
+  open: history => (state, actions) => {
     if (state.open) return state;
     if (!closeSearchBoxHandler)
       closeSearchBoxHandler = e => {
@@ -64,7 +63,7 @@ const actionCreators = {
           actions.search_up();
           e.preventDefault();
         } else if (e.key === "Enter") {
-          actions.search_choose();
+          actions.search_choose(history);
           e.preventDefault();
         }
       };
@@ -80,9 +79,9 @@ const actionCreators = {
     removeEventListener('keyup', closeSearchBoxHandler);
     return initialState;
   },
-  search_choose: () => state => {
+  search_choose: history => state => {
     if (state.search && (state.paths[state.index] || state.paths.length === 1)) {
-      getHistory().push(state.paths[state.index] ? state.paths[state.index].path : state.paths[0].path);
+      history.push(state.paths[state.index] ? state.paths[state.index].path : state.paths[0].path);
       return initialState;
     }
     return state;

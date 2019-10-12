@@ -52,7 +52,7 @@ const deriveAESCryptoKeyAndIV = async (alg, passphrase, useSalt, generateSalt, s
   const derived = EVP_BytesToKey(passphrase, useSalt && salt, 32, 16, 1);
 
   return {
-    cryptoKey: await crypto.subtle.importKey("raw", derived.key, alg, true, [usage]),
+    cryptoKey: await crypto.subtle.importKey('raw', derived.key, alg, true, [usage]),
     iv: derived.iv,
     salt
   };
@@ -68,11 +68,11 @@ const getAesParams = (alg, iv) => (alg === 'AES-CTR' ? {
 });
 
 const importRSAOAEPCryptoKey = (jwk, usage) => crypto.subtle.importKey(
-  "jwk",
+  'jwk',
   jwk,
   {
-    name: "RSA-OAEP",
-    hash: "SHA" + (jwk.alg.substr(8) || "-1")
+    name: 'RSA-OAEP',
+    hash: 'SHA' + (jwk.alg.substr(8) || "-1")
   },
   true,
   [usage]
@@ -100,7 +100,7 @@ export const cipherEncrypt = async (alg, data, useKDF, key, iv, passphrase, useS
         iv = keyAndIV.iv;
         salt = keyAndIV.salt;
       } else {
-        cryptoKey = await crypto.subtle.importKey("raw", new Uint8Array(devek.hexStringToArray(key)), alg, false, ['encrypt']);
+        cryptoKey = await crypto.subtle.importKey('raw', new Uint8Array(devek.hexStringToArray(key)), alg, false, ['encrypt']);
         iv = new Uint8Array(devek.hexStringToArray(iv));
       }
       options = getAesParams(alg, iv);

@@ -5,11 +5,9 @@ import {actions} from "./PageCrypto.store";
 
 import {SSH_SUPPORT} from "./generate";
 
-const CryptoGenerate = ({ tabs, algType, symmAlg, asymAlg, hashAlg, rsaModulusLength, ecNamedCurve, aesKeyLength, publicKey, privateKey, privateSSH, format, source, kdf, symmKey, outputKey, error } :
-                        { tabs: any, algType: string, symmAlg: string, asymAlg: string, hashAlg: string, rsaModulusLength: number, ecNamedCurve: string, aesKeyLength: number, publicKey: string, privateKey: string, privateSSH: string, format: string, source: string, kdf: Object, symmKey: string, outputKey: CryptoKey, error: string }) => (
+const CryptoGenerate = ({ algType, symmAlg, asymAlg, hashAlg, rsaModulusLength, ecNamedCurve, aesKeyLength, publicKey, privateKey, privateSSH, format, source, kdf, symmKey, outputKey, error } :
+                        { algType: string, symmAlg: string, asymAlg: string, hashAlg: string, rsaModulusLength: number, ecNamedCurve: string, aesKeyLength: number, publicKey: string, privateKey: string, privateSSH: string, format: string, source: string, kdf: Object, symmKey: string, outputKey: CryptoKey, error: string }) => (
   <div>
-    {tabs}
-
     <label>Type:</label>
     <Radio className={styles.options2} options={["Symmetric", "Asymmetric"]} value={algType} onClick={actions.genAlgType} />
 

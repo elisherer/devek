@@ -5,10 +5,8 @@ import devek from 'devek';
 
 import styles from "./PageCrypto.less";
 
-const CryptoHash = ({ tabs, input, alg, hash, format } : { tabs: any, input: string, alg: string, hash: Object, format: string }) => (
+const CryptoHash = ({ input, alg, hash, format } : { input: string, alg: string, hash: Object, format: string }) => (
   <div>
-    {tabs}
-
     <label>Input:</label>
     <TextArea autoFocus onChange={actions.hashInput} value={input}/>
     <div className={styles.input_info}>

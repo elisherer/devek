@@ -1,5 +1,5 @@
-import { reduceBy } from "./color";
-import createStore from "../../helpers/createStore";
+import { reduceBy } from './color';
+import createStore from 'helpers/createStore';
 
 const actionCreators = {
   rgba: e => state => reduceBy('rgba', {...state, rgba: e.target.value}),

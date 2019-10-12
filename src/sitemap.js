@@ -1,25 +1,25 @@
 import { lazy } from 'react';
 
-import Home from "./components/Home";
-import PageText from "./components/text/PageText";
-import PageBase from "./components/base/PageBase";
-import PageRegex from "./components/regex/PageRegex";
-import PageJSON from "./components/json/PageJSON";
-import PageJWT from "./components/jwt/PageJWT";
-import PageXML from "./components/xml/PageXML";
-import PageTime from "./components/time/PageTime";
-import PageImage from "./components/image/PageImage";
-import PageRandom from "./components/random/PageRandom";
-import PageColor from "./components/color/PageColor";
-import PageNetwork from "./components/network/PageNetwork";
-//import PageCrypto from "./components/crypto/PageCrypto"; // Lazy loaded
+import Home from './components/Home';
+import PageText from './components/text/PageText';
+import PageBase from './components/base/PageBase';
+import PageRegex from './components/regex/PageRegex';
+import PageJSON from './components/json/PageJSON';
+import PageJWT from './components/jwt/PageJWT';
+import PageXML from './components/xml/PageXML';
+import PageTime from './components/time/PageTime';
+import PageImage from './components/image/PageImage';
+import PageRandom from './components/random/PageRandom';
+import PageColor from './components/color/PageColor';
+import PageNetwork from './components/network/PageNetwork';
+//import PageCrypto from './components/crypto/PageCrypto'; // Lazy loaded
 import './components/crypto/PageCrypto.less'; // this is to prevent lazy loading of the css file (too small)
-import PageDiff from "./components/diff/PageDiff"; // Lazy loaded
-import PageData from "./components/data/PageData";
-import PageURL from "./components/url/PageURL";
-import PageChecksum from "./components/checksum/PageChecksum";
+import PageDiff from './components/diff/PageDiff'; // Lazy loaded
+import PageData from './components/data/PageData';
+import PageURL from './components/url/PageURL';
+import PageChecksum from './components/checksum/PageChecksum';
 
-const PageCryptoLazy = lazy(() => import(/* webpackChunkName: "crypto" */"./components/crypto/PageCrypto"));
+const PageCryptoLazy = lazy(() => import(/* webpackChunkName: "crypto" */'./components/crypto/PageCrypto'));
 
 export const siteMap = {
   "/": {
@@ -33,23 +33,28 @@ export const siteMap = {
     component: PageText,
     keyword: 'text',
     title: 'Text',
-    header: 'Text Conversion',
+    header: "Text Conversion",
     description: "Converting Case, Encodings (URL, HTML, Base64)",
     children: {
       "/case": {
         keyword: 'case',
-        title: "Case Conversion",
+        title: "Case",
         description: "Uppercase, lowercase and capitalize"
       },
       "/url": {
         keyword: 'url',
-        title: "URL Encoding",
+        title: "URL",
         description: 'encode and decode',
       },
       "/html": {
         keyword: 'html',
-        title: "HTML Encoding",
+        title: "HTML",
         description: 'encode and decode',
+      },
+      "/convert": {
+        keyword: 'convert',
+        title: "Conversion",
+        description: 'Reverse text etc.',
       }
     }
   },
@@ -62,12 +67,12 @@ export const siteMap = {
     children: {
       "/numbers": {
         keyword: 'numbers',
-        title: "Numbers bases",
+        title: "Numbers",
         description: "Convert between numbers bases"
       },
       "/text": {
         keyword: 'text',
-        title: "Text bases",
+        title: "Text",
         description: 'Convert between text bases',
       },
     }
@@ -95,12 +100,12 @@ export const siteMap = {
     children: {
       "/": {
         keyword: 'xpath',
-        title: "Debug and prettify XML",
+        title: "Debug and Prettify",
         description: "Debug XML using XPath, and apply prettify"
       },
-      "/filters": {
+      "/transform": {
         keyword: 'transform',
-        title: "Transform XML",
+        title: "Transform",
         description: "Transform XML using XSLT"
       },
     }
@@ -110,7 +115,19 @@ export const siteMap = {
     keyword: 'jwt',
     title: 'JWT',
     header: 'JWT Tool',
-    description: "Decode, Verify & Encode"
+    description: "Decode, Verify & Encode",
+    children: {
+      "/decode": {
+        keyword: 'decode',
+        title: "Decoder",
+        description: 'Decode and validate JWT',
+      },
+      "/encode": {
+        keyword: 'encode',
+        title: "Encoder",
+        description: "Generate JWT"
+      },
+    }
   },
   "/time": {
     component: PageTime,
@@ -126,7 +143,7 @@ export const siteMap = {
       },
       "/convert": {
         keyword: 'convert',
-        title: "Convert time",
+        title: "Convert",
         description: 'Convert between different time representations',
       },
       "/stopwatch": {
@@ -145,27 +162,27 @@ export const siteMap = {
     children: {
       "/": {
         keyword: 'image',
-        title: "Image transformations and extraction",
-        description: "Transform image and export"
+        title: "Actions",
+        description: "Image transformations and extraction"
       },
       "/filters": {
         keyword: 'filters',
-        title: "Image filters",
+        title: "Filters",
         description: "Apply image filters"
       },
       "/crop": {
         keyword: 'crop',
-        title: "Image crop",
-        description: "Convert between numbers bases"
+        title: "Crop",
+        description: "Image cropping tool"
       },
       "/resize": {
         keyword: 'resize',
-        title: "Image resizer",
+        title: "Resize",
         description: 'Resize images',
       },
       "/picker": {
         keyword: 'picker',
-        title: "Image color picker",
+        title: "Color Picker",
         description: 'Pick color from an image',
       },
     }
@@ -179,12 +196,12 @@ export const siteMap = {
     children: {
       "/password": {
         keyword: 'password',
-        title: "Passwords",
+        title: "Password",
         description: "Generate passwords"
       },
       "/guid": {
         keyword: 'guid',
-        title: "GUID",
+        title: "Guid",
         description: 'Generate unique ids',
       },
     }
@@ -198,22 +215,22 @@ export const siteMap = {
     children: {
       "/hash": {
         keyword: 'hash',
-        title: 'Hash generation',
+        title: 'Hash',
         description: 'Generate hash of input text',
       },
       "/cipher": {
         keyword: 'cipher',
-        title: "Encrypt or Decrypt",
+        title: "Cipher",
         description: 'Encrypt or decrypt information',
       },
       "/generate": {
         keyword: 'generate',
-        title: "Generate encryption keys",
+        title: "Generate Keys",
         description: 'Generate/derive symmetric/asymmetric keys for encryption/signing',
       },
       "/cert": {
         keyword: 'certificate',
-        title: "Parse certificates",
+        title: "Certificate Parser",
         description: 'Parse PEM (X.509 / ASN.1) certificates',
       },
     }
@@ -234,13 +251,13 @@ export const siteMap = {
     children: {
       "/convert": {
         keyword: 'convert',
-        title: 'Color conversion',
+        title: 'Conversion',
         description: 'Convert between different color representations',
       },
       "/gradient": {
         keyword: 'gradient',
-        title: "Gradient generator",
-        description: 'Create CSS gradients',
+        title: "Gradient",
+        description: 'Create CSS color gradients',
       },
     }
   },
@@ -274,12 +291,12 @@ export const siteMap = {
     children: {
       "/crc": {
         keyword: 'crc',
-        title: "CRC checksum",
+        title: "CRC",
         description: "Calculate cyclic redundancy check for a given input"
       },
       "/luhn": {
         keyword: 'luhn',
-        title: "Luhn (mod 10) validation",
+        title: "Luhn",
         description: "Validate using the Luhn Algorithm (Mod 10)"
       },
     }

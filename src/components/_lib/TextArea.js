@@ -1,9 +1,9 @@
 import React, { useEffect, useRef } from 'react';
 import devek from 'devek';
 import cx from 'classnames';
-import styles from "./TextArea.less";
+import styles from './TextArea.less';
 
-import screen from "helpers/screen";
+import screen from 'helpers/screen';
 
 const blurOnEscape = e => {
   if (e.key === "Escape") {

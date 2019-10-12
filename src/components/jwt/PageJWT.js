@@ -1,35 +1,33 @@
 import React from 'react';
-import { CopyToClipboard, Tabs, TextArea, TextBox } from '../_lib';
+import { Redirect }  from 'react-router-dom';
+import { CopyToClipboard, TextArea, TextBox } from '../_lib';
 import styles from './PageJWT.less';
 
 import { useStore, actions } from './PageJWT.store';
 
-const PageJWT = () => {
+const pageRoutes = ['decode', 'encode', ];
+
+const PageJWT = ({ location } : { location: Object }) => {
+  const pathSegments = location.pathname.substr(1).split('/');
+  const type = pathSegments[1];
+  if (!pageRoutes.includes(type)) {
+    return <Redirect to={'/' + pathSegments[0] + '/' + pageRoutes[0]}/>;
+  }
+
   const state = useStore();
-
-  const encodeMode = state.encode;
-
-  const tabs = (
-    <Tabs>
-      <span data-active={!encodeMode || null} onClick={actions.toggle}>Decoder</span>
-      <span data-active={encodeMode || null} onClick={actions.toggle}>Encoder</span>
-    </Tabs>
-  );
 
   const secretTextbox = <TextBox value={state.secret}
                                  placeholder="Base64Url encoded secret"
                                  onChange={actions.secret} />;
 
-  if (encodeMode) {
+  if (type === 'encode') {
     return (
       <div>
-        {tabs}
-
         <label>Algorithm</label>
         <TextBox value="HS256" readOnly />
 
-        <TextArea className={styles.header} value={state.header} readOnly />
-        <TextArea className={styles.payload} value={state.in_payload} onChange={actions.in_payload} autoFocus />
+        <TextArea wrapperClassName={styles.area} className={styles.header} value={state.header} readOnly />
+        <TextArea wrapperClassName={styles.area} className={styles.payload} value={state.in_payload} onChange={actions.in_payload} autoFocus />
         <TextArea className={styles.sig} value={state.secret ? state.sig : ''} readOnly />
 
         <label>Secret key</label>
@@ -59,8 +57,6 @@ const PageJWT = () => {
 
   return (
     <div>
-      {tabs}
-
       <span>Token</span><CopyToClipboard from="jwt"/>
       <TextBox id="jwt" autoFocus selectOnFocus
                className={styles.token}
@@ -76,7 +72,7 @@ const PageJWT = () => {
       {state.alg && secretTextbox}
 
       <label>Contents:</label>
-      <TextArea readOnly={!encodeMode} html className={styles.jwt}
+      <TextArea readOnly={type === 'decode'} html className={styles.jwt}
                 value={resultHTML} />
     </div>
   );

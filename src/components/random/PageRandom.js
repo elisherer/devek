@@ -1,22 +1,22 @@
 import React from 'react';
-import { NavLink, Redirect } from "react-router-dom";
-import { CopyToClipboard, Radio, Tabs, TextArea } from '../_lib';
+import { Redirect } from 'react-router-dom';
+import { CopyToClipboard, Radio, TextArea } from '../_lib';
 import { useStore, actions } from './PageRandom.store';
-import { generatePassword, generateTable, uuidv4 } from "./rand";
+import { generatePassword, generateTable, uuidv4 } from './rand';
 
 import styles from './PageRandom.less';
 
 let table = null, tableFlags = null;
 let ticks = null;
 
-const PageRandom = () => {
+const pageRoutes = ['password', 'guid'];
+
+const PageRandom = ({ location } : { location: Object }) => {
   const pathSegments = location.pathname.substr(1).split('/');
-
-  if (pathSegments.length < 2) {
-    return <Redirect to={`/${pathSegments[0]}/password`}/>;
-  }
-
   const type = pathSegments[1];
+  if (!pageRoutes.includes(type || '')) {
+    return <Redirect to={'/' + pathSegments[0] + '/' + pageRoutes[0]} />;
+  }
 
   let result, flags, size;
   const state = useStore();
@@ -57,11 +57,6 @@ const PageRandom = () => {
 
   return (
     <div>
-      <Tabs>
-        <NavLink to="/random/password">Password</NavLink>
-        <NavLink to="/random/guid">Guid</NavLink>
-      </Tabs>
-
       <label className={styles.range}>
         <span>Count ({count})</span>
         <input type="range" min="1" max="16" value={count} onChange={actions.count}/>

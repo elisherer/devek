@@ -1,39 +1,20 @@
 import React from 'react';
-import { NavLink, Redirect}  from "react-router-dom";
-import {Checkbox, CopyToClipboard, Tabs, TextArea, TextBox} from '../_lib';
+import { Redirect}  from 'react-router-dom';
+import { Checkbox, CopyToClipboard, TextArea, TextBox } from '../_lib';
 import { useStore, actions } from './PageXML.store';
-import {XMLParse, prettifyXml, queryXPath} from "./xml";
+import { XMLParse, prettifyXml, queryXPath } from './xml';
 
 let xmlDocSource, xmlDoc;
+const pageRoutes = ['', 'transform'];
 
-const subPages = [
-  {
-    path: '',
-    title: 'Debug and Prettify',
-  },
-  {
-    path: 'transform',
-    title: 'Transform',
-  },
-];
-
-const PageXML = () => {
+const PageXML = ({ location } : { location: Object }) => {
   const pathSegments = location.pathname.substr(1).split('/');
-
   const type = pathSegments[1];
-  if (type && !subPages.find(sp => sp.path === type)) {
-    return <Redirect to={`/${pathSegments[0]}/${subPages[0].path}`} />;
+  if (!pageRoutes.includes(type || '')) {
+    return <Redirect to={'/' + pathSegments[0] + '/' + pageRoutes[0]} />;
   }
 
   const state = useStore();
-
-  const tabs = (
-    <Tabs>
-      {subPages.map(subPage => (
-        <NavLink key={subPage.path} to={`/${pathSegments[0]}/${subPage.path}`} exact={!subPage.path}>{subPage.title}</NavLink>
-      ))}
-    </Tabs>
-  );
 
   if (!type) {
 
@@ -99,8 +80,6 @@ const PageXML = () => {
 
     return (
       <div>
-        {tabs}
-
         <label>XML:</label>
         <TextArea autoFocus onChange={actions.xml} value={xmlInput}/>
 
@@ -126,7 +105,6 @@ const PageXML = () => {
 
     return (
       <div>
-        {tabs}
         <label>XML:</label>
         <TextArea autoFocus onChange={actions.xml} value={xmlInput}/>
 

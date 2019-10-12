@@ -1,11 +1,11 @@
-import {useReducer} from "react";
+import {useReducer} from 'react';
 import createDevTools from './devtools';
 
 const resetActionType = '__RESET';
 
 export default (actionCreators, initialState, name) => {
   const store = {
-    dispatch: () => throw new Error("Don't call actions before calling useStore")
+    dispatch: () => { throw new Error("Don't call actions before calling useStore") }
   };
 
   const devTools = createDevTools({ name, initialState, store});

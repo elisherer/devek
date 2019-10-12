@@ -1,6 +1,6 @@
 import React from 'react';
 import cx from 'classnames';
-import styles from "./ListBox.less";
+import styles from './ListBox.less';
 
 const blurOnEscape = e => {
   if (e.key === "Escape") {

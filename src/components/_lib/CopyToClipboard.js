@@ -1,5 +1,5 @@
 import React from 'react';
-import styles from "./CopyToClipboard.less";
+import styles from './CopyToClipboard.less';
 
 const copyFrom = e => {
   let el = document.getElementById(e.target.dataset.from);

@@ -1,5 +1,12 @@
 import React, {useState, useEffect} from 'react';
+
 import styles from './PageTime.less';
+
+var pad = (n, z = 2) => ('00' + n).slice(-z);
+function formatTime(time) {
+  const s = Math.round(time);
+  return pad(s/3.6e6|0) + ':' + pad((s%3.6e6)/6e4 | 0) + ':' + pad((s%6e4)/1000|0) + '.' + pad(s%1000, 3);
+}
 
 function useFrameNow(isActive) {
   const [now, setNow] = useState(null)
@@ -25,12 +32,6 @@ function useFrameNow(isActive) {
   }, [ isActive ]);
 
   return isActive ? now : null;
-}
-
-var pad = (n, z = 2) => ('00' + n).slice(-z);
-function formatTime(time) {
-  const s = Math.round(time);
-  return pad(s/3.6e6|0) + ':' + pad((s%3.6e6)/6e4 | 0) + ':' + pad((s%6e4)/1000|0) + '.' + pad(s%1000, 3);
 }
 
 const Stopwatch = () => {

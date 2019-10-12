@@ -1,5 +1,5 @@
 import { reduceNumberBy, reduceTextBy } from './base';
-import createStore from "../../helpers/createStore";
+import createStore from 'helpers/createStore';
 
 const actionCreators = {
   from: e => state => reduceNumberBy('from', { ...state, from: e.target.value }),

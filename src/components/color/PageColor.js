@@ -1,6 +1,6 @@
 import React from 'react';
-import {CopyToClipboard, Radio, Tabs, TextBox} from '../_lib';
-import { NavLink, Redirect}  from "react-router-dom";
+import {CopyToClipboard, Radio, TextBox} from '../_lib';
+import { Redirect }  from 'react-router-dom';
 import { useStore, actions } from './PageColor.store';
 import { formatters, parsers } from './color.js';
 import styles from './PageColor.less';
@@ -21,20 +21,14 @@ const fixValue = value => {
   return hex;
 };
 
-const PageColor = () => {
+const pageRoutes = ['convert','gradient'];
+
+const PageColor = ({ location } : { location: Object }) => {
   const pathSegments = location.pathname.substr(1).split('/');
-
   const type = pathSegments[1];
-  if (!['convert','gradient'].includes(type)) {
-    return <Redirect to={`/${pathSegments[0]}/convert`} />;
+  if (!pageRoutes.includes(type || '')) {
+    return <Redirect to={'/' + pathSegments[0] + '/' + pageRoutes[0]} />;
   }
-
-  const tabs = (
-    <Tabs>
-      <NavLink to={`/${pathSegments[0]}/convert`} exact>Conversion</NavLink>
-      <NavLink to={`/${pathSegments[0]}/gradient`}>Gradient</NavLink>
-    </Tabs>
-  );
 
   const state = useStore();
 
@@ -56,8 +50,6 @@ const PageColor = () => {
 
     return (
       <div>
-        {tabs}
-
         <label>Preview</label>
         <div className={styles.preview}>
           <div style={preview}/>
@@ -111,8 +103,6 @@ const PageColor = () => {
 
     return (
       <div>
-        {tabs}
-
         {colorInput(0)}
         {colorInput(1)}
         <button onClick={actions.switchColors}>Reverse order</button>

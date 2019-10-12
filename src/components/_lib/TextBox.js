@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import cx from 'classnames';
-import styles from "./TextBox.less";
+import styles from './TextBox.less';
 import screen from 'helpers/screen';
 
 const blurOnEscape = e => {

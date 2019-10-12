@@ -1,5 +1,5 @@
-import { reduceBy, subnetToMask } from "./network";
-import createStore from "../../helpers/createStore";
+import { reduceBy, subnetToMask } from './network';
+import createStore from 'helpers/createStore';
 
 const actionCreators = {
   ipv4: e => state => reduceBy('ipv4', { ...state, ipv4: e.target.value }),

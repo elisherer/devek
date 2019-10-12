@@ -1,19 +1,12 @@
-import React from "react";
-import { render } from "react-dom";
+import React from 'react';
+import { render } from 'react-dom';
 import { BrowserRouter } from 'react-router-dom';
-import App from "./components/App";
-import { initHistory, getHistory } from "./helpers/history";
+import App from './components/App';
 
 const appElement = document.getElementById("root");
 
-const pullHistory = br => {
-  if (br && !getHistory()) {
-    initHistory(br.history);
-  }
-};
-
 render(
-  <BrowserRouter ref={pullHistory}>
+  <BrowserRouter>
     <App />
   </BrowserRouter>
   , appElement);

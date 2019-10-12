@@ -1,12 +1,12 @@
 import React, { useRef, useEffect } from 'react';
 
-import {initShaderProgram} from "./shader";
+import {initShaderProgram} from './shader';
 import vsSource from './shaders/vertex.shader';
 import fsSource from './shaders/fragment.shader';
-import getProgramInfo from "./shaders/program_info";
+import getProgramInfo from './shaders/program_info';
 
-import initBuffers from "./buffers";
-import initTextures from "./textures";
+import initBuffers from './buffers';
+import initTextures from './textures';
 
 import cubeScene from './cubeScene';
 

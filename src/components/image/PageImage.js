@@ -1,9 +1,9 @@
 import React, { useRef } from 'react';
 import cx from 'classnames';
-import {Tabs, TextBox} from '../_lib';
-import { NavLink, Redirect}  from "react-router-dom";
+import { TextBox } from '../_lib';
+import { Redirect }  from 'react-router-dom';
 import { useStore, actions } from './PageImage.store';
-import getEventLocation from "./getEventLocation";
+import getEventLocation from './getEventLocation';
 import {
   toBase64,
   loadFileAsync,
@@ -105,35 +105,13 @@ const onResizeButtonClick = e => {
   actions.loaded(width, height);
 };
 
-const subPages = [
-  {
-    path: '',
-    title: 'Actions',
-  },
-  {
-    path: 'filters',
-    title: 'Filters',
-  },
-  {
-    path: 'crop',
-    title: 'Crop',
-  },
-  {
-    path: 'resize',
-    title: 'Resize',
-  },
-  {
-    path: 'picker',
-    title: 'Color Picker',
-  },
-];
+const pageRoutes = ['', 'filters','crop','resize','picker'];
 
-const PageImage = () => {
+const PageImage = ({ location } : { location: Object }) => {
   const pathSegments = location.pathname.substr(1).split('/');
-
   const type = pathSegments[1];
-  if (type && !subPages.find(sp => sp.path === type)) {
-    return <Redirect to={`/${pathSegments[0]}/${subPages[0].path}`} />;
+  if (!pageRoutes.includes(type || '')) {
+    return <Redirect to={'/' + pathSegments[0] + '/' + pageRoutes[0]} />;
   }
 
   const { dragging, loaded, color, select, resize, crop } = useStore();
@@ -141,15 +119,6 @@ const PageImage = () => {
   initCanvas(canvasRef);
 
   const disabled = !loaded;
-
-  const tabs = (
-    <Tabs>
-      {subPages.map(subPage => (
-        <NavLink key={subPage.path} to={`/${pathSegments[0]}/${subPage.path}`} exact={!subPage.path}>{subPage.title}</NavLink>
-      ))}
-    </Tabs>
-  );
-
 
   const picker = type === 'picker',
     cropper = type === 'crop';
@@ -161,7 +130,6 @@ const PageImage = () => {
         Click and browse for an image or Drag & Drop it here
         <input type="file" style={{display: 'none'}} onChange={onFileChange} />
       </label>
-      {tabs}
 
       {!type && (
         <div className={cx(styles.actions, { [styles.loaded]: loaded })}>

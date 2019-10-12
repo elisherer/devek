@@ -1,4 +1,4 @@
-import Uint64 from "../../helpers/Uint64";
+import Uint64 from 'helpers/Uint64';
 
 const reflect = (val, width) => {
   let resByte = 0;

@@ -1,6 +1,6 @@
 import React from 'react';
 import cx from 'classnames';
-import styles from "./Radio.less";
+import styles from './Radio.less';
 
 const Radio = ({ className, children, options, value, onClick, showEmptyWith } :
                  { className?: string, children?: any, options?: Array, value?: any, onClick?: Function, showEmptyWith?: string }) => (

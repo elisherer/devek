@@ -1,6 +1,6 @@
 import devek from 'devek';
 import MD5 from './md5';
-import createStore from "../../helpers/createStore";
+import createStore from 'helpers/createStore';
 import { parseCertificate } from './asn1';
 import { prettyCert } from './cert';
 import {cipherEncrypt, cipherDecrypt, cipherFormat} from './cipher';

@@ -12,13 +12,20 @@
   width: 0;
   transition: width 300ms ease-in-out;
   height: 100%;
-  color: rgba(255,255,255,0.5);
-  background: url(../assets/devek_watermark.svg) bottom no-repeat, @gui-nav-background;
+  color: @gui-nav-foreground;
+  background: @gui-nav-background;
   background-size: contain;
   overflow-x: hidden;
   overflow-y: scroll;
   position: absolute;
   z-index:998;
+
+  // Chrome, Safari, newer versions of Opera
+  &::-webkit-scrollbar { width: 0 !important }
+  // Firefox
+  overflow: -moz-scrollbars-none;
+  // Internet Explorer +10
+  -ms-overflow-style: none;
 
   .menu {
     background: url(../assets/icons/ic_menu_white_48px.svg) no-repeat;
@@ -32,40 +39,47 @@
     @media (min-width: @screen-desktop-min) {
       display: block;
       position: relative;
+      min-width: @gui-nav-min-width;
       width: @gui-nav-width;
     }
   }
 
   @media (min-width: @screen-desktop-min) {
     position: relative;
-    overflow-y: hidden;
+    min-width: @gui-nav-min-width;
     width: @gui-nav-width;
   }
   &.open {
+    min-width: @gui-nav-min-width;
     width: @gui-nav-width;
   }
 }
 
-.menuitem {
+.navitem {
   color: @gui-nav-foreground;
   text-decoration: none;
   display: block;
-  width: @gui-nav-width;
+  width: 100%;
   height: @gui-nav-item-height;
-  line-height: @gui-nav-item-height;
+  line-height: (@gui-nav-item-height - 2 * @gui-nav-item-padding);
   cursor: pointer;
-  padding-left: 20px;
+  padding: @gui-nav-item-padding;
+  padding-left: 40px;
   border-left: 4px solid transparent;
+  font-size: 18px;
+  text-transform: uppercase;
   &:hover {
     //background-color: rgba(255,255,255,0.1);
     //background: linear-gradient(120deg, white, transparent);
-    border-color: rgba(255,255,255,0.2);
-    background: linear-gradient(120deg, rgba(255,255,255,0.2), transparent);
+    border-color: @gui-nav-hover-color;
+    background: linear-gradient(120deg, @gui-nav-hover-color, transparent);
   }
   &.active {
-    background: linear-gradient(120deg, rgba(255,255,255,0.3), transparent);
-    //background-color: rgba(255,255,255,0.2);
-    border-color: white;
+    color: @gui-nav-selected;
+    //font-weight: bold;
+    //background: linear-gradient(120deg, rgba(255,255,255,0.3), transparent);
+    background-color: rgba(0,0,0,0.2);
+    border-color: @gui-nav-selected;
   }
 }
 
@@ -78,9 +92,25 @@
   margin: 15px 20px 16px 65px;
 
   @media (min-width: @screen-desktop-min) {
-    margin: 16px;
+    margin: 16px 6px;
     width: 162px;
     height: 38px;
+  }
+}
+
+.github {
+  position: absolute;
+  text-align: right;
+  padding-bottom: 10px;
+  right: 16px;
+  top: 20px;
+  @media only screen and (min-width: @screen-desktop-min) {
+    padding-bottom: 10px;
+    right: 24px;
+    top: 26px;
+  }
+  svg {
+    fill: @gui-nav-selected;
   }
 }
 
@@ -91,7 +121,9 @@
   position: relative;
   max-width: 100%;
   @media (min-width: @screen-desktop-min) {
-    max-width: calc(100% - @gui-nav-width);
+    max-width: calc(100% - @gui-nav-min-width);
+    background: url(../assets/devek_watermark.svg) 98% 98% no-repeat;
+    background-size: 15vw;
   }
 }
 
@@ -116,14 +148,13 @@
   width: 34px;
   height: 34px;
   cursor: pointer;
+
+  background: url(../assets/icons/ic_menu_black_48px.svg) no-repeat;
+  background-size: cover;
+
   @media only screen and (min-width: @screen-desktop-min) {
     display: none;
   }
-}
-
-.menu {
-  background: url(../assets/icons/ic_menu_black_48px.svg) no-repeat;
-  background-size: cover;
 }
 
 .header {
@@ -155,6 +186,7 @@
   
   @media (min-width: @screen-desktop-min) {
     padding: 10px;
+    height: @gui-nav-item-height;
     display: block;
   }
 }
@@ -163,20 +195,20 @@
   flex: 1;
   height: 100%;
   overflow: auto;
-
   > div {
     padding: 10px;
     width: 100%;
-    background: white;
+    background: @gui-card-color;
     position: relative;
 
     @media only screen and (min-width: @screen-desktop-min) {
       width: fit-content;
       max-width: calc(100% - 40px);
-      min-width: (@screen-desktop-min - @gui-nav-width - 40px);
+      min-width: (@screen-desktop-min - @gui-nav-min-width - 40px);
       padding: 20px;
       margin: 20px;
-      box-shadow: 0 0 16px rgba(0,0,0,.2);
+      box-shadow: @gui-card-shadow;
+      border-radius: 10px;
     }
     @media only screen and (min-width: 1024px) {
       min-width: 768px;
@@ -198,17 +230,48 @@
   }
 }
 
-.github {
-  position: absolute;
-  bottom: 0;
-  text-align: right;
-  padding-bottom: 10px;
-  right: 10px;
-  left: 10px;
+.tabs {
+  line-height: 30px;
+  background: @gui-card-color;
+  //box-shadow: @gui-card-shadow;
+  
+  //horizontal scrolling
+  overflow-y: auto;
+  white-space: nowrap;
+
+  // Chrome, Safari, newer versions of Opera
+  &::-webkit-scrollbar { height: 0 !important }
+  // Firefox
+  overflow: -moz-scrollbars-none;
+  // Internet Explorer +10
+  -ms-overflow-style: none;
+
   @media only screen and (min-width: @screen-desktop-min) {
-    text-align: center;
+    width: fit-content;
+    padding: 0 20px;
+    margin: 20px 20px 0;
+    border-radius: 20px;
   }
-  svg {
-    fill: white;
+
+  > * {
+    text-align: center;
+    color: #999;
+    text-decoration: none;
+    display: inline-block;
+    padding: 8px 8px;
+    font-size: 14px; 
+    font-weight: bold;
+    min-width: 60px;
+    cursor: pointer;
+    user-select: none;
+    border-bottom: 2px solid @gui-card-header-border;
+    @media only screen and (min-width: @screen-desktop-min) {
+      border-color: @gui-card-color;
+    }
+    &[aria-current], &[data-active] {
+      color: @gui-secondary-color;
+      border-bottom: 2px solid @gui-secondary-color;
+
+    }
   }
 }

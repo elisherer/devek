@@ -5,11 +5,9 @@ import {actions} from "./PageCrypto.store";
 
 import styles from "./PageCrypto.less";
 
-const CryptoCipher = ({ tabs, alg, kdf, input, passphrase, useSalt, salt, cipherKey, iv, aesCounter, jwk, output } :
-                        { tabs: any, alg: string, kdf: string, input: string, passphrase: string, useSalt: boolean, salt: string, cipherKey: string, iv: string, aesCounter: string, jwk: string, output: string }) => (
+const CryptoCipher = ({ alg, kdf, input, passphrase, useSalt, salt, cipherKey, iv, aesCounter, jwk, output } :
+                        { alg: string, kdf: string, input: string, passphrase: string, useSalt: boolean, salt: string, cipherKey: string, iv: string, aesCounter: string, jwk: string, output: string }) => (
   <div>
-    {tabs}
-
     <label>Algorithm:</label>
     <Radio className={styles.options2} options={["AES-CBC","AES-CTR","AES-GCM","RSA-OAEP"]} value={alg} onClick={actions.cipherAlg} />
 

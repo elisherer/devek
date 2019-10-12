@@ -35,29 +35,38 @@ module.exports = function (api) {
 
   const presets = [
     "@babel/preset-flow",
-    "@babel/preset-react",
+
+    ["@babel/preset-react", {
+      "development": dev,
+    }],
+
     ["@babel/preset-env", {
       "modules": test ? "commonjs" : false,
       "useBuiltIns": "usage",
       "corejs": 3,
     }],
+
     [babelPresetStage1, { decoratorsLegacy: true }],
   ];
 
-  let plugins =
+  let plugins = [
+    // plugins to include
 
-    prod ? [
+  ].concat(
+
+    prod ? [ // production only
       "@babel/plugin-transform-react-constant-elements",
       "@babel/plugin-transform-react-inline-elements",
       "babel-plugin-transform-react-pure-class-to-function",
-      "babel-plugin-transform-react-remove-prop-types"
+      "babel-plugin-transform-react-remove-prop-types",
 
-    ] : dev ? [
-      "react-hot-loader/babel"
+    ] : dev ? [ // development only
+      "react-hot-loader/babel",
 
-    ] : [
+    ] : [ // test only
 
-    ];
+    ]
+  ).filter(Boolean);
 
   return {
     presets,

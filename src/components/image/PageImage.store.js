@@ -1,4 +1,4 @@
-import createStore from "../../helpers/createStore";
+import createStore from 'helpers/createStore';
 
 const actionCreators = {
   loaded: (width, height) => state => ({ ...state, loaded: true, resize: { width, height }, crop: { x: 0, y: 0, width, height }}),

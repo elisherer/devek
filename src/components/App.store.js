@@ -1,4 +1,4 @@
-import createStore from "../helpers/createStore";
+import createStore from 'helpers/createStore';
 
 const actionCreators = {
   drawerOpen: () => state => ({

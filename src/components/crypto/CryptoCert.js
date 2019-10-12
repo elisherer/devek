@@ -30,11 +30,9 @@ const onPEMChange = e => {
   actions.loaded(pem);
 };
 
-const CryptoHash = ({ tabs, pem, output, dragging } : { tabs: any, pem: string, output: string, dragging: boolean }) => (
+const CryptoHash = ({ pem, output, dragging } : { pem: string, output: string, dragging: boolean }) => (
   <div onDragEnter={actions.onDragEnter} onDragOver={onDragOver}
        onDragLeave={actions.onDragLeave} onDrop={onDrop}>
-    {tabs}
-
     <div>
       PEM Certificate (Paste, Drop or <label className={styles.upload}>Browse...<input type="file" style={{display: 'none'}} onChange={onFileChange} /></label>)
     </div>

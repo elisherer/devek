@@ -1,6 +1,6 @@
-import createStore from "../../helpers/createStore";
+import createStore from 'helpers/createStore';
 
-import {decodeAsync, encodeAsync} from "./jwt";
+import {decodeAsync, encodeAsync} from './jwt';
 
 const actionCreators = {
   in_token: e => async (state, actions) => {

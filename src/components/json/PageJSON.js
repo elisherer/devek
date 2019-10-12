@@ -1,7 +1,7 @@
 import React from 'react';
 import { Checkbox, CopyToClipboard, TextArea, TextBox } from '../_lib';
 import { useStore, actions } from './PageJSON.store';
-import { queryObject } from "./json";
+import { queryObject } from './json';
 
 let objSource, obj;
 

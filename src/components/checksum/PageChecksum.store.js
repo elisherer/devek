@@ -1,6 +1,6 @@
 import devek from 'devek';
 import { luhn, crcByName } from './checksum';
-import createStore from "../../helpers/createStore";
+import createStore from 'helpers/createStore';
 
 const getByFormat = (input, format) => format === 'Hex' ? devek.hexStringToArray(input) : devek.stringToArray(input);
 

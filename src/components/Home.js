@@ -1,10 +1,10 @@
 import React from 'react';
 import jokes from '../jokes';
 
-import styles from "./Home.less";
+import styles from './Home.less';
 
 import logo from '../assets/devek_text.svg';
-import DevekCube from "./webgl/DevekCube";
+import DevekCube from './webgl/DevekCube';
 
 const dayOfTheYear = ~~((Date.now() - (new Date(new Date().getFullYear() + '-01-01'))) / 864e5);
 const jokeOfTheDay = jokes[(dayOfTheYear % jokes.length)];

@@ -32,7 +32,7 @@ const drawClockFactory = (ctx, r) => function drawClock() {
   const now = new Date(); 
   let hour = now.getHours();
   let minute = now.getMinutes();
-  let second = now.getSeconds();
+  let second = now.getSeconds() + now.getMilliseconds() / 1000;
   drawHand(ctx, ((hour % 12)*Math.PI/6) + (minute*Math.PI/(6*60)) + (second*Math.PI/(360*60)), r*0.5, r*0.04);
   drawHand(ctx, (minute*Math.PI/30) + (second*Math.PI/(30*60)), r*0.8, r*0.04);
   drawHand(ctx, second*Math.PI/30, r*0.9, r*0.02, 'red');
@@ -69,11 +69,13 @@ const Clock = props => {
       watchFace = drawFace(ctx, r)
     }
     const callback = drawClockFactory(ctx, r);
-    callback();
-    const timer = setInterval(callback, 1000);
-    return () => {
-      clearTimeout(timer);
-    };
+    let id;
+    const tick = () => {
+      callback();
+      id = requestAnimationFrame(tick);
+    }
+    tick();
+    return () => cancelAnimationFrame(id);
   }, []);
 
   return <canvas ref={ref} {...props} />
