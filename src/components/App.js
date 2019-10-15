@@ -1,5 +1,7 @@
 import React, { Fragment, Suspense, useEffect } from 'react';
 import { Switch, Route, Link, NavLink, Redirect, useLocation } from 'react-router-dom';
+import Icon from '@mdi/react';
+import { mdiGithubCircle } from '@mdi/js';
 import cx from 'classnames';
 import SearchBox from './search/SearchBox';
 import NotFound from './NotFound';
@@ -34,6 +36,9 @@ const App = () => {
       </Fragment>
     ) : (
       <NavLink key={path} to={path} className={styles.navitem} activeClassName={styles.active} aria-label={siteMap[path].title}>
+        {!!siteMap[path].icon && (
+          <Icon path={siteMap[path].icon} size={1}/>
+        )}
         {siteMap[path].title}
       </NavLink>
     );
@@ -57,21 +62,17 @@ const App = () => {
         <div className={styles.menu} onClick={actions.drawerClose}/>
         <div className={styles.github} >
           <a href="https://github.com/elisherer/devek" target="_blank" rel="noopener noreferrer" title="GitHub">
-            <svg width="28" height="28" viewBox="0 0 16 16" aria-hidden="true">
-              <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z" />
-            </svg>
+            <Icon path={mdiGithubCircle} size={1.33} />
           </a>
         </div>
         {navLinks}
       </nav>
       <main className={styles.main}>
         {state.drawer && <div className={styles.overlay} onClick={actions.drawerClose} /> }
+        <SearchBox />
         <header className={styles.header}>
           <div className={styles.menu} onClick={actions.drawerOpen}/>
-          {header && <span className={styles.description}>{header}</span>}
-        </header>
-        <SearchBox />
-        <Suspense fallback={<Spinner />}>
+          <h1>{siteMapParent.icon && <Icon path={siteMapParent.icon} size={1.33} />} {siteMapParent.header}</h1>
           {siteMapParent && siteMapParent.children && (
           <nav className={styles.tabs}>
             {Object.keys(siteMapParent.children).map(path => 
@@ -79,6 +80,8 @@ const App = () => {
             )}
           </nav>
           )}
+        </header>       
+        <Suspense fallback={<Spinner />}>
           <article className={styles.article}>
             <Switch>
               {Object.keys(siteMap).map(path => (

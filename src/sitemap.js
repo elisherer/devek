@@ -19,6 +19,25 @@ import PageData from './components/data/PageData';
 import PageURL from './components/url/PageURL';
 import PageChecksum from './components/checksum/PageChecksum';
 
+import {
+  mdiText, // text
+  mdiCalculator, // base
+  mdiRegex, // regex
+  mdiJson, // json
+  mdiXml, // xml
+  mdiShieldKeyOutline, // jwt
+  mdiClockOutline, // time
+  mdiImage, // image
+  mdiDiceMultipleOutline, // random
+  mdiLockOutline, // crypto
+  mdiVectorDifference, // diff
+  mdiPalette, // color
+  mdiLanConnect, // network
+  mdiFormatLineStyle, // data
+  mdiLink, // url
+  mdiHandOkay, // checksum
+} from '@mdi/js';
+
 const PageCryptoLazy = lazy(() => import(/* webpackChunkName: "crypto" */'./components/crypto/PageCrypto'));
 
 export const siteMap = {
@@ -27,7 +46,7 @@ export const siteMap = {
     keyword: 'home',
     title: 'Home',
     header: 'Developer Kit',
-    description: 'Home'
+    description: 'Home',
   },
   "/text": {
     component: PageText,
@@ -35,6 +54,7 @@ export const siteMap = {
     title: 'Text',
     header: "Text Conversion",
     description: "Converting Case, Encodings (URL, HTML, Base64)",
+    icon: mdiText,
     children: {
       "/case": {
         keyword: 'case',
@@ -64,6 +84,7 @@ export const siteMap = {
     title: 'Base',
     header: 'Base Conversion',
     description: "Convert between bases",
+    icon: mdiCalculator,
     children: {
       "/numbers": {
         keyword: 'numbers',
@@ -82,14 +103,16 @@ export const siteMap = {
     keyword: 'regex',
     title: 'RegEx',
     header: 'RegEx Tester',
-    description: "Regular expression testing"
+    description: "Regular expression testing",
+    icon: mdiRegex,
   },
   "/json": {
     component: PageJSON,
     keyword: 'json',
     title: 'JSON',
-    header: 'JSON Debugger/Prettifier',
-    description: "Debug, Prettify"
+    header: 'JSON Tools',
+    description: "Debug, Prettify",
+    icon: mdiJson,
   },
   "/xml": {
     component: PageXML,
@@ -97,6 +120,7 @@ export const siteMap = {
     title: 'XML',
     header: 'XML Tools',
     description: "Prettify, Query by XPath and Transform",
+    icon: mdiXml,
     children: {
       "/": {
         keyword: 'xpath',
@@ -116,6 +140,7 @@ export const siteMap = {
     title: 'JWT',
     header: 'JWT Tool',
     description: "Decode, Verify & Encode",
+    icon: mdiShieldKeyOutline,
     children: {
       "/decode": {
         keyword: 'decode',
@@ -133,8 +158,9 @@ export const siteMap = {
     component: PageTime,
     keyword: 'time',
     title: 'Time',
-    header: 'Time tools',
+    header: 'Time Tools',
     description: "See world time and do conversions",
+    icon: mdiClockOutline,
     children: {
       "/now": {
         keyword: 'now',
@@ -157,8 +183,9 @@ export const siteMap = {
     component: PageImage,
     keyword: 'image',
     title: 'Image',
-    header: 'Image web tools',
+    header: 'Image Tools',
     description: 'Convert, crop, resize, filter images',
+    icon: mdiImage,
     children: {
       "/": {
         keyword: 'image',
@@ -193,6 +220,7 @@ export const siteMap = {
     title: 'Random',
     header: 'Random Generator',
     description: "Generate Random passwords, numbers, etc",
+    icon: mdiDiceMultipleOutline,
     children: {
       "/password": {
         keyword: 'password',
@@ -210,8 +238,9 @@ export const siteMap = {
     component: PageCryptoLazy,
     keyword: 'crypto',
     title: 'Crypto',
-    header: 'Crypto tools',
+    header: 'Crypto Tools',
     description: 'Cryptography tools',
+    icon: mdiLockOutline,
     children: {
       "/hash": {
         keyword: 'hash',
@@ -240,14 +269,16 @@ export const siteMap = {
     keyword: 'diff',
     title: 'Diff',
     header: 'Difference finder',
-    description: 'Find differences between two texts'
+    description: 'Find differences between two texts',
+    icon: mdiVectorDifference,
   },
   "/color": {
     component: PageColor,
     keyword: 'color',
     title: 'Color',
-    header: 'Color tools',
+    header: 'Color Tools',
     description: 'Convert between different color representations',
+    icon: mdiPalette,
     children: {
       "/convert": {
         keyword: 'convert',
@@ -265,29 +296,33 @@ export const siteMap = {
     component: PageNetwork,
     keyword: 'network',
     title: 'Network',
-    header: 'Network tools',
-    description: 'Network information utilities (IP address and more)'
+    header: 'Network Tools',
+    description: 'Network information utilities (IP address and more)',
+    icon: mdiLanConnect,
   },
   "/data": {
     component: PageData,
     keyword: 'data',
     title: 'Data',
-    header: 'Data tools',
-    description: 'Data manipulation tools'
+    header: 'Data Tools',
+    description: 'Data manipulation tools',
+    icon: mdiFormatLineStyle,
   },
   "/url": {
     component: PageURL,
     keyword: 'url',
     title: 'URL',
-    header: 'URL parser',
-    description: 'Parse URL to its components'
+    header: 'URL Parser',
+    description: 'Parse URL to its components',
+    icon: mdiLink,
   },
   "/checksum": {
     component: PageChecksum,
     keyword: 'checksum',
     title: 'Checksum',
-    header: 'Checksum tools',
+    header: 'Checksum Tools',
     description: 'Calculate various checksums',
+    icon: mdiHandOkay,
     children: {
       "/crc": {
         keyword: 'crc',

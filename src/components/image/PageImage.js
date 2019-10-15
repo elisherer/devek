@@ -123,54 +123,65 @@ const PageImage = ({ location } : { location: Object }) => {
   const picker = type === 'picker',
     cropper = type === 'crop';
 
-  return (
-    <div  onDragEnter={actions.onDragEnter} onDragOver={onDragOver}
-          onDragLeave={actions.onDragLeave} onDrop={onDrop}>
-      <label className={cx(styles.dropbox, { [styles.dragging]: dragging })}>
-        Click and browse for an image or Drag & Drop it here
-        <input type="file" style={{display: 'none'}} onChange={onFileChange} />
-      </label>
+  const dropHandlers = {
+    onDragEnter: actions.onDragEnter,
+    onDragLeave: actions.onDragLeave,
+    onDragOver,
+    onDrop
+  };
 
-      {!type && (
-        <div className={cx(styles.actions, { [styles.loaded]: loaded })}>
-          <button disabled={disabled} onClick={handleRotate} data-angle="90">Rotate right</button>
-          <button disabled={disabled} onClick={handleRotate} data-angle="270">Rotate left</button>
-          <button disabled={disabled} onClick={flipH}>Flip H</button>
-          <button disabled={disabled} onClick={flipV}>Flip V</button>
-          <button disabled={disabled} onClick={toBase64}>To Base64</button>
-        </div>
-      )}
-      {type === 'filters' && (
-        <div className={cx(styles.actions, { [styles.loaded]: loaded })}>
-          <button disabled={disabled} onClick={greyscale}>Greyscale</button>
-          <button disabled={disabled} onClick={invert}>Invert</button>
-          <button disabled={disabled} onClick={sepia}>Sepia</button>
-        </div>
-      )}
-      { type === 'crop' && (
-        <div className={cx(styles.actions, { [styles.loaded]: loaded })}>
-          <TextBox disabled={disabled} className={styles.inline} type="number" value={crop.x} data-input="x" onChange={actions.cropInput} />
-          ,<TextBox disabled={disabled} className={styles.inline} type="number" value={crop.y} data-input="y" onChange={actions.cropInput} /> (
-          <TextBox disabled={disabled} className={styles.inline} type="number" value={crop.width} data-input="width" onChange={actions.cropInput} /> x
-          <TextBox disabled={disabled} className={styles.inline} type="number" value={crop.height} data-input="height" onChange={actions.cropInput} /> )
-          &nbsp;
-          <button disabled={disabled} data-x={crop.x} data-y={crop.y} data-width={crop.width} data-height={crop.height} onClick={onCropButtonClick}>Crop</button>
-          <div>* You can draw a rectangle on the image to set the coordinates before cropping</div>
-        </div>
-      )}
-      { type === 'resize' && (
-        <div className={cx(styles.actions, { [styles.loaded]: loaded })}>
-          <TextBox disabled={disabled} className={styles.inline} type="number" value={resize.width} data-input="width" onChange={actions.resizeInput} /> x <TextBox disabled={disabled} className={styles.inline} type="number" value={resize.height} data-input="height" onChange={actions.resizeInput} />
-          &nbsp;
-          <button disabled={disabled} data-width={resize.width} data-height={resize.height} onClick={onResizeButtonClick}>Resize</button>
-        </div>
-      )}
-      { type === 'picker' && (
-        <div className={cx(styles.actions, { [styles.loaded]: loaded })}>
-          <div>Picker: <input disabled={disabled} type="color" readOnly value={color} /> ► <input disabled={disabled} readOnly type="color" value={select} />&nbsp;<TextBox className={styles.inline} readOnly value={select} /></div>
-        </div>
-      )}
-      <div className={styles.canvas_wrapper}>
+  const dropBox = (
+    <label className={cx(styles.dropbox, { [styles.dragging]: dragging })} {...dropHandlers}>
+      Click and browse for an image or Drag & Drop it here
+      <input type="file" style={{display: 'none'}} onChange={onFileChange} />
+    </label>
+  );
+
+  return (
+    <>
+      <div {...dropHandlers} >
+        {!type && (
+          <div className={cx(styles.actions, { [styles.loaded]: loaded })}>
+            <button disabled={disabled} onClick={handleRotate} data-angle="90">Rotate right</button>
+            <button disabled={disabled} onClick={handleRotate} data-angle="270">Rotate left</button>
+            <button disabled={disabled} onClick={flipH}>Flip H</button>
+            <button disabled={disabled} onClick={flipV}>Flip V</button>
+            <button disabled={disabled} onClick={toBase64}>To Base64</button>
+          </div>
+        )}
+        {type === 'filters' && (
+          <div className={cx(styles.actions, { [styles.loaded]: loaded })}>
+            <button disabled={disabled} onClick={greyscale}>Greyscale</button>
+            <button disabled={disabled} onClick={invert}>Invert</button>
+            <button disabled={disabled} onClick={sepia}>Sepia</button>
+          </div>
+        )}
+        { type === 'crop' && (
+          <div className={cx(styles.actions, { [styles.loaded]: loaded })}>
+            <TextBox disabled={disabled} className={styles.inline} type="number" value={crop.x} data-input="x" onChange={actions.cropInput} />
+            ,<TextBox disabled={disabled} className={styles.inline} type="number" value={crop.y} data-input="y" onChange={actions.cropInput} /> (
+            <TextBox disabled={disabled} className={styles.inline} type="number" value={crop.width} data-input="width" onChange={actions.cropInput} /> x
+            <TextBox disabled={disabled} className={styles.inline} type="number" value={crop.height} data-input="height" onChange={actions.cropInput} /> )
+            &nbsp;
+            <button disabled={disabled} data-x={crop.x} data-y={crop.y} data-width={crop.width} data-height={crop.height} onClick={onCropButtonClick}>Crop</button>
+            <div>* You can draw a rectangle on the image to set the coordinates before cropping</div>
+          </div>
+        )}
+        { type === 'resize' && (
+          <div className={cx(styles.actions, { [styles.loaded]: loaded })}>
+            <TextBox disabled={disabled} className={styles.inline} type="number" value={resize.width} data-input="width" onChange={actions.resizeInput} /> x <TextBox disabled={disabled} className={styles.inline} type="number" value={resize.height} data-input="height" onChange={actions.resizeInput} />
+            &nbsp;
+            <button disabled={disabled} data-width={resize.width} data-height={resize.height} onClick={onResizeButtonClick}>Resize</button>
+          </div>
+        )}
+        { type === 'picker' && (
+          <div className={cx(styles.actions, { [styles.loaded]: loaded })}>
+            <div>Picker: <input disabled={disabled} type="color" readOnly value={color} /> ► <input disabled={disabled} readOnly type="color" value={select} />&nbsp;<TextBox className={styles.inline} readOnly value={select} /></div>
+          </div>
+        )}
+      </div>
+      {!loaded && dropBox}
+      <section className={styles.canvas_wrapper} {...dropHandlers}>
         {cropper && loaded && <div className={styles.rubber_band} style={{ left: crop.x, top: crop.y, width: crop.width, height: crop.height }} />}
         <canvas ref={canvasRef}
           className={cx(styles.canvas, { [styles.visible]: loaded })}
@@ -178,8 +189,8 @@ const PageImage = ({ location } : { location: Object }) => {
           onMouseMove={picker ? onMouseMove : cropper ? onCropMouseMove: undefined}
           onMouseDown={cropper ? onCropMouseDown : undefined}
         />
-      </div>
-    </div>
+      </section>
+    </>
   );
 };
 

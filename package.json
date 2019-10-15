@@ -27,6 +27,8 @@
   "author": "Eli Sherer <eli.sherer@gmail.com>",
   "license": "MIT",
   "dependencies": {
+    "@mdi/js": "4.5.95",
+    "@mdi/react": "1.2.1",
     "classnames": "2.2.6",
     "core-js": "3.2.1",
     "react": "16.10.2",

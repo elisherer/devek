@@ -3,6 +3,7 @@
 .dropbox {
   border: 2px dashed #888;
   padding: 20px;
+  margin: 20px;
 }
 .dragging {
   border-color: #333;
@@ -20,11 +21,14 @@
 
 }
 .canvas {
-  max-width: 100%;
+  //max-width: 100%;
   display: none;
 }
 .canvas_wrapper {
   position:relative;
+  @media (min-width: @screen-desktop-min) {
+    margin: 20px;
+  }
 }
 .rubber_band {
   position:absolute;

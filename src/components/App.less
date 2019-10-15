@@ -39,18 +39,15 @@
     @media (min-width: @screen-desktop-min) {
       display: block;
       position: relative;
-      min-width: @gui-nav-min-width;
       width: @gui-nav-width;
     }
   }
 
   @media (min-width: @screen-desktop-min) {
     position: relative;
-    min-width: @gui-nav-min-width;
     width: @gui-nav-width;
   }
   &.open {
-    min-width: @gui-nav-min-width;
     width: @gui-nav-width;
   }
 }
@@ -81,6 +78,14 @@
     background-color: rgba(0,0,0,0.2);
     border-color: @gui-nav-selected;
   }
+  svg { 
+    margin-right: 10px;
+    vertical-align: middle;
+    padding-bottom: 5px;
+    path {
+      fill: @gui-nav-foreground;
+    }
+  }
 }
 
 .logo {
@@ -103,7 +108,7 @@
   text-align: right;
   padding-bottom: 10px;
   right: 16px;
-  top: 20px;
+  top: 14px;
   @media only screen and (min-width: @screen-desktop-min) {
     padding-bottom: 10px;
     right: 24px;
@@ -121,9 +126,17 @@
   position: relative;
   max-width: 100%;
   @media (min-width: @screen-desktop-min) {
-    max-width: calc(100% - @gui-nav-min-width);
+    max-width: calc(100% - @gui-nav-width);
     background: url(../assets/devek_watermark.svg) 98% 98% no-repeat;
     background-size: 15vw;
+  }
+  h1 {
+    margin: 12px 56px 0;
+    font-size: 20px;
+    @media (min-width: @screen-desktop-min) {
+      font-size: 22px;
+      margin-left: 20px;
+    }
   }
 }
 
@@ -143,8 +156,8 @@
 
 .menu {
   position: absolute;
-  top: 14px;
-  left: 12px;
+  top: 10px;
+  left: 14px;
   width: 34px;
   height: 34px;
   cursor: pointer;
@@ -158,24 +171,14 @@
 }
 
 .header {
-  background: white;
-  height: @gui-header-height;
-  font-family: @font-mono;
-  font-size: 24px;
-  display: flex;
-  align-items: center;
-  border-bottom: 1px solid @gui-grey-border;
-
-  &:empty {
-    border-bottom: none;
-  }
-
-  .description {
-    margin-left: 54px;
-    font-size: 18px;
-    color: @gui-text-light-color;
-    @media only screen and (min-width: @screen-desktop-min) {
-      margin-left: 20px;
+  min-height: @gui-header-height;
+  svg {
+    display: none;
+    @media (min-width: @screen-desktop-min) {
+      vertical-align: middle;
+      margin-right: 10px;
+      padding-bottom: 6px;
+      display: initial;
     }
   }
 }
@@ -204,7 +207,7 @@
     @media only screen and (min-width: @screen-desktop-min) {
       width: fit-content;
       max-width: calc(100% - 40px);
-      min-width: (@screen-desktop-min - @gui-nav-min-width - 40px);
+      min-width: (@screen-desktop-min - @gui-nav-width - 40px);
       padding: 20px;
       margin: 20px;
       box-shadow: @gui-card-shadow;
@@ -232,8 +235,6 @@
 
 .tabs {
   line-height: 30px;
-  background: @gui-card-color;
-  //box-shadow: @gui-card-shadow;
   
   //horizontal scrolling
   overflow-y: auto;
@@ -248,9 +249,7 @@
 
   @media only screen and (min-width: @screen-desktop-min) {
     width: fit-content;
-    padding: 0 20px;
-    margin: 20px 20px 0;
-    border-radius: 20px;
+    margin: 0 20px;
   }
 
   > * {
@@ -264,10 +263,7 @@
     min-width: 60px;
     cursor: pointer;
     user-select: none;
-    border-bottom: 2px solid @gui-card-header-border;
-    @media only screen and (min-width: @screen-desktop-min) {
-      border-color: @gui-card-color;
-    }
+    border-bottom: 2px solid @gui-background-color;
     &[aria-current], &[data-active] {
       color: @gui-secondary-color;
       border-bottom: 2px solid @gui-secondary-color;

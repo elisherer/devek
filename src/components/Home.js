@@ -28,6 +28,15 @@ const Home = () => (
 
     <p>Press <kbd>/</kbd> for quick search</p>
 
+    <table>
+      <caption>Third-party libraries</caption>
+      <tr><td>@mdi/js & @mdi/react</td><td>MIT - Copyright © Austin Andrews</td></tr>
+      <tr><td>classnames</td><td>MIT - Copyright © Jed Watson</td></tr>
+      <tr><td>core-js</td><td>MIT - Copyright © Denis Pushkarev</td></tr>
+      <tr><td>react & react-dom</td><td>MIT - Copyright © Facebook, Inc. and its affiliates</td></tr>
+      <tr><td>react-router-dom</td><td>MIT - Copyright © React Training</td></tr>
+    </table>
+
     <footer className="emoji"><strong>Developed & Hosted</strong> with ❤ by <a href="https://github.com/elisherer">elisherer</a></footer>
   </div>
 );

@@ -14,11 +14,11 @@ export const loadFileAsync = (file, callback) => {
   reader.onload = e => {
     const img = new Image();
     img.onload = () => {
-      canvas.width = img.width;
-      canvas.height = img.height;
+      canvas.width = img.naturalWidth;
+      canvas.height = img.naturalHeight;
       ctx.drawImage(img, 0, 0);
       base64Source = img.src;
-      callback(img.width, img.height);
+      callback(canvas.width, canvas.height);
     };
     img.src = e.target.result;
   };
@@ -69,9 +69,13 @@ export const sepia = createFilter((data, index) => {
 
 export const invert = () => {
 
+  const gco = ctx.globalCompositeOperation;
+
   ctx.globalCompositeOperation = 'difference';
   ctx.fillStyle = 'white';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  ctx.globalCompositeOperation = gco; // reset
 
   base64Source = canvas.toDataURL();
 };
