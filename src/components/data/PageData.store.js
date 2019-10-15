@@ -48,7 +48,11 @@ const actionCreators = {
   run: () => state => {
     const result = state.pipe.reduce((a, c) => data.actions[c.action].func(a, c.parameters), state.input);
 
-    return { ...state, output: Array.isArray(result) ? (result.length === 1 ? result[0] : JSON.stringify(result, null, 2)) : result };
+    return { 
+      ...state, 
+      timestamp: new Date(),
+      output: Array.isArray(result) ? (result.length === 1 ? result[0] : JSON.stringify(result, null, 2)) : result 
+    };
   },
 };
 

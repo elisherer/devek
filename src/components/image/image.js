@@ -69,13 +69,11 @@ export const sepia = createFilter((data, index) => {
 
 export const invert = () => {
 
-  const gco = ctx.globalCompositeOperation;
-
+  ctx.save();
   ctx.globalCompositeOperation = 'difference';
   ctx.fillStyle = 'white';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-  ctx.globalCompositeOperation = gco; // reset
+  ctx.restore();
 
   base64Source = canvas.toDataURL();
 };
@@ -137,7 +135,7 @@ export const handleRotate = e => {
   let angle_rad = +e.target.dataset.angle * Math.PI / 180,
     w = canvas.width,
     h = canvas.height;
-
+  
   const oc = document.createElement('canvas'),
     octx = oc.getContext('2d');
   oc.width = w;

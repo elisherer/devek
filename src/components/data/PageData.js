@@ -8,7 +8,7 @@ import styles from './PageData.less';
 const options = Object.keys(data.actions);
 
 const PageData = () => {
-  const { input, parameters, pickedAction, pipe, selected, output } = useStore();
+  const { input, parameters, pickedAction, pipe, selected, output, timestamp } = useStore();
   const pick = data.actions[pickedAction];
 
   return (
@@ -62,7 +62,7 @@ const PageData = () => {
       <>
         <h1>Result</h1>
 
-        <span>Output:</span><CopyToClipboard from="data_output"/>
+        <span>Output:</span><CopyToClipboard from="data_output"/> <span className={styles.timestamp}> {timestamp.toISOString()}</span>
         <TextArea id="data_output" readOnly lineNumbers value={output} />
       </>
       )}

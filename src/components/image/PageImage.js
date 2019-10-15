@@ -15,6 +15,14 @@ import {
   handleCrop,
   sepia, flipH, flipV
 } from './image';
+import { 
+  mdiRotateLeft, 
+  mdiRotateRight,
+  mdiFlipHorizontal,
+  mdiFlipVertical,
+  mdiCpu64Bit
+} from '@mdi/js';
+import Icon from '@mdi/react';
 
 import styles from './PageImage.less';
 
@@ -139,14 +147,14 @@ const PageImage = ({ location } : { location: Object }) => {
 
   return (
     <>
-      <div {...dropHandlers} >
+      <section className={styles.toolbar} {...dropHandlers} >
         {!type && (
           <div className={cx(styles.actions, { [styles.loaded]: loaded })}>
-            <button disabled={disabled} onClick={handleRotate} data-angle="90">Rotate right</button>
-            <button disabled={disabled} onClick={handleRotate} data-angle="270">Rotate left</button>
-            <button disabled={disabled} onClick={flipH}>Flip H</button>
-            <button disabled={disabled} onClick={flipV}>Flip V</button>
-            <button disabled={disabled} onClick={toBase64}>To Base64</button>
+            <button className="emoji" disabled={disabled} onClick={handleRotate} data-angle="90" title="Rotate right"><Icon path={mdiRotateRight} size={1} /></button>
+            <button className="emoji" disabled={disabled} onClick={handleRotate} data-angle="270" title="Rotate left"><Icon path={mdiRotateLeft} size={1} /></button>
+            <button className="emoji" disabled={disabled} onClick={flipH} title="Flip Horizontal"><Icon path={mdiFlipHorizontal} size={1}/></button>
+            <button className="emoji" disabled={disabled} onClick={flipV} title="Flip Vertical"><Icon path={mdiFlipVertical} size={1}/></button>
+            <button className="emoji" disabled={disabled} onClick={toBase64} title="To Base64"><Icon path={mdiCpu64Bit} size={1}/></button>
           </div>
         )}
         {type === 'filters' && (
@@ -179,7 +187,7 @@ const PageImage = ({ location } : { location: Object }) => {
             <div>Picker: <input disabled={disabled} type="color" readOnly value={color} /> ► <input disabled={disabled} readOnly type="color" value={select} />&nbsp;<TextBox className={styles.inline} readOnly value={select} /></div>
           </div>
         )}
-      </div>
+      </section>
       {!loaded && dropBox}
       <section className={styles.canvas_wrapper} {...dropHandlers}>
         {cropper && loaded && <div className={styles.rubber_band} style={{ left: crop.x, top: crop.y, width: crop.width, height: crop.height }} />}
