@@ -127,6 +127,52 @@ export const handleRotate = angle_rad => {
   return canvas.toDataURL();
 };
 
+export const handleBlur = () => {
+  ctx.save();
+  const blur = 4;
+  let sum = 0;
+  let delta = 5;
+  let alpha_left = 1 / (2 * Math.PI * delta * delta);
+  let step = blur < 3 ? 1 : 2;
+  for (let y = -blur; y <= blur; y += step) {
+    for (let x = -blur; x <= blur; x += step) {
+      let weight = alpha_left * Math.exp(-(x * x + y * y) / (2 * delta * delta));
+      sum += weight;
+    }
+  }
+  for (let y = -blur; y <= blur; y += step) {
+    for (let x = -blur; x <= blur; x += step) {
+      ctx.globalAlpha = alpha_left * Math.exp(-(x * x + y * y) / (2 * delta * delta)) / sum * blur;
+      ctx.drawImage(canvas,x,y);
+    }
+  }
+  ctx.restore();
+
+  return canvas.toDataURL();
+};
+
+const bg = blur => {
+		
+		let sum = 0;
+		let delta = 5;
+		let alpha_left = 1 / (2 * Math.PI * delta * delta);
+		let step = blur < 3 ? 1 : 2;
+		for (let y = -blur; y <= blur; y += step) {
+			for (let x = -blur; x <= blur; x += step) {
+				let weight = alpha_left * Math.exp(-(x * x + y * y) / (2 * delta * delta));
+				sum += weight;
+			}
+		}
+
+		for (let y = -blur; y <= blur; y += step) {
+			for (let x = -blur; x <= blur; x += step) {
+				ctx.globalAlpha = alpha_left * Math.exp(-(x * x + y * y) / (2 * delta * delta)) / sum * blur;
+				ctx.drawImage(canvas,x,y);
+			}
+		}
+		ctx.globalAlpha = 1;
+}
+
 //const rgbToHex = (r, g, b) => "#" + ("000000" + ((r << 16) | (g << 8) | b).toString(16)).slice(-6);
 
 export const getColor = (loc) => {

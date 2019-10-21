@@ -1,5 +1,5 @@
 import createStore from 'helpers/createStore';
-import { handleRotate, handleFlip, handleInvert, handleGreyscale, handleSepia, handleCrop, handleResize, getColor } from './image';
+import { handleRotate, handleFlip, handleInvert, handleGreyscale, handleSepia, handleCrop, handleResize, handleBlur, getColor } from './image';
 import getEventLocation from './getEventLocation';
 
 const setSize = (width, height) => ({ width, height, resize: { width, height }, crop: { x: 0, y: 0, width, height }});
@@ -25,6 +25,7 @@ const actionCreators = {
   invert: () => state => ({ ...state, src: handleInvert() }),
   greyscale: () => state => ({ ...state, src: handleGreyscale() }),
   sepia: () => state => ({ ...state, src: handleSepia() }),
+  blur: () => state => ({ ...state, src: handleBlur() }),
 
   resizeInput: e => state => ({ ...state, resize: { ...state.resize, [e.target.dataset.input]: parseInt(e.target.value) } }),
   resize: () => state => ({ ...state, src: handleResize(state.resize.width, state.resize.height), ...setSize(state.resize.width, state.resize.height) }),

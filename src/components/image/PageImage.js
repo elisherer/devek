@@ -15,6 +15,7 @@ import {
   mdiCpu64Bit,
   mdiInvertColors,
   mdiGradient,
+  mdiBlur,
   mdiImage,
   mdiCrop,
   mdiResize
@@ -143,6 +144,7 @@ const toolbarClassName = cx(styles.actions, { [styles.loaded]: loaded });
             <button className="icon" disabled={disabled} onClick={actions.invert} title="Invert Colors"><Icon path={mdiInvertColors} size={1}/></button>
             <button className="icon" disabled={disabled} onClick={actions.greyscale} title="Greyscale"><Icon path={mdiGradient} size={1}/></button>
             <button className="icon" disabled={disabled} onClick={actions.sepia} title="Sepia"><Icon path={mdiImage} color="#704214" size={1}/></button>
+            <button className="icon" disabled={disabled} onClick={actions.blur} title="Blur"><Icon path={mdiBlur} size={1}/></button>
           </div>
         )}
         { type === 'crop' && (
