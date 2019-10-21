@@ -1,26 +1,23 @@
-import React, { useRef } from 'react';
+import React, { useCallback } from 'react';
 import cx from 'classnames';
 import { TextBox } from '../_lib';
 import { Redirect }  from 'react-router-dom';
 import { useStore, actions } from './PageImage.store';
 import getEventLocation from './getEventLocation';
 import {
-  toBase64,
   loadFileAsync,
-  initCanvas,
-  greyscale,
-  invert,
-  handleRotate,
-  handleResize,
-  handleCrop,
-  sepia, flipH, flipV
 } from './image';
 import { 
   mdiRotateLeft, 
   mdiRotateRight,
   mdiFlipHorizontal,
   mdiFlipVertical,
-  mdiCpu64Bit
+  mdiCpu64Bit,
+  mdiInvertColors,
+  mdiGradient,
+  mdiImage,
+  mdiCrop,
+  mdiResize
 } from '@mdi/js';
 import Icon from '@mdi/react';
 
@@ -30,14 +27,6 @@ const onDragOver = e => {
   e.dataTransfer.dropEffect = 'link';
   e.stopPropagation();
   e.preventDefault();
-};
-
-const rgbToHex = (r, g, b) => "#" + ("000000" + ((r << 16) | (g << 8) | b).toString(16)).slice(-6);
-const onMouseMove = e => {
-  const loc = getEventLocation(e);
-  const ctx = e.target.getContext('2d');
-  const pixelData = ctx.getImageData(loc[0], loc[1], 1, 1).data;
-  actions.color(rgbToHex(pixelData[0],pixelData[1],pixelData[2]));
 };
 
 const onDrop = e => {
@@ -64,8 +53,8 @@ const moveBand = (x,y,w,h) => {
     h = -h;
   }
 
-  actions.crop({
-    x, y, width: w -2, height: h - 2
+  actions.cropInput({
+    x, y, width: w - 2, height: h - 2
   });
 };
 
@@ -77,10 +66,9 @@ function onCropMouseUp(e) {
 }
 
 function onCropMouseMove(e) {
-  if (isDrawing) {
-    const loc = getEventLocation(e);
-    moveBand(start_X, start_Y, loc[0] - start_X, loc[1] - start_Y, 2);
-  }
+  if (!isDrawing) return;
+  const loc = getEventLocation(e);
+  moveBand(start_X, start_Y, loc[0] - start_X, loc[1] - start_Y, 2);
 }
 
 function onCropMouseDown(e) {
@@ -88,30 +76,11 @@ function onCropMouseDown(e) {
   isDrawing = true;
 
   const loc = getEventLocation(e);
-  actions.crop({
-    x: loc[0], y: loc[1], width: 0, height: 0
-  });
   start_X = loc[0];
   start_Y = loc[1];
+
+  moveBand(start_X, start_Y, 0, 0);
 }
-
-const onCropButtonClick = e => {
-  handleCrop(e);
-
-  let width = parseInt(e.target.dataset.width),
-    height = parseInt(e.target.dataset.height);
-
-  actions.loaded(width, height);
-};
-
-const onResizeButtonClick = e => {
-  handleResize(e);
-
-  let width = parseInt(e.target.dataset.width),
-    height = parseInt(e.target.dataset.height);
-
-  actions.loaded(width, height);
-};
 
 const pageRoutes = ['', 'filters','crop','resize','picker'];
 
@@ -122,10 +91,20 @@ const PageImage = ({ location } : { location: Object }) => {
     return <Redirect to={'/' + pathSegments[0] + '/' + pageRoutes[0]} />;
   }
 
-  const { dragging, loaded, color, select, resize, crop } = useStore();
-  const canvasRef = useRef();
-  initCanvas(canvasRef);
+  const { dragging, src, color, select, resize, crop } = useStore();
 
+  const toBase64 = useCallback(() => {
+    const w = window.open('about:blank');
+    setTimeout(() => {
+      const pre = w.document.createElement('pre');
+      pre.style.overflowWrap = "break-word";
+      pre.style.whiteSpace = "pre-wrap";
+      pre.innerHTML = src;
+      w.document.body.appendChild(pre);
+    }, 0);
+  }, [src]);
+
+  const loaded = !!src;
   const disabled = !loaded;
 
   const picker = type === 'picker',
@@ -145,58 +124,62 @@ const PageImage = ({ location } : { location: Object }) => {
     </label>
   );
 
+const toolbarClassName = cx(styles.actions, { [styles.loaded]: loaded });
+
   return (
     <>
       <section className={styles.toolbar} {...dropHandlers} >
         {!type && (
-          <div className={cx(styles.actions, { [styles.loaded]: loaded })}>
-            <button className="emoji" disabled={disabled} onClick={handleRotate} data-angle="90" title="Rotate right"><Icon path={mdiRotateRight} size={1} /></button>
-            <button className="emoji" disabled={disabled} onClick={handleRotate} data-angle="270" title="Rotate left"><Icon path={mdiRotateLeft} size={1} /></button>
-            <button className="emoji" disabled={disabled} onClick={flipH} title="Flip Horizontal"><Icon path={mdiFlipHorizontal} size={1}/></button>
-            <button className="emoji" disabled={disabled} onClick={flipV} title="Flip Vertical"><Icon path={mdiFlipVertical} size={1}/></button>
-            <button className="emoji" disabled={disabled} onClick={toBase64} title="To Base64"><Icon path={mdiCpu64Bit} size={1}/></button>
+          <div className={toolbarClassName}>
+            <button className="icon" disabled={disabled} onClick={actions.rotateRight} title="Rotate right"><Icon path={mdiRotateRight} size={1} /></button>
+            <button className="icon" disabled={disabled} onClick={actions.rotateLeft} title="Rotate left"><Icon path={mdiRotateLeft} size={1} /></button>
+            <button className="icon" disabled={disabled} onClick={actions.flipH} data-dir="h" title="Flip Horizontal"><Icon path={mdiFlipHorizontal} size={1}/></button>
+            <button className="icon" disabled={disabled} onClick={actions.flipV} data-dir="v" title="Flip Vertical"><Icon path={mdiFlipVertical} size={1}/></button>
+            <button className="icon" disabled={disabled} onClick={toBase64} title="To Base64"><Icon path={mdiCpu64Bit} size={1}/></button>
           </div>
         )}
         {type === 'filters' && (
-          <div className={cx(styles.actions, { [styles.loaded]: loaded })}>
-            <button disabled={disabled} onClick={greyscale}>Greyscale</button>
-            <button disabled={disabled} onClick={invert}>Invert</button>
-            <button disabled={disabled} onClick={sepia}>Sepia</button>
+          <div className={toolbarClassName}>
+            <button className="icon" disabled={disabled} onClick={actions.invert} title="Invert Colors"><Icon path={mdiInvertColors} size={1}/></button>
+            <button className="icon" disabled={disabled} onClick={actions.greyscale} title="Greyscale"><Icon path={mdiGradient} size={1}/></button>
+            <button className="icon" disabled={disabled} onClick={actions.sepia} title="Sepia"><Icon path={mdiImage} color="#704214" size={1}/></button>
           </div>
         )}
         { type === 'crop' && (
-          <div className={cx(styles.actions, { [styles.loaded]: loaded })}>
+          <div className={toolbarClassName}>
             <TextBox disabled={disabled} className={styles.inline} type="number" value={crop.x} data-input="x" onChange={actions.cropInput} />
             ,<TextBox disabled={disabled} className={styles.inline} type="number" value={crop.y} data-input="y" onChange={actions.cropInput} /> (
             <TextBox disabled={disabled} className={styles.inline} type="number" value={crop.width} data-input="width" onChange={actions.cropInput} /> x
             <TextBox disabled={disabled} className={styles.inline} type="number" value={crop.height} data-input="height" onChange={actions.cropInput} /> )
             &nbsp;
-            <button disabled={disabled} data-x={crop.x} data-y={crop.y} data-width={crop.width} data-height={crop.height} onClick={onCropButtonClick}>Crop</button>
-            <div>* You can draw a rectangle on the image to set the coordinates before cropping</div>
+            <button className="icon" disabled={disabled} onClick={actions.crop} title="Crop"><Icon path={mdiCrop} size={1}/></button>
           </div>
         )}
         { type === 'resize' && (
-          <div className={cx(styles.actions, { [styles.loaded]: loaded })}>
+          <div className={toolbarClassName}>
             <TextBox disabled={disabled} className={styles.inline} type="number" value={resize.width} data-input="width" onChange={actions.resizeInput} /> x <TextBox disabled={disabled} className={styles.inline} type="number" value={resize.height} data-input="height" onChange={actions.resizeInput} />
             &nbsp;
-            <button disabled={disabled} data-width={resize.width} data-height={resize.height} onClick={onResizeButtonClick}>Resize</button>
+            <button className="icon" disabled={disabled} onClick={actions.resize} title="Resize"><Icon path={mdiResize} size={1}/></button>
           </div>
         )}
         { type === 'picker' && (
-          <div className={cx(styles.actions, { [styles.loaded]: loaded })}>
+          <div className={toolbarClassName}>
             <div>Picker: <input disabled={disabled} type="color" readOnly value={color} /> ► <input disabled={disabled} readOnly type="color" value={select} />&nbsp;<TextBox className={styles.inline} readOnly value={select} /></div>
           </div>
+        )}
+        {type === 'crop' && (
+          <div className={styles.hint}>* You can draw a rectangle on the image to set the coordinates before cropping</div>
         )}
       </section>
       {!loaded && dropBox}
       <section className={styles.canvas_wrapper} {...dropHandlers}>
         {cropper && loaded && <div className={styles.rubber_band} style={{ left: crop.x, top: crop.y, width: crop.width, height: crop.height }} />}
-        <canvas ref={canvasRef}
-          className={cx(styles.canvas, { [styles.visible]: loaded })}
-          onMouseUp={picker ? actions.onMouseClick : cropper ? onCropMouseUp: undefined}
-          onMouseMove={picker ? onMouseMove : cropper ? onCropMouseMove: undefined}
+        {src && <img className={cx(styles.canvas, { [styles.visible]: loaded })}
+          src={src} alt="" draggable={false}
+          onMouseUp={picker ? actions.pick : cropper ? onCropMouseUp: undefined}
+          onMouseMove={picker ? actions.peek : cropper ? onCropMouseMove: undefined}
           onMouseDown={cropper ? onCropMouseDown : undefined}
-        />
+        />}
       </section>
     </>
   );

@@ -21,9 +21,11 @@ function getElementPosition(element) {
  */
 function getEventLocation(event){
   const pos = getElementPosition(event.target);
+  const ox = event.target.parentNode.parentNode.scrollLeft;
+  const oy = event.target.parentNode.parentNode.scrollTop;
   return [
-    event.pageX - pos[0],
-    event.pageY - pos[1]
+    event.pageX - pos[0] + ox,
+    event.pageY - pos[1] + oy
   ];
 }
 

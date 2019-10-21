@@ -1,15 +1,9 @@
-let _ref, canvas, ctx, base64Source;
-
-export const initCanvas = ref => {
-  _ref = ref;
-  if (ref.current === canvas || !ref.current) return;
-  canvas = ref.current;
-  ctx = canvas.getContext('2d');
-};
+const canvas = document.createElement('canvas'),
+    ctx = canvas.getContext('2d');
 
 export const loadFileAsync = (file, callback) => {
-  if (!canvas) initCanvas(_ref);
   if (typeof FileReader === "undefined" || !file || file.type.indexOf("image") === -1) return; // no file or not an image
+
   const reader = new FileReader();
   reader.onload = e => {
     const img = new Image();
@@ -17,8 +11,8 @@ export const loadFileAsync = (file, callback) => {
       canvas.width = img.naturalWidth;
       canvas.height = img.naturalHeight;
       ctx.drawImage(img, 0, 0);
-      base64Source = img.src;
-      callback(canvas.width, canvas.height);
+      const src = img.src;
+      callback(canvas.width, canvas.height, src);
     };
     img.src = e.target.result;
   };
@@ -28,96 +22,77 @@ export const loadFileAsync = (file, callback) => {
   reader.readAsDataURL(file);
 };
 
-export const toBase64 = () => {
-  const w = window.open('about:blank');
-  setTimeout(() => {
-    const pre = w.document.createElement('pre');
-    pre.style.overflowWrap = "break-word";
-    pre.style.whiteSpace = "pre-wrap";
-    pre.innerHTML = base64Source;
-    w.document.body.appendChild(pre);
-  }, 0);
-};
-
 const createFilter = filter => {
   return () => {
     const imageData = ctx.getImageData(0,0, ctx.canvas.width, ctx.canvas.height);
 
     for (let j = 0; j < imageData.width ; j++)
       for (let i = 0; i < imageData.height ; i++)
-        filter(imageData.data, (i*4)*imageData.width+(j*4));
+        filter(imageData.data, (i*4)*imageData.width+(j*4), i, j);
 
     ctx.putImageData(imageData,0, 0);
 
-    base64Source = canvas.toDataURL();
+    return canvas.toDataURL();
   }
 };
 
-export const greyscale = createFilter((data, index) => {
+export const handleGreyscale = createFilter((data, index) => {
   const grey = 0.2989 * data[index] + 0.587 * data[index + 1] + 0.114 * data[index + 2];
   data[index]= grey;
   data[index+1]= grey;
   data[index+2]= grey;
 });
 
-export const sepia = createFilter((data, index) => {
+export const handleSepia = createFilter((data, index) => {
   const r = data[index], g = data[index + 1], b = data[index + 2];
   data[index] = Math.min(255, r * 0.393 + g * 0.769 + b * 0.189);
   data[index + 1] = Math.min(255, r * 0.349 + g * 0.686 + b * 0.168);
   data[index + 2] = Math.min(255, r * 0.272 + g * 0.534 + b * 0.131);
 });
 
-export const invert = () => {
-
+export const handleInvert = () => {
   ctx.save();
   ctx.globalCompositeOperation = 'difference';
   ctx.fillStyle = 'white';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
   ctx.restore();
-
-  base64Source = canvas.toDataURL();
+  return canvas.toDataURL();
 };
 
-export const flipH = () => {
+export const handleFlip = dir => {
   ctx.save();
-  ctx.translate(canvas.width, 0);
-  ctx.scale(-1, 1);
+  if (dir === 'h' ) {
+    ctx.translate(canvas.width, 0);
+    ctx.scale(-1, 1);
+  }
+  else {
+    ctx.translate(0, canvas.height);
+    ctx.scale(1, -1);  
+  }
   ctx.drawImage(canvas, 0, 0);
   ctx.restore();
-  base64Source = canvas.toDataURL();
-};
-export const flipV = () => {
-  ctx.save();
-  ctx.translate(0, canvas.height);
-  ctx.scale(1, -1);
-  ctx.drawImage(canvas, 0, 0);
-  ctx.restore();
-  base64Source = canvas.toDataURL();
+  return canvas.toDataURL();
 };
 
-
-export const handleResize = e => {
-  let newWidth = parseInt(e.target.dataset.width),
-    newHeight = parseInt(e.target.dataset.height);
-
+export const handleResize = (width, height) => {
   const oc = document.createElement('canvas'),
     octx = oc.getContext('2d');
-  oc.width = newWidth;
-  oc.height = newHeight;
-  octx.drawImage(canvas, 0, 0, newWidth, newHeight);
+  oc.width = width;
+  oc.height = height;
+  octx.drawImage(canvas, 0, 0, width, height);
 
-  canvas.width = newWidth;
-  canvas.height = newHeight;
+  canvas.width = width;
+  canvas.height = height;
   ctx.drawImage(oc, 0, 0);
-  base64Source = canvas.toDataURL();
+  return canvas.toDataURL();
 };
 
-export const handleCrop = e => {
+export const handleCrop = crop => {
   let
-    x = parseInt(e.target.dataset.x),
-    y = parseInt(e.target.dataset.y),
-    width = parseInt(e.target.dataset.width),
-    height = parseInt(e.target.dataset.height);
+    x = parseInt(crop.x),
+    y = parseInt(crop.y),
+    width = parseInt(crop.width),
+    height = parseInt(crop.height);
 
   const oc = document.createElement('canvas'),
     octx = oc.getContext('2d');
@@ -128,14 +103,13 @@ export const handleCrop = e => {
   canvas.width = width;
   canvas.height = height;
   ctx.drawImage(oc, 0, 0);
-  base64Source = canvas.toDataURL();
+  return canvas.toDataURL();
 };
 
-export const handleRotate = e => {
-  let angle_rad = +e.target.dataset.angle * Math.PI / 180,
-    w = canvas.width,
+export const handleRotate = angle_rad => {
+  let w = canvas.width,
     h = canvas.height;
-  
+
   const oc = document.createElement('canvas'),
     octx = oc.getContext('2d');
   oc.width = w;
@@ -150,8 +124,15 @@ export const handleRotate = e => {
   ctx.drawImage(oc, - w/2, - h/2);
   ctx.restore();
 
-  base64Source = canvas.toDataURL();
+  return canvas.toDataURL();
 };
+
+//const rgbToHex = (r, g, b) => "#" + ("000000" + ((r << 16) | (g << 8) | b).toString(16)).slice(-6);
+
+export const getColor = (loc) => {
+  const pixel = ctx.getImageData(loc[0], loc[1], 1, 1).data;
+  return "#" + ("000000" + ((pixel[0] << 16) | (pixel[1] << 8) | pixel[2]).toString(16)).slice(-6);
+}
 
 /**
 

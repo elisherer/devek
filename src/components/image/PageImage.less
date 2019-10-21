@@ -1,27 +1,40 @@
 @import '../../assets/variables';
 
 .toolbar {
-  padding: 20px;
+  padding: 4px;
+  @media (min-width: @screen-desktop-min) {
+    padding: 20px;
+  }
 }
 
 .dropbox {
   border: 2px dashed #888;
   padding: 20px;
-  margin: 0 20px;
+  margin: 0 4px;
+  @media (min-width: @screen-desktop-min) {
+    margin: 0 20px;
+  }
 }
 .dragging {
   border-color: #333;
 }
 .actions {
   color: #ddd;
+  display: flex;
+  min-height: 40px;
   &.loaded {
     color: inherit;
   }
   button {
     margin-right: 6px;
-    margin-bottom: 4px;
   }
-
+}
+.hint {
+  display: none;
+  @media (min-width: @screen-desktop-min) {
+    display: block;
+    position: absolute;
+  }
 }
 .canvas {
   //max-width: 100%;
@@ -35,7 +48,8 @@
 }
 .rubber_band {
   position:absolute;
-  border:1px dotted;
+  border:1px dotted white;
+  mix-blend-mode: difference;
   pointer-events:none;
 }
 .visible {
@@ -54,6 +68,7 @@
   }
 }
 .inline {
-  max-width: 100px;
+  max-width: 90px;
   display: inline-block;
+  margin-bottom: 0; // disable textbox bottom margin
 }

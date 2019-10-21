@@ -27,7 +27,7 @@ const PageData = () => {
           options={options} />
         <div className={styles.parameters}>
           <div className={styles.action_title}>
-            <button className="emoji" onClick={actions.pipe} title="Add command">➕</button>
+            <button className="icon" onClick={actions.pipe} title="Add command">➕</button>
             <div><strong>{pickedAction}</strong> - {pick.description}</div>
           </div>
           {pick.parameters && Object.keys(pick.parameters).map(param => (
@@ -49,10 +49,10 @@ const PageData = () => {
             value={selected}
             options={pipe} numbered/>
         <div className={styles.pipe_actions}>
-          <button className="emoji" disabled={!selected} title="Move up">🔺</button>
-          <button className="emoji" disabled={!selected} title="Move down">🔻</button>
+          <button className="icon" disabled={!selected} title="Move up">🔺</button>
+          <button className="icon" disabled={!selected} title="Move down">🔻</button>
           <br/>
-          <button className="emoji" disabled={!selected} onClick={actions.remove} title="Remove">❌</button>
+          <button className="icon" disabled={!selected} onClick={actions.remove} title="Remove">❌</button>
         </div>
       </div>
 
