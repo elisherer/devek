@@ -4,6 +4,10 @@
   "theme_color": "#5500AA",
   "start_url": "/?utm_source=a2hs",
   "display": "standalone",
+  "serviceworker": {
+    "src": "./service-worker.js",
+    "update_via_cache": "none"
+  },
   "icons": [
     {
       "src": "\/favicon\/android-icon-36x36.png",

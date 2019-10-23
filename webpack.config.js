@@ -9,19 +9,25 @@ const
   webpackDevServerWaitpage = require('webpack-dev-server-waitpage'),
   CopyWebpackPlugin = require('copy-webpack-plugin'),
   TerserJSPlugin = require('terser-webpack-plugin'),
-  OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+  OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin'),
+  ScriptExtHtmlWebpackPlugin = require('script-ext-html-webpack-plugin'),
+  StyleExtHtmlWebpackPlugin = require('style-ext-html-webpack-plugin'),
+  WorkboxPlugin = require('workbox-webpack-plugin');
 
 const mode = process.env.NODE_ENV || 'development';
 const node_modules = /[\\/]node_modules[\\/]/;
 const PRODUCTION = mode === 'production';
 const ANALYZE = process.env.ANALYZE;
 
+const outputPath = path.resolve(__dirname, PRODUCTION ? 'dist' : 'dist-dev');
+
 module.exports = {
   mode,
+  bail: PRODUCTION,
   entry: PRODUCTION ? './src/index.js' : ['react-hot-loader/patch', './src/index.js'],
   output: {
     filename: '[name]-[hash].js',
-    path: path.resolve(__dirname, 'dist'),
+    path: outputPath,
     publicPath : "/",
     chunkFilename: "[name]-[chunkhash].js",
     devtoolModuleFilenameTemplate: info =>
@@ -78,17 +84,25 @@ module.exports = {
       cache: PRODUCTION,
       template: 'src/index.ejs',
     }),
+    new ScriptExtHtmlWebpackPlugin({
+      defaultAttribute: 'defer'
+    }),
+    PRODUCTION && new StyleExtHtmlWebpackPlugin(),
 
     PRODUCTION && new CleanWebpackPlugin(), // Cleanup before each build
 
     new CopyWebpackPlugin([{ from: 'public', to: '' }]), // Copy root domain files
 
     ANALYZE && new BundleAnalyzerPlugin({ analyzerMode: 'static', openAnalyzer: false }),
-    
+
+    PRODUCTION && new WorkboxPlugin.GenerateSW({
+      skipWaiting: true,
+    }),
   ].filter(Boolean),
   module: {
     strictExportPresence: true,
     rules: [
+      { parser: { requireEnsure: false } },
       { test: /\.(c|le)ss$/,
         use: [
           !PRODUCTION ? 'style-loader' : MiniCssExtractPlugin.loader, 

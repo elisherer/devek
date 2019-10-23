@@ -2,7 +2,6 @@ import React, { Fragment, Suspense, useEffect } from 'react';
 import { Switch, Route, Link, NavLink, Redirect, useLocation } from 'react-router-dom';
 import Icon from '@mdi/react';
 import { mdiGithubCircle } from '@mdi/js';
-import cx from 'classnames';
 import SearchBox from './search/SearchBox';
 import NotFound from './NotFound';
 import { siteMap } from '../sitemap';
@@ -31,7 +30,7 @@ const App = () => {
 
     return path === '/' ? (
       <Fragment key={path}>
-        <Link to="/" className={styles.logo} aria-label="Homepage"/>
+        <Link to="/" aria-label="Homepage"/>
         <div className={styles.search_hint}>Press <kbd onClick={devekSearch}>/</kbd> to search</div>
       </Fragment>
     ) : (
@@ -57,8 +56,8 @@ const App = () => {
   }, [location.pathname]);
 
   return (
-    <div className={styles.app}>
-      <nav className={cx(styles.nav,{ [styles.open]: state.drawer })}>
+    <>
+      <nav className={styles.open ? state.drawer : undefined}>
         <div className={styles.menu} onClick={actions.drawerClose}/>
         <div className={styles.github} >
           <a href="https://github.com/elisherer/devek" target="_blank" rel="noopener noreferrer" title="GitHub">
@@ -67,10 +66,10 @@ const App = () => {
         </div>
         {navLinks}
       </nav>
-      <main className={styles.main}>
+      <main>
         {state.drawer && <div className={styles.overlay} onClick={actions.drawerClose} /> }
         <SearchBox />
-        <header className={styles.header}>
+        <header>
           <div className={styles.menu} onClick={actions.drawerOpen}/>
           <h1>{siteMapParent.icon && <Icon path={siteMapParent.icon} size={1.33} />} {siteMapParent.header}</h1>
           {siteMapParent && siteMapParent.children && (
@@ -82,7 +81,7 @@ const App = () => {
           )}
         </header>       
         <Suspense fallback={<Spinner />}>
-          <article className={styles.article}>
+          <article>
             <Switch>
               {Object.keys(siteMap).map(path => (
                 <Route key={path} path={path} exact={path === "/"} component={siteMap[path].component}/>
@@ -92,7 +91,7 @@ const App = () => {
           </article>
         </Suspense>
       </main>
-    </div>
+    </>
   );
 };
 
