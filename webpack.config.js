@@ -97,6 +97,7 @@ module.exports = {
 
     PRODUCTION && new WorkboxPlugin.GenerateSW({
       skipWaiting: true,
+      exclude: [ /htaccess/, /robots\.txt/, /\.php$/ ]
     }),
   ].filter(Boolean),
   module: {

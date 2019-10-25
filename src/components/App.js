@@ -57,7 +57,7 @@ const App = () => {
 
   return (
     <>
-      <nav className={styles.open ? state.drawer : undefined}>
+      <nav className={state.drawer ? styles.open : undefined}>
         <div className={styles.menu} onClick={actions.drawerClose}/>
         <div className={styles.github} >
           <a href="https://github.com/elisherer/devek" target="_blank" rel="noopener noreferrer" title="GitHub">
