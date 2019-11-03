@@ -47,8 +47,8 @@ const actions = {
     defaults: { Pattern: '', Flags: 'gi', Remove: 'Matching'},
     func: (input, { Pattern, Flags, Remove }) => {
       const regexp = new RegExp(Pattern, Flags);
-      const removeMatching = Remove === 'Matching';
-      return parseArrayOrString(input).filter(x => removeMatching ? !regexp.test(x) : regexp.test(x));
+      const filter = Remove === 'Matching' ? x => !regexp.test(x) : x => regexp.test(x);
+      return parseArrayOrString(input).filter(filter);
     },
   },
 

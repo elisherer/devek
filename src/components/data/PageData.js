@@ -47,12 +47,12 @@ const PageData = () => {
             onChange={actions.selectAction}
             size={Math.max(6, pipe.length)}
             value={selected}
-            options={pipe} numbered/>
+            options={pipe} numbered indexed/>
         <div className={styles.pipe_actions}>
-          <button className="icon" disabled={!selected} title="Move up">🔺</button>
-          <button className="icon" disabled={!selected} title="Move down">🔻</button>
+          <button className="icon" disabled={!pipe.length || selected === 0} onClick={actions.moveUp} title="Move up">🔺</button>
+          <button className="icon" disabled={!pipe.length || selected === pipe.length - 1} onClick={actions.moveDown} title="Move down">🔻</button>
           <br/>
-          <button className="icon" disabled={!selected} onClick={actions.remove} title="Remove">❌</button>
+          <button className="icon" disabled={!pipe.length} onClick={actions.remove} title="Remove">❌</button>
         </div>
       </div>
 
