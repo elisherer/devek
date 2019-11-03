@@ -1,13 +1,12 @@
 import React from 'react';
-import {CopyToClipboard, Radio, TextBox} from '../_lib';
+import {CopyToClipboard, ListBox, Radio, TextBox} from '../_lib';
 import { Redirect }  from 'react-router-dom';
 import { useStore, actions } from './PageColor.store';
 import { formatters, parsers } from './color.js';
 import styles from './PageColor.less';
 import x11 from './x11';
 
-let webcolorsDdl;
-
+const x11Colors = [{ name: 'custom', value: '#000000' }].concat(Object.keys(x11).map(wc => ({ name: wc, value: '#' + x11[wc] })));
 const hexRegex = /#[a-z0-9]{6}/i;
 const fixValue = value => {
   if (hexRegex.test(value)) return value;
@@ -38,16 +37,6 @@ const PageColor = ({ location } : { location: Object }) => {
 
     const preview = { background: formatters.rgba(parsed) };
 
-    if (!webcolorsDdl) {
-      webcolorsDdl = (
-        <select onChange={actions.hex}>
-          {Object.keys(x11).map(wc => (
-            <option style={{background:wc}} key={wc} value={x11[wc]}>{wc}</option>
-          ))}
-        </select>
-      )
-    }
-
     return (
       <div>
         <label>Preview</label>
@@ -57,7 +46,7 @@ const PageColor = ({ location } : { location: Object }) => {
 
         <div className={styles.predefined}>
           <label>Select an X11 web-color:</label>
-          {webcolorsDdl}
+          <ListBox size={1} value={formatters.hex(parsed)} onChange={actions.hex} options={x11Colors} />
         </div>
 
         <div className={styles.predefined}>
