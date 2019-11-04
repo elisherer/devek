@@ -1,19 +1,54 @@
-import React from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { CopyToClipboard, ListBox, TextArea, TextBox } from '../_lib';
 import { useStore, actions } from './PageData.store';
 import * as data from './data';
+import { 
+  mdiPlus,
+  mdiChevronUp,
+  mdiChevronDown,
+  mdiDelete,
+  mdiSync,
+  mdiImport,
+  mdiExport,
+} from '@mdi/js';
+import Icon from '@mdi/react';
 
 import styles from './PageData.less';
 
 const options = Object.keys(data.actions);
+const stringify = obj => Object.keys(obj).reduce((a,c) => a + (a ? ", " : '') + c + '=' + obj[c], '');
 
 const PageData = () => {
   const { input, parameters, pickedAction, pipe, selected, output, timestamp } = useStore();
   const pick = data.actions[pickedAction];
 
+  const handleImport = useCallback(() => {
+    const promptInput = window.prompt("Paste the import data");
+    try {
+      const importData = JSON.parse(promptInput);
+      if (!importData) return;
+      if (!Array.isArray(importData)) 
+        throw new Error('JSON is not an array');
+      if (importData.some(x => !data.actions[x.action] || (data.actions[x.action].parameters && !x.parameters))) 
+        throw new Error('Array contains invalid action structures');
+      //TODO: validate more
+      actions.import(importData);
+    }
+    catch(e) {
+      window.alert(e.message);
+    }
+  }, []);
+  const handleExport = useCallback(() => {
+    window.prompt("Copy the export data", JSON.stringify(pipe));
+  }, [pipe]);
+  const pipeMemo = useMemo(
+    () => pipe.map(x=>({ value: x.value, name: `${x.action}(${x.parameters ? stringify(x.parameters) : ''})`})), 
+    [pipe]
+  )
+
   return (
     <div>
-      <p>Enter your data in JSON format to the source text box, pick the actions to process with their required parameters and order and run.</p>
+      <p>Enter your data in raw format to the source text box, pick the actions to process with their required parameters, order and run.</p>
       <span>Source:</span>
       <TextArea autoFocus id="data_input" value={input} onChange={actions.input} />
 
@@ -27,7 +62,6 @@ const PageData = () => {
           options={options} />
         <div className={styles.parameters}>
           <div className={styles.action_title}>
-            <button className="icon" onClick={actions.pipe} title="Add command">➕</button>
             <div><strong>{pickedAction}</strong> - {pick.description}</div>
           </div>
           {pick.parameters && Object.keys(pick.parameters).map(param => (
@@ -40,20 +74,22 @@ const PageData = () => {
           ))}
         </div>
       </div>
-
+      <div className={styles.pipe_actions}>
+        <button className="icon" onClick={actions.pipe} title="Add command"><Icon path={mdiPlus} size={1} /></button>
+        <button className="icon" disabled={!pipe.length} onClick={actions.update} title="Update"><Icon path={mdiSync} size={1} /></button>
+        <button className="icon" disabled={!pipe.length || selected === 0} onClick={actions.moveUp} title="Move up"><Icon path={mdiChevronUp} size={1} /></button>
+        <button className="icon" disabled={!pipe.length || selected === pipe.length - 1} onClick={actions.moveDown} title="Move down"><Icon path={mdiChevronDown} size={1} /></button>
+        <button className="icon" disabled={!pipe.length} onClick={actions.remove} title="Remove"><Icon path={mdiDelete} size={1} /></button>
+        <button className="icon" onClick={handleImport} title="Import"><Icon path={mdiImport} size={1} /></button>
+        <button className="icon" disabled={!pipe.length} onClick={handleExport} title="Remove"><Icon path={mdiExport} size={1} /></button>
+      </div>
       <span>Actions:</span>
-      <div className={styles.actions}>
-        <ListBox className={styles.pipe}
+      <div className={styles.pipe}>
+        <ListBox className={styles.actions}
             onChange={actions.selectAction}
             size={Math.max(6, pipe.length)}
             value={selected}
-            options={pipe} numbered indexed/>
-        <div className={styles.pipe_actions}>
-          <button className="icon" disabled={!pipe.length || selected === 0} onClick={actions.moveUp} title="Move up">🔺</button>
-          <button className="icon" disabled={!pipe.length || selected === pipe.length - 1} onClick={actions.moveDown} title="Move down">🔻</button>
-          <br/>
-          <button className="icon" disabled={!pipe.length} onClick={actions.remove} title="Remove">❌</button>
-        </div>
+            options={pipeMemo} numbered indexed/>
       </div>
 
       <button onClick={actions.run} disabled={!pipe.length}>Run</button>

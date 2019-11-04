@@ -50,27 +50,30 @@ export const handleSepia = createFilter((data, index) => {
   data[index + 2] = Math.min(255, r * 0.272 + g * 0.534 + b * 0.131);
 });
 
-export const handleInvert = () => {
-  ctx.save();
-  ctx.globalCompositeOperation = 'difference';
-  ctx.fillStyle = 'white';
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-  ctx.restore();
-  return canvas.toDataURL();
-};
+export const handleInvert = createFilter((data, index) => {
+  data[index] = 255 - data[index];
+  data[index + 1] = 255 - data[index + 1];
+  data[index + 2] = 255 - data[index + 2];
+});
 
 export const handleFlip = dir => {
-  ctx.save();
+  const oc = document.createElement('canvas'),
+    octx = oc.getContext('2d');
+  oc.width = canvas.width;
+  oc.height = canvas.height;
+
   if (dir === 'h' ) {
-    ctx.translate(canvas.width, 0);
-    ctx.scale(-1, 1);
+    octx.translate(canvas.width, 0);
+    octx.scale(-1, 1);
   }
   else {
-    ctx.translate(0, canvas.height);
-    ctx.scale(1, -1);  
+    octx.translate(0, canvas.height);
+    octx.scale(1, -1);  
   }
-  ctx.drawImage(canvas, 0, 0);
-  ctx.restore();
+  octx.drawImage(canvas, 0, 0);
+  //clear
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.drawImage(oc, 0, 0);
   return canvas.toDataURL();
 };
 

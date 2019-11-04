@@ -1,15 +1,15 @@
 import React, { Fragment, Suspense, useEffect } from 'react';
 import { Switch, Route, Link, NavLink, Redirect, useLocation } from 'react-router-dom';
 import Icon from '@mdi/react';
-import { mdiGithubCircle } from '@mdi/js';
+import { mdiGithubCircle, mdiMenu } from '@mdi/js';
 import SearchBox from './search/SearchBox';
 import NotFound from './NotFound';
 import { siteMap } from '../sitemap';
 import { useStore, actions } from './App.store';
 import screen from 'helpers/screen';
+import Spinner from './_lib/Spinner';
 
 import styles from './App.less';
-import Spinner from './_lib/Spinner';
 
 const devekSearch = () => window.devek.openSearch();
 
@@ -58,7 +58,9 @@ const App = () => {
   return (
     <>
       <nav className={state.drawer ? styles.open : undefined}>
-        <div className={styles.menu} onClick={actions.drawerClose}/>
+        <div className={styles.menu} onClick={actions.drawerClose}>
+          <Icon path={mdiMenu} size={1.5} color="white"/>
+        </div>
         <div className={styles.github} >
           <a href="https://github.com/elisherer/devek" target="_blank" rel="noopener noreferrer" title="GitHub">
             <Icon path={mdiGithubCircle} size={1.33} />
@@ -70,7 +72,9 @@ const App = () => {
         {state.drawer && <div className={styles.overlay} onClick={actions.drawerClose} /> }
         <SearchBox />
         <header>
-          <div className={styles.menu} onClick={actions.drawerOpen}/>
+          <div className={styles.menu} onClick={actions.drawerOpen}>
+            <Icon path={mdiMenu} size={1.5} />
+          </div>
           <h1>{siteMapParent.icon && <Icon path={siteMapParent.icon} size={1.33} />} {siteMapParent.header}</h1>
           {siteMapParent && siteMapParent.children && (
           <nav className={styles.tabs}>

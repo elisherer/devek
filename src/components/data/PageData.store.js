@@ -1,31 +1,43 @@
 import createStore from 'helpers/createStore';
 import * as data from './data';
 
-const filterParameters = (action, parameters) => data.actions[action].parameters ? Object.keys(data.actions[action].parameters).reduce((a,c) => {
-  a[c] = parameters[c] || data.actions[action].defaults[c];
-  return a;
-}, {}) : null;
+const initialState = {
+  input: '',
+  pickedAction: 'Split',
+  parameters: {},
+  pipe: [],
+  selected: -1,
+  output: '',
+};
 
-const stringify = obj => Object.keys(obj).reduce((a,c) => a + (a ? ", " : '') + c + '=' + obj[c], '');
+const pipeAction = state =>{
+  const result = {
+    action: state.pickedAction, 
+  };
+  if (data.actions[state.pickedAction].parameters) {
+    result.parameters = Object.keys(data.actions[state.pickedAction].parameters).reduce((a,c) => {
+      a[c] = state.parameters[c] || data.actions[state.pickedAction].defaults[c];
+      return a;
+    }, {});
+  }
+  return result;
+};
 
 const actionCreators = {
   input: e => state => ({ ...state, input: e.target.innerText }),
   pickedAction: e => state => ({ ...state, pickedAction: e.target.value }),
   parameter: e => state => ({ ...state, parameters: { ...state.parameters, [e.target.dataset.name]: e.target.value }}),
-  pipe: () => state => { 
-    const actionParameters = filterParameters(state.pickedAction, state.parameters);
-    const pipe = state.pipe.concat({ 
-      name: `${state.pickedAction}(${actionParameters ? stringify(actionParameters) : ''})`,
-      action: state.pickedAction, 
-      parameters: actionParameters 
-    });
-    return { 
-      ...state, 
-      pipe,
-      selected: pipe.length - 1,
-    };
-  },
-  selectAction: e => state => ({ ...state, selected: parseInt(e.target.selectedIndex) }),
+  pipe: () => state => ({ 
+    ...state, 
+    pipe: state.pipe.concat(pipeAction(state)),
+    selected: state.pipe.length,
+  }),
+  selectAction: e => state => ({ 
+    ...state,
+    selected: parseInt(e.target.selectedIndex), 
+    pickedAction: state.pipe[e.target.selectedIndex].action,
+    parameters: state.pipe[e.target.selectedIndex].parameters
+  }),
   moveDown: () => state => {
     if (state.selected === -1 || state.selected === state.pipe.length - 1) return state;
     const clone = state.pipe.slice();
@@ -46,6 +58,13 @@ const actionCreators = {
       selected: state.selected - 1,
     }; 
   },
+  update: () => state => { 
+    if (state.selected === -1) return state;
+    return { 
+      ...state, 
+      pipe: state.pipe.map((a, i) => i !== state.selected ? a : pipeAction(state)), 
+    }; 
+  },
   remove: () => state => { 
     if (state.selected === -1) return state;
     const pipe = state.pipe.filter((a, i) => i !== state.selected);
@@ -56,6 +75,7 @@ const actionCreators = {
       selected: state.selected < 0 ? 0 : newIndex,
     }; 
   },
+  import: pipe => () => ({ ...initialState, pipe }),
   run: () => state => {
     const result = state.pipe.reduce((a, c) => data.actions[c.action].func(a, c.parameters), state.input);
 
@@ -67,14 +87,6 @@ const actionCreators = {
   },
 };
 
-const initialState = {
-  input: '',
-  pickedAction: 'Split',
-  parameters: {},
-  pipe: [],
-  selected: -1,
-  output: '',
-};
 
 export const {
   actions,
