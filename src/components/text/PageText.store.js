@@ -2,10 +2,14 @@ import createStore from 'helpers/createStore';
 
 const actionCreators = {
   input: e => state => ({ ...state, input: e.target.innerText }),
+  charmap: categories => state => ({ ...state, charmap: { ...state.charmap, categories }})
 };
 
 const initialState = {
-  input: ''
+  input: '',
+  charmap: {
+    categories: []
+  }
 };
 
 export const {

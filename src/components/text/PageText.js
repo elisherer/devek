@@ -1,10 +1,13 @@
 import React from 'react';
 import cx from 'classnames';
-import { CopyToClipboard, Radio, TextArea } from '../_lib';
+import { CopyToClipboard, ChecklistBox, ListBox, Radio, TextArea } from '../_lib';
 import { textCategories, textFunctions } from './text';
 import { Redirect, NavLink } from 'react-router-dom';
 
 import { useStore, actions } from './PageText.store';
+import charmap from './charmap';
+
+const charmapCategories = charmap.map(x=> ({ name: `${x[0]} (${x[1]}-${x[2]})`, value: x[0] }));
 
 import styles from './PageText.less';
 
@@ -18,12 +21,31 @@ const PageText = ({ location } : { location: Object }) => {
   }
 
   const textFunc = pathSegments[2];
-  if (!textFunc) {
+  if (!textFunc && category !== 'charmap') {
     const firstTextFunc = Object.keys(textFunctions[category])[0];
     return <Redirect to={`/${pathSegments[0]}/${category}/${firstTextFunc}`}/>;
   }
 
   const state = useStore();
+
+  if (category === 'charmap') {
+    const charMap = [];
+    charmap.forEach(range => {
+      if (state.charmap.categories.includes(range[0])) {
+        const submap = [];
+        for (let j = range[1]; j <= range[2]; j++) {
+          submap.push(<i key={range[0] + j}>{String.fromCodePoint(j)}</i>);
+        }
+        charMap.push(<div key={range[0]}><h1>{range[0]}</h1>{submap}</div>)
+      }
+    });
+    return <div>
+      <div className={styles.charmap}>
+        <ChecklistBox label="Select a sub-range:" options={charmapCategories} value={state.charmap.categories} onChange={actions.charmap} maxShowSelection={2}/>
+        {charMap}
+      </div>
+    </div>
+  }
 
   const { input } = state;
   let output, error = null;

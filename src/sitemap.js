@@ -75,6 +75,11 @@ export const siteMap = {
         keyword: 'convert',
         title: "Conversion",
         description: 'Reverse text etc.',
+      },
+      "/charmap": {
+        keyword: 'characters',
+        title: "CharMap",
+        description: 'Characters map',
       }
     }
   },

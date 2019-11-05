@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from 'react';
-import { CopyToClipboard, ListBox, TextArea, TextBox } from '../_lib';
+import {ChecklistBox, CopyToClipboard, ListBox, TextArea, TextBox} from '../_lib';
 import { useStore, actions } from './PageData.store';
 import * as data from './data';
 import { 
@@ -66,9 +66,12 @@ const PageData = () => {
           </div>
           {pick.parameters && Object.keys(pick.parameters).map(param => (
             <div key={param}><span>{param}:</span>{Array.isArray(pick.parameters[param]) ? (
+              pick.parameters[param][0] === 'MULTI' ? (
+             <ChecklistBox label={param} options={pick.parameters[param].slice(1)} value={(parameters[param] || pick.defaults[param]).split(',')} onChange={actions.parameter} maxShowSelection={Infinity}/>
+                ) : (
              <ListBox options={pick.parameters[param]} size={1} 
                 value={parameters[param] || pick.defaults[param]} onChange={actions.parameter} data-name={param}/>
-            ) : (
+            )) : (
               <TextBox value={parameters[param] || pick.defaults[param]} onChange={actions.parameter} data-name={param} />
             )}</div>
           ))}

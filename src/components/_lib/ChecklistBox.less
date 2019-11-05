@@ -1,0 +1,40 @@
+@import '../../assets/variables';
+
+.checklist {
+  position: relative;
+  max-width: 560px;
+  label {
+    margin: 0 !important;
+  }
+  margin-bottom: 10px;
+}
+
+.items {
+  padding: 2px;
+  display: none;
+  margin: 0;
+  border: 1px solid #ccc;
+  border-top: none;
+  position: absolute;
+  z-index: 9999999;
+  background: white;
+  width: 100%;
+  max-height: 33vh;
+  overflow-y: scroll;
+  &.open {
+    display: block;
+  }
+  li {
+    list-style: none;
+    line-height: 26px;
+  }
+  label {
+    display: inline-block;
+    cursor: pointer;
+    width: 100%;
+    &:active, &:hover {
+      color: white;
+      background-color: #1e90ff; //Highlight
+    }
+  }
+}

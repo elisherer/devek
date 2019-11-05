@@ -1,14 +1,17 @@
 @import '../../assets/variables';
 
 .listbox {
-  display: flex;
+  display: flex !important;
+  margin-bottom: 10px !important;
+  position: relative;
   background: @gui-textarea-background;
   border: 1px solid @gui-grey-border;
   border-radius: 5px;
   padding: 8px;
-  margin-bottom: 10px;
   max-width: 560px;
+  cursor: pointer;
   select{
+    cursor: pointer;
     background: @gui-textarea-background;
     color: @gui-foreground-color;
     border: none;
@@ -32,4 +35,12 @@
   &.error, &.error:focus-within {
     border-color: red;
   }
+}
+
+.over_select {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
 }

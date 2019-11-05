@@ -33,8 +33,8 @@ const actions = {
 
   "Replace": {
     description: "Replace each item using a regular expression and substitution expression",
-    parameters: { Pattern: 'string', Flags: [ "g", "gm", "gi", "gmi", "m", "mi", "i"], Substitution: 'string' },
-    defaults: { Pattern: '', Flags: 'gi', Substitution: ''},
+    parameters: { Pattern: 'string', Flags: ['MULTI', "g", "m", "i"], Substitution: 'string' },
+    defaults: { Pattern: '', Flags: 'g,i', Substitution: ''},
     func: (input, { Pattern, Flags, Substitution }) => {
       const regexp = new RegExp(Pattern, Flags);
       return parseArrayOrString(input).map(x => x.replace(regexp, Substitution));
