@@ -40,7 +40,13 @@ const ChecklistBox = ({ options, label, maxShowSelection, disabled, value, onCha
 
   const handleChange = useCallback(e => {
     const newValue = value.includes(e.target.value) ? value.filter(x => x !== e.target.value) : value.concat([e.target.value]);
-    onChange(newValue);
+    const event = {
+      target: {
+        value: newValue,
+        dataset: ref.current.dataset
+      }
+    };
+    onChange(event);
   }, [onChange, value]);
 
   return (

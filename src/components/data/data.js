@@ -33,8 +33,8 @@ const actions = {
 
   "Replace": {
     description: "Replace each item using a regular expression and substitution expression",
-    parameters: { Pattern: 'string', Flags: ['MULTI', "g", "m", "i"], Substitution: 'string' },
-    defaults: { Pattern: '', Flags: 'g,i', Substitution: ''},
+    parameters: { Pattern: 'string', Flags: ["g", "m", "i"], Substitution: 'string' },
+    defaults: { Pattern: '', Flags: ['g','i'], Substitution: ''},
     func: (input, { Pattern, Flags, Substitution }) => {
       const regexp = new RegExp(Pattern, Flags);
       return parseArrayOrString(input).map(x => x.replace(regexp, Substitution));
@@ -43,8 +43,8 @@ const actions = {
 
   "Filter": {
     description: "Filter items that do/don't match the specified regular expression",
-    parameters: { Pattern: 'string', Flags: [ "g", "gm", "gi", "gmi", "m", "mi", "i"], Remove: ["Matching", "Non Matching"] },
-    defaults: { Pattern: '', Flags: 'gi', Remove: 'Matching'},
+    parameters: { Pattern: 'string', Flags: ["g", "gm", "gi", "gmi", "m", "mi", "i"], Remove: ["Matching", "Non Matching"] },
+    defaults: { Pattern: '', Flags: ['g','i'], Remove: 'Matching'},
     func: (input, { Pattern, Flags, Remove }) => {
       const regexp = new RegExp(Pattern, Flags);
       const filter = Remove === 'Matching' ? x => !regexp.test(x) : x => regexp.test(x);

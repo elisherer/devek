@@ -1,6 +1,6 @@
 import React from 'react';
 import cx from 'classnames';
-import { CopyToClipboard, ChecklistBox, ListBox, Radio, TextArea } from '../_lib';
+import { CopyToClipboard, ChecklistBox, Radio, TextArea } from '../_lib';
 import { textCategories, textFunctions } from './text';
 import { Redirect, NavLink } from 'react-router-dom';
 
