@@ -1,6 +1,7 @@
 import createStore from 'helpers/createStore';
+import support from 'helpers/support';
 
-const composeFlags = on => ["g","m","i"].filter(flag => on.includes(flag)).join('');
+const composeFlags = on => support.RegExpFlags.filter(flag => on.includes(flag)).join('');
 
 const actionCreators = {
   regex: e => state => ({ ...state, regex: e.target.value }),

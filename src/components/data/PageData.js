@@ -67,7 +67,7 @@ const PageData = () => {
           {pick.parameters && Object.keys(pick.parameters).map(param => (
             <div key={param}><span>{param}:</span>{Array.isArray(pick.parameters[param]) ? (
               Array.isArray(pick.defaults[param]) ? (
-             <ChecklistBox label={param} options={pick.parameters[param].slice(1)} value={(parameters[param] || pick.defaults[param])} onChange={actions.parameter} maxShowSelection={Infinity} data-name={param}/>
+             <ChecklistBox label={param} options={pick.parameters[param]} value={(parameters[param] || pick.defaults[param])} onChange={actions.parameter} maxShowSelection={Infinity} data-name={param}/>
                 ) : (
              <ListBox options={pick.parameters[param]} size={1} 
                 value={parameters[param] || pick.defaults[param]} onChange={actions.parameter} data-name={param}/>

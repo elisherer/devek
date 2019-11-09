@@ -1,3 +1,5 @@
+import support from 'helpers/support';
+
 // Split -> Map -> Filter -> Reduce / Join
 
 const sorts = {
@@ -33,7 +35,7 @@ const actions = {
 
   "Replace": {
     description: "Replace each item using a regular expression and substitution expression",
-    parameters: { Pattern: 'string', Flags: ["g", "m", "i"], Substitution: 'string' },
+    parameters: { Pattern: 'string', Flags: support.RegExpFlags, Substitution: 'string' },
     defaults: { Pattern: '', Flags: ['g','i'], Substitution: ''},
     func: (input, { Pattern, Flags, Substitution }) => {
       const regexp = new RegExp(Pattern, Flags);
@@ -43,7 +45,7 @@ const actions = {
 
   "Filter": {
     description: "Filter items that do/don't match the specified regular expression",
-    parameters: { Pattern: 'string', Flags: ["g", "gm", "gi", "gmi", "m", "mi", "i"], Remove: ["Matching", "Non Matching"] },
+    parameters: { Pattern: 'string', Flags: support.RegExpFlags, Remove: ["Matching", "Non Matching"] },
     defaults: { Pattern: '', Flags: ['g','i'], Remove: 'Matching'},
     func: (input, { Pattern, Flags, Remove }) => {
       const regexp = new RegExp(Pattern, Flags);
