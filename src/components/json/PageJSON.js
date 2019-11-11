@@ -55,7 +55,7 @@ const PageJSON = () => {
       <Checkbox label={<span><code>JSON.parse</code> first</span>} checked={parse} onChange={actions.parse} />
 
       <label>Path expression:</label>
-      <TextBox startAddon="JSON" placeholder=".x" value={path} onChange={actions.path}/>
+      <TextBox startAddon="$" placeholder=".x" value={path} onChange={actions.path}/>
 
       <h1>Result (Prettified)</h1>
       {!error && <CopyToClipboard from="pretty-json" />}
