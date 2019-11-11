@@ -9,8 +9,9 @@
 - Image
   - Base64 to image (although you can just use the browser's address bar for that)
   - Add "browse" option (after the image was loaded)
+  - Use web worker?
 - Charmap
   - Search
-- Data
-  - Use RAF to do calculation? (setup a load test)
   
+- General
+  - Add support to drop files in inputs (need to add encoding selection for support)

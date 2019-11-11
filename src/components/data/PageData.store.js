@@ -7,6 +7,7 @@ const initialState = {
   parameters: {},
   pipe: [],
   selected: -1,
+  running: false,
   output: '',
 };
 
@@ -76,15 +77,16 @@ const actionCreators = {
     }; 
   },
   import: pipe => () => ({ ...initialState, pipe }),
-  run: () => state => {
-    const result = state.pipe.reduce((a, c) => data.actions[c.action].func(a, c.parameters), state.input);
-
-    return { 
-      ...state, 
-      timestamp: new Date(),
-      output: Array.isArray(result) ? (result.length === 1 ? result[0] : JSON.stringify(result, null, 2)) : result 
-    };
-  },
+  runStart: () => state => ({
+    ...state,
+    running: true
+  }),
+  runFinished: result => state => ({ 
+    ...state, 
+    timestamp: new Date(),
+    running: false,
+    output: Array.isArray(result) ? (result.length === 1 ? result[0] : JSON.stringify(result, null, 2)) : result,
+  }),
 };
 
 

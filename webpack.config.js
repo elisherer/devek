@@ -136,6 +136,13 @@ module.exports = {
           }
         }
       },
+      {
+        test: /\.worker\.js$/,
+        use: { 
+          loader: 'worker-loader',
+          options: { inline: true, fallback: false } 
+        }
+      },
       { test: /\.js$/, exclude: node_modules,
         use: [
           'babel-loader',

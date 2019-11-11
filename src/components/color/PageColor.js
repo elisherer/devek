@@ -46,7 +46,7 @@ const PageColor = ({ location } : { location: Object }) => {
 
         <div className={styles.predefined}>
           <label>Select an X11 web-color:</label>
-          <ListBox size={1} value={formatters.hex(parsed)} onChange={actions.hex} options={x11Colors} />
+          <ListBox size={1} value={formatters.hex(parsed)} onChange={actions.hex} options={x11Colors} uid={c => c.name} />
         </div>
 
         <div className={styles.predefined}>

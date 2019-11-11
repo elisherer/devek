@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useEffect, useCallback, useMemo } from 'react';
 import {ChecklistBox, CopyToClipboard, ListBox, TextArea, TextBox} from '../_lib';
 import { useStore, actions } from './PageData.store';
 import * as data from './data';
@@ -12,6 +12,7 @@ import {
   mdiExport,
 } from '@mdi/js';
 import Icon from '@mdi/react';
+import Worker from './data.worker';
 
 import styles from './PageData.less';
 
@@ -19,8 +20,26 @@ const options = Object.keys(data.actions);
 const stringify = obj => Object.keys(obj).reduce((a,c) => a + (a ? ", " : '') + c + '=' + obj[c], '');
 
 const PageData = () => {
-  const { input, parameters, pickedAction, pipe, selected, output, timestamp } = useStore();
+  const { input, parameters, pickedAction, pipe, selected, running, output, timestamp } = useStore();
   const pick = data.actions[pickedAction];
+
+  const worker = useMemo(() => { // create worker on first render
+    const w = new Worker();
+    w.addEventListener("message", event => {
+      // receive message from worker
+      actions.runFinished(event.data.result);
+    });
+    return w;
+  }, []);
+  useEffect(() => () => { // terminate on unmount
+    worker.terminate();
+  }, [])
+  
+  const runStart = useCallback(() => {
+    actions.runStart(); // set running flag
+    // post to worker
+    worker.postMessage({ input, pipe });
+  }, [input, pipe]);
 
   const handleImport = useCallback(() => {
     const promptInput = window.prompt("Paste the import data");
@@ -95,7 +114,7 @@ const PageData = () => {
             options={pipeMemo} numbered indexed/>
       </div>
 
-      <button onClick={actions.run} disabled={!pipe.length}>Run</button>
+      <button onClick={runStart} disabled={!pipe.length || running}>{running ? "Running..." : "Run"}</button>
 
       {output && (
       <>

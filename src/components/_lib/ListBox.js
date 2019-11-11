@@ -19,6 +19,7 @@ const ListBox = ({
                    numbered,
                    indexed,
                    hidePopup,
+                   uid,
                    ...more
                  } : {
   className?: string,
@@ -30,6 +31,7 @@ const ListBox = ({
   numbered?: boolean,
   indexed?: boolean,
   hidePopup?: boolean,
+  uid?: Function,
 }) => {
 
   return (
@@ -42,7 +44,7 @@ const ListBox = ({
             {...more}
       >
         {options && options.map((x, i) => (
-          <option key={x.value || (indexed ? i : x)} value={x.value || (indexed ? i : x)}>
+          <option key={uid ? uid(x) : (x.value || (indexed ? i : x))} value={x.value || (indexed ? i : x)}>
             {numbered ? (i+1) + ' - ' : ''}{x.name || x.value || x}
           </option>
         ))}
