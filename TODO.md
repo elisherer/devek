@@ -7,8 +7,6 @@
 - Create self-signed certificate 
   https://github.com/infotechinc/create-x509-certificate
 - Image
-  - Base64 to image (although you can just use the browser's address bar for that)
-  - Add "browse" option (after the image was loaded)
   - Use web worker?
 - Charmap
   - Search

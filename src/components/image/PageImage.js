@@ -1,13 +1,15 @@
-import React, { useCallback } from 'react';
+import React, { useMemo, useCallback } from 'react';
 import cx from 'classnames';
-import { TextBox } from '../_lib';
+import { DropDownMenu, TextBox } from '../_lib';
 import { Redirect }  from 'react-router-dom';
 import { useStore, actions } from './PageImage.store';
 import getEventLocation from './getEventLocation';
 import {
   loadFileAsync,
+  loadFromDataUri,
 } from './image';
 import { 
+  mdiOpenInApp,
   mdiRotateLeft, 
   mdiRotateRight,
   mdiFlipHorizontal,
@@ -118,20 +120,39 @@ const PageImage = ({ location } : { location: Object }) => {
     onDrop
   };
 
-  const dropBox = (
+  const dropBox = useMemo(() => (
     <label className={cx(styles.dropbox, { [styles.dragging]: dragging })} {...dropHandlers}>
       Click and browse for an image or Drag & Drop it here
       <input type="file" style={{display: 'none'}} onChange={onFileChange} />
     </label>
-  );
+  ), []);
 
-const toolbarClassName = cx(styles.actions, { [styles.loaded]: loaded });
+  const toolbarClassName = cx(styles.actions, { [styles.loaded]: loaded });
+
+  const loadMenu = useMemo(() => {
+    return [
+      { 
+        children: (
+          <label>From device...<input type="file" style={{display: 'none'}} onChange={onFileChange} /></label>
+        )
+      },
+      {
+        children: (
+          <label>From Data URI...</label>
+        ),
+        onClick: () => loadFromDataUri(actions.loaded)
+      }
+    ];
+  }, []);
 
   return (
     <>
       <section className={styles.toolbar} {...dropHandlers} >
         {!type && (
           <div className={toolbarClassName}>
+            <DropDownMenu menu={loadMenu}>
+              <button className="icon" title="Open"><Icon path={mdiOpenInApp } size={1} /></button>
+            </DropDownMenu>
             <button className="icon" disabled={disabled} onClick={actions.rotateRight} title="Rotate right"><Icon path={mdiRotateRight} size={1} /></button>
             <button className="icon" disabled={disabled} onClick={actions.rotateLeft} title="Rotate left"><Icon path={mdiRotateLeft} size={1} /></button>
             <button className="icon" disabled={disabled} onClick={actions.flipH} data-dir="h" title="Flip Horizontal"><Icon path={mdiFlipHorizontal} size={1}/></button>
@@ -142,7 +163,7 @@ const toolbarClassName = cx(styles.actions, { [styles.loaded]: loaded });
         {type === 'filters' && (
           <div className={toolbarClassName}>
             <button className="icon" disabled={disabled} onClick={actions.invert} title="Invert Colors"><Icon path={mdiInvertColors} size={1}/></button>
-            <button className="icon" disabled={disabled} onClick={actions.greyscale} title="Greyscale"><Icon path={mdiGradient} size={1}/></button>
+            <button className="icon" disabled={disabled} onClick={actions.grayscale} title="Grayscale"><Icon path={mdiGradient} size={1}/></button>
             <button className="icon" disabled={disabled} onClick={actions.sepia} title="Sepia"><Icon path={mdiImage} color="#704214" size={1}/></button>
             <button className="icon" disabled={disabled} onClick={actions.blur} title="Blur"><Icon path={mdiBlur} size={1}/></button>
           </div>
