@@ -32,6 +32,7 @@ const actionCreators = {
   // cipher
   cipherAlg: e => state => ({ ...state, cipher: { ...state.cipher, alg: e.target.dataset.value }}),
   cipherKDF: e => state => ({ ...state, cipher: { ...state.cipher, kdf: e.target.dataset.value }}),
+  cipherPosition: e => state => ({ ...state, cipher: { ...state.cipher, position: e.target.dataset.value }}),
   cipherInput: e => state => ({ ...state, cipher: { ...state.cipher, input: e.target.innerText }}),
   passphrase: e => state => ({ ...state, cipher: { ...state.cipher, passphrase: e.target.value }}),
   useSalt: e => state => ({ ...state, cipher: { ...state.cipher, useSalt: e.target.checked }}),
@@ -59,6 +60,7 @@ const actionCreators = {
       state.cipher.alg,
       state.cipher.input,
       state.cipher.kdf !== 'None',
+      state.cipher.position,
       state.cipher.cipherKey,
       state.cipher.iv,
       state.cipher.passphrase,
@@ -83,6 +85,7 @@ const actionCreators = {
       state.cipher.alg,
       state.cipher.input,
       state.cipher.kdf !== 'None',
+      state.cipher.position,
       state.cipher.cipherKey,
       state.cipher.iv,
       state.cipher.passphrase,
@@ -157,6 +160,7 @@ const initialState = {
   cipher: {
     alg: 'AES-CBC',
     kdf: 'OpenSSL',
+    position: 'Start',
     input: '',
     passphrase: '',
     useSalt: true,

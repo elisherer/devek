@@ -1,4 +1,4 @@
-const { parseCertificate } = require('./asn1');
+import { parseCertificate } from './asn1';
 
 
 const c0_ec = `-----BEGIN CERTIFICATE-----
@@ -65,6 +65,19 @@ rGhLV1pRG9frwDFshqD2Vaj4ENBCBh6UpeBop5+285zQ4SI7q4U9oSebUDJiuOx6
 +tZ9KynmrbJpTSi0+BM=`;
 
 
-//const ob = parseCertificate(certificateBytes);
-const asn = parseCertificate(c0_ec);
-console.log(require('util').inspect(asn, { depth: 6, colors: true, maxArrayLength: 5 })); //eslint-disable-line
+describe('crypto/asn1', () => {
+  test('cert 1', () => {
+    const asn = parseCertificate(c0_ec);
+    expect(asn).toMatchSnapshot();
+  });
+
+  test('cert 2', () => {
+    const asn = parseCertificate(c1);
+    expect(asn).toMatchSnapshot();
+  });
+
+  test('cert 3', () => {
+    const asn = parseCertificate(c2);
+    expect(asn).toMatchSnapshot();
+  });
+});

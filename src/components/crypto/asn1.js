@@ -164,16 +164,15 @@ function parse(buffer) {
     }
   }
 
-  Object.assign(info, {
+  return {
+    ...info,
     tagClassName,
     tagClass,
     tagName,
     tagNumber,
     constructed,
     children,
-  });
-
-  return info;
+  };
 }
 
 function parseChildren(buffer) {

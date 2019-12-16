@@ -33,21 +33,33 @@ const ChecklistBox = ({ options, label, maxShowSelection, disabled, value, onCha
     };
   }, [open]);
 
-  const memoLabel = useMemo(() => maxShowSelection
-    ? [value.length ? (maxShowSelection < Infinity ? value.slice(0, maxShowSelection) + (value.length > maxShowSelection ? ' (+' + (value.length - maxShowSelection) + ')' : ''): value.join(',') ) : label]
-    : [label]
-  , maxShowSelection ? [label, value] : [label]);
+  const memoLabel = useMemo(() => {
+    if (!maxShowSelection || !value || !value.length) return [label]; // placeholder
+    const mappedValue = value.map(x => {
+      const found = options.find(opt => (Object.prototype.hasOwnProperty.call(opt, 'value') ? opt.value : opt) == x);
+      return Object.prototype.hasOwnProperty.call(found, 'name') ? found.name : found;
+    });
+    if (maxShowSelection < Infinity) {
+      return [mappedValue.slice(0, maxShowSelection) + 
+          (value.length > maxShowSelection ? ' (+' + (value.length - maxShowSelection) + ')' : '')];
+    }
+    return [mappedValue.join(',')];
+  }, maxShowSelection ? [label, options, value] : [label]);
 
   const handleChange = useCallback(e => {
-    const newValue = value.includes(e.target.value) ? value.filter(x => x !== e.target.value) : value.concat([e.target.value]);
+    const availableValues = value && options.map(x => Object.prototype.hasOwnProperty.call(x, 'value') ? x.value : x);
+    const valueExists = value.some(x => x == e.target.value);
+    const newValue = value && availableValues.filter(opt => valueExists 
+      ? value.some(x => x == opt) && opt != e.target.value
+      : value.some(x => x == opt) || opt == e.target.value);
     const event = {
       target: {
         value: newValue,
         dataset: ref.current.dataset
       }
     };
-    onChange(event);
-  }, [onChange, value]);
+    onChange && onChange(event);
+  }, [onChange, value, options]);
 
   return (
     <label ref={ref} className={styles.checklist} {...props} aria-haspopup="true" aria-expanded={open}>
@@ -61,7 +73,7 @@ const ChecklistBox = ({ options, label, maxShowSelection, disabled, value, onCha
             <li key={localValue}>
               <Checkbox label={x.name || localValue}
                         value={localValue}
-                        checked={value.includes(localValue)}
+                        checked={value && value.some(x => x == localValue)}
                         onChange={handleChange}/>
             </li>
           );

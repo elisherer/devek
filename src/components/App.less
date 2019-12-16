@@ -82,7 +82,7 @@
     > header {
       min-height: @gui-header-height;
       h1 {
-        margin: 12px 56px 0;
+        margin: 12px 0 0 56px;
         font-size: 20px;
         @media (min-width: @screen-desktop-min) {
           font-size: 22px;
@@ -125,10 +125,10 @@
 
       h1 {
         color: @gui-card-left-border;
-        padding: 0 0 10px;
-        margin: 20px 0 16px;
-        font-size: 16px;
-        font-weight: normal;
+        padding: 0 0 4px;
+        margin: 10px 0 16px;
+        font-size: 20px;
+        font-weight: bold;
         border-bottom: 2px solid @gui-card-header-border;
       }
 
@@ -239,41 +239,9 @@
   }
 }
 
-.tabs {
-  line-height: 30px;
-
-  //horizontal scrolling
-  overflow-y: auto;
-  white-space: nowrap;
-
-  // Chrome, Safari, newer versions of Opera
-  &::-webkit-scrollbar { height: 0 !important }
-  // Firefox
-  overflow: -moz-scrollbars-none;
-  // Internet Explorer +10
-  -ms-overflow-style: none;
-
-  @media only screen and (min-width: @screen-desktop-min) {
+@media only screen and (min-width: @screen-desktop-min) {
+  .tabs {
     width: fit-content;
-    margin: 0 20px;
-  }
-
-  > * {
-    text-align: center;
-    color: #999;
-    text-decoration: none;
-    display: inline-block;
-    padding: 8px 8px;
-    font-size: 14px;
-    font-weight: bold;
-    min-width: 60px;
-    cursor: pointer;
-    user-select: none;
-    border-bottom: 2px solid @gui-background-color;
-    &[aria-current], &[data-active] {
-      color: @gui-secondary-color;
-      border-bottom: 2px solid @gui-secondary-color;
-
-    }
+    margin: 0 20px;  
   }
 }

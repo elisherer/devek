@@ -8,6 +8,7 @@ import PageJSON from './components/json/PageJSON';
 import PageJWT from './components/jwt/PageJWT';
 import PageXML from './components/xml/PageXML';
 import PageTime from './components/time/PageTime';
+import PageCron from './components/cron/PageCron';
 import PageImage from './components/image/PageImage';
 import PageRandom from './components/random/PageRandom';
 import PageColor from './components/color/PageColor';
@@ -27,6 +28,7 @@ import {
   mdiXml, // xml
   mdiShieldKeyOutline, // jwt
   mdiClockOutline, // time
+  mdiTimer,
   mdiImage, // image
   mdiDiceMultipleOutline, // random
   mdiLockOutline, // crypto
@@ -183,6 +185,14 @@ export const siteMap = {
         description: 'Stopwatch with laps',
       },
     }
+  },
+  "/cron": {
+    component: PageCron,
+    keyword: 'cron',
+    title: 'Cron',
+    header: 'Cron Expressions Tools',
+    description: 'Encode and decode cron expressions',
+    icon: mdiTimer,
   },
   "/image": {
     component: PageImage,

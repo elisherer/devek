@@ -5,8 +5,8 @@ import {actions} from "./PageCrypto.store";
 
 import styles from "./PageCrypto.less";
 
-const CryptoCipher = ({ alg, kdf, input, passphrase, useSalt, salt, cipherKey, iv, aesCounter, jwk, output } :
-                        { alg: string, kdf: string, input: string, passphrase: string, useSalt: boolean, salt: string, cipherKey: string, iv: string, aesCounter: string, jwk: string, output: string }) => (
+const CryptoCipher = ({ alg, kdf, position, input, passphrase, useSalt, salt, cipherKey, iv, aesCounter, jwk, output } :
+                        { alg: string, kdf: string, position: string, input: string, passphrase: string, useSalt: boolean, salt: string, cipherKey: string, iv: string, aesCounter: string, jwk: string, output: string }) => (
   <div>
     <label>Algorithm:</label>
     <Radio className={styles.options2} options={["AES-CBC","AES-CTR","AES-GCM","RSA-OAEP"]} value={alg} onClick={actions.cipherAlg} />
@@ -28,6 +28,10 @@ const CryptoCipher = ({ alg, kdf, input, passphrase, useSalt, salt, cipherKey, i
 
         { kdf === 'None' && (
           <>
+            <label>Position of {alg === 'AES-CTR' ? "CTR" : "IV"} in cipher:</label>
+            <Radio className={styles.options2} options={["Start", "End", "None"]} value={position} onClick={actions.cipherPosition} />
+
+
             <div className={styles.note}>* You can use the <Link to="/crypto/generate">generate</Link> page to generate a suitable key</div>
 
             <label>Key: (Hex)</label>
@@ -35,13 +39,13 @@ const CryptoCipher = ({ alg, kdf, input, passphrase, useSalt, salt, cipherKey, i
             {(alg === 'AES-CTR') && (
               <>
                 <label>Counter: (Hex, 16 bytes, 64 bits x 2)</label>
-                <TextBox autoComplete="off" onChange={actions.cipherAESCounter} value={aesCounter} placeholder="Leave blank to generate" />
+                <TextBox autoComplete="off" onChange={actions.cipherAESCounter} value={aesCounter} placeholder="Leave blank to generate/extract" />
               </>
             )}
             {(alg === 'AES-CBC' || alg === 'AES-GCM') && (
               <>
                 <label>IV: (Hex, 16 bytes)</label>
-                <TextBox autoComplete="off" onChange={actions.cipherIV} value={iv} placeholder="Leave blank to generate" />
+                <TextBox autoComplete="off" onChange={actions.cipherIV} value={iv} placeholder="Leave blank to generate/extract" />
               </>
             )}
           </>
@@ -54,7 +58,7 @@ const CryptoCipher = ({ alg, kdf, input, passphrase, useSalt, salt, cipherKey, i
             <TextBox autoComplete="off" onChange={actions.passphrase} value={passphrase}/>
 
             <Checkbox label="Salt: (Hex)" checked={useSalt} onChange={actions.useSalt}/>
-            <TextBox autoComplete="off" disabled={!useSalt} onChange={actions.salt} value={salt} placeholder="Leave blank to generate"/>
+            <TextBox autoComplete="off" disabled={!useSalt} onChange={actions.salt} value={salt} placeholder="Leave blank to generate/extract"/>
           </>
         )}
       </>
@@ -69,8 +73,8 @@ const CryptoCipher = ({ alg, kdf, input, passphrase, useSalt, salt, cipherKey, i
 
     {output && (output.error ? <span className={styles.error}>{output.error}</span> : (
       <>
-        {output.kdf && <label>KDF output:</label>}
-        {output.kdf && <TextArea readOnly value={output.kdf} />}
+        {output.properties && <label>Cipher properties:</label>}
+        {output.properties && <TextArea readOnly value={output.properties} />}
 
         <label>Format:</label>
         <Radio className={styles.options2} options={["Base64", "Hex", "UTF-8"]} value={output.format} onClick={actions.cipherFormat} />
