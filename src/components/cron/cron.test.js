@@ -1,4 +1,4 @@
- Cron from './cron';
+import Cron from './cron';
 
 describe('cron', () => {
 

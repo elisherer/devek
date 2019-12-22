@@ -16,8 +16,16 @@ const PageCron = () => {
     Array.from({ length: Cron.config.count[tab] }).map((x, i) => <option key={i} value={Cron.config.first[tab] + i}>{Cron.config.names[tab] ? Cron.config.names[tab][Cron.config.first[tab]+i] : (Cron.config.first[tab]+i)}</option>)
   , [tab]);
 
+  const everyOptions3 = useMemo(() => tab !== 'day' ? null :
+    Array.from({ length: Cron.config.count[tab+'m'] }).map((x, i) => <option key={i} value={Cron.config.first[tab+'m'] + i}>{Cron.config.names[tab+'m'] ? Cron.config.names[tab+'m'][Cron.config.first[tab+'m']+i] : (Cron.config.first[tab+'m']+i)}</option>)
+  , [tab]);
+
   const specificOptions = useMemo(() => 
     Array.from({ length: Cron.config.count[tab] }).map((x, i) => ({ name: Cron.config.names[tab] ? Cron.config.names[tab][Cron.config.first[tab]+i] : (Cron.config.first[tab]+i),value: Cron.config.first[tab]+i }))
+  , [tab]);
+
+  const specificOptions2 = useMemo(() => tab !== 'day' ? null :
+    Array.from({ length: Cron.config.count[tab+'m'] }).map((x, i) => ({ name: Cron.config.names[tab+'m'] ? Cron.config.names[tab+'m'][Cron.config.first[tab+'m']+i] : (Cron.config.first[tab+'m']+i),value: Cron.config.first[tab+'m']+i }))
   , [tab]);
 
   return (
@@ -42,15 +50,48 @@ const PageCron = () => {
       </Tabs>
       
       <div className={styles.options}>
+        <RadioOption id="opt_every" name={tab} label={`Every ${tab}`} checked={gen[tab].type === '*'} 
+                     data-type="*" onChange={actions.type}/>
         {tab === 'day' ? (
           <>
-          
+            <RadioOption id="opt_start" name={tab} checked={gen[tab].type === 'w/'} 
+                        data-type="w/" onChange={actions.type}>
+              Every <select data-type="w/"
+                            value={gen[tab]['w/'][0]} 
+                            onChange={actions.arg0}>
+                      {everyOptions1}
+                    </select> {tab}(s) starting on <select data-type="w/" 
+                                                                value={gen[tab]['w/'][1]} 
+                                                                onChange={actions.arg1}>
+                                                          {everyOptions2}
+                                                        </select>
+            </RadioOption>
+            <RadioOption id="opt_start_m" name={tab} checked={gen[tab].type === 'm/'} 
+                        data-type="m/" onChange={actions.type}>
+              Every <select data-type="m/"
+                            value={gen[tab]['m/'][0]} 
+                            onChange={actions.arg0}>
+                      {everyOptions1}
+                    </select> {tab}(s) starting on the <select data-type="m/" 
+                                                                value={gen[tab]['m/'][1]} 
+                                                                onChange={actions.arg1}>
+                                                          {everyOptions3}
+                                                        </select> of the month
+            </RadioOption>
+            <RadioOption id="opt_specific" name={tab} checked={gen[tab].type === 'w,'} 
+                        data-type="w," onChange={actions.type}>
+              Specific {tab}(s) of the week (multiple selection): <ChecklistBox label={`Choose ${tab} of the week`} options={specificOptions} maxShowSelection={10} 
+                            data-type="w," value={gen[tab]['w,']} onChange={actions.args}/>
+            </RadioOption>
+            <RadioOption id="opt_specific_m" name={tab} checked={gen[tab].type === 'm,'} 
+                        data-type="m," onChange={actions.type}>
+              Specific {tab}(s) of the month  (multiple selection): <ChecklistBox label={`Choose ${tab} of the month`} options={specificOptions2} maxShowSelection={10} 
+                            data-type="m," value={gen[tab]['m,']} onChange={actions.args}/>
+            </RadioOption>
+
           </>
         ) : (
-          <>
-            <RadioOption id="opt_every" name={tab} label={`Every ${tab}`} checked={gen[tab].type === '*'} 
-                     data-type="*" onChange={actions.type}/>
-        
+          <>       
             <RadioOption id="opt_start" name={tab} checked={gen[tab].type === '/'} 
                         data-type="/" onChange={actions.type}>
               Every <select data-type="/" 
@@ -64,7 +105,7 @@ const PageCron = () => {
                                                         </select>
             </RadioOption>
             
-            <RadioOption id="opt_specific" name={tab} label={`Specific ${tab} (multiple)`} checked={gen[tab].type === ','} 
+            <RadioOption id="opt_specific" name={tab} checked={gen[tab].type === ','} 
                         data-type="," onChange={actions.type}>
               Specific {tab}(s) (multiple selection): <ChecklistBox label={`Choose ${tab}`} options={specificOptions} maxShowSelection={10} 
                             data-type="," value={gen[tab][',']} onChange={actions.args}/>

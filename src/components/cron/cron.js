@@ -7,12 +7,14 @@ const aliasWords = {
   [MONTH]: [null,"JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","DEC"],
   [DAY]: ["SUN","MON","TUE","WED","THU","FRI","SAT","SUN"],
 };
+const ORDINAL = {1:'st',2:'nd',3:'rd',21:'st',22:'nd',23:'rd',31:'st'};
 const config = {
-  first: { [SECOND]: 0, [MINUTE]: 0, [HOUR]: 0, [DAY]: 1, [MONTH]: 1, [YEAR]: 1993},
-  count: { [SECOND]: 60, [MINUTE]: 60, [HOUR]: 24, [DAY]: 31, [MONTH]: 12, [YEAR]: 100},
+  first: { [SECOND]: 0, [MINUTE]: 0, [HOUR]: 0, [DAY]: 0, [DAY+'m']: 1, [MONTH]: 1, [YEAR]: 1993},
+  count: { [SECOND]: 60, [MINUTE]: 60, [HOUR]: 24, [DAY]: 7, [DAY+'m']: 31, [MONTH]: 12, [YEAR]: 100},
   names: {
     [MONTH]: [null,"January","February","March","April","May","June","July","August","September","October","November","December"],
     [DAY]: ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],
+    [DAY+'m']: Array.from({length:32}).map((_,i)=> i+(ORDINAL[i] || 'th'))
   }
 };
 const PREDEFINED = {
@@ -31,7 +33,8 @@ const parseValue = (value, index, name) => {
   if (value[0] < 10) 
     return parseInt(value, 10);
   const word = value.toUpperCase();
-  if (Object.prototype.hasOwnProperty.call(parseWords[name], word)) 
+  if (Object.prototype.hasOwnProperty.call(parseWords, name) &&
+      Object.prototype.hasOwnProperty.call(parseWords[name], word)) 
     return parseWords[name][word] + (word === 'SUN' && index === 1 ? 7 : 0);
   throw new Error(`Unknown alias ${word} for type ${name}`);
 };
@@ -40,10 +43,10 @@ const parseField = (name, value) => {
   if (value === '*') {
     return { type: '*' };
   }
-  if (/^\d+\/\d+$/.test(value)) { // 0/0 , */0
-    return { type: '/', args: value.split('/').map((x, i) => i === 0 && x === '*' ? 0 : parseInt(x, 10)) };
+  if (/^(\*|\d+)\/\d+$/.test(value)) { // 0/0 , */0
+    return { type: '/', args: value.split('/').map(x => x === '*' ? 0 : parseInt(x, 10)) };
   }
-  else if (/^([A-Z]{3}|\d+)-([A-Z]{3}|\d+)$/i.test(value)) { // range only
+  else if (name !== DAY && /^([A-Z]{3}|\d+)-([A-Z]{3}|\d+)$/i.test(value)) { // range only
     return { type: '-', args: value.split('-').map((x, i) => parseValue(x, i, name)) };
   }
   return { 
@@ -62,32 +65,32 @@ const parseField = (name, value) => {
 };
 
 const parseDayFields = (dom, dow, quartz) => {
-  const o = (quartz && dow === '?') || (dow === '*' && dom !== '*' && dom !== '?') ? 'month' : 'week';
-  switch (o) {
-    case 'month':
-      if (quartz) {
+  const o = (quartz && dow === '?') || (dow === '*' && dom !== '*' && dom !== '?') ? 'm' : 'w';
+  let parsed;
+  if (quartz) {
+    switch (o) {
+      case 'm':
         if (dom === 'LW') {
-          return { of: o, type: 'LW' };
+          return { of: o, type: 'mLW' };
         }
         else if (dom.startsWith('L')) {
-          return { of: o, type: 'L', args: [dom.split('-')[1] || 0] };
+          return { of: o, type: 'mL', args: [dom.split('-')[1] || 0] };
         }
         else if (dom.endsWith('W')) {
-          return { of: o, type: 'W', args: [parseInt(dom.slice(0,-1))] };
+          return { of: o, type: 'mW', args: [parseInt(dom.slice(0,-1))] };
         }
-      }
-      return { of: o, ...parseField(DAY, dom) };
-    case 'week':
-      if (quartz) {
+        break;
+      case 'w':
         if (dow.includes('#')) {
-          return { of: o, type: '#', args: dow.split('#').map(x => parseInt(x, 10)) };
+          return { of: o, type: 'w#', args: dow.split('#').map(x => parseInt(x, 10)) };
         }
         else if (dow.endsWith('L')) {
-          return { of: o, type: 'L', args: [parseInt(dow.slice(0,-1))] };
+          return { of: o, type: 'wL', args: [parseInt(dow.slice(0,-1))] };
         }
-      }
-      return { of: o, ...parseField(DAY, dow) };
+    }
   }
+  parsed = parseField(DAY, o === 'm' ? dom : dow);
+  return { of: o, ...parsed, type: o + parsed.type };
 };
 
 const stringifyField = (name, field) => {
