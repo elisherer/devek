@@ -11,6 +11,7 @@ const actionCreators = {
   binary: e => state => reduceTextBy('binary', { ...state, binary: e.target.value }),
   hex: e => state => reduceTextBy('hex', { ...state, hex: e.target.value }),
   base64: e => state => reduceTextBy('base64', { ...state, base64: e.target.value }),
+  base64Url: e => state => reduceTextBy('base64Url', { ...state, base64Url: e.target.value }),
 };
 
 const initialState = {
@@ -22,6 +23,7 @@ const initialState = {
   binary: '',
   hex: '',
   base64: '',
+  base64Url: '',
   errors: {}
 };
 

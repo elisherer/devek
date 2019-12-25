@@ -44,6 +44,14 @@ const parsers = {
     catch (e) {
       return NaN;
     }
+  },
+  base64Url: b64 => {
+    try {
+      return devek.base64UrlToUint8Array(b64);
+    }
+    catch (e) {
+      return NaN;
+    }
   }
 };
 
@@ -52,6 +60,7 @@ const serializers = {
   binary: arr => [...arr].map(x => x.toString(2).padStart(8, '0')).join(' '),
   hex: devek.arrayToHexString,
   base64: devek.arrayToBase64,
+  base64Url: devek.arrayToBase64Url,
 };
 
 const allFields = Object.keys(parsers);
