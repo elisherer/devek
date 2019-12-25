@@ -10,6 +10,9 @@
   - Use web worker?
 - Charmap
   - Search
+- Cipher
+  - Add AES-GCM auth tag support
   
 - General
   - Add support to drop files in inputs (need to add encoding selection for support)
+  
