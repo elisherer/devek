@@ -65,32 +65,32 @@ const parseField = (name, value) => {
 };
 
 const parseDayFields = (dom, dow, quartz) => {
-  const o = (quartz && dow === '?') || (dow === '*' && dom !== '*' && dom !== '?') ? 'm' : 'w';
+  const dayOf = (quartz && dow === '?') || (dow === '*' && dom !== '*' && dom !== '?') ? 'm' : 'w';
   let parsed;
   if (quartz) {
-    switch (o) {
+    switch (dayOf) {
       case 'm':
         if (dom === 'LW') {
-          return { of: o, type: 'mLW' };
+          return { type: 'mLW' };
         }
         else if (dom.startsWith('L')) {
-          return { of: o, type: 'mL', args: [dom.split('-')[1] || 0] };
+          return { type: 'mL', args: [dom.split('-')[1] || 0] };
         }
         else if (dom.endsWith('W')) {
-          return { of: o, type: 'mW', args: [parseInt(dom.slice(0,-1))] };
+          return { type: 'mW', args: [parseInt(dom.slice(0,-1))] };
         }
         break;
       case 'w':
         if (dow.includes('#')) {
-          return { of: o, type: 'w#', args: dow.split('#').map(x => parseInt(x, 10)) };
+          return { type: 'w#', args: dow.split('#').map(x => parseInt(x, 10)) };
         }
         else if (dow.endsWith('L')) {
-          return { of: o, type: 'wL', args: [parseInt(dow.slice(0,-1))] };
+          return { type: 'wL', args: [parseInt(dow.slice(0,-1))] };
         }
     }
   }
-  parsed = parseField(DAY, o === 'm' ? dom : dow);
-  return { of: o, ...parsed, type: o + parsed.type };
+  parsed = parseField(DAY, dayOf === 'm' ? dom : dow);
+  return { ...parsed, type: dayOf + parsed.type };
 };
 
 const stringifyField = (name, field) => {
@@ -163,9 +163,9 @@ class Cron {
     parts.push(stringifyField(SECOND, c.second));
     parts.push(stringifyField(MINUTE, c.minute));
     parts.push(stringifyField(HOUR, c.hour));
-    parts.push(c.day.of !== 'month' ? '?' : c.day.type); // TODO: DOM
+    parts.push(c.day.type[0] !== 'm' ? '?' : c.day.type); // TODO: DOM
     parts.push(stringifyField(MONTH, c.month));
-    parts.push(c.day.of !== 'week' ? '?' : c.day.type); // TODO: DOW
+    parts.push(c.day.type[0] !== 'w' ? '?' : c.day.type); // TODO: DOW
     parts.push(stringifyField(YEAR, c.year));
 
     return parts.join(' ');

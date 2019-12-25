@@ -9,8 +9,15 @@ const actionCreators = {
     return state;
   },
   parseQuartz: () => state => {
-    console.log(Cron.parse(state.exp, 'quartz'));
-    return state;
+    const parsed = Cron.parse(state.exp, 'quartz');
+    console.log(parsed);
+    return {
+      ...state, 
+      gen: Object.keys(parsed).reduce((gen,part) => {
+        gen[part].type = parsed[part].type;
+        gen[part][parsed[part].type] = parsed[part].args;
+      }, { ...state.gen })
+    };
   },
   type: e => state => ({
     ...state,
@@ -92,12 +99,12 @@ const initialState = {
       of: 'm',
       'm/': [1,1],
       'm,': [1],
-      'mL': [1],
+      'mL': [0],
       'mW': [1],
       'w/': [1,0],
       'w,': [0],
       'wL': [1],
-      'wW': [1]
+      'w#': [1,0]
     },
     month: {
       type: '*',

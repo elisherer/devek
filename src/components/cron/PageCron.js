@@ -9,15 +9,33 @@ const PageCron = () => {
   const { exp, error, tab, gen, gen_output } = useStore();
   
   const everyOptions1 = useMemo(() =>
-    Array.from({ length: Cron.config.count[tab] }).map((x, i) => <option key={i+1} value={i+1}>{i+1}</option>)
+    Array.from({ length: Cron.config.count[tab] }).map((x, i) => 
+      <option key={i+1} value={i+1}>{i+1}</option>
+    )
   , [tab]);
 
   const everyOptions2 = useMemo(() => 
-    Array.from({ length: Cron.config.count[tab] }).map((x, i) => <option key={i} value={Cron.config.first[tab] + i}>{Cron.config.names[tab] ? Cron.config.names[tab][Cron.config.first[tab]+i] : (Cron.config.first[tab]+i)}</option>)
+    Array.from({ length: Cron.config.count[tab] }).map((x, i) => 
+      <option key={i} value={Cron.config.first[tab] + i}>{Cron.config.names[tab] ? Cron.config.names[tab][Cron.config.first[tab]+i] : (Cron.config.first[tab]+i)}</option>
+    )
   , [tab]);
 
   const everyOptions3 = useMemo(() => tab !== 'day' ? null :
-    Array.from({ length: Cron.config.count[tab+'m'] }).map((x, i) => <option key={i} value={Cron.config.first[tab+'m'] + i}>{Cron.config.names[tab+'m'] ? Cron.config.names[tab+'m'][Cron.config.first[tab+'m']+i] : (Cron.config.first[tab+'m']+i)}</option>)
+    Array.from({ length: Cron.config.count[tab+'m'] }).map((x, i) => 
+      <option key={i} value={Cron.config.first[tab+'m'] + i}>{Cron.config.names[tab+'m'] ? Cron.config.names[tab+'m'][Cron.config.first[tab+'m']+i] : (Cron.config.first[tab+'m']+i)}</option>
+    )
+  , [tab]);
+
+  const everyOptions4 = useMemo(() => tab !== 'day' ? null :
+    Array.from({ length: Cron.config.count[tab+'m'] }).map((x, i) => 
+      <option key={i+1} value={i+1}>{i+1}</option>
+    )
+  , [tab]);
+
+  const everyOptions5 = useMemo(() => tab !== 'day' ? null :
+    Array.from({ length: Cron.config.count[tab+'m'] }).map((x, i) => 
+      <option key={i} value={i}>{i}</option>
+    )
   , [tab]);
 
   const specificOptions = useMemo(() => 
@@ -71,7 +89,7 @@ const PageCron = () => {
               Every <select data-type="m/"
                             value={gen[tab]['m/'][0]} 
                             onChange={actions.arg0}>
-                      {everyOptions1}
+                      {everyOptions4}
                     </select> {tab}(s) starting on the <select data-type="m/" 
                                                                 value={gen[tab]['m/'][1]} 
                                                                 onChange={actions.arg1}>
@@ -88,19 +106,46 @@ const PageCron = () => {
               Specific {tab}(s) of the month  (multiple selection): <ChecklistBox label={`Choose ${tab} of the month`} options={specificOptions2} maxShowSelection={10} 
                             data-type="m," value={gen[tab]['m,']} onChange={actions.args}/>
             </RadioOption>
+            <RadioOption id="opt_last_dom" name={tab} checked={gen[tab].type === 'mL'}
+                        data-type="mL" onChange={actions.type}>
+              <select data-type="mL" value={gen[tab]['mL'][0]} onChange={actions.arg0}>
+                {everyOptions5}
+              </select> day(s) before the end of the month (0 = Last day)</RadioOption>
+            <RadioOption id="opt_last_wd" name={tab} checked={gen[tab].type === 'mLW'} 
+                        data-type="mLW" onChange={actions.type}>
+              On the last weekday of the month
+            </RadioOption>         
+            <RadioOption id="opt_near_wd" name={tab} checked={gen[tab].type === 'mW'} 
+                        data-type="mW" onChange={actions.type}>
+              Nearest weekday to the <select data-type="mW" value={gen[tab]['mW'][0]} onChange={actions.arg0}>
+                                       {everyOptions3}
+                                     </select> of the month
+            </RadioOption>
+            <RadioOption id="opt_last_dow" name={tab} checked={gen[tab].type === 'wL'} 
+                        data-type="wL" onChange={actions.type}>
+              On the last <select data-type="wL" value={gen[tab]['wL'][0]} onChange={actions.arg0}>
+                            {everyOptions2}
+                          </select> of the month
+            </RadioOption>
 
+            <RadioOption id="opt_nth_dow" name={tab} checked={gen[tab].type === 'w#'} 
+                        data-type="wL" onChange={actions.type}>
+              On the <select data-type="w#" value={gen[tab]['w#'][0]} onChange={actions.arg0}>
+                       {everyOptions3}
+                     </select> <select data-type="w#" value={gen[tab]['w#'][1]} onChange={actions.arg1}>
+                       {everyOptions2}
+                     </select> of the month
+            </RadioOption>
+                 
+            <strong>*Weekday = Monday to Friday</strong>
           </>
         ) : (
           <>       
             <RadioOption id="opt_start" name={tab} checked={gen[tab].type === '/'} 
                         data-type="/" onChange={actions.type}>
-              Every <select data-type="/" 
-                            value={gen[tab]['/'][0]} 
-                            onChange={actions.arg0}>
+              Every <select data-type="/" value={gen[tab]['/'][0]} onChange={actions.arg0}>
                       {everyOptions1}
-                    </select> {tab}(s) starting at {tab} <select data-type="/" 
-                                                                value={gen[tab]['/'][1]} 
-                                                                onChange={actions.arg1}>
+                    </select> {tab}(s) starting at {tab} <select data-type="/" value={gen[tab]['/'][1]} onChange={actions.arg1}>
                                                           {everyOptions2}
                                                         </select>
             </RadioOption>
@@ -113,13 +158,9 @@ const PageCron = () => {
             
             <RadioOption id="opt_range" name={tab} checked={gen[tab].type === '-'} 
                         data-type="-" onChange={actions.type}>
-              Every {tab} between <select data-type="-" 
-                                          value={gen[tab]['-'][0]}
-                                          onChange={actions.arg0}>
+              Every {tab} between <select data-type="-" value={gen[tab]['-'][0]}onChange={actions.arg0}>
                                     {everyOptions2}
-                                  </select> and <select data-type="-" 
-                                                        value={gen[tab]['-'][1]}
-                                                        onChange={actions.arg1}>
+                                  </select> and <select data-type="-" value={gen[tab]['-'][1]}onChange={actions.arg1}>
                                                   {everyOptions2}
                                                 </select>
             </RadioOption>
