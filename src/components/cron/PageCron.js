@@ -6,7 +6,7 @@ import { useStore, actions } from './PageCron.store';
 import styles from './PageCron.less';
 
 const PageCron = () => {
-  const { exp, error, tab, gen, gen_output } = useStore();
+  const { exp, error, tab, gen } = useStore();
   
   const everyOptions1 = useMemo(() =>
     Array.from({ length: Cron.config.count[tab] }).map((x, i) => 
@@ -45,6 +45,8 @@ const PageCron = () => {
   const specificOptions2 = useMemo(() => tab !== 'day' ? null :
     Array.from({ length: Cron.config.count[tab+'m'] }).map((x, i) => ({ name: Cron.config.names[tab+'m'] ? Cron.config.names[tab+'m'][Cron.config.first[tab+'m']+i] : (Cron.config.first[tab+'m']+i),value: Cron.config.first[tab+'m']+i }))
   , [tab]);
+
+  const output = Cron.stringify(gen, 'quartz');
 
   return (
     <div>
@@ -129,7 +131,7 @@ const PageCron = () => {
             </RadioOption>
 
             <RadioOption id="opt_nth_dow" name={tab} checked={gen[tab].type === 'w#'} 
-                        data-type="wL" onChange={actions.type}>
+                        data-type="w#" onChange={actions.type}>
               On the <select data-type="w#" value={gen[tab]['w#'][0]} onChange={actions.arg0}>
                        {everyOptions3}
                      </select> <select data-type="w#" value={gen[tab]['w#'][1]} onChange={actions.arg1}>
@@ -170,7 +172,7 @@ const PageCron = () => {
       </div>
 
       <span>Output Expression:</span><CopyToClipboard from="cron_exp"/>
-      <TextBox id="cron_exp" readOnly value={gen_output} />
+      <TextBox id="cron_exp" readOnly value={output} />
 
     </div>
   );

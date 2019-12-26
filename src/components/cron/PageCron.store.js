@@ -14,8 +14,7 @@ const actionCreators = {
     return {
       ...state, 
       gen: Object.keys(parsed).reduce((gen,part) => {
-        gen[part].type = parsed[part].type;
-        gen[part][parsed[part].type] = parsed[part].args;
+        gen[part] = { ...gen[part], ...parsed[part] };
       }, { ...state.gen })
     };
   },

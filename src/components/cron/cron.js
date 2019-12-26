@@ -1,11 +1,13 @@
-const SECOND = 'second', MINUTE = 'minute', HOUR = 'hour', DAY = 'day', MONTH = 'month', YEAR = 'year';
+const SECOND = 'second', MINUTE = 'minute', HOUR = 'hour', DAY = 'day', MONTH = 'month', YEAR = 'year', QUARTZ = 'quartz', CRONTAB = 'crontab';
 const parseWords = {
   [MONTH]: { JAN: 1, FEB: 2, MAR: 3, APR: 4, MAY: 5, JUN: 6, JUL: 7, AUG: 8, SEP: 9, OCT: 10, NOV: 11, DEC: 12 },
-  [DAY]: { SUN: 0, MON: 1, TUE: 2, WED: 3, THU: 4, FRI: 5, SAT: 6 },
+  [CRONTAB + DAY]: { SUN: 0, MON: 1, TUE: 2, WED: 3, THU: 4, FRI: 5, SAT: 6 },
+  [QUARTZ + DAY]: { SUN: 1, MON: 2, TUE: 3, WED: 4, THU: 5, FRI: 6, SAT: 7 },
 };
 const aliasWords = {
   [MONTH]: [null,"JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","DEC"],
-  [DAY]: ["SUN","MON","TUE","WED","THU","FRI","SAT","SUN"],
+  [CRONTAB + DAY]: ["SUN","MON","TUE","WED","THU","FRI","SAT","SUN"],
+  [QUARTZ + DAY]: [null, "SUN","MON","TUE","WED","THU","FRI","SAT"],
 };
 const ORDINAL = {1:'st',2:'nd',3:'rd',21:'st',22:'nd',23:'rd',31:'st'};
 const config = {
@@ -29,63 +31,67 @@ const PREDEFINED = {
   "every_second": "* * * * * * *",
 };
 
-const parseValue = (value, index, name) => {
+const parseValue = (value, index, name, mode) => {
   if (value[0] < 10) 
     return parseInt(value, 10);
   const word = value.toUpperCase();
+  if (Object.prototype.hasOwnProperty.call(parseWords, mode + name) &&
+    Object.prototype.hasOwnProperty.call(parseWords[mode + name], word))
+    return parseWords[mode + name][word] + (mode === CRONTAB && word === 'SUN' && index === 1 ? 7 : 0);
   if (Object.prototype.hasOwnProperty.call(parseWords, name) &&
       Object.prototype.hasOwnProperty.call(parseWords[name], word)) 
-    return parseWords[name][word] + (word === 'SUN' && index === 1 ? 7 : 0);
+    return parseWords[name][word];
   throw new Error(`Unknown alias ${word} for type ${name}`);
 };
 
-const parseField = (name, value) => {
+const parseField = (name, value, mode) => {
   if (value === '*') {
-    return { type: '*' };
+    return { type: "*" };
   }
   if (/^(\*|\d+)\/\d+$/.test(value)) { // 0/0 , */0
-    return { type: '/', args: value.split('/').map(x => x === '*' ? 0 : parseInt(x, 10)) };
+    return { type: "/", "/": value.split('/').map(x => x === '*' ? 0 : parseInt(x, 10)) };
   }
   else if (name !== DAY && /^([A-Z]{3}|\d+)-([A-Z]{3}|\d+)$/i.test(value)) { // range only
-    return { type: '-', args: value.split('-').map((x, i) => parseValue(x, i, name)) };
+    return { type: "-", "-": value.split('-').map((x, i) => parseValue(x, i, name, mode)) };
   }
   return { 
-    type: ',', 
-    args: value.split(',').reduce((args, arg) => {
+    type: ",",
+    ",": value.split(',').reduce((args, arg) => {
       if (arg.includes('-')) {
-        const range = arg.split('-').map(parseValue);
+        const range = arg.split('-').map((x,i) => parseValue(x, i, name, mode));
         for (let i = range[0]; i <= range[1]; i++) args.push(i);
       }
       else {
-        args.push(parseValue(arg, -1, name));
+        args.push(parseValue(arg, -1, name, mode));
       }
       return args;
     }, []),
   };
 };
 
-const parseDayFields = (dom, dow, quartz) => {
+const parseDayFields = (dom, dow, mode) => {
+  const quartz = mode === QUARTZ;
   const dayOf = (quartz && dow === '?') || (dow === '*' && dom !== '*' && dom !== '?') ? 'm' : 'w';
   let parsed;
   if (quartz) {
     switch (dayOf) {
       case 'm':
         if (dom === 'LW') {
-          return { type: 'mLW' };
+          return { type: "mLW" };
         }
         else if (dom.startsWith('L')) {
-          return { type: 'mL', args: [dom.split('-')[1] || 0] };
+          return { type: "mL", "mL": [dom.split('-')[1] || 0] };
         }
         else if (dom.endsWith('W')) {
-          return { type: 'mW', args: [parseInt(dom.slice(0,-1))] };
+          return { type: "mW", "mW": [parseInt(dom.slice(0,-1))] };
         }
         break;
       case 'w':
         if (dow.includes('#')) {
-          return { type: 'w#', args: dow.split('#').map(x => parseInt(x, 10)) };
+          return { type: "w#", "w#": dow.split('#').map(x => parseInt(x, 10)) };
         }
         else if (dow.endsWith('L')) {
-          return { type: 'wL', args: [parseInt(dow.slice(0,-1))] };
+          return { type: "wL", "wL": [parseInt(dow.slice(0,-1))] };
         }
     }
   }
@@ -93,13 +99,14 @@ const parseDayFields = (dom, dow, quartz) => {
   return { ...parsed, type: dayOf + parsed.type };
 };
 
-const stringifyField = (name, field) => {
-  const aliases = aliasWords[name];
-  switch (field.type) {
+const stringifyField = (name, field, mode) => {
+  const aliases = aliasWords[mode + name] || aliasWords[name];
+  const {type} = field;
+  switch (type) {
     case '*': return '*';
-    case '/': return `${field.args[0]}/${field.args[1]}`;
-    case '-': return field.args.map(x => aliases ? aliases[x] : x).join('-');
-    default: return field.args.map(x => aliases ? aliases[x] : x).join(','); // TODO: try to group consecutive into ranges
+    case '/': return `${field[type][0]}/${field[type][1]}`;
+    case '-': return field[type].map(x => aliases ? aliases[x] : x).join('-');
+    default: return field[type].map(x => aliases ? aliases[x] : x).join(','); // TODO: try to group consecutive into ranges
   }
 };
 
@@ -122,13 +129,13 @@ class Cron {
       const predefined = expression.substr(1).toLowerCase();
       if (Object.prototype.hasOwnProperty.call(PREDEFINED, predefined)) {
         expression = PREDEFINED[predefined];
-        mode = 'quartz'; // we keep predefined in quartz format
+        mode = QUARTZ; // we keep predefined in quartz format
       }
       else {
         throw new Error(`Invalid predefined cron expression ${expression}`);
       }
     }
-    else if (mode === 'crontab') {
+    else if (mode === CRONTAB) {
       expression = '0 ' + expression; // add 'at second 0' since crontab does not contains seconds
     }
 
@@ -142,31 +149,32 @@ class Cron {
     }
 
     return { 
-      second: parseField(SECOND, fields[0]),
-      minute: parseField(MINUTE, fields[1]),
-      hour: parseField(HOUR, fields[2]),
-      day: parseDayFields(fields[3], fields[5], mode === 'quartz'),
-      month: parseField(MONTH, fields[4]),
-      year: parseField(YEAR, fields[6]),
+      second: parseField(SECOND, fields[0], mode),
+      minute: parseField(MINUTE, fields[1], mode),
+      hour: parseField(HOUR, fields[2], mode),
+      day: parseDayFields(fields[3], fields[5], mode),
+      month: parseField(MONTH, fields[4], mode),
+      year: parseField(YEAR, fields[6], mode),
     };
   }
 
   /**
   *
   * @param {Object} c
+  * @param {string} mode
   * @returns {string}
   */
-  static stringify(c) {
+  static stringify(c, mode) {
     
     const parts = [];
 
-    parts.push(stringifyField(SECOND, c.second));
-    parts.push(stringifyField(MINUTE, c.minute));
-    parts.push(stringifyField(HOUR, c.hour));
-    parts.push(c.day.type[0] !== 'm' ? '?' : c.day.type); // TODO: DOM
-    parts.push(stringifyField(MONTH, c.month));
+    parts.push(stringifyField(SECOND, c.second, mode));
+    parts.push(stringifyField(MINUTE, c.minute, mode));
+    parts.push(stringifyField(HOUR, c.hour, mode));
+    parts.push(c.day.type === '*' ? '*' : (c.day.type[0] !== 'm' ? '?' : c.day.type)); // TODO: DOM
+    parts.push(stringifyField(MONTH, c.month, mode));
     parts.push(c.day.type[0] !== 'w' ? '?' : c.day.type); // TODO: DOW
-    parts.push(stringifyField(YEAR, c.year));
+    parts.push(stringifyField(YEAR, c.year, mode));
 
     return parts.join(' ');
   }
