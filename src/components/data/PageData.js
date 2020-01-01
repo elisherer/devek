@@ -97,13 +97,13 @@ const PageData = () => {
         </div>
       </div>
       <div className={styles.pipe_actions}>
-        <button className="icon" onClick={actions.pipe} title="Add command"><Icon path={mdiPlus} size={1} /></button>
-        <button className="icon" disabled={!pipe.length} onClick={actions.update} title="Update"><Icon path={mdiSync} size={1} /></button>
-        <button className="icon" disabled={!pipe.length || selected === 0} onClick={actions.moveUp} title="Move up"><Icon path={mdiChevronUp} size={1} /></button>
-        <button className="icon" disabled={!pipe.length || selected === pipe.length - 1} onClick={actions.moveDown} title="Move down"><Icon path={mdiChevronDown} size={1} /></button>
-        <button className="icon" disabled={!pipe.length} onClick={actions.remove} title="Remove"><Icon path={mdiDelete} size={1} /></button>
-        <button className="icon" onClick={handleImport} title="Import"><Icon path={mdiImport} size={1} /></button>
-        <button className="icon" disabled={!pipe.length} onClick={handleExport} title="Remove"><Icon path={mdiExport} size={1} /></button>
+        <button className="tool" onClick={actions.pipe} title="Add command"><Icon path={mdiPlus} size={1} /></button>
+        <button className="tool" disabled={!pipe.length} onClick={actions.update} title="Update"><Icon path={mdiSync} size={1} /></button>
+        <button className="tool" disabled={!pipe.length || selected === 0} onClick={actions.moveUp} title="Move up"><Icon path={mdiChevronUp} size={1} /></button>
+        <button className="tool" disabled={!pipe.length || selected === pipe.length - 1} onClick={actions.moveDown} title="Move down"><Icon path={mdiChevronDown} size={1} /></button>
+        <button className="tool" disabled={!pipe.length} onClick={actions.remove} title="Remove"><Icon path={mdiDelete} size={1} /></button>
+        <button className="tool" onClick={handleImport} title="Import"><Icon path={mdiImport} size={1} /></button>
+        <button className="tool" disabled={!pipe.length} onClick={handleExport} title="Remove"><Icon path={mdiExport} size={1} /></button>
       </div>
       <span>Actions:</span>
       <div className={styles.pipe}>

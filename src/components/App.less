@@ -126,12 +126,14 @@
       h1 {
         color: @gui-card-left-border;
         padding: 0 0 4px;
-        margin: 10px 0 16px;
+        margin: 0 0 16px;
         font-size: 20px;
         font-weight: bold;
-        border-bottom: 2px solid @gui-card-header-border;
+        //border-bottom: 2px solid @gui-card-header-border;
       }
-
+      * + h1 {
+        margin-top: 16px;
+      }
       label {
         display: block;
         margin-bottom: 6px;

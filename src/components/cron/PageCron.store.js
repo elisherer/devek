@@ -2,80 +2,87 @@ import Cron from './cron';
 import createStore from 'helpers/createStore';
 
 const actionCreators = {
-  exp: e => state => ({ ...state, exp: e.target.value }),
-  tab: e => state => ({ ...state, tab: e.target.dataset.tab }),
-  parseCrontab: () => state => {
-    console.log(Cron.parse(state.exp, 'crontab'));
-    return state;
-  },
-  parseQuartz: () => state => {
-    const parsed = Cron.parse(state.exp, 'quartz');
+  mode: mode => state => ({ ...state, mode }),
+  exp: e => state => ({ ...state, [state.mode]: { ...state[state.mode], exp: e.target.value }}),
+  tab: e => state => ({ ...state, [state.mode]: { ...state[state.mode], tab: e.target.dataset.tab }}),
+  parse: () => state => {
+    const parsed = Cron.parse(state[state.mode].exp, state.mode);
     console.log(parsed);
     return {
       ...state, 
-      gen: Object.keys(parsed).reduce((gen,part) => {
-        gen[part] = { ...gen[part], ...parsed[part] };
-      }, { ...state.gen })
+      [state.mode]: { 
+        ...state[state.mode], 
+        gen: Object.keys(parsed).reduce((gen,part) => {
+          gen[part] = { ...gen[part], ...parsed[part] };
+          return gen;
+        }, { ...state[state.mode].gen })
+      }
     };
   },
   type: e => state => ({
     ...state,
-    gen: {
-      ...state.gen,
-      [state.tab]: {
-        ...state.gen[state.tab],
-        type: e.target.dataset.type
+    [state.mode]: { 
+      ...state[state.mode], 
+      gen: {
+        ...state[state.mode].gen,
+        [state[state.mode].tab]: {
+          ...state[state.mode].gen[state[state.mode].tab],
+          type: e.target.dataset.type
+        }
       }
     }
   }),
   args: e => state => ({
     ...state,
-    gen: {
-      ...state.gen,
-      [state.tab]: {
-        ...state.gen[state.tab],
-        type: e.target.dataset.type,
-        [e.target.dataset.type]: e.target.value,
+    [state.mode]: { 
+      ...state[state.mode], 
+      gen: {
+        ...state[state.mode].gen,
+        [state[state.mode].tab]: {
+          ...state[state.mode].gen[state[state.mode].tab],
+          type: e.target.dataset.type,
+          [e.target.dataset.type]: e.target.value,
+        }
       }
     }
   }),
   arg0: e => state => ({
     ...state,
-    gen: {
-      ...state.gen,
-      [state.tab]: {
-        ...state.gen[state.tab],
-        type: e.target.dataset.type,
-        [e.target.dataset.type]: [parseInt(e.target.value, 10)].concat(state.gen[state.tab][e.target.dataset.type].slice(1)),
+    [state.mode]: { 
+      ...state[state.mode], 
+      gen: {
+        ...state[state.mode].gen,
+        [state[state.mode].tab]: {
+          ...state[state.mode].gen[state[state.mode].tab],
+          type: e.target.dataset.type,
+          [e.target.dataset.type]: [parseInt(e.target.value, 10)].concat(state[state.mode].gen[state[state.mode].tab][e.target.dataset.type].slice(1)),
+        }
       }
     }
   }),
   arg1: e => state => ({
     ...state,
-    gen: {
-      ...state.gen,
-      [state.tab]: {
-        ...state.gen[state.tab],
-        type: e.target.dataset.type,
-        [e.target.dataset.type]: state.gen[state.tab][e.target.dataset.type].slice(0, -1).concat([parseInt(e.target.value, 10)]),
+    [state.mode]: { 
+      ...state[state.mode], 
+      gen: {
+        ...state[state.mode].gen,
+        [state[state.mode].tab]: {
+          ...state[state.mode].gen[state[state.mode].tab],
+          type: e.target.dataset.type,
+          [e.target.dataset.type]: state[state.mode].gen[state[state.mode].tab][e.target.dataset.type].slice(0, -1).concat([parseInt(e.target.value, 10)]),
+        }
       }
     }
   }),
-  gen_second: '',
-  gen_minute: '',
-  gen_hour: '',
-  gen_days: '',
-  gen_month: '',
-  gen_year: '',
 };
 
 const now = new Date();
 
-const initialState = {
-  exp: '0 0 0 ? * * *',
-  tab: "second",
+const initState = mode => ({
+  exp: mode === 'crontab' ?  '0 0 * * * *' : '0 0 0 ? * * *',
+  tab: mode === 'crontab' ? "minute" : "second",
   gen: {
-    second: {
+    second: mode === 'crontab' ? undefined : {
       type: ',',
       '/': [0,1],
       '-': [0,0],
@@ -93,9 +100,14 @@ const initialState = {
       '-': [0,0],
       ',': [0]
     },
-    day: {
+    day: mode === 'crontab' ? {
       type: '*',
-      of: 'm',
+      'm/': [1,1],
+      'm,': [1],
+      'w/': [1,0],
+      'w,': [0],
+    } : {
+      type: '*',
       'm/': [1,1],
       'm,': [1],
       'mL': [0],
@@ -118,7 +130,11 @@ const initialState = {
       ',': [now.getFullYear()]
     },
   },
-  gen_output: '0 0 0 * * ? *',
+})
+
+const initialState = {
+  crontab: initState('crontab'),
+  quartz: initState('quartz'),
 };
 
 export const {

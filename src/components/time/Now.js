@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import { Checkbox } from '../_lib';
+import Checkbox from '../_lib/Checkbox';
 import { getWeek } from './time.js';
 import { actions } from './PageTime.store';
 import Clock from './Clock';
@@ -37,6 +37,7 @@ const useRAF = (ampm) => {
 
   return info;
 }
+
 
 const Now = ({ ampm } : { ampm: boolean }) => {
 

@@ -151,21 +151,21 @@ const PageImage = ({ location } : { location: Object }) => {
         {!type && (
           <div className={toolbarClassName}>
             <DropDownMenu menu={loadMenu}>
-              <button className="icon" title="Open"><Icon path={mdiOpenInApp } size={1} /></button>
+              <button className="tool" title="Open"><Icon path={mdiOpenInApp } size={1} /></button>
             </DropDownMenu>
-            <button className="icon" disabled={disabled} onClick={actions.rotateRight} title="Rotate right"><Icon path={mdiRotateRight} size={1} /></button>
-            <button className="icon" disabled={disabled} onClick={actions.rotateLeft} title="Rotate left"><Icon path={mdiRotateLeft} size={1} /></button>
-            <button className="icon" disabled={disabled} onClick={actions.flipH} data-dir="h" title="Flip Horizontal"><Icon path={mdiFlipHorizontal} size={1}/></button>
-            <button className="icon" disabled={disabled} onClick={actions.flipV} data-dir="v" title="Flip Vertical"><Icon path={mdiFlipVertical} size={1}/></button>
-            <button className="icon" disabled={disabled} onClick={toBase64} title="To Base64"><Icon path={mdiCpu64Bit} size={1}/></button>
+            <button className="tool" disabled={disabled} onClick={actions.rotateRight} title="Rotate right"><Icon path={mdiRotateRight} size={1} /></button>
+            <button className="tool" disabled={disabled} onClick={actions.rotateLeft} title="Rotate left"><Icon path={mdiRotateLeft} size={1} /></button>
+            <button className="tool" disabled={disabled} onClick={actions.flipH} data-dir="h" title="Flip Horizontal"><Icon path={mdiFlipHorizontal} size={1}/></button>
+            <button className="tool" disabled={disabled} onClick={actions.flipV} data-dir="v" title="Flip Vertical"><Icon path={mdiFlipVertical} size={1}/></button>
+            <button className="tool" disabled={disabled} onClick={toBase64} title="To Base64"><Icon path={mdiCpu64Bit} size={1}/></button>
           </div>
         )}
         {type === 'filters' && (
           <div className={toolbarClassName}>
-            <button className="icon" disabled={disabled} onClick={actions.invert} title="Invert Colors"><Icon path={mdiInvertColors} size={1}/></button>
-            <button className="icon" disabled={disabled} onClick={actions.grayscale} title="Grayscale"><Icon path={mdiGradient} size={1}/></button>
-            <button className="icon" disabled={disabled} onClick={actions.sepia} title="Sepia"><Icon path={mdiImage} color="#704214" size={1}/></button>
-            <button className="icon" disabled={disabled} onClick={actions.blur} title="Blur"><Icon path={mdiBlur} size={1}/></button>
+            <button className="tool" disabled={disabled} onClick={actions.invert} title="Invert Colors"><Icon path={mdiInvertColors} size={1}/></button>
+            <button className="tool" disabled={disabled} onClick={actions.grayscale} title="Grayscale"><Icon path={mdiGradient} size={1}/></button>
+            <button className="tool" disabled={disabled} onClick={actions.sepia} title="Sepia"><Icon path={mdiImage} color="#704214" size={1}/></button>
+            <button className="tool" disabled={disabled} onClick={actions.blur} title="Blur"><Icon path={mdiBlur} size={1}/></button>
           </div>
         )}
         { type === 'crop' && (
@@ -175,14 +175,14 @@ const PageImage = ({ location } : { location: Object }) => {
             <TextBox disabled={disabled} className={styles.inline} type="number" value={crop.width} data-input="width" onChange={actions.cropInput} /> x
             <TextBox disabled={disabled} className={styles.inline} type="number" value={crop.height} data-input="height" onChange={actions.cropInput} /> )
             &nbsp;
-            <button className="icon" disabled={disabled} onClick={actions.crop} title="Crop"><Icon path={mdiCrop} size={1}/></button>
+            <button className="tool" disabled={disabled} onClick={actions.crop} title="Crop"><Icon path={mdiCrop} size={1}/></button>
           </div>
         )}
         { type === 'resize' && (
           <div className={toolbarClassName}>
             <TextBox disabled={disabled} className={styles.inline} type="number" value={resize.width} data-input="width" onChange={actions.resizeInput} /> x <TextBox disabled={disabled} className={styles.inline} type="number" value={resize.height} data-input="height" onChange={actions.resizeInput} />
             &nbsp;
-            <button className="icon" disabled={disabled} onClick={actions.resize} title="Resize"><Icon path={mdiResize} size={1}/></button>
+            <button className="tool" disabled={disabled} onClick={actions.resize} title="Resize"><Icon path={mdiResize} size={1}/></button>
           </div>
         )}
         { type === 'picker' && (

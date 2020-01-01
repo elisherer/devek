@@ -193,6 +193,18 @@ export const siteMap = {
     header: 'Cron Expressions Tools',
     description: 'Encode and decode cron expressions',
     icon: mdiTimer,
+    children: {
+      "/crontab": {
+        keyword: 'crontab',
+        title: "Crontab",
+        description: "Encode and decode crontab expressions"
+      },
+      "/quartz": {
+        keyword: 'quartz',
+        title: "Quartz",
+        description: "Encode and decode quartz expressions"
+      },
+    }
   },
   "/image": {
     component: PageImage,
