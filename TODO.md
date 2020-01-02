@@ -2,8 +2,6 @@
 
 ## Ideas
 
-- Cron - parser / generator
-  https://www.freeformatter.com/cron-expression-generator-quartz.html
 - Create self-signed certificate 
   https://github.com/infotechinc/create-x509-certificate
 - Image
