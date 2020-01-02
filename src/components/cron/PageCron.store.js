@@ -6,13 +6,20 @@ const actionCreators = {
   exp: e => state => ({ ...state, [state.mode]: { ...state[state.mode], exp: e.target.value }}),
   tab: e => state => ({ ...state, [state.mode]: { ...state[state.mode], tab: e.target.dataset.tab }}),
   parse: () => state => {
-    const parsed = Cron.parse(state[state.mode].exp, state.mode);
-    console.log(parsed);
+    let parsed = null, error = null;
+    try {
+      parsed = Cron.parse(state[state.mode].exp, state.mode);
+    }
+    catch (e) {
+      error = e.message;
+    }
+
     return {
       ...state, 
       [state.mode]: { 
-        ...state[state.mode], 
-        gen: Object.keys(parsed).reduce((gen,part) => {
+        ...state[state.mode],
+        error,
+        gen: error ? state[state.mode].gen : Object.keys(parsed).reduce((gen,part) => {
           gen[part] = { ...gen[part], ...parsed[part] };
           return gen;
         }, { ...state[state.mode].gen })
@@ -110,12 +117,12 @@ const initState = mode => ({
       type: '*',
       'm/': [1,1],
       'm,': [1],
-      'mL': [0],
+      'mL': [1],
       'mW': [1],
-      'w/': [1,0],
-      'w,': [0],
+      'w/': [1,1],
+      'w,': [1],
       'wL': [1],
-      'w#': [1,0]
+      'w#': [1,1]
     },
     month: {
       type: '*',

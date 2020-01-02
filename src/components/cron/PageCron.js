@@ -34,7 +34,7 @@ const PageCron = ({ location } : { location: Object }) => {
   const namedValuesFromFirst = useMemo(() => 
     Array.from({ length: Cron.config.count[tab] }).map((x, i) => ({ 
       name: Cron.config.names[tab] ? Cron.config.names[tab][Cron.config.first[tab]+i] : (Cron.config.first[tab]+i), 
-      value: Cron.config.first[tab] + i 
+      value: Cron.config.first[tab] + i + (tab === 'day' && mode === QUARTZ ? 1 : 0)
     }))
   , [tab]);
   const namedOptionsFromFirst = useMemo(() => namedValuesFromFirst.map(x => <option key={x.value} value={x.value}>{x.name}</option>), [tab]);
@@ -48,7 +48,7 @@ const PageCron = ({ location } : { location: Object }) => {
   const domNamedValuesFromFirst = useMemo(() => tab !== 'day' ? null :
     Array.from({ length: Cron.config.count[tab+'m'] }).map((x, i) => ({ 
       name: Cron.config.names[tab+'m'] ? Cron.config.names[tab+'m'][Cron.config.first[tab+'m']+i] : (Cron.config.first[tab+'m']+i), 
-      value: Cron.config.first[tab+'m'] + i 
+      value: Cron.config.first[tab+'m'] + i
     }))
   , [tab]);
 
@@ -76,6 +76,8 @@ const PageCron = ({ location } : { location: Object }) => {
                value={exp} onChange={actions.exp} />
       <button className="icon" onClick={actions.parse} title="Parse"><Icon path={mdiPlay} size={1} /></button>
       </div>
+      {error && <sup className={styles.error}>{error}</sup>}               
+
       <h1>Create</h1>
       <Tabs>
         {mode === QUARTZ && <div data-tab="second" aria-current={tab === 'second' || null} onClick={actions.tab}>Seconds</div>}
@@ -151,9 +153,9 @@ const PageCron = ({ location } : { location: Object }) => {
 
                 <RadioOption id="opt_nth_dow" name={tab} checked={gen[tab].type === 'w#'} 
                             data-type="w#" onChange={actions.type}>
-                  On the <select data-type="w#" value={gen[tab]['w#'][0]} onChange={actions.arg0}>
+                  On the <select data-type="w#" value={gen[tab]['w#'][1]} onChange={actions.arg1}>
                           {domNamedOptionsFromFirst.slice(0, 5)}
-                        </select> <select data-type="w#" value={gen[tab]['w#'][1]} onChange={actions.arg1}>
+                        </select> <select data-type="w#" value={gen[tab]['w#'][0]} onChange={actions.arg0}>
                           {namedOptionsFromFirst}
                         </select> of the month
                 </RadioOption>

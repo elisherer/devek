@@ -31,26 +31,28 @@ const PREDEFINED = {
   "every_minute": "0 */1 * * * * *",
   "every_second": "* * * * * * *",
 };
+const EveryNRegExp = /^(\*|\d+)\/\d+$/,
+  RangeRegExp = /^([A-Z]{3}|\d+)-([A-Z]{3}|\d+)$/i;
 
 const parseValue = (value, index, name, mode) => {
   if (value[0] < 10) 
     return parseInt(value, 10);
   const word = value.toUpperCase();
-  if (parseWords?.[mode + name]?.[word])
+  if (typeof parseWords?.[mode + name]?.[word] === 'number')
     return parseWords[mode + name][word] + (mode === CRONTAB && word === 'SUN' && index === 1 ? 7 : 0);
-  if (parseWords?.[name]?.[word]) 
+  if (typeof parseWords?.[name]?.[word] === 'number') 
     return parseWords[name][word];
-  throw new Error(`Unknown alias ${word} for type ${name}`);
+  throw new Error(`Unknown alias ${word} for type ${name} in mode ${mode}`);
 };
 
 const parseField = (name, value, mode) => {
   if (value === '*') {
     return { type: "*" };
   }
-  if (/^(\*|\d+)\/\d+$/.test(value)) { // 0/0 , */0
+  if (EveryNRegExp.test(value)) { // 0/0 , */0
     return { type: "/", "/": value.split('/').map(x => x === '*' ? 0 : parseInt(x, 10)) };
   }
-  else if (name !== DAY && /^([A-Z]{3}|\d+)-([A-Z]{3}|\d+)$/i.test(value)) { // range only
+  else if (name !== DAY && RangeRegExp.test(value)) { // range only
     return { type: "-", "-": value.split('-').map((x, i) => parseValue(x, i, name, mode)) };
   }
   return { 
@@ -94,17 +96,22 @@ const parseDayFields = (dom, dow, mode) => {
         }
     }
   }
-  parsed = parseField(DAY, dayOf === 'm' ? dom : dow);
-  return { ...parsed, type: parsed.type === '*' ? '*' : (dayOf + parsed.type) };
+  parsed = parseField(DAY, dayOf === 'm' ? dom : dow, mode);
+  const result = { type: parsed.type === '*' ? '*' : (dayOf + parsed.type) };
+  if (result.type !== '*') {
+    result[result.type] = parsed[parsed.type];
+  }
+  return result;
 };
 
 const stringifyField = (name, field, mode) => {
   const aliases = aliasWords[mode + name] || aliasWords[name];
+  const aliaser = aliases ? x => aliases[x] : x => x;
   const {type} = field;
-  switch (type) {
+  switch (type[type.length - 1]) { // last letter
     case '*': return '*';
     case '/': return `${field[type][0]}/${field[type][1]}`;
-    case '-': return field[type].map(x => aliases ? aliases[x] : x).join('-');
+    case '-': return field[type].map(aliaser).join('-');
     default: {
       let firstInRange = null, lastValue = null;
       const output = [];
@@ -114,15 +121,31 @@ const stringifyField = (name, field, mode) => {
           if (firstInRange === null) firstInRange = x;
           continue;
         }
-        output.push(firstInRange + (lastValue === firstInRange ? '' : '-' + lastValue));
+        output.push(aliaser(firstInRange) + (lastValue === firstInRange ? '' : '-' + aliaser(lastValue)));
         lastValue = x;
         firstInRange = x;
       }
-      output.push(firstInRange + (lastValue === firstInRange ? '' : '-' + lastValue));
+      output.push(aliaser(firstInRange) + (lastValue === firstInRange ? '' : '-' + aliaser(lastValue)));
       
       return output.join(',');
     }
   }
+};
+
+const stringifyDayField = (field, mode) => {
+  const { type } = field;
+  if (mode === CRONTAB || ['*','/','-',','].includes(type[1])) {
+    return stringifyField(DAY, field, mode);
+  }
+  // one of special day-of options (L,W,#,...)
+  switch (type) {
+    case 'mLW': return 'LW';
+    case 'mL': return 'L' + (field[type][0] ? '-' + field[type][0] : '');
+    case 'mW': return field[type][0] + 'W';
+    case 'w#': return field[type][0] + '#' + field[type][1];
+    case 'wL': return field[type][0] + 'L';
+  }
+  throw new Error(`Unknown type ${type}`);
 };
 
 class Cron {
@@ -144,7 +167,6 @@ class Cron {
       const predefined = expression.substr(1).toLowerCase();
       if (Object.prototype.hasOwnProperty.call(PREDEFINED, predefined)) {
         expression = PREDEFINED[predefined];
-        mode = QUARTZ; // we keep predefined in quartz format
       }
       else {
         throw new Error(`Invalid predefined cron expression ${expression}`);
@@ -187,9 +209,9 @@ class Cron {
     if (mode === QUARTZ) parts.push(stringifyField(SECOND, c.second, mode));
     parts.push(stringifyField(MINUTE, c.minute, mode));
     parts.push(stringifyField(HOUR, c.hour, mode));
-    parts.push(c.day.type === '*' || c.day.type[0] !== 'm' ? unused : c.day.type); // TODO: DOM
+    parts.push(c.day.type === '*' || c.day.type[0] !== 'm' ? unused : stringifyDayField(c.day, mode));
     parts.push(stringifyField(MONTH, c.month, mode));
-    parts.push(c.day.type === '*' ? '*' : (c.day.type[0] !== 'w' ? unused : c.day.type)); // TODO: DOW
+    parts.push(c.day.type === '*' ? '*' : (c.day.type[0] !== 'w' ? unused : stringifyDayField(c.day, mode)));
     parts.push(stringifyField(YEAR, c.year, mode));
 
     return parts.join(' ');
