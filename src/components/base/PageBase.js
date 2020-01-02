@@ -20,7 +20,7 @@ const PageBase = ({ location } : { location: Object }) => {
   const { errors } = state;
 
   if (type === 'text') {
-    const { utf8, hex, binary, base64 } = state;
+    const { utf8, hex, binary, base64, base64Url } = state;
 
     return (
       <div>
@@ -42,6 +42,11 @@ const PageBase = ({ location } : { location: Object }) => {
         <span>Base64:</span><CopyToClipboard from="base_text_base64"/>
         <div className={styles.wrap}>
           <TextBox className={styles.number} invalid={errors.base64} id="base_text_base64" value={base64} onChange={actions.base64} />
+        </div>
+
+        <span>Base64Url:</span><CopyToClipboard from="base_text_base64url"/>
+        <div className={styles.wrap}>
+          <TextBox className={styles.number} invalid={errors.base64Url} id="base_text_base64url" value={base64Url} onChange={actions.base64Url} />
         </div>
       </div>
     );

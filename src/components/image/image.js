@@ -1,6 +1,18 @@
 const canvas = document.createElement('canvas'),
     ctx = canvas.getContext('2d');
 
+export const loadFromDataUri = (callback) => {
+  const img = new Image();
+    img.onload = () => {
+      canvas.width = img.naturalWidth;
+      canvas.height = img.naturalHeight;
+      ctx.drawImage(img, 0, 0);
+      const src = img.src;
+      callback(canvas.width, canvas.height, src);
+    };
+    img.src = prompt('Enter Data URI:', 'data:image/png;base64,');
+};
+
 export const loadFileAsync = (file, callback) => {
   if (typeof FileReader === "undefined" || !file || file.type.indexOf("image") === -1) return; // no file or not an image
 
@@ -36,11 +48,11 @@ const createFilter = filter => {
   }
 };
 
-export const handleGreyscale = createFilter((data, index) => {
-  const grey = 0.2989 * data[index] + 0.587 * data[index + 1] + 0.114 * data[index + 2];
-  data[index]= grey;
-  data[index+1]= grey;
-  data[index+2]= grey;
+export const handleGrayscale = createFilter((data, index) => {
+  const gray = 0.2989 * data[index] + 0.587 * data[index + 1] + 0.114 * data[index + 2];
+  data[index]= gray;
+  data[index+1]= gray;
+  data[index+2]= gray;
 });
 
 export const handleSepia = createFilter((data, index) => {

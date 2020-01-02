@@ -7,7 +7,7 @@ import NotFound from './NotFound';
 import { siteMap } from '../sitemap';
 import { useStore, actions } from './App.store';
 import screen from 'helpers/screen';
-import Spinner from './_lib/Spinner';
+import { Spinner, Tabs} from './_lib';
 
 import styles from './App.less';
 
@@ -77,11 +77,11 @@ const App = () => {
           </div>
           <h1>{siteMapParent.icon && <Icon path={siteMapParent.icon} size={1.33} />} {siteMapParent.header}</h1>
           {siteMapParent && siteMapParent.children && (
-          <nav className={styles.tabs}>
+          <Tabs className={styles.tabs}>
             {Object.keys(siteMapParent.children).map(path => 
               <NavLink key={path} to={parentPath + path} exact={path === '/' || path === ''}>{siteMapParent.children[path].title}</NavLink>
             )}
-          </nav>
+          </Tabs>
           )}
         </header>       
         <Suspense fallback={<Spinner />}>

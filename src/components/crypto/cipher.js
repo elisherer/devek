@@ -5,7 +5,8 @@ const crypto = devek.crypto;
 devek.md5 = md5;
 
 const OPENSSL_MAGIC = devek.stringToUint8Array("Salted__"),
-  SALT_SIZE = 8;
+  SALT_SIZE = 8,
+  IV_SIZE = 16;
 
 /**
  * Key derivation function using MD5
@@ -83,16 +84,18 @@ const getRsaOaepParams = (alg, label) => ({
   label
 });
 
-const buildKDFOutputAsync = async (alg, iv, useSalt, salt, cryptoKey) => [
+const buildIVOutput = (alg, iv) => (alg === 'AES-CTR' ? 'counter = ' : 'iv      = ') + devek.arrayToHexString(iv);
+
+const buildPropertiesOutputAsync = async (alg, iv, useSalt, salt, cryptoKey) => [
   useSalt && ('salt    = ' + devek.arrayToHexString(salt)),
   'key     = ' + devek.arrayToHexString(new Uint8Array(await crypto.subtle.exportKey('raw', cryptoKey))),
-  (alg === 'AES-CTR' ? 'counter = ' : 'iv      = ') + devek.arrayToHexString(iv)
+  buildIVOutput(alg, iv)
 ].filter(Boolean).join('\n');
 
-export const cipherEncrypt = async (alg, data, useKDF, key, iv, passphrase, useSalt, generateSalt, salt, jwk) => {
+export const cipherEncrypt = async (alg, data, useKDF, position, key, iv, passphrase, useSalt, generateSalt, salt, jwk) => {
   try {
     const isAES = alg.startsWith('AES');
-    let cryptoKey, options;
+    let cryptoKey, options, ivGenerated = false;
     if (isAES) {
       if (useKDF) {
         const keyAndIV = await deriveAESCryptoKeyAndIV(alg, passphrase, useSalt, generateSalt, salt, 'encrypt');
@@ -101,7 +104,12 @@ export const cipherEncrypt = async (alg, data, useKDF, key, iv, passphrase, useS
         salt = keyAndIV.salt;
       } else {
         cryptoKey = await crypto.subtle.importKey('raw', new Uint8Array(devek.hexStringToArray(key)), alg, false, ['encrypt']);
-        iv = new Uint8Array(devek.hexStringToArray(iv));
+        if (!iv) {
+          iv = crypto.getRandomValues(new Uint8Array(IV_SIZE));
+          ivGenerated = true;
+        }
+        else 
+          iv = new Uint8Array(devek.hexStringToArray(iv));
       }
       options = getAesParams(alg, iv);
     }
@@ -110,33 +118,67 @@ export const cipherEncrypt = async (alg, data, useKDF, key, iv, passphrase, useS
       options = getRsaOaepParams(alg);
     }
 
-    const encrypted = new Uint8Array(await crypto.subtle.encrypt(options, cryptoKey,
+    let encrypted = new Uint8Array(await crypto.subtle.encrypt(options, cryptoKey,
       devek.stringToUint8Array(data)
     ));
+    if (isAES && useKDF && useSalt) {
+      encrypted = devek.concatUint8Array(OPENSSL_MAGIC, salt, encrypted);
+    }
+
+    if (isAES && position !== 'None') {
+      if (position === 'Start') {
+        encrypted = devek.concatUint8Array(iv, encrypted);
+      } else {
+        encrypted = devek.concatUint8Array(encrypted, iv);
+      }
+    }
+
+    let properties = '';
+    if (isAES) {
+      if (ivGenerated) {
+        properties = buildIVOutput(alg, iv);
+      } else if (useKDF) {
+        properties = await buildPropertiesOutputAsync(alg, iv, useSalt, salt, cryptoKey);
+      }
+    }
 
     return {
-      kdf: useKDF && isAES ? await buildKDFOutputAsync(alg, iv, useSalt, salt, cryptoKey) : '',
-      output: isAES && useKDF && useSalt ? devek.concatUint8Array(OPENSSL_MAGIC, salt, encrypted) : encrypted
+      properties,
+      output: encrypted
     };
   }
   catch (e) {
-    return {kdf: '', error: e.name + ': ' + e.message};
+    console.error(e);
+    return {properties: '', error: e.name + ': ' + e.message};
   }
 };
 
-export const cipherDecrypt = async (alg, data, useKDF, key, iv, passphrase, useSalt, generateSalt, salt, jwk) => {
+export const cipherDecrypt = async (alg, data, useKDF, position, key, iv, passphrase, useSalt, generateSalt, salt, jwk) => {
   try {
     const isAES = alg.startsWith('AES');
 
     // extract salt from data if there
-    const decoded = devek.base64ToUint8Array(data);
-    const salted = decoded.length > OPENSSL_MAGIC.length
-      && OPENSSL_MAGIC.every((x, i) => decoded[i] === x);
-    if (salted) {
+    let encrypted = devek.base64ToUint8Array(data);
+    if (useKDF && 
+        encrypted.length > OPENSSL_MAGIC.length && 
+        OPENSSL_MAGIC.every((x, i) => encrypted[i] === x)) {
       useSalt = true;
-      salt = decoded.slice(OPENSSL_MAGIC.length, OPENSSL_MAGIC.length + 8);
+      salt = encrypted.slice(OPENSSL_MAGIC.length, OPENSSL_MAGIC.length + 8);
+      encrypted = encrypted.slice(OPENSSL_MAGIC.length + 8);
     }
-    const encrypted = salted ? decoded.slice(OPENSSL_MAGIC.length + 8) : decoded;
+
+    let ivExtracted = false;
+    if (!useKDF && isAES) {
+      ivExtracted = true;
+      if (position === 'Start') {
+        iv = encrypted.slice(0, IV_SIZE);
+        encrypted = encrypted.slice(-(encrypted.length - IV_SIZE));
+      }
+      else if (position === 'End') {
+        iv = encrypted.slice(-IV_SIZE);
+        encrypted = encrypted.slice(0, encrypted.length - IV_SIZE);
+      }
+    }
 
     // get key and options
     let cryptoKey, options;
@@ -148,7 +190,7 @@ export const cipherDecrypt = async (alg, data, useKDF, key, iv, passphrase, useS
         salt = derived.salt;
       } else {
         cryptoKey = await crypto.subtle.importKey("raw", new Uint8Array(devek.hexStringToArray(key)), alg, true, ['decrypt']);
-        iv = new Uint8Array(devek.hexStringToArray(iv));
+        if (typeof iv === 'string') iv = new Uint8Array(devek.hexStringToArray(iv));
       }
       options = getAesParams(alg, iv);
     } else {
@@ -158,13 +200,23 @@ export const cipherDecrypt = async (alg, data, useKDF, key, iv, passphrase, useS
 
     const decrypted = new Uint8Array(await crypto.subtle.decrypt(options, cryptoKey, encrypted));
 
+    let properties = '';
+    if (isAES) {
+      if (ivExtracted) {
+        properties = buildIVOutput(alg, iv);
+      } else if (useKDF) {
+        properties = await buildPropertiesOutputAsync(alg, iv, useSalt, salt, cryptoKey);
+      }
+    }
+
     return {
-      kdf: useKDF && isAES ? await buildKDFOutputAsync(alg, iv, useSalt, salt, cryptoKey) : '',
+      properties,
       output: decrypted
     };
   }
   catch (e) {
-    return {kdf: '', error: e.name + ': ' + e.message};
+    console.error(e);
+    return {properties: '', error: e.name + ': ' + e.message};
   }
 };
 

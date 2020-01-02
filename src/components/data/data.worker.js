@@ -15,6 +15,7 @@ const removeNewLines = x => x.replace(/\n/g, '');
 const actions = {
   "Split": (input, { By }) => flat(parseArrayOrString(input).map(x => x.split(parseString(By)))),
   "Wrap": (input, { Prefix, Suffix }) => parseArrayOrString(input).map(x => Prefix + x + Suffix),
+  "ChangeCase": (input, { Case }) => parseArrayOrString(input).map(x => x.toString()[Case === 'Uppercase' ? 'toUpperCase' : 'toLowerCase']() ),
   "Replace": (input, { Pattern, Flags, Substitution }) => {
       const regexp = new RegExp(Pattern, Flags.join(''));
       return parseArrayOrString(input).map(x => x.replace(regexp, Substitution));

@@ -15,6 +15,12 @@ const actions = {
     defaults: { Prefix: '', Suffix: '' },
   },
 
+  "ChangeCase": {
+    description: "Change case of strings",
+    parameters: { Case: ['Uppercase', 'Lowercase'] },
+    defaults: { Case: 'Uppercase' },
+  },
+
   "Replace": {
     description: "Replace each item using a regular expression and substitution expression",
     parameters: { Pattern: 'string', Flags: support.RegExpFlags, Substitution: 'string' },
