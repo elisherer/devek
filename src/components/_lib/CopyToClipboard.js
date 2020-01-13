@@ -1,5 +1,5 @@
 import React from 'react';
-import styles from './CopyToClipboard.less';
+import styled from 'styled-components';
 
 const copyFrom = e => {
   let el = document.getElementById(e.target.dataset.from);
@@ -16,11 +16,32 @@ const copyFrom = e => {
   }
 };
 
+const Wrapper = styled.span`
+  display: inline-block;
+  padding: 2px 3px;
+  font-size: 12px;
+  background: #eee;
+  cursor: pointer;
+  border-radius: 5px;
+  margin-bottom: 4px;
+
+  &:hover {
+    background: #ddd;
+  }
+  textarea {
+    position: absolute;
+    left: -100%;
+  }
+  span + & {
+    margin-left: 20px;
+  }
+`;
+
 const CopyToClipboard = ({ from } : { from: string }) => (
-  <span className={styles.copy} data-from={from} onClick={copyFrom}>
+  <Wrapper data-from={from} onClick={copyFrom}>
     <textarea />
     Copy
-  </span>
+  </Wrapper>
 );
 
 export default CopyToClipboard;

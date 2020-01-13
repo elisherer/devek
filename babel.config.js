@@ -20,7 +20,9 @@ const babelPresetStage1 = () => ({
     require("@babel/plugin-syntax-dynamic-import"),
     require("@babel/plugin-syntax-import-meta"),
     [require("@babel/plugin-proposal-class-properties"), { loose: false }],
-    require("@babel/plugin-proposal-json-strings")
+    require("@babel/plugin-proposal-json-strings"),
+
+    require("babel-plugin-styled-components"),
   ]
 });
 

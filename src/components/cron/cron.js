@@ -218,6 +218,20 @@ class Cron {
   }
 
   static config = config;
+
+  /**
+   *
+   *
+   * @param {string|Object} arg
+   * @param {string} mode
+   * @returns Array
+   */
+  static predict = (arg, mode) => {
+    const cron = typeof arg === 'string' ? Cron.parse(arg, mode) : arg;
+
+    const now = Date.now();
+    
+  };
  }
 
  export default Cron;

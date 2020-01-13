@@ -36,6 +36,7 @@ const Home = () => (
       <tr><td>core-js</td><td>MIT - Copyright © Denis Pushkarev</td></tr>
       <tr><td>react & react-dom</td><td>MIT - Copyright © Facebook, Inc. and its affiliates</td></tr>
       <tr><td>react-router-dom</td><td>MIT - Copyright © React Training</td></tr>
+      <tr><td>styled-components</td><td>MIT - Copyright © Glen Maddern and Maximilian Stoiber</td></tr>
       </tbody>
     </table>
 
