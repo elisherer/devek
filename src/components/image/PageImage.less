@@ -7,28 +7,6 @@
   }
 }
 
-.dropbox {
-  border: 2px dashed #888;
-  padding: 20px;
-  margin: 0 4px;
-  @media (min-width: @screen-desktop-min) {
-    margin: 0 20px;
-  }
-}
-.dragging {
-  border-color: #333;
-}
-.actions {
-  color: #ddd;
-  display: flex;
-  min-height: 40px;
-  &.loaded {
-    color: inherit;
-  }
-  button {
-    margin-right: 6px;
-  }
-}
 .hint {
   display: none;
   @media (min-width: @screen-desktop-min) {
@@ -36,25 +14,13 @@
     position: absolute;
   }
 }
-.canvas {
-  //max-width: 100%;
-  display: none;
-}
 .canvas_wrapper {
-  position:relative;
+  position: relative;
   @media (min-width: @screen-desktop-min) {
     margin: 0 20px;
   }
 }
-.rubber_band {
-  position:absolute;
-  border:1px dotted white;
-  mix-blend-mode: difference;
-  pointer-events:none;
-}
-.visible {
-  display: block;
-}
+
 .color {
   border: 2px solid #ddd;
   padding: 5px;

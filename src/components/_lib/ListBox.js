@@ -5,7 +5,7 @@ const Wrapper = styled.label`
   display: flex !important;
   margin-bottom: 10px !important;
   position: relative;
-  background: ${({ theme, readOnly, disabled }) => readOnly || disabled ? theme.textareaReadonlyBackground : theme.textareaBackground}
+  background: ${({ theme, readOnly, disabled }) => readOnly || disabled ? theme.textareaReadonlyBackground : theme.textareaBackground};
   border: 1px solid ${({ theme }) => theme.greyBorder};
   border-radius: 5px;
   padding: 8px;

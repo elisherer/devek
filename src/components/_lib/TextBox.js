@@ -1,7 +1,6 @@
 import React, { useEffect, useRef } from 'react';
-import cx from 'classnames';
-import styles from './TextBox.less';
 import screen from 'helpers/screen';
+import styled from 'styled-components';
 
 const blurOnEscape = e => {
   if (e.key === "Escape") {
@@ -9,6 +8,36 @@ const blurOnEscape = e => {
     e.preventDefault();
   }
 };
+
+const Wrapper = styled.section`
+  display: flex;
+  background: ${({ theme, readOnly, disabled }) => readOnly || disabled ? theme.textareaReadonlyBackground : theme.textareaBackground};
+  border: 1px solid ${({ theme, invalid }) => invalid ? 'red' : theme.greyBorder};
+  border-radius: 5px;
+  padding: 8px;
+  font-family: ${({ theme }) => theme.fontMono};
+  margin-bottom: 10px;
+  max-width: 560px;
+  input{
+    background: ${({ theme }) => theme.textareaBackground};
+    color: ${({ theme }) => theme.foregroundColor};
+    border: none;
+    width: 100%;
+    font-family: ${({ theme }) => theme.fontMono};
+    margin: 0;
+    outline: none;
+    white-space: normal;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    word-break: break-all;
+    &[readonly], &[disabled] {
+      background: ${({ theme }) => theme.textareaReadonlyBackground};
+    }
+  }
+  &:focus-within {
+    border-color: ${({ theme, invalid }) => invalid ? 'red' : theme.secondaryColor};
+  }
+`;
 
 const TextBox = ({
                    autoFocus,
@@ -52,7 +81,7 @@ const TextBox = ({
   }, []);
 
   return (
-    <section style={style} className={cx(className, styles.textbox, { [styles.readonly]: readOnly, [styles.disabled]: disabled, [styles.error]: invalid })}>
+    <Wrapper style={style} className={className} readOnly={readOnly} disabled={disabled} invalid={invalid}>
       {startAddon}
       <input ref={inputElement} readOnly={readOnly} placeholder={placeholder}
              className={inputClassName}
@@ -62,7 +91,7 @@ const TextBox = ({
              {...more}
       />
       {endAddon}
-    </section>
+    </Wrapper>
   );
 };
 

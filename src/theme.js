@@ -1,7 +1,9 @@
 const 
   primaryColor = '#5500aa',
   primaryDark = '#220044', // darken(primaryColor, 20%),
-  secondaryColor = '#1a1897';
+  secondaryColor = '#1a1897',
+  secondaryColorLight10 = '#221fc3', // lighten(secondaryColor, 10%)
+  secondaryColorLight30 = '#6462e6'; // lighten(secondaryColor, 30%)
 
 const theme = {
 
@@ -15,16 +17,21 @@ const theme = {
 
   textLightColor: '#575757', // set by accessibility test
   greyBorder: '#cccccc',
+  darkGreyBorder: '#999999', // darken(greyBorder, 20%)
   
   primaryColor,
   primaryDark,
   secondaryColor,
-
+  secondaryColorLight10,
+  secondaryColorLight30,
+  
   headerHeight: '54px',
   headerBackground: primaryColor,
   headerForeground: 'white',
   
   togglebarBackground: secondaryColor,
+  togglebarActiveHoverBackground: secondaryColorLight10,
+  togglebarHoverBackground: secondaryColorLight30,
   
   radioBackground: '#cccccc',
   
@@ -49,6 +56,9 @@ const theme = {
   textareaBorder: secondaryColor,
   textareaBackground: '#fdfdfd',
   textareaReadonlyBackground: '#f6f6f6',
+
+  searchItemHover: '#e2e2e2',
+  searchItemActive: '#f2f2f2',
 };
 
 export default theme;

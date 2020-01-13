@@ -226,10 +226,10 @@ class Cron {
    * @param {string} mode
    * @returns Array
    */
-  static predict = (arg, mode) => {
-    const cron = typeof arg === 'string' ? Cron.parse(arg, mode) : arg;
+  static predict = (/*arg, mode*/) => {
+    //const cron = typeof arg === 'string' ? Cron.parse(arg, mode) : arg;
 
-    const now = Date.now();
+    //const now = Date.now();
     
   };
  }

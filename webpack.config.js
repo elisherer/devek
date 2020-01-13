@@ -41,17 +41,11 @@ module.exports = {
   optimization: {
     minimizer: [new TerserJSPlugin({}), new OptimizeCSSAssetsPlugin({})],
     splitChunks: {
-      minSize: 30000,
-      cacheGroups: {
-        commons: {
-          test: node_modules, // Create a vendor chunk with all the imported node_modules in it
-          name: "vendor",
-          chunks: "all"
-        }
-      }
+      chunks: 'all'
     }
   },
   devServer: {
+    compress: true,
     historyApiFallback: true,
     before: (app, server) => {
       app.use(require('./api.mock'));

@@ -7,9 +7,28 @@ import {
   mdiPlay
 } from '@mdi/js';
 import Icon from '@mdi/react';
-import styles from './PageCron.less';
+import styled from 'styled-components';
 
 const pageRoutes = ['crontab', 'quartz', ];
+
+const InputWrapper = styled.div`
+  display: flex;
+  *:first-child {
+    flex-grow: 1;
+    width: 100%;
+  }
+  button {
+    margin-left: 10px;
+  }
+`;
+
+const Options = styled.div`
+  padding: 10px;
+`;
+
+const ErrorText = styled.sup`
+  color: red;
+`;
 
 const PageCron = ({ location } : { location: Object }) => {
   const pathSegments = location.pathname.substr(1).split('/');
@@ -71,12 +90,12 @@ const PageCron = ({ location } : { location: Object }) => {
     <div>
       <h1>Parse</h1>
       <span>Input expression:</span>
-      <div className={styles.wrap}>
-      <TextBox autoFocus selectOnFocus invalid={error}
-               value={exp} onChange={actions.exp} />
-      <button className="icon" onClick={actions.parse} title="Parse"><Icon path={mdiPlay} size={1} /></button>
-      </div>
-      {error && <sup className={styles.error}>{error}</sup>}               
+      <InputWrapper>
+        <TextBox autoFocus selectOnFocus invalid={error}
+                value={exp} onChange={actions.exp} />
+        <button className="icon" onClick={actions.parse} title="Parse"><Icon path={mdiPlay} size={1} /></button>
+      </InputWrapper>
+      {error && <ErrorText>{error}</ErrorText>}               
 
       <h1>Create</h1>
       <Tabs>
@@ -88,7 +107,7 @@ const PageCron = ({ location } : { location: Object }) => {
         <div data-tab="year" aria-current={tab === 'year' || null} onClick={actions.tab}>Year</div>
       </Tabs>
       
-      <div className={styles.options}>
+      <Options>
         <RadioOption id="opt_every" name={tab} label={`Every ${tab}`} checked={gen[tab].type === '*'} 
                      data-type="*" onChange={actions.type}/>
         {tab === 'day' ? (
@@ -192,7 +211,7 @@ const PageCron = ({ location } : { location: Object }) => {
           </>
         )
       }
-      </div>
+      </Options>
 
       <span>Output Expression:</span><CopyToClipboard from="cron_exp"/>
       <TextBox id="cron_exp" readOnly value={output} />

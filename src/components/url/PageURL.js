@@ -2,8 +2,17 @@ import React from 'react';
 import { CopyToClipboard, TextBox } from '../_lib';
 import { useStore, actions } from './PageURL.store';
 import qs from './qs';
+import styled from 'styled-components';
 
-import styles from './PageURL.less';
+const Table = styled.table`
+  th { 
+    text-align: left; 
+    height: 30px;
+  }
+  td, th {
+    vertical-align: top;
+  }
+`;
 
 const PageURL = () => {
 
@@ -26,7 +35,7 @@ const PageURL = () => {
                value={input} onChange={actions.input} />
       <br />
 
-      <table className={styles.table}>
+      <Table>
         <colgroup>
           <col /><col /><col />
         </colgroup>
@@ -48,7 +57,7 @@ const PageURL = () => {
               <td id="url_searchParams"><pre>{JSON.stringify(query, null, 2)}</pre></td>
           </tr>
         </tbody>
-      </table>
+      </Table>
     </div>
   );
 };

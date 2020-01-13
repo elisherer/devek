@@ -2,10 +2,15 @@ import React from 'react';
 import { Checkbox, Radio, TextArea, TextBox } from '../_lib';
 import { useStore, actions } from './PageRegex.store';
 import support from 'helpers/support';
-
-import styles from './PageRegex.less'
+import styled from 'styled-components';
 
 let compiledRegex = null;
+
+const Radio30Percent = styled(Radio)`
+  div {
+    flex-basis: 30%;
+  }
+`;
 
 const PageRegex = () => {
   const state = useStore();
@@ -52,14 +57,14 @@ const PageRegex = () => {
                value={regexSource} onChange={actions.regex} autoFocus />
 
       <label>Flags</label>
-      <Radio className={styles.flags}>
+      <Radio30Percent>
         <div data-active={flags.includes('g') || null} data-flag="g" onClick={actions.flags}>Global</div>
         <div data-active={flags.includes('m') || null} data-flag="m" onClick={actions.flags}>Multi&#8209;line</div>
         <div data-active={flags.includes('i') || null} data-flag="i" onClick={actions.flags}>Insensitive</div>
         {support.RegExpFlags.includes('s') && <div data-active={flags.includes('s') || null} data-flag="s" onClick={actions.flags}>DotAll</div>}
         {support.RegExpFlags.includes('u') && <div data-active={flags.includes('u') || null} data-flag="u" onClick={actions.flags}>Unicode</div>}
         {support.RegExpFlags.includes('y') && <div data-active={flags.includes('y') || null} data-flag="y" onClick={actions.flags}>Sticky</div>}
-      </Radio>
+      </Radio30Percent>
 
       <label>Test string</label>
       <TextArea onChange={actions.testString} value={testString} />

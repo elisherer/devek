@@ -16,7 +16,7 @@ import PageNetwork from './components/network/PageNetwork';
 //import PageCrypto from './components/crypto/PageCrypto'; // Lazy loaded
 import './components/crypto/PageCrypto.less'; // this is to prevent lazy loading of the css file (too small)
 import PageDiff from './components/diff/PageDiff'; // Lazy loaded
-import PageData from './components/data/PageData';
+//import PageData from './components/data/PageData';
 import PageURL from './components/url/PageURL';
 import PageChecksum from './components/checksum/PageChecksum';
 
@@ -41,6 +41,7 @@ import {
 } from '@mdi/js';
 
 const PageCryptoLazy = lazy(() => import(/* webpackChunkName: "crypto" */'./components/crypto/PageCrypto'));
+const PageDataLazy =  lazy(() => import(/* webpackChunkName: "data" */'./components/data/PageData'));
 
 export const siteMap = {
   "/": {
@@ -328,7 +329,7 @@ export const siteMap = {
     icon: mdiLanConnect,
   },
   "/data": {
-    component: PageData,
+    component: PageDataLazy,
     keyword: 'data',
     title: 'Data',
     header: 'Data Tools',

@@ -5,9 +5,15 @@ import { Redirect } from 'react-router-dom';
 import { useStore, actions } from './PageChecksum.store';
 import crcDatabase from './crcDatabase';
 
-import styles from './PageChecksum.less';
+import styled from 'styled-components';
 
 const pageRoutes = ['crc', 'luhn'];
+
+const Radio22Percent = styled(Radio)`
+  div {
+    flex-basis: 22%;
+  }
+`;
 
 const PageChecksum = ({ location } : { location: Object }) => {
   const pathSegments = location.pathname.substr(1).split('/');
@@ -45,13 +51,13 @@ const PageChecksum = ({ location } : { location: Object }) => {
         <TextArea autoFocus onChange={actions.crcInput} value={input} />
 
         <label>Input format:</label>
-        <Radio className={styles.options} options={["Hex", "UTF-8"]} value={format} onClick={actions.crcFormat} />
+        <Radio22Percent options={["Hex", "UTF-8"]} value={format} onClick={actions.crcFormat} />
 
         <label>Width:</label>
-        <Radio className={styles.options} options={[8, 16, 32, 64]} value={width} onClick={actions.crcWidth} />
+        <Radio22Percent options={[8, 16, 32, 64]} value={width} onClick={actions.crcWidth} />
 
         <label>Name: (First is default)</label>
-        <Radio className={styles.options} options={Object.keys(crcDatabase[width])} showEmptyWith={crcDatabase[width][''][5]} value={name} onClick={actions.crcName} />
+        <Radio22Percent options={Object.keys(crcDatabase[width])} showEmptyWith={crcDatabase[width][''][5]} value={name} onClick={actions.crcName} />
 
         <label>Parameters:</label>
         <TextArea readOnly value={output} />
