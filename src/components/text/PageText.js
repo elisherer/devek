@@ -2,17 +2,21 @@ import React from 'react';
 import { CopyToClipboard, ChecklistBox, Radio, TextArea } from '../_lib';
 import { textCategories, textFunctions } from './text';
 import { Redirect, NavLink } from 'react-router-dom';
-
 import { useStore, actions } from './PageText.store';
+import styled from 'styled-components';
 import charmap from './charmap';
 
 const charmapCategories = charmap.map(x=> ({ name: `${x[0]} (${x[1]}-${x[2]})`, value: x[0] }));
 
-import styles from './PageText.less';
-import styled from 'styled-components';
 
 const TextAreaWithValidation = styled(TextArea)`
-  color: ${({ error }) => error ? 'red' : 'inherit'};
+  pre {
+    color: ${({ error }) => error ? 'red' : 'inherit'};
+  }
+`;
+
+const AlignToRight = styled.div`
+  text-align: right;
 `;
 
 const I = styled.i`
@@ -73,7 +77,7 @@ const PageText = ({ location } : { location: Object }) => {
 
   return (
     <div>
-      <Radio className={styles.funcs}>
+      <Radio flexBasis={25}>
         {
           Object.keys(textFunctions[category]).map(tf =>{
             return (
@@ -85,9 +89,9 @@ const PageText = ({ location } : { location: Object }) => {
 
       <label>Input:</label>
       <TextArea autoFocus onChange={actions.input} value={input}/>
-      <div className={styles.input_info}>
+      <AlignToRight>
         <sup>Length: {input.length}</sup>
-      </div>
+      </AlignToRight>
 
       <span>Output:</span><CopyToClipboard from="text_output"/>
       <TextAreaWithValidation id="text_output" readOnly
@@ -95,9 +99,9 @@ const PageText = ({ location } : { location: Object }) => {
                 style={ctf.style}
                 value={error || output}
       />
-      <div className={styles.input_info}>
+      <AlignToRight>
         <sup>&nbsp;{!error && output.length > 0 ? "Length: " + output.length : ''}</sup>
-      </div>
+      </AlignToRight>
     </div>
   );
 };

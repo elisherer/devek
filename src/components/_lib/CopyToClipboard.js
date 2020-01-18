@@ -20,13 +20,14 @@ const Wrapper = styled.span`
   display: inline-block;
   padding: 2px 3px;
   font-size: 12px;
-  background: #eee;
+  color: ${({ theme }) => theme.badgeForeground };
+  background: ${({ theme }) => theme.badgeBackground };
   cursor: pointer;
   border-radius: 5px;
   margin-bottom: 4px;
 
   &:hover {
-    background: #ddd;
+    background: ${({ theme }) => theme.badgeHoverBackground };
   }
   textarea {
     position: absolute;

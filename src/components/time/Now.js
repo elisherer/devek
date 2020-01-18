@@ -4,8 +4,25 @@ import { getWeek } from './time.js';
 import { actions } from './PageTime.store';
 import Clock from './Clock';
 import getHebrewDate from './hebrew';
+import styled from 'styled-components';
 
-import styles from './PageTime.less';
+const NowWrapper = styled.div`
+  .float {
+    position:absolute;
+    top: 60px;
+    right: 30px;
+  }
+  .center { text-align: center; }
+  .big { font-size: 28px; }
+  .bold { font-size: 30px; font-weight: bolder; }
+`;
+const UTCTime = styled.div`
+  padding: 20px;
+  text-align: center;
+`;
+const EpochTime = styled.div`
+  text-align: center;
+`;
 
 const useRAF = (ampm) => {
   const [info, setInfo] = useState({});
@@ -46,29 +63,29 @@ const Now = ({ ampm } : { ampm: boolean }) => {
       } = useRAF(ampm);  
 
   return (
-    <div>
-      <div className={styles.float}>
+    <NowWrapper>
+      <div className="float">
         <Checkbox label="12H" checked={ampm} onChange={actions.ampm}/>
       </div>
 
-      <div className={styles.center}>
+      <div className="center">
         <Clock width="240" height="240" />
 
-        <div className={styles.bold}>{localTime}</div>
-        <div className={styles.big}>{localeTimeDateString}</div>
+        <div className="bold">{localTime}</div>
+        <div className="big">{localeTimeDateString}</div>
         <div>Week {week}<br/>GMT{tz}</div>
         <div>{hebrewDate}</div>
       </div>
 
-      <div className={styles.utc_time}>
-        <span className={styles.big}>{utcTime}</span> <span> UTC</span>
-      </div>
+      <UTCTime>
+        <span className="big">{utcTime}</span> <span> UTC</span>
+      </UTCTime>
 
-      <div className={styles.epoch_time}>
-        <div className={styles.big}>{time}</div>
+      <EpochTime>
+        <div className="big">{time}</div>
         <div>Milliseconds since Epoch time</div>
-      </div>
-    </div>
+      </EpochTime>
+    </NowWrapper>
   );
 }
 

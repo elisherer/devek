@@ -9,12 +9,11 @@ import PageJWT from './components/jwt/PageJWT';
 import PageXML from './components/xml/PageXML';
 import PageTime from './components/time/PageTime';
 import PageCron from './components/cron/PageCron';
-import PageImage from './components/image/PageImage';
+//import PageImage from './components/image/PageImage'; // Lazy loaded
 import PageRandom from './components/random/PageRandom';
 import PageColor from './components/color/PageColor';
 import PageNetwork from './components/network/PageNetwork';
 //import PageCrypto from './components/crypto/PageCrypto'; // Lazy loaded
-import './components/crypto/PageCrypto.less'; // this is to prevent lazy loading of the css file (too small)
 import PageDiff from './components/diff/PageDiff'; // Lazy loaded
 //import PageData from './components/data/PageData';
 import PageURL from './components/url/PageURL';
@@ -42,6 +41,7 @@ import {
 
 const PageCryptoLazy = lazy(() => import(/* webpackChunkName: "crypto" */'./components/crypto/PageCrypto'));
 const PageDataLazy =  lazy(() => import(/* webpackChunkName: "data" */'./components/data/PageData'));
+const PageImageLazy =  lazy(() => import(/* webpackChunkName: "image" */'./components/image/PageImage'));
 
 export const siteMap = {
   "/": {
@@ -208,7 +208,7 @@ export const siteMap = {
     }
   },
   "/image": {
-    component: PageImage,
+    component: PageImageLazy,
     keyword: 'image',
     title: 'Image',
     header: 'Image Tools',

@@ -7,9 +7,9 @@ const Mark = styled.span`
   left: 2px;
   height: 20px;
   width: 20px;
-  border: 1px solid ${({ theme }) => theme.darkGreyBorder};
+  border: 1px solid ${({ theme }) => theme.greyBorder};
   border-radius: 5px;
-  background-color: white;
+  background-color: ${({ theme }) => theme.inputBackground};
 
   &:after {
     content: "";
@@ -42,7 +42,7 @@ const CheckboxLabel = styled.label`
     width: 0;
 
     &:focus ~ ${Mark} {
-      border-color: ${({ theme }) => theme.secondaryColor};
+      border-color: ${({ theme }) => theme.inputFocusBorder};
     }
 
     &:checked ~ ${Mark}:after {

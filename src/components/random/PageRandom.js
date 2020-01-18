@@ -3,11 +3,25 @@ import { Redirect } from 'react-router-dom';
 import { CopyToClipboard, Radio, TextArea } from '../_lib';
 import { useStore, actions } from './PageRandom.store';
 import { generatePassword, generateTable, uuidv4 } from './rand';
-
-import styles from './PageRandom.less';
+import styled from 'styled-components';
 
 let table = null, tableFlags = null;
 let ticks = null;
+
+const ButtonsWrapper = styled.div`
+  margin-top: 20px;
+`;
+
+const RangeWrapper = styled.label`
+  display: flex !important;
+  span {
+    display: inline-block;
+    width: 90px;
+  }
+  input[type=range] {
+    flex: 1;
+  }
+`;
 
 const pageRoutes = ['password', 'guid'];
 
@@ -57,21 +71,21 @@ const PageRandom = ({ location } : { location: Object }) => {
 
   return (
     <div>
-      <label className={styles.range}>
+      <RangeWrapper>
         <span>Count ({count})</span>
         <input type="range" min="1" max="16" value={count} onChange={actions.count}/>
-      </label>
+      </RangeWrapper>
 
       {type === "password" && (
         <div>
-          <label className={styles.range}>
+          <RangeWrapper>
             <span>Length ({size})</span>
             <input type="range" min="6" max="64" step="1" list="random_password_size" value={size} onChange={actions.size} />
             {ticks}
-          </label>
+          </RangeWrapper>
 
           <label>Flags</label>
-          <Radio className={styles.flags}>
+          <Radio flexBasis={16}>
             <div data-active={flags.includes('a')||null} data-flag="a" onClick={actions.flags}>a-z</div>
             <div data-active={flags.includes('A')||null} data-flag="A" onClick={actions.flags}>A-Z</div>
             <div data-active={flags.includes('0')||null} data-flag="0" onClick={actions.flags}>0-9</div>
@@ -81,9 +95,9 @@ const PageRandom = ({ location } : { location: Object }) => {
         </div>
       )}
 
-      <div className={styles.buttons}>
+      <ButtonsWrapper>
         <button onClick={actions.refresh}>Regenerate</button>
-      </div>
+      </ButtonsWrapper>
 
       <h1>Result</h1>
       <CopyToClipboard from="random_result" />

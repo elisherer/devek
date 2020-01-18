@@ -5,7 +5,7 @@ const Wrapper = styled.label`
   display: flex !important;
   margin-bottom: 10px !important;
   position: relative;
-  background: ${({ theme, readOnly, disabled }) => readOnly || disabled ? theme.textareaReadonlyBackground : theme.textareaBackground};
+  background: ${({ theme, readOnly, disabled }) => readOnly || disabled ? theme.inputDisabledBackground : theme.inputBackground};
   border: 1px solid ${({ theme }) => theme.greyBorder};
   border-radius: 5px;
   padding: 8px;
@@ -13,7 +13,7 @@ const Wrapper = styled.label`
   cursor: pointer;
   select{
     cursor: pointer;
-    background: ${({ theme }) => theme.textareaBackground};
+    background: ${({ theme }) => theme.inputBackground};
     color: ${({ theme }) => theme.foregroundColor};
     border: none;
     width: 100%;
@@ -24,11 +24,11 @@ const Wrapper = styled.label`
     word-wrap: break-word;
     word-break: break-all;
     &[readonly], &[disabled] {
-      background: ${({ theme }) => theme.textareaReadonlyBackground};
+      background: ${({ theme }) => theme.inputDisabledBackground};
     }
   }
   &:focus-within {
-    border-color: ${({ theme }) => theme.secondaryColor};
+    border-color: ${({ theme }) => theme.inputFocusBorder};
   }
   &.error, &.error:focus-within {
     border-color: red;

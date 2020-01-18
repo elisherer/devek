@@ -16,11 +16,11 @@ const Ul = styled.ul`
   padding: 2px;
   display: ${({ open }) => open ? 'block' : 'none'};
   margin: 0;
-  border: 1px solid #ccc;
+  border: 1px solid ${({ theme }) => theme.greyBorder};
   border-top: none;
   position: absolute;
   z-index: 9999999;
-  background: white;
+  background: ${({ theme }) => theme.inputBackground};
   width: 100%;
   max-height: 33vh;
   overflow-y: scroll;
@@ -34,7 +34,7 @@ const Ul = styled.ul`
     width: 100%;
     &:active, &:hover {
       color: white;
-      background-color: #1e90ff; /* Highlight */
+      background-color: ${({ theme }) => theme.highlight };
     }
   }
 `;

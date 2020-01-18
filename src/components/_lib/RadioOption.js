@@ -7,7 +7,7 @@ const Mark = styled.span`
   left: 2px;
   height: 20px;
   width: 20px;
-  border: 1px solid ${({ theme }) => theme.darkGreyBorder}; 
+  border: 1px solid ${({ theme }) => theme.strongGreyBorder}; 
   border-radius: 20px;
   background-color: white;
 

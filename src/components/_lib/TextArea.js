@@ -48,7 +48,7 @@ function replaceCaret(el) {
 
 const Wrapper = styled.div`
   display: flex;
-  background: ${({ theme, readOnly, disabled }) => readOnly || disabled ? theme.textareaReadonlyBackground : theme.textareaBackground};
+  background: ${({ theme, readOnly, disabled }) => readOnly || disabled ? theme.inputDisabledBackground : theme.inputBackground};
   border: 1px solid ${({ theme }) => theme.greyBorder};
   border-radius: 5px;
   min-height: 4em;
@@ -56,7 +56,7 @@ const Wrapper = styled.div`
   overflow: auto;
   margin-bottom: 10px;
   &:focus-within {
-    border-color: ${({ theme }) => theme.secondaryColor};
+    border-color: ${({ theme }) => theme.inputFocusBorder};
   }
 `;
 
@@ -81,8 +81,8 @@ const Pre = styled.pre`
   white-space: pre; /* use pre-wrap to wrap words */
 `;
 
-const TextArea = ({ autoFocus, className, wrapperClassName, style, onChange, readOnly, value, html, disabled, lineNumbers, ...more } :
-                    { autoFocus?: boolean, className?: string, wrapperClassName?: string, style?: Object, onChange?: Function, readOnly?: boolean, value?: string, html?: boolean, disabled?: boolean, lineNumbers?: boolean }) => {
+const TextArea = ({ autoFocus, className, style, onChange, readOnly, value, html, disabled, lineNumbers, ...more } :
+                    { autoFocus?: boolean, className?: string, style?: Object, onChange?: Function, readOnly?: boolean, value?: string, html?: boolean, disabled?: boolean, lineNumbers?: boolean }) => {
   const innerProp = html ? "innerHTML" : "innerText";
 
   const inputElement = useRef();
@@ -119,9 +119,9 @@ const TextArea = ({ autoFocus, className, wrapperClassName, style, onChange, rea
   }, []);
 
   return (
-    <Wrapper className={wrapperClassName} readOnly={readOnly} disabled={disabled}>
+    <Wrapper className={className} readOnly={readOnly} disabled={disabled}>
       {lineNumbersDiv}
-      <Pre ref={inputElement} style={style} className={className}
+      <Pre ref={inputElement} style={style}
            contentEditable={!readOnly && !disabled}
            onInput={onChange}
            onKeyDown={blurOnEscape}

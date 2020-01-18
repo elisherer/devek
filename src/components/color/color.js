@@ -134,6 +134,21 @@ export const formatters = {
 
 const allFields = ['rgba', 'hex', 'hsla', 'hwba', 'cmyka'];
 
+export const hexLighten = (hex, amount) => {
+  const c = parsers.hex(hex);
+  const hsl = toHSL(c);
+  hsl.l += amount / 100;
+  hsl.l = hsl.l > 1 ? 1 : (hsl.l < 0 ? 0 : hsl.l); // clamp
+  return formatters.hex(fromHSL(hsl.h, hsl.s, hsl.l));
+};
+
+export const hexDarken = (hex, amount) => {
+  const c = parsers.hex(hex);
+  const hsl = toHSL(c);
+  hsl.l -= amount / 100;
+  hsl.l = hsl.l > 1 ? 1 : (hsl.l < 0 ? 0 : hsl.l); // clamp
+  return formatters.hex(fromHSL(hsl.h, hsl.s, hsl.l));
+};
 
 export const reduceBy = (field, fields) => {
   const newState = { ...fields, errors: { ...fields.errors }};

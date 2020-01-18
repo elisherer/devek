@@ -11,7 +11,7 @@ const blurOnEscape = e => {
 
 const Wrapper = styled.section`
   display: flex;
-  background: ${({ theme, readOnly, disabled }) => readOnly || disabled ? theme.textareaReadonlyBackground : theme.textareaBackground};
+  background: ${({ theme, readOnly, disabled }) => readOnly || disabled ? theme.inputDisabledBackground : theme.inputBackground};
   border: 1px solid ${({ theme, invalid }) => invalid ? 'red' : theme.greyBorder};
   border-radius: 5px;
   padding: 8px;
@@ -19,7 +19,7 @@ const Wrapper = styled.section`
   margin-bottom: 10px;
   max-width: 560px;
   input{
-    background: ${({ theme }) => theme.textareaBackground};
+    background: ${({ theme }) => theme.inputBackground};
     color: ${({ theme }) => theme.foregroundColor};
     border: none;
     width: 100%;
@@ -31,11 +31,11 @@ const Wrapper = styled.section`
     word-wrap: break-word;
     word-break: break-all;
     &[readonly], &[disabled] {
-      background: ${({ theme }) => theme.textareaReadonlyBackground};
+      background: ${({ theme }) => theme.inputDisabledBackground};
     }
   }
   &:focus-within {
-    border-color: ${({ theme, invalid }) => invalid ? 'red' : theme.secondaryColor};
+    border-color: ${({ theme, invalid }) => invalid ? 'red' : theme.inputFocusBorder};
   }
 `;
 

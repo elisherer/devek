@@ -5,10 +5,10 @@ const UnsortedList = styled.ul`
   padding: 0;
   display: ${({ open }) => open ? 'block' : 'none'};
   margin: 4px 0;
-  border: 1px solid #ccc;
+  border: 1px solid ${({ theme }) => theme.greyBorder};
   position: absolute;
   z-index: 9999999;
-  background: white;
+  background: ${({ theme }) => theme.inputBackground};
   max-height: 33vh;
   overflow-y: scroll;
   li {
@@ -23,7 +23,7 @@ const UnsortedList = styled.ul`
     margin-bottom: 0 !important;
     &:active, &:hover {
       color: white;
-      background-color: #1e90ff; //Highlight
+      background-color: ${({ theme }) => theme.highlight};
     }
   }
 `;

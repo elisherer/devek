@@ -22,8 +22,6 @@ import {
   mdiResize
 } from '@mdi/js';
 import Icon from '@mdi/react';
-
-import styles from './PageImage.less';
 import styled from 'styled-components';
 
 const onDragOver = e => {
@@ -85,6 +83,13 @@ function onCropMouseDown(e) {
   moveBand(start_X, start_Y, 0, 0);
 }
 
+const CanvasWrapper = styled.section`
+  position: relative;
+  @media (min-width: ${({ theme }) => theme.screenDesktopMin}) {
+    margin: 0 20px;
+  }
+`;
+
 const ToolbarSection = styled.section`
   padding: 4px;
   @media (min-width: ${({ theme }) => theme.screenDesktopMin}) {
@@ -113,6 +118,14 @@ const DropBox = styled.label`
   margin: 0 4px;
   @media (min-width: ${({ theme }) => theme.screenDesktopMin}) {
     margin: 0 20px;
+  }
+`;
+
+const Hint = styled.div`
+  display: none;
+  @media (min-width: ${({ theme }) => theme.screenDesktopMin}) {
+    display: block;
+    position: absolute;
   }
 `;
 
@@ -217,29 +230,29 @@ const PageImage = ({ location } : { location: Object }) => {
         )}
         { type === 'resize' && (
           <Toolbar loaded={loaded}>
-            <InlineTextBox disabled={disabled} type="number" value={resize.width} data-input="width" onChange={actions.resizeInput} /> x <TextBox disabled={disabled} className={styles.inline} type="number" value={resize.height} data-input="height" onChange={actions.resizeInput} />
+            <InlineTextBox disabled={disabled} type="number" value={resize.width} data-input="width" onChange={actions.resizeInput} /> x <InlineTextBox disabled={disabled} type="number" value={resize.height} data-input="height" onChange={actions.resizeInput} />
             &nbsp;
             <button className="tool" disabled={disabled} onClick={actions.resize} title="Resize"><Icon path={mdiResize} size={1}/></button>
           </Toolbar>
         )}
         { type === 'picker' && (
           <Toolbar loaded={loaded}>
-            <div>Picker: <input disabled={disabled} type="color" readOnly value={color} /> ► <input disabled={disabled} readOnly type="color" value={select} />&nbsp;<TextBox className={styles.inline} readOnly value={select} /></div>
+            <div>Picker: <input disabled={disabled} type="color" readOnly value={color} /> ► <input disabled={disabled} readOnly type="color" value={select} />&nbsp;<InlineTextBox readOnly value={select} /></div>
           </Toolbar>
         )}
         {type === 'crop' && (
-          <div className={styles.hint}>* You can draw a rectangle on the image to set the coordinates before cropping</div>
+          <Hint>* You can draw a rectangle on the image to set the coordinates before cropping</Hint>
         )}
       </ToolbarSection>
       {!loaded && dropBox}
-      <section className={styles.canvas_wrapper} {...dropHandlers}>
+      <CanvasWrapper {...dropHandlers}>
         {cropper && loaded && <RubberBand style={{ left: crop.x, top: crop.y, width: crop.width, height: crop.height }} />}
         {src && loaded && <img src={src} alt="" draggable={false}
           onMouseUp={picker ? actions.pick : cropper ? onCropMouseUp: undefined}
           onMouseMove={picker ? actions.peek : cropper ? onCropMouseMove: undefined}
           onMouseDown={cropper ? onCropMouseDown : undefined}
         />}
-      </section>
+      </CanvasWrapper>
     </>
   );
 };

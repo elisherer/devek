@@ -13,11 +13,41 @@ import {
 } from '@mdi/js';
 import Icon from '@mdi/react';
 import Worker from './data.worker';
-
-import styles from './PageData.less';
+import styled from 'styled-components';
 
 const options = Object.keys(data.actions);
 const stringify = obj => Object.keys(obj).reduce((a,c) => a + (a ? ", " : '') + c + '=' + obj[c], '');
+
+const Picker = styled.div`
+  display: flex;
+  section {
+    flex: 0.5;
+  }
+`;
+
+const Parameters = styled.div`
+  flex: 1;
+  padding-left: 8px;
+  div:first-child {
+    display: flex;
+    margin-bottom: 10px;
+  }
+`;
+const PickerActions = styled.div`
+  button {
+    margin-right: 8px;
+  }
+`;
+const PipeActionsListBox = styled(ListBox)`
+  max-width: 100%;
+  option {
+    font-family: ${({ theme }) => theme.fontMono };
+  }
+`;
+const Timestamp = styled.span`
+  float: right;
+  color: ${({ theme }) => theme.greyBorder };
+`;
 
 const PageData = () => {
   const { input, parameters, pickedAction, pipe, selected, running, output, timestamp } = useStore();
@@ -74,15 +104,13 @@ const PageData = () => {
       <hr />
 
       <span>Action Picker:</span>
-      <div className={styles.picker}>
+      <Picker>
         <ListBox onChange={actions.pickedAction}
           size={11}
           value={pickedAction}
           options={options} />
-        <div className={styles.parameters}>
-          <div className={styles.action_title}>
-            <div><strong>{pickedAction}</strong> - {pick.description}</div>
-          </div>
+        <Parameters>
+          <div><strong>{pickedAction}</strong> - {pick.description}</div>
           {pick.parameters && Object.keys(pick.parameters).map(param => (
             <div key={param}><span>{param}:</span>{Array.isArray(pick.parameters[param]) ? (
               Array.isArray(pick.defaults[param]) ? (
@@ -94,9 +122,9 @@ const PageData = () => {
               <TextBox value={parameters[param] || pick.defaults[param]} onChange={actions.parameter} data-name={param} />
             )}</div>
           ))}
-        </div>
-      </div>
-      <div className={styles.pipe_actions}>
+        </Parameters>
+      </Picker>
+      <PickerActions>
         <button className="tool" onClick={actions.pipe} title="Add command"><Icon path={mdiPlus} size={1} /></button>
         <button className="tool" disabled={!pipe.length} onClick={actions.update} title="Update"><Icon path={mdiSync} size={1} /></button>
         <button className="tool" disabled={!pipe.length || selected === 0} onClick={actions.moveUp} title="Move up"><Icon path={mdiChevronUp} size={1} /></button>
@@ -104,15 +132,13 @@ const PageData = () => {
         <button className="tool" disabled={!pipe.length} onClick={actions.remove} title="Remove"><Icon path={mdiDelete} size={1} /></button>
         <button className="tool" onClick={handleImport} title="Import"><Icon path={mdiImport} size={1} /></button>
         <button className="tool" disabled={!pipe.length} onClick={handleExport} title="Remove"><Icon path={mdiExport} size={1} /></button>
-      </div>
+      </PickerActions>
       <span>Actions:</span>
-      <div className={styles.pipe}>
-        <ListBox className={styles.actions}
-            onChange={actions.selectAction}
-            size={Math.max(6, pipe.length)}
-            value={selected}
-            options={pipeMemo} numbered indexed/>
-      </div>
+      <PipeActionsListBox
+          onChange={actions.selectAction}
+          size={Math.max(6, pipe.length)}
+          value={selected}
+          options={pipeMemo} numbered indexed/>
 
       <button onClick={runStart} disabled={!pipe.length || running}>{running ? "Running..." : "Run"}</button>
 
@@ -120,7 +146,7 @@ const PageData = () => {
       <>
         <h1>Result</h1>
 
-        <span>Output:</span><CopyToClipboard from="data_output"/> <span className={styles.timestamp}> {timestamp.toISOString()}</span>
+        <span>Output:</span><CopyToClipboard from="data_output"/> <Timestamp>{timestamp.toISOString()}</Timestamp>
         <TextArea id="data_output" readOnly lineNumbers value={output} />
       </>
       )}

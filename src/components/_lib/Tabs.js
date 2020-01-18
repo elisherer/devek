@@ -31,8 +31,8 @@ const Tabs = styled.nav`
     user-select: none;
     border-bottom: 2px solid ${({ theme }) => theme.backgroundColor};
     &[aria-current], &[data-active] {
-      color: ${({ theme }) => theme.secondaryColor};
-      border-bottom: 2px solid ${({ theme }) => theme.secondaryColor};
+      color: ${({ theme }) => theme.tabsTextColor};
+      border-bottom: 2px solid ${({ theme }) => theme.tabsTextColor};
 
     }
   }

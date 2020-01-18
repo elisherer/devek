@@ -3,34 +3,39 @@ import {CopyToClipboard, Radio, TextArea} from "../_lib";
 import {actions} from "./PageCrypto.store";
 import devek from 'devek';
 
-import styles from "./PageCrypto.less";
+import styled from 'styled-components';
+
+const SmallInfo = styled.div`
+  text-align: right;
+  vertical-align: super;
+  font-size: smaller;
+`;
+
+const LongTextArea = styled(TextArea)`
+  max-width: 728px;
+`;
 
 const CryptoHash = ({ input, alg, hash, format } : { input: string, alg: string, hash: Object, format: string }) => (
   <div>
     <label>Input:</label>
     <TextArea autoFocus onChange={actions.hashInput} value={input}/>
-    <div className={styles.input_info}>
-      <sup>Length: {input.length}</sup>
-    </div>
+    <SmallInfo>Length: {input.length}</SmallInfo>
 
     <label>Algorithm:</label>
-    <Radio className={styles.options} options={["SHA-1", "SHA-256", "SHA-384", "SHA-512", "MD5"]} value={alg} onClick={actions.hashAlg} />
+    <Radio flexBasis={20} options={["SHA-1", "SHA-256", "SHA-384", "SHA-512", "MD5"]} value={alg} onClick={actions.hashAlg} />
 
     <label>Output format:</label>
     {alg !== 'MD5' ? (
-      <Radio className={styles.options} options={["Hex", "Base64"]} value={format} onClick={actions.hashFormat} />
+      <Radio flexBasis={20} options={["Hex", "Base64"]} value={format} onClick={actions.hashFormat} />
     ) : (
-      <Radio className={styles.options} options={["Hex"]} value="Hex" />
+      <Radio flexBasis={20} options={["Hex"]} value="Hex" />
     )}
 
     <span>Hash:</span><CopyToClipboard from="crypto_hash"/>
-    <TextArea id="crypto_hash" readOnly
-              className={styles.long_output}
+    <LongTextArea id="crypto_hash" readOnly
               value={typeof hash === 'string' ? hash : (format === 'Base64' ? devek.arrayToBase64(hash) : devek.arrayToHexString(hash))}
     />
-    <div className={styles.input_info}>
-      <sup>&nbsp;{(alg === 'MD5' ? hash.length / 2 : hash.byteLength) + " Bytes"}</sup>
-    </div>
+    <SmallInfo>&nbsp;{(alg === 'MD5' ? hash.length / 2 : hash.byteLength) + " Bytes"}</SmallInfo>
   </div>
 );
 
