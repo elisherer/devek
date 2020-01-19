@@ -238,9 +238,6 @@ kbd {
       flex: 1;
       height: 100%;
       overflow: auto;
-      a:link, a:visited, a:hover, a:active {
-        color: ${({ theme }) => theme.secondaryColor};
-      }
       > div {
         padding: 10px;
         width: 100%;

@@ -7,17 +7,16 @@ const Mark = styled.span`
   left: 2px;
   height: 20px;
   width: 20px;
-  border: 1px solid ${({ theme }) => theme.strongGreyBorder}; 
+  border: 2px solid ${({ theme }) => theme.radioBorder}; 
   border-radius: 20px;
-  background-color: white;
 
   &:after {
-    content: "\25cf";
+    content: "\\25cf";
     position: absolute;
     display: none;
-    left: 3px;
-    top: -7px;
-    color: ${({ theme }) => theme.secondaryColorLight30};
+    left: 2px;
+    top: -8px;
+    color: ${({ theme }) => theme.secondaryColor};
     font-size: 20px;
   }
 `;

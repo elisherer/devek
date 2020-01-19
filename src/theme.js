@@ -14,7 +14,6 @@ const base = {
  
   highlight: '#1e90ff',
   greyBorder: '#e0e0e0',
-  strongGreyBorder: x => hexDarken(x.greyBorder, x.dark ? -20 : 20),
   
   foregroundColor: '#303030',
   backgroundColor: '#f3f5f9',
@@ -35,11 +34,14 @@ const base = {
   badgeBackground: '#eeeeee',
   badgeHoverBackground: '#dddddd',
  
+  togglebarActiveForeground: 'white',
+  togglebarForeground: '#333333',
   togglebarBackground: x => x.secondaryColor,
   togglebarActiveHoverBackground: x => hexLighten(x.secondaryColor, x.dark ? -10 : 10),
   togglebarHoverBackground: x => hexLighten(x.secondaryColor, x.dark ? -30 : 30),
   togglebarInactiveBackground: '#cccccc',
 
+  radioBorder: '#c0c0c0',
   radioMark: x => hexLighten(x.secondaryColor, 30),
 
   buttonBackground: x => x.secondaryColor,
@@ -82,6 +84,8 @@ const base_dark = {
 
   togglebarInactiveBackground: '#444444',
   
+  radioBorder: '#606060',
+
   buttonDisabled: '#777777',
 };
 
@@ -91,9 +95,7 @@ const evalTheme = theme =>
     return a;
   }, {});
 
-const light = evalTheme(base),
-  dark = evalTheme(base_dark);
-const theme = evalTheme(dark || light);
-
-
-export default theme;
+export default {
+  light: evalTheme(base),
+  dark: evalTheme(base_dark),
+};

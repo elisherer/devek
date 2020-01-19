@@ -1,7 +1,7 @@
 import React, { Fragment, Suspense, useEffect } from 'react';
 import { Switch, Route, Link, NavLink, Redirect, useLocation } from 'react-router-dom';
 import Icon from '@mdi/react';
-import { mdiGithubCircle, mdiMenu } from '@mdi/js';
+import { mdiGithubCircle, mdiMenu, mdiBrightness4 } from '@mdi/js';
 import SearchBox from './search/SearchBox';
 import NotFound from './NotFound';
 import { siteMap } from '../sitemap';
@@ -10,11 +10,12 @@ import screen from 'helpers/screen';
 import { Spinner } from './_lib';
 
 import GlobalStyle from './App.global.style';
-import { MainNavigation, StyledNavLink, Hamburger, GitHubIcon, SearchHint, StyledTabs, Overlay } from './App.style';
+import { MainNavigation, StyledNavLink, Hamburger, ToggleTheme, GitHubIcon, SearchHint, StyledTabs, Overlay } from './App.style';
+import { withTheme } from 'styled-components';
 
 const devekSearch = () => window.devek.openSearch();
 
-const App = () => {
+const App = ({ theme, toggleTheme } : {theme : Object, toggleTheme: Function}) => {
   const location = useLocation();
   if (location.pathname === '/' && location.search) {
     return <Redirect to="/" />;
@@ -78,7 +79,7 @@ const App = () => {
 
         <header>
           <Hamburger onClick={actions.drawerOpen}>
-            <Icon path={mdiMenu} size={1.5} />
+            <Icon path={mdiMenu} size={1.5} color={theme.dark ? 'white' : 'black'}/>
           </Hamburger>
           <h1>{siteMapParent.icon && <Icon path={siteMapParent.icon} size={1.33} />} {siteMapParent.header}</h1>
           {siteMapParent && siteMapParent.children && (
@@ -88,6 +89,9 @@ const App = () => {
             )}
           </StyledTabs>
           )}
+          <ToggleTheme onClick={toggleTheme}>
+            <Icon path={mdiBrightness4} color={theme.dark ? '#cccccc' : '#333333'}/>
+          </ToggleTheme>
         </header>
 
         <Suspense fallback={<Spinner />}>
@@ -105,7 +109,7 @@ const App = () => {
   );
 };
 
-let exportedApp = App;
+let exportedApp = withTheme(App);
 
 if (process.env.NODE_ENV !== "production") {
   const { hot/*, setConfig*/ }  = require("react-hot-loader/root");

@@ -10,7 +10,7 @@ const Wrapper = styled.div`
   overflow: hidden;
 
   > * {
-    color: ${({ theme }) => theme.foregroundColor} !important;
+    color: ${({ theme }) => theme.togglebarForeground};
     text-decoration: none;
     flex-basis: ${({ flexBasis }) => (flexBasis || 50) +'%'};
     font-size: 12px;
@@ -26,7 +26,7 @@ const Wrapper = styled.div`
     }
     &[aria-current], &[data-active] {
       background-color: ${({ theme }) => theme.togglebarBackground};
-      color: white;
+      color: ${({ theme }) => theme.togglebarActiveForeground};;
     }
     &[aria-current]:hover, &[data-active]:hover {
       background-color: ${({ theme }) => theme.togglebarActiveHoverBackground}; 

@@ -78,8 +78,13 @@ const Clock = (props : { theme : Object}) => {
       id = requestAnimationFrame(tick);
     }
     tick();
-    return () => cancelAnimationFrame(id);
-  }, []);
+    return () => {
+      watchFace = null;
+      cancelAnimationFrame(id);
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+  }, [props.theme]);
 
   return <canvas ref={ref} {...props} />
 };

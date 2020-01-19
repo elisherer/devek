@@ -39,6 +39,9 @@ const Page = styled.div`
       text-align: right;
     }
   }
+  a:link, a:visited, a:hover, a:active {
+    color: ${({ theme }) => theme.secondaryColor};
+  }
 `;
 
 const JokeHeader = styled.div`

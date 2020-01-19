@@ -108,7 +108,7 @@ const toHSL = c =>{
 
 export const formatters = {
   rgba: c => `rgb${c.a < 1 ? 'a' : ''}(${c.r}, ${c.g}, ${c.b}${c.a < 1 ? ', ' + c.a : ''})`,
-  hex: c => '#' + (c.r < 16 ? '0' : '') + c.r.toString(16) + (c.g < 16 ? '0' : '') + c.g.toString(16) + (c.b < 16 ? '0' : '') + c.b.toString(16),
+  hex: c => '#' + (c.r < 16 ? '0' : '') + parseInt(c.r).toString(16) + (c.g < 16 ? '0' : '') + parseInt(c.g).toString(16) + (c.b < 16 ? '0' : '') + parseInt(c.b).toString(16),
   hsla: c => {
     const hsl = toHSL(c);
     return `hsl${c.a < 1 ? 'a' : ''}(${fix(hsl.h * 360)}, ${fix(hsl.s * 100)}%, ${fix(hsl.l * 100)}%${c.a < 1 ? ', ' + c.a : ''})`;

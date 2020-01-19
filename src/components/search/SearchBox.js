@@ -27,15 +27,15 @@ const SearchIcon = styled.div`
 const SearchItem = styled(Link)`
   color: ${({ theme }) => theme.foregroundColor};
   display: block;
-  background: ${({ theme, active }) => active ? theme.searchItemActive : 'white'};
+  background: ${({ theme, active }) => active ? theme.highlight : theme.backgroundColor};
   padding: 4px 8px;
   text-align: left;
   text-decoration: none;
-  border: 1px solid silver;
   border-top: none;
+  border-bottom: 1px solid ${({ theme }) => theme.greyBorder};
   outline: none;
   &:hover {
-    background: ${({ theme }) => theme.searchItemHover};
+    background: ${({ theme }) => theme.highlight};
   }
 `;
 
@@ -78,7 +78,7 @@ const SearchBox = () => {
       <SearchTextBox type="search" autoFocus autoComplete="off" placeholder="Search" 
                      value={search} onChange={actions.search} onBlur={onBlur} />
       {search && paths.map((p, i) => (
-        <SearchItem key={p.path} to={p.path} active={i === index} onMouseDown={clickLinkHandler}>
+        <SearchItem key={p.path} to={p.path} active={(i === index) ? "true" : ""} onMouseDown={clickLinkHandler}>
           <strong>{p.title}</strong> - <span>{p.description}</span>
         </SearchItem>
       ))
