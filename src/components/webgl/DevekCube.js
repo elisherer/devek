@@ -9,8 +9,10 @@ import initBuffers from './buffers';
 import initTextures from './textures';
 
 import cubeScene from './cubeScene';
+import { parsers } from '../color/color';
+import { withTheme } from "styled-components";
 
-const DevekCube = () => {
+const DevekCube = ({ theme } : { theme : Object}) => {
   const ref = useRef();
 
   useEffect(() => {
@@ -32,15 +34,15 @@ const DevekCube = () => {
       const deltaTime = now - then;
       then = now;
 
-      cubeScene(gl, programInfo, buffers, textures, deltaTime);
+      cubeScene(gl, programInfo, buffers, textures, deltaTime, parsers.hex(theme.cardBackground));
 
       requestAnimationFrame(render);
     }
     requestAnimationFrame(render);
     return () => (stop = true);
-  }, []);
+  }, [theme.cardBackground]);
 
   return <canvas ref={ref} width="150" height="150" />;
 };
 
-export default DevekCube;
+export default withTheme(DevekCube);

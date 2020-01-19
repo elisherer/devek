@@ -2,8 +2,8 @@ import React, {useEffect} from 'react';
 import { CopyToClipboard, TextBox } from '../_lib';
 import { useStore, actions } from './PageNetwork.store';
 import { formatters, isPrivate } from './network';
-import styles from './PageNetwork.less';
 import { getAsync } from 'helpers/http';
+import styled from 'styled-components';
 
 const fetchIP = () => {
   let cancelled = false;
@@ -14,6 +14,16 @@ const fetchIP = () => {
   });
   return () => { cancelled = true };
 };
+
+const MyIP = styled.div`
+  font-size: 18px;
+  margin-bottom: 20px;
+`;
+
+const Table = styled.table`
+  font-size: 12px;
+  th { text-align: left; }
+`;
 
 const PageNetwork = () => {
   useEffect(fetchIP, []);
@@ -26,9 +36,9 @@ const PageNetwork = () => {
     <div>
       <dt key="network_ip_address" />
 
-      <div className={styles.my_ip}>
+      <MyIP>
         My IP Address: <strong id="ip_myip">{myIP || "fetching..."}</strong> <CopyToClipboard from="ip_myip"/>
-      </div>
+      </MyIP>
 
       <span>IPv4:</span>
       <TextBox invalid={errors.ipv4} autoFocus onChange={actions.ipv4} value={ipv4} />
@@ -40,7 +50,7 @@ const PageNetwork = () => {
 
       <label>Info:</label>
       {parsed && (
-        <table className={styles.table}>
+        <Table>
           <colgroup>
             <col /><col /><col />
           </colgroup>
@@ -61,7 +71,7 @@ const PageNetwork = () => {
           <tr><td>Int/Hex</td><td>{parsed}</td><td>0x{parsed.toString(16)}</td></tr>
           <tr><td>IPv6</td><td /><td>0:0:0:0:0:ffff:{(parsed >>> 16).toString(16).padStart(4, '0')}:{(parsed & 0xff).toString(16).padStart(4, '0')}</td></tr>
           </tbody>
-        </table>
+        </Table>
       )}
     </div>
   );

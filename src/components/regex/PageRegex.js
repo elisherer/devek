@@ -3,8 +3,6 @@ import { Checkbox, Radio, TextArea, TextBox } from '../_lib';
 import { useStore, actions } from './PageRegex.store';
 import support from 'helpers/support';
 
-import styles from './PageRegex.less'
-
 let compiledRegex = null;
 
 const PageRegex = () => {
@@ -52,7 +50,7 @@ const PageRegex = () => {
                value={regexSource} onChange={actions.regex} autoFocus />
 
       <label>Flags</label>
-      <Radio className={styles.flags}>
+      <Radio flexBasis={30}>
         <div data-active={flags.includes('g') || null} data-flag="g" onClick={actions.flags}>Global</div>
         <div data-active={flags.includes('m') || null} data-flag="m" onClick={actions.flags}>Multi&#8209;line</div>
         <div data-active={flags.includes('i') || null} data-flag="i" onClick={actions.flags}>Insensitive</div>

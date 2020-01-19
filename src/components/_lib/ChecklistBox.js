@@ -1,7 +1,43 @@
 import React, { useRef, useMemo, useState, useCallback, useEffect } from 'react';
 import ListBox from './ListBox';
 import Checkbox from './Checkbox';
-import styles from './ChecklistBox.less';
+import styled from 'styled-components';
+
+const Checklist = styled.label`
+  position: relative;
+  max-width: 560px;
+  label {
+    margin: 0 !important;
+  }
+  margin-bottom: 10px;
+`;
+
+const Ul = styled.ul`
+  padding: 2px;
+  display: ${({ open }) => open ? 'block' : 'none'};
+  margin: 0;
+  border: 1px solid ${({ theme }) => theme.greyBorder};
+  border-top: none;
+  position: absolute;
+  z-index: 9999999;
+  background: ${({ theme }) => theme.inputBackground};
+  width: 100%;
+  max-height: 33vh;
+  overflow-y: scroll;
+  li {
+    list-style: none;
+    line-height: 26px;
+  }
+  label {
+    display: inline-block;
+    cursor: pointer;
+    width: 100%;
+    &:active, &:hover {
+      color: white;
+      background-color: ${({ theme }) => theme.highlight };
+    }
+  }
+`;
 
 const ChecklistBox = ({ options, label, maxShowSelection, disabled, value, onChange, ...props } : { options: Array, label: string, maxShowSelection?: number, disabled?: boolean, value?: Array, onChange?: Function }) => {
   const ref = useRef();
@@ -62,11 +98,11 @@ const ChecklistBox = ({ options, label, maxShowSelection, disabled, value, onCha
   }, [onChange, value, options]);
 
   return (
-    <label ref={ref} className={styles.checklist} {...props} aria-haspopup="true" aria-expanded={open}>
+    <Checklist ref={ref} {...props} aria-haspopup="true" aria-expanded={open}>
       <div>
         <ListBox options={memoLabel} size={1} hidePopup onClick={handleTriggerClick} disabled={disabled}/>
       </div>
-      <ul className={styles.items + (open ? ' ' + styles.open : '')}>
+      <Ul open={open}>
         {options && options.map(x => {
           const localValue = Object.prototype.hasOwnProperty.call(x, 'value') ? x.value : x;
           return (
@@ -78,8 +114,8 @@ const ChecklistBox = ({ options, label, maxShowSelection, disabled, value, onCha
             </li>
           );
         })}
-      </ul>
-    </label>
+      </Ul>
+    </Checklist>
   );
 };
 

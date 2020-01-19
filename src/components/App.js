@@ -1,19 +1,21 @@
 import React, { Fragment, Suspense, useEffect } from 'react';
 import { Switch, Route, Link, NavLink, Redirect, useLocation } from 'react-router-dom';
 import Icon from '@mdi/react';
-import { mdiGithubCircle, mdiMenu } from '@mdi/js';
+import { mdiGithubCircle, mdiMenu, mdiBrightness4 } from '@mdi/js';
 import SearchBox from './search/SearchBox';
 import NotFound from './NotFound';
 import { siteMap } from '../sitemap';
 import { useStore, actions } from './App.store';
 import screen from 'helpers/screen';
-import { Spinner, Tabs} from './_lib';
+import { Spinner } from './_lib';
 
-import styles from './App.less';
+import GlobalStyle from './App.global.style';
+import { MainNavigation, StyledNavLink, Hamburger, ToggleTheme, GitHubIcon, SearchHint, StyledTabs, Overlay } from './App.style';
+import { withTheme } from 'styled-components';
 
 const devekSearch = () => window.devek.openSearch();
 
-const App = () => {
+const App = ({ theme, toggleTheme } : {theme : Object, toggleTheme: Function}) => {
   const location = useLocation();
   if (location.pathname === '/' && location.search) {
     return <Redirect to="/" />;
@@ -31,15 +33,15 @@ const App = () => {
     return path === '/' ? (
       <Fragment key={path}>
         <Link to="/" aria-label="Homepage"/>
-        <div className={styles.search_hint}>Press <kbd onClick={devekSearch}>/</kbd> to search</div>
+        <SearchHint>Press <kbd onClick={devekSearch}>/</kbd> to search</SearchHint>
       </Fragment>
     ) : (
-      <NavLink key={path} to={path} className={styles.navitem} activeClassName={styles.active} aria-label={siteMap[path].title}>
+      <StyledNavLink key={path} to={path} activeClassName="active" aria-label={siteMap[path].title}>
         {!!siteMap[path].icon && (
           <Icon path={siteMap[path].icon} size={1}/>
         )}
         {siteMap[path].title}
-      </NavLink>
+      </StyledNavLink>
     );
   });
 
@@ -57,33 +59,41 @@ const App = () => {
 
   return (
     <>
-      <nav className={state.drawer ? styles.open : undefined}>
-        <div className={styles.menu} onClick={actions.drawerClose}>
+      <GlobalStyle />
+
+      <MainNavigation open={state.drawer}>
+        <Hamburger onClick={actions.drawerClose}>
           <Icon path={mdiMenu} size={1.5} color="white"/>
-        </div>
-        <div className={styles.github} >
+        </Hamburger>
+        <GitHubIcon>
           <a href="https://github.com/elisherer/devek" target="_blank" rel="noopener noreferrer" title="GitHub">
             <Icon path={mdiGithubCircle} size={1.33} />
           </a>
-        </div>
+        </GitHubIcon>
         {navLinks}
-      </nav>
+      </MainNavigation>
+
       <main>
-        {state.drawer && <div className={styles.overlay} onClick={actions.drawerClose} /> }
+        {state.drawer && <Overlay onClick={actions.drawerClose} /> }
         <SearchBox />
+
         <header>
-          <div className={styles.menu} onClick={actions.drawerOpen}>
-            <Icon path={mdiMenu} size={1.5} />
-          </div>
+          <Hamburger onClick={actions.drawerOpen}>
+            <Icon path={mdiMenu} size={1.5} color={theme.dark ? 'white' : 'black'}/>
+          </Hamburger>
           <h1>{siteMapParent.icon && <Icon path={siteMapParent.icon} size={1.33} />} {siteMapParent.header}</h1>
           {siteMapParent && siteMapParent.children && (
-          <Tabs className={styles.tabs}>
+          <StyledTabs>
             {Object.keys(siteMapParent.children).map(path => 
               <NavLink key={path} to={parentPath + path} exact={path === '/' || path === ''}>{siteMapParent.children[path].title}</NavLink>
             )}
-          </Tabs>
+          </StyledTabs>
           )}
-        </header>       
+          <ToggleTheme onClick={toggleTheme}>
+            <Icon path={mdiBrightness4} color={theme.dark ? '#cccccc' : '#333333'}/>
+          </ToggleTheme>
+        </header>
+
         <Suspense fallback={<Spinner />}>
           <article>
             <Switch>
@@ -99,7 +109,7 @@ const App = () => {
   );
 };
 
-let exportedApp = App;
+let exportedApp = withTheme(App);
 
 if (process.env.NODE_ENV !== "production") {
   const { hot/*, setConfig*/ }  = require("react-hot-loader/root");

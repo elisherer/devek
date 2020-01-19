@@ -1,8 +1,8 @@
 import React from 'react';
 import {TextArea} from "../_lib";
 import {actions} from "./PageCrypto.store";
-import styles from "./PageCrypto.less";
 import loadFileAsync from "helpers/loadFileAsync";
+import styled from 'styled-components';
 
 const onDragOver = e => {
   e.dataTransfer.dropEffect = 'link';
@@ -30,13 +30,26 @@ const onPEMChange = e => {
   actions.loaded(pem);
 };
 
+const UploadLabel = styled.label`
+  display: inline-block !important;
+  text-decoration: underline;
+  font-weight: bold;
+  cursor: pointer;
+`;
+
+const DraggingTextArea = styled(TextArea)`
+  pre {
+    border-color: ${({ theme, dragging }) => dragging ? theme.secondaryColor : 'inherit'};
+  }
+`;
+
 const CryptoHash = ({ pem, output, dragging } : { pem: string, output: string, dragging: boolean }) => (
   <div onDragEnter={actions.onDragEnter} onDragOver={onDragOver}
        onDragLeave={actions.onDragLeave} onDrop={onDrop}>
     <div>
-      PEM Certificate (Paste, Drop or <label className={styles.upload}>Browse...<input type="file" style={{display: 'none'}} onChange={onFileChange} /></label>)
+      PEM Certificate (Paste, Drop or <UploadLabel>Browse...<input type="file" style={{display: 'none'}} onChange={onFileChange} /></UploadLabel>)
     </div>
-    <TextArea wrapperClassName={dragging ? styles.dragging : null} id="crypto_cert_pem" value={pem} onChange={onPEMChange}/>
+    <DraggingTextArea dragging={dragging} id="crypto_cert_pem" value={pem} onChange={onPEMChange}/>
 
     <label>Certificate fields</label>
     <TextArea readOnly value={output} />

@@ -20,7 +20,9 @@ const babelPresetStage1 = () => ({
     require("@babel/plugin-syntax-dynamic-import"),
     require("@babel/plugin-syntax-import-meta"),
     [require("@babel/plugin-proposal-class-properties"), { loose: false }],
-    require("@babel/plugin-proposal-json-strings")
+    require("@babel/plugin-proposal-json-strings"),
+
+    require("babel-plugin-styled-components"),
   ]
 });
 
@@ -38,12 +40,14 @@ module.exports = function (api) {
 
     ["@babel/preset-react", {
       "development": dev,
+      "useBuiltIns": true,
     }],
 
     ["@babel/preset-env", {
       "modules": test ? "commonjs" : false,
       "useBuiltIns": "usage",
       "corejs": 3,
+      "exclude": ["transform-typeof-symbol"],
     }],
 
     [babelPresetStage1, { decoratorsLegacy: true }],

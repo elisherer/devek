@@ -3,15 +3,12 @@ const webpack = require('webpack');
 
 const
   HtmlWebpackPlugin = require('html-webpack-plugin'),
-  MiniCssExtractPlugin = require("mini-css-extract-plugin"),
   CleanWebpackPlugin = require('clean-webpack-plugin').CleanWebpackPlugin,
   BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin,
   webpackDevServerWaitpage = require('webpack-dev-server-waitpage'),
   CopyWebpackPlugin = require('copy-webpack-plugin'),
   TerserJSPlugin = require('terser-webpack-plugin'),
-  OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin'),
   ScriptExtHtmlWebpackPlugin = require('script-ext-html-webpack-plugin'),
-  StyleExtHtmlWebpackPlugin = require('style-ext-html-webpack-plugin'),
   WorkboxPlugin = require('workbox-webpack-plugin');
 
 const mode = process.env.NODE_ENV || 'development';
@@ -39,19 +36,13 @@ module.exports = {
   },
   devtool: ANALYZE ? 'source-map' : (PRODUCTION ? false : 'cheap-module-source-map'),
   optimization: {
-    minimizer: [new TerserJSPlugin({}), new OptimizeCSSAssetsPlugin({})],
+    minimizer: [new TerserJSPlugin({})/*, new OptimizeCSSAssetsPlugin({})*/],
     splitChunks: {
-      minSize: 30000,
-      cacheGroups: {
-        commons: {
-          test: node_modules, // Create a vendor chunk with all the imported node_modules in it
-          name: "vendor",
-          chunks: "all"
-        }
-      }
+      chunks: 'all'
     }
   },
   devServer: {
+    compress: true,
     historyApiFallback: true,
     before: (app, server) => {
       app.use(require('./api.mock'));
@@ -75,10 +66,10 @@ module.exports = {
       raw: false // wrap in a comment
     }),
 
-    new MiniCssExtractPlugin({ // Minify and create one css file
+    /*new MiniCssExtractPlugin({ // Minify and create one css file
       filename: 'assets/style-[contenthash].css',
       chunkFilename: 'assets/[name]-style-[contenthash].css',
-    }),
+    }),*/
 
     new HtmlWebpackPlugin({ // Create index.html file
       cache: PRODUCTION,
@@ -87,7 +78,7 @@ module.exports = {
     new ScriptExtHtmlWebpackPlugin({
       defaultAttribute: 'defer'
     }),
-    PRODUCTION && new StyleExtHtmlWebpackPlugin(),
+    //PRODUCTION && new StyleExtHtmlWebpackPlugin(),
 
     PRODUCTION && new CleanWebpackPlugin(), // Cleanup before each build
 
@@ -104,7 +95,7 @@ module.exports = {
     strictExportPresence: true,
     rules: [
       { parser: { requireEnsure: false } },
-      { test: /\.(c|le)ss$/,
+      /*{ test: /\.(c|le)ss$/,
         use: [
           !PRODUCTION ? 'style-loader' : MiniCssExtractPlugin.loader, 
           {
@@ -125,7 +116,7 @@ module.exports = {
             }
           }
         ],
-      },
+      },*/
       { test: /\.(ico|gif|png|jpe?g|svg)$/,
         use: {
           loader: 'url-loader',

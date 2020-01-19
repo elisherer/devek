@@ -1,6 +1,16 @@
 import React, {useState, useEffect} from 'react';
+import styled from 'styled-components';
 
-import styles from './PageTime.less';
+const ButtonsWrapper = styled.div`
+  margin-bottom: 30px;
+`;
+const Center = styled.div`
+  text-align: center;
+`;
+const StopwatchTime = styled.div`
+  font-size: 3em;
+  margin-bottom: 20px;
+`;
 
 var pad = (n, z = 2) => ('00' + n).slice(-z);
 function formatTime(time) {
@@ -34,6 +44,7 @@ function useFrameNow(isActive) {
   return isActive ? now : null;
 }
 
+
 const Stopwatch = () => {
 
   const [pastLapse, setPastLapse] = useState(0)
@@ -65,12 +76,12 @@ const Stopwatch = () => {
   }
 
   return (
-    <div className={styles.center}>
-      <div className={styles.stopwatch}>{formatTime(totalLapse)}</div>
+    <Center>
+      <StopwatchTime>{formatTime(totalLapse)}</StopwatchTime>
 
-      <div className={styles.buttons}>
+      <ButtonsWrapper>
         <button onClick={handleRunClick}>{isRunning ? 'Stop' : 'Start'}</button> <button onClick={handleLap} disabled={!isRunning}>Lap</button>
-      </div>
+      </ButtonsWrapper>
       <button onClick={handleClearClick}>Clear</button>
       {!!laps.length && (
         <>
@@ -78,7 +89,7 @@ const Stopwatch = () => {
           <ol>{laps.map((lap, i) => <li key={i}>{lap}</li>)}</ol>
         </>
       )}
-    </div>
+    </Center>
   );
 };
 

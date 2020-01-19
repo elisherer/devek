@@ -1,5 +1,32 @@
 import React, { useRef, useState, useCallback, useEffect } from 'react';
-import styles from './DropDownMenu.less';
+import styled from 'styled-components';
+
+const UnsortedList = styled.ul`
+  padding: 0;
+  display: ${({ open }) => open ? 'block' : 'none'};
+  margin: 4px 0;
+  border: 1px solid ${({ theme }) => theme.greyBorder};
+  position: absolute;
+  z-index: 9999999;
+  background: ${({ theme }) => theme.inputBackground};
+  max-height: 33vh;
+  overflow-y: scroll;
+  li {
+    list-style: none;
+    line-height: 26px;
+  }
+  label {
+    display: inline-block;
+    padding: 8px;
+    cursor: pointer;
+    color: ${({ theme }) => theme.foregroundColor}
+    margin-bottom: 0 !important;
+    &:active, &:hover {
+      color: white;
+      background-color: ${({ theme }) => theme.highlight};
+    }
+  }
+`;
 
 const DropDownMenu = ({ menu, disabled, children, ...props } : { menu: Array, disabled?: boolean, children?: any }) => {
   const ref = useRef();
@@ -34,11 +61,11 @@ const DropDownMenu = ({ menu, disabled, children, ...props } : { menu: Array, di
   const isOpen = !disabled && open;
 
   return (
-    <span ref={ref} className={styles.trigger_wrap} {...props} aria-haspopup="true" aria-expanded={isOpen} onClick={!disabled ? handleTriggerClick : undefined}>
+    <span ref={ref} {...props} aria-haspopup="true" aria-expanded={isOpen} onClick={!disabled ? handleTriggerClick : undefined}>
       {children}
-      <ul className={styles.items + (isOpen ? ' ' + styles.open : '')} onClick={handleTriggerClick} onChange={handleTriggerClick}>
+      <UnsortedList open={isOpen} onClick={handleTriggerClick} onChange={handleTriggerClick}>
         {menu && menu.map(({ id, ...props}, i) => <li key={id || i} {...props} />)}
-      </ul>
+      </UnsortedList>
     </span>
   );
 };

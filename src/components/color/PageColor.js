@@ -3,8 +3,8 @@ import {CopyToClipboard, ListBox, Radio, TextBox} from '../_lib';
 import { Redirect }  from 'react-router-dom';
 import { useStore, actions } from './PageColor.store';
 import { formatters, parsers } from './color.js';
-import styles from './PageColor.less';
 import x11 from './x11';
+import styled from 'styled-components';
 
 const x11Colors = [{ name: 'custom', value: '#000000' }].concat(Object.keys(x11).map(wc => ({ name: wc, value: '#' + x11[wc] })));
 const hexRegex = /#[a-z0-9]{6}/i;
@@ -19,6 +19,50 @@ const fixValue = value => {
   }
   return hex;
 };
+
+const Preview = styled.div`
+  width: 200px;
+  height: ${({ gradient }) => gradient ? '120px' : '40px'};
+  background-position: 0 0, 10px 10px;
+  background-size: 20px 20px;
+  background-image: ${({theme})=> theme.dark
+    ? 'linear-gradient(45deg, #555 25%, transparent 25%, transparent 75%, #555 75%, #555 100%), linear-gradient(45deg, #555 25%, #333 25%, #333 75%, #555 75%, #555 100%)'
+    : 'linear-gradient(45deg, #eee 25%, transparent 25%, transparent 75%, #eee 75%, #eee 100%), linear-gradient(45deg, #eee 25%, white 25%, white 75%, #eee 75%, #eee 100%)'
+  };
+  margin-bottom: ${({ gradient }) => gradient ? '0px' : '30px'};
+  padding: ${({ gradient }) => gradient ? '12px' : '5px'};
+  > div {
+    width: ${({ gradient }) => gradient ? '96px' : '100px'};
+    height: ${({ gradient }) => gradient ? '96px' : '30px'};
+    margin: 0 auto;
+  }
+`;
+
+const GradientsRadio = styled(Radio)`
+  div {
+    border: 2px solid ${({ theme }) => theme.greyBorder};
+    flex-basis: 20%;
+    font-size: 20px;
+    width: 48px;
+    height: 48px;
+    &:hover {
+      border-color: grey;
+    }
+    &[data-active]{
+      border-color: black;
+    }
+  }
+`;
+
+
+const Wrapper = styled.div`
+  margin-bottom: 20px;
+`;
+
+const PositionLabel = styled.span`
+  display: inline-block;
+  width: 115px;
+`;
 
 const pageRoutes = ['convert','gradient'];
 
@@ -40,19 +84,19 @@ const PageColor = ({ location } : { location: Object }) => {
     return (
       <div>
         <label>Preview</label>
-        <div className={styles.preview}>
+        <Preview>
           <div style={preview}/>
-        </div>
+        </Preview>
 
-        <div className={styles.predefined}>
+        <Wrapper>
           <label>Select an X11 web-color:</label>
           <ListBox size={1} value={formatters.hex(parsed)} onChange={actions.hex} options={x11Colors} uid={c => c.name} />
-        </div>
+        </Wrapper>
 
-        <div className={styles.predefined}>
+        <Wrapper>
           <span>Picker: </span>
           <input type="color" onChange={actions.hex} value={formatters.hex(parsed)}/>
-        </div>
+        </Wrapper>
 
         <span>RGB/A:</span><CopyToClipboard from="color_rgba"/>
         <TextBox invalid={errors.rgba} id="color_rgba" autoFocus onChange={actions.rgba} value={rgba}/>
@@ -84,7 +128,7 @@ const PageColor = ({ location } : { location: Object }) => {
         <span>Color {index+1}:</span> <input type="color" data-index={index} data-field="color" onChange={actions.gradientStop} value={fixValue(gradientStop[index].color)}/>
         <TextBox data-index={index} data-field="color" onChange={actions.gradientStop} value={gradientStop[index].color}/>
         <label>
-          <span className={styles.positionLabel}>Position ({gradientStop[index].pos}%)</span>
+          <PositionLabel>Position ({gradientStop[index].pos}%)</PositionLabel>
           <input type="range" min="0" max="100" data-index={index} data-field="pos" value={gradientStop[index].pos} onChange={actions.gradientStop}/>
         </label>
       </>
@@ -97,7 +141,7 @@ const PageColor = ({ location } : { location: Object }) => {
         <button onClick={actions.switchColors}>Reverse order</button>
 
         <label>Gradient type</label>
-        <Radio className={styles.gradients}>
+        <GradientsRadio>
           <div data-active={gradientType === 'linear-gradient(to left' || null} data-gt="linear-gradient(to left" onClick={actions.gradientType}
           style={{background: `linear-gradient(to left, ${gradientStop[0].color},${gradientStop[1].color})`}}/>
           <div data-active={gradientType === 'linear-gradient(to right' || null} data-gt="linear-gradient(to right" onClick={actions.gradientType}
@@ -116,15 +160,15 @@ const PageColor = ({ location } : { location: Object }) => {
                style={{background: `linear-gradient(to bottom right, ${gradientStop[0].color},${gradientStop[1].color})`}}/>
           <div data-active={gradientType === 'radial-gradient(circle at center' || null} data-gt="radial-gradient(circle at center" onClick={actions.gradientType}
                style={{background: `radial-gradient(circle at center, ${gradientStop[0].color},${gradientStop[1].color})`}}/>
-        </Radio>
+        </GradientsRadio>
 
         <span>Gradient CSS:</span><CopyToClipboard from="color_gradient"/>
         <TextBox id="color_gradient" value={gradientCss} readOnly />
 
         <label>Preview</label>
-        <div className={styles.preview + ' ' + styles.gradient}>
+        <Preview gradient>
           <div style={preview}/>
-        </div>
+        </Preview>
       </div>
     )
   }

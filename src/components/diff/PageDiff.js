@@ -2,8 +2,7 @@ import React from 'react';
 import { Checkbox, CopyToClipboard, TextArea } from '../_lib';
 import { useStore, actions } from './PageDiff.store';
 import { textFunctions } from '../text/text';
-
-import styles from './PageDiff.less';
+import styled from 'styled-components';
 
 const he = textFunctions.html.encode.func;
 
@@ -16,7 +15,7 @@ const prepareLine = (nr, typ, aText) => {
 
 const prepareLines = (diff, a, b) => {
   let n = 0,
-    output = `<table class="${styles.output_table}"><tbody>`;
+    output = `<table><tbody>`;
 
   for (let fdx = 0; fdx < diff.length; fdx++) {
     const item = diff[fdx];
@@ -29,12 +28,12 @@ const prepareLines = (diff, a, b) => {
 
     // write deleted lines
     for (let m = 0; m < item.deletedA; m++) {
-      output += prepareLine(-1, styles.d, a[item.startA + m]);
+      output += prepareLine(-1, "_d", a[item.startA + m]);
     }
 
     // write inserted lines
     while (n < item.startB + item.insertedB) {
-      output += prepareLine(n, styles.i, b[n]);
+      output += prepareLine(n, "_i", b[n]);
       n++;
     }
   }
@@ -63,12 +62,12 @@ const prepareBlocks = (diff, a, b) => {
 
     // write deleted blocks
     for (let m = 0; m < item.deletedA; m++) {
-      output += `<span class="${styles.d}">${he(a[item.startA + m])}</span>`;
+      output += `<span class="_d">${he(a[item.startA + m])}</span>`;
     }
 
     // write inserted blocks
     while (n < item.startB + item.insertedB) {
-      output += `<span class="${styles.i}">${he(b[n])}</span>`;
+      output += `<span class="_i">${he(b[n])}</span>`;
       n++;
     }
   }
@@ -81,6 +80,43 @@ const prepareBlocks = (diff, a, b) => {
   return output;
 };
 
+const OutputTextArea = styled(TextArea)`
+  table {
+    empty-cells: show;
+
+    border-collapse: collapse;
+    table-layout: fixed;
+    padding: 0;
+
+    td:first-of-type {
+      color: silver;
+      text-align: right;
+      width: 40px;
+      padding-right: 8px;
+    }
+  }
+  ._i {
+    color: black;
+    background-color: #80ff80
+  }
+  ._d {
+    color: black;
+    background-color: #ff8080
+  }
+`;
+
+const BWrapper = styled.div`
+  padding-top: 20px;
+`;
+const ActionsWrapper = styled.div`
+  button {
+    margin-right: 6px;
+    margin-bottom: 4px;
+  }
+`;
+const FlagsWrapper = styled.div`
+  padding: 20px;
+`;
 
 const PageDiff = () => {
   const state = useStore();
@@ -107,27 +143,27 @@ const PageDiff = () => {
       <label>Input A (&quot;old&quot;):</label>
       <TextArea autoFocus onChange={actions.inputA} value={inputA}/>
 
-      <div className={styles.b}>
+      <BWrapper>
         <label>Input B (&quot;new&quot;):</label>
         <TextArea onChange={actions.inputB} value={inputB}/>
-      </div>
+      </BWrapper>
 
-      <div className={styles.flags}>
+      <FlagsWrapper>
         <Checkbox label="Trim spaces" checked={trimSpace} onChange={actions.trimSpace} />
         <Checkbox label="Ignore spaces" checked={ignoreSpace} onChange={actions.ignoreSpace} />
         <Checkbox label="Case sensitive" checked={!ignoreCase} onChange={actions.ignoreCase} />
-      </div>
+      </FlagsWrapper>
 
-      <div className={styles.actions}>
+      <ActionsWrapper>
         <button onClick={actions.lineDiff}>Line Diff</button>
         <button onClick={actions.blockDiff}>Block Diff</button>
-      </div>
+      </ActionsWrapper>
 
       <h1>Result</h1>
       {!error && <CopyToClipboard from="diff_result" />}
       {error
         ? <p style={{color:'red'}}>{error}</p>
-        : <TextArea readOnly html value={output} id="diff_result" />}
+        : <OutputTextArea readOnly html value={output} id="diff_result" />}
     </div>
   );
 };

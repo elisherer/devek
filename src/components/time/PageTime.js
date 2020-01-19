@@ -4,8 +4,18 @@ import { CopyToClipboard, TextBox } from '../_lib';
 import { useStore, actions } from './PageTime.store';
 import Now from './Now';
 import Stopwatch from './Stopwatch';
+import styled from 'styled-components';
 
-import styles from './PageTime.less';
+const ButtonsWrapper = styled.div`
+  margin-bottom: 30px;
+`;
+
+const RangeWrapper = styled.label`
+  > span {
+    margin-right: 20px;
+  }
+  padding-bottom: 20px;
+`;
 
 const pageRoutes = ['now', 'convert', 'stopwatch'];
 
@@ -38,14 +48,14 @@ const PageTime = ({ location } : { location: Object }) => {
 
   return (
     <div>
-      <div className={styles.buttons}>
+      <ButtonsWrapper>
         <button onClick={actions.now}>Set to Now</button> <button onClick={actions.utc}>Set to UTC</button> / Pick: <input type="date" onChange={actions.iso} />
-      </div>
+      </ButtonsWrapper>
 
-      <label className={styles.range}>
+      <RangeWrapper>
         <span>Time Zone: ({timezone})</span>
         <input type="range" min="-11" max="14" value={timezone} onChange={actions.timezone}/>
-      </label>
+      </RangeWrapper>
 
       <span>ISO 8601:</span><CopyToClipboard from="time_iso"/>
       <TextBox invalid={errors.iso} id="time_iso" autoFocus onChange={actions.iso} value={iso} />

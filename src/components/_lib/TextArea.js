@@ -1,9 +1,8 @@
 import React, { useEffect, useRef } from 'react';
 import devek from 'devek';
-import cx from 'classnames';
-import styles from './TextArea.less';
 
 import screen from 'helpers/screen';
+import styled from 'styled-components';
 
 const blurOnEscape = e => {
   if (e.key === "Escape") {
@@ -47,8 +46,43 @@ function replaceCaret(el) {
   }
 }
 
-const TextArea = ({ autoFocus, className, wrapperClassName, style, onChange, readOnly, value, html, disabled, lineNumbers, ...more } :
-                    { autoFocus?: boolean, className?: string, wrapperClassName?: string, style?: Object, onChange?: Function, readOnly?: boolean, value?: string, html?: boolean, disabled?: boolean, lineNumbers?: boolean }) => {
+const Wrapper = styled.div`
+  display: flex;
+  background: ${({ theme, readOnly, disabled }) => readOnly || disabled ? theme.inputDisabledBackground : theme.inputBackground};
+  border: 1px solid ${({ theme }) => theme.greyBorder};
+  border-radius: 5px;
+  min-height: 4em;
+  max-height: 450px;
+  overflow: auto;
+  margin-bottom: 10px;
+  &:focus-within {
+    border-color: ${({ theme }) => theme.inputFocusBorder};
+  }
+`;
+
+const LineNumbers = styled.div`
+  font-family: ${({ theme }) => theme.fontMono};
+  white-space: pre;
+  padding-top:8px;
+  padding-right: 8px;
+  width: 40px; /* line numbers width */
+  color: silver;
+  text-align: right;
+`;
+
+const Pre = styled.pre`
+  display:inline-block;
+  min-height: 4em;
+
+  margin: 0;
+  padding: 8px;
+  outline: none;
+  width: 100%;
+  white-space: pre; /* use pre-wrap to wrap words */
+`;
+
+const TextArea = ({ autoFocus, className, style, onChange, readOnly, value, html, disabled, lineNumbers, ...more } :
+                    { autoFocus?: boolean, className?: string, style?: Object, onChange?: Function, readOnly?: boolean, value?: string, html?: boolean, disabled?: boolean, lineNumbers?: boolean }) => {
   const innerProp = html ? "innerHTML" : "innerText";
 
   const inputElement = useRef();
@@ -64,9 +98,9 @@ const TextArea = ({ autoFocus, className, wrapperClassName, style, onChange, rea
   if (lineNumbers && readOnly && !html) {
     const numberOfLines = devek.numberOfLines(value.endsWith('\n') ? value.slice(0,-1) : value);
     lineNumbersDiv = (
-      <div className={styles.ln}>
+      <LineNumbers>
         {Array.from({ length: numberOfLines }).map((x,k)=>k+1).join('\n')}
-      </div>
+      </LineNumbers>
     );
   }
 
@@ -85,20 +119,16 @@ const TextArea = ({ autoFocus, className, wrapperClassName, style, onChange, rea
   }, []);
 
   return (
-    <div className={cx(styles.wrapper, wrapperClassName)}>
+    <Wrapper className={className} readOnly={readOnly} disabled={disabled}>
       {lineNumbersDiv}
-      <pre ref={inputElement} style={style} className={cx(className, styles.textarea, {
-        //[styles.has_ln]: lineNumbers,
-        [styles.readonly]: readOnly,
-        [styles.disabled]: disabled,
-      })}
+      <Pre ref={inputElement} style={style}
            contentEditable={!readOnly && !disabled}
            onInput={onChange}
            onKeyDown={blurOnEscape}
            onPaste={html ? undefined : stripFormattingOnPaste}
            {...more}
       />
-    </div>
+    </Wrapper>
   );
 };
 

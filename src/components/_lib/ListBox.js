@@ -1,6 +1,47 @@
 import React from 'react';
-import cx from 'classnames';
-import styles from './ListBox.less';
+import styled from 'styled-components'
+
+const Wrapper = styled.label`
+  display: flex !important;
+  margin-bottom: 10px !important;
+  position: relative;
+  background: ${({ theme, readOnly, disabled }) => readOnly || disabled ? theme.inputDisabledBackground : theme.inputBackground};
+  border: 1px solid ${({ theme }) => theme.greyBorder};
+  border-radius: 5px;
+  padding: 8px;
+  max-width: 560px;
+  cursor: pointer;
+  select{
+    cursor: pointer;
+    background: ${({ theme }) => theme.inputBackground};
+    color: ${({ theme }) => theme.foregroundColor};
+    border: none;
+    width: 100%;
+    margin: 0;
+    outline: none;
+    white-space: normal;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    word-break: break-all;
+    &[readonly], &[disabled] {
+      background: ${({ theme }) => theme.inputDisabledBackground};
+    }
+  }
+  &:focus-within {
+    border-color: ${({ theme }) => theme.inputFocusBorder};
+  }
+  &.error, &.error:focus-within {
+    border-color: red;
+  }
+`;
+
+const SelectHider = styled.div`
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+`;
 
 const blurOnEscape = e => {
   if (e.key === "Escape") {
@@ -35,7 +76,7 @@ const ListBox = ({
 }) => {
 
   return (
-    <label className={cx(className, styles.listbox, { [styles.readonly]: readOnly, [styles.disabled]: disabled })}>
+    <Wrapper className={className}>
       <select readOnly={readOnly}
             size={size || 3}
             value={value}
@@ -49,8 +90,8 @@ const ListBox = ({
           </option>
         ))}
       </select>
-      {hidePopup &&  (<div className={styles.over_select} />)}
-    </label>
+      {hidePopup &&  (<SelectHider />)}
+    </Wrapper>
   );
 };
 
