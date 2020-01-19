@@ -25,7 +25,10 @@ const Preview = styled.div`
   height: ${({ gradient }) => gradient ? '120px' : '40px'};
   background-position: 0 0, 10px 10px;
   background-size: 20px 20px;
-  background-image: linear-gradient(45deg, #eee 25%, transparent 25%, transparent 75%, #eee 75%, #eee 100%),linear-gradient(45deg, #eee 25%, white 25%, white 75%, #eee 75%, #eee 100%);
+  background-image: ${({theme})=> theme.dark
+    ? 'linear-gradient(45deg, #555 25%, transparent 25%, transparent 75%, #555 75%, #555 100%), linear-gradient(45deg, #555 25%, #333 25%, #333 75%, #555 75%, #555 100%)'
+    : 'linear-gradient(45deg, #eee 25%, transparent 25%, transparent 75%, #eee 75%, #eee 100%), linear-gradient(45deg, #eee 25%, white 25%, white 75%, #eee 75%, #eee 100%)'
+  };
   margin-bottom: ${({ gradient }) => gradient ? '0px' : '30px'};
   padding: ${({ gradient }) => gradient ? '12px' : '5px'};
   > div {
@@ -37,7 +40,7 @@ const Preview = styled.div`
 
 const GradientsRadio = styled(Radio)`
   div {
-    border: 2px solid white;
+    border: 2px solid ${({ theme }) => theme.greyBorder};
     flex-basis: 20%;
     font-size: 20px;
     width: 48px;

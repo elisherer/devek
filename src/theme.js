@@ -81,7 +81,8 @@ const base_dark = {
   badgeHoverBackground: '#777777',
 
   togglebarInactiveBackground: '#444444',
-
+  
+  buttonDisabled: '#777777',
 };
 
 const evalTheme = theme => 

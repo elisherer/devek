@@ -45,6 +45,18 @@ hr {
   background: #bbbbbb;
 }
 
+/* generic inputs */
+input[type=date], select {
+  color: ${({ theme }) => theme.foregroundColor};
+  background: ${({ theme }) => theme.inputBackground};
+  border: 1px solid ${({ theme }) => theme.greyBorder};
+  outline: none;
+  padding: 4px;
+  border-radius: 4px;
+  &:focus {
+    border-color: ${({ theme }) => theme.secondaryColor};
+  }
+}
 /* range */
 
 input[type=range] {
