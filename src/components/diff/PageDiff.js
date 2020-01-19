@@ -96,9 +96,11 @@ const OutputTextArea = styled(TextArea)`
     }
   }
   ._i {
+    color: black;
     background-color: #80ff80
   }
   ._d {
+    color: black;
     background-color: #ff8080
   }
 `;

@@ -19,8 +19,7 @@ const ErrorText = styled.span`
 
 const NoteText = styled.div`
   padding: 6px;
-  border: 1px solid #dddddd;
-  background-color: #eeeeee;
+  background: ${({ theme }) => theme.greyBorder};
   margin-bottom: 20px;
 `;
 

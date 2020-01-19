@@ -46,7 +46,7 @@ hr {
 }
 
 /* generic inputs */
-input[type=date], select {
+input[type=date], input[type=color], select {
   color: ${({ theme }) => theme.foregroundColor};
   background: ${({ theme }) => theme.inputBackground};
   border: 1px solid ${({ theme }) => theme.greyBorder};
@@ -56,6 +56,9 @@ input[type=date], select {
   &:focus {
     border-color: ${({ theme }) => theme.secondaryColor};
   }
+}
+input[type=color] {
+  padding: 0 2px;
 }
 /* range */
 
@@ -235,6 +238,9 @@ kbd {
       flex: 1;
       height: 100%;
       overflow: auto;
+      a:link, a:visited, a:hover, a:active {
+        color: ${({ theme }) => theme.secondaryColor};
+      }
       > div {
         padding: 10px;
         width: 100%;

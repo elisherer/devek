@@ -60,7 +60,7 @@ function drawHand(ctx, pos, length, width, style) {
 }
 
 
-const Clock = props => {
+const Clock = (props : { theme : Object}) => {
   const ref = useRef();
 
   useEffect(() => {

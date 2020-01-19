@@ -2,8 +2,8 @@ import mat4 from './mat4';
 
 let cubeRotation = 0.0;
 
-export default (gl, programInfo, buffers, textures, deltaTime) => {
-  gl.clearColor(1.0, 1.0, 1.0, 1.0);  // Clear to white, fully opaque
+export default (gl, programInfo, buffers, textures, deltaTime, backgroundColor) => {
+  gl.clearColor(backgroundColor.r/255, backgroundColor.g/255, backgroundColor.b/255, 1.0);  // Clear to white, fully opaque
   gl.clearDepth(1.0);                 // Clear everything
   gl.enable(gl.DEPTH_TEST);           // Enable depth testing
   gl.depthFunc(gl.LEQUAL);            // Near things obscure far things

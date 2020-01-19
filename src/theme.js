@@ -13,7 +13,7 @@ const base = {
   secondaryColor: '#2060e0',
  
   highlight: '#1e90ff',
-  greyBorder: '#cccccc',
+  greyBorder: '#e0e0e0',
   strongGreyBorder: x => hexDarken(x.greyBorder, x.dark ? -20 : 20),
   
   foregroundColor: '#303030',
@@ -67,7 +67,7 @@ const base_dark = {
 
   foregroundColor: '#cccccc',
   backgroundColor: '#1e1e1e',
-  cardBackground: '#383838',
+  cardBackground: '#383838', // must use HEX
   scrollbarColor: 'rgba(192,192,192,0.5)',
 
   codeBackground: '#2a2a2a',
@@ -93,7 +93,7 @@ const evalTheme = theme =>
 
 const light = evalTheme(base),
   dark = evalTheme(base_dark);
-const theme = evalTheme(dark);
+const theme = evalTheme(dark || light);
 
 
 export default theme;

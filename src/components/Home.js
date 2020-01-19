@@ -1,7 +1,7 @@
 import React from 'react';
 import jokes from '../jokes';
 
-import logo from '../assets/devek_text.svg';
+import Logo from '!!react-svg-loader!../assets/devek_text_white.svg';
 import DevekCube from './webgl/DevekCube';
 import styled from 'styled-components';
 
@@ -14,10 +14,10 @@ const Page = styled.div`
   max-width: 560px;
   margin: 0 auto;
 
-  img {
-    width: 280px;
+  svg {
     margin-top: 40px;
     margin-bottom: 40px;
+    fill: ${({ theme }) => theme.dark ? "#fff" : "#000"}
   }
   p { margin: 0; }
   p:last-of-type { margin-top: 40px;}
@@ -51,7 +51,7 @@ const Joke = styled.div`
 
 const Home = () => (
   <Page>
-    <img alt="Logo" src={logo} />
+    <Logo width="280px" height="90px" />
 
     <DevekCube/>
 

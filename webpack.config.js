@@ -3,15 +3,12 @@ const webpack = require('webpack');
 
 const
   HtmlWebpackPlugin = require('html-webpack-plugin'),
-  MiniCssExtractPlugin = require("mini-css-extract-plugin"),
   CleanWebpackPlugin = require('clean-webpack-plugin').CleanWebpackPlugin,
   BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin,
   webpackDevServerWaitpage = require('webpack-dev-server-waitpage'),
   CopyWebpackPlugin = require('copy-webpack-plugin'),
   TerserJSPlugin = require('terser-webpack-plugin'),
-  OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin'),
   ScriptExtHtmlWebpackPlugin = require('script-ext-html-webpack-plugin'),
-  StyleExtHtmlWebpackPlugin = require('style-ext-html-webpack-plugin'),
   WorkboxPlugin = require('workbox-webpack-plugin');
 
 const mode = process.env.NODE_ENV || 'development';

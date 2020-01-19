@@ -10,7 +10,7 @@ const Wrapper = styled.div`
   overflow: hidden;
 
   > * {
-    color: ${({ theme }) => theme.foregroundColor};
+    color: ${({ theme }) => theme.foregroundColor} !important;
     text-decoration: none;
     flex-basis: ${({ flexBasis }) => (flexBasis || 50) +'%'};
     font-size: 12px;

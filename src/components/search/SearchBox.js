@@ -13,7 +13,7 @@ const onBlur = () => clickedLink ? (clickedLink = false) : actions.close();
 const SearchModal = styled.div`
   position: absolute;
   width: 100%;
-  background: white;
+  background: ${({ theme }) => theme.backgroundColor};
   height: 54px;
   z-index: 999;
 `;
