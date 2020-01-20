@@ -63,7 +63,8 @@ module.exports = {
         const author = (packageJson.author && packageJson.author.name) || packageJson.author;
         return `Copyright (c) ${(new Date()).getFullYear()} ${author}.  All Rights Reserved.`;
       })(),
-      exclude: /\.LICENSE/,
+      entryOnly: true,
+      exclude: /\.worker\.js$/,
       raw: false // wrap in a comment
     }),
 
