@@ -29,7 +29,6 @@ const Parameters = styled.div`
   flex: 1;
   padding-left: 8px;
   div:first-child {
-    display: flex;
     margin-bottom: 10px;
   }
 `;

@@ -106,7 +106,7 @@ export const Hamburger = styled.div`
 
 export const ToggleTheme = styled.div`
   position: absolute;
-  top: 10px;
+  top: 16px;
   right: 10px;
   width: 24px;
   height: 24px;

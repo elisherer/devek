@@ -11,13 +11,22 @@ const Mark = styled.span`
   border-radius: 20px;
 
   &:after {
-    content: "\\25cf";
     position: absolute;
+    content: "";
     display: none;
-    left: 2px;
-    top: -8px;
-    color: ${({ theme }) => theme.secondaryColor};
-    font-size: 20px;
+    left: 3px;
+    top: 3px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: ${({ theme }) => theme.secondaryColor};
+  }
+
+  input[type=radio]:checked ~ &:after {
+    display: block;
+  }
+  input[type=radio]:focus ~ & {
+    border-color: ${({ theme }) => theme.secondaryColor};
   }
 `;
 
@@ -35,14 +44,6 @@ const OptionLabel = styled.label`
     cursor: pointer;
     height: 0;
     width: 0;
-
-    &:focus ~ ${Mark} {
-      border-color: ${({ theme }) => theme.secondaryColor};
-    }
-
-    &:checked ~ ${Mark}:after {
-      display: block;
-    }
   }
 `;
 

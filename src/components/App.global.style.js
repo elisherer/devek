@@ -160,7 +160,8 @@ button {
   }
   /* button with class="tool" */
   &.tool {
-    background: white;
+    background: ${({ theme }) => theme.cardBackground};
+    fill: ${({ theme }) => theme.dark ? 'white' : 'black'};
     padding: 8px;
     border: 1px solid ${({ theme }) => theme.greyBorder};
     width: 40px;
@@ -169,7 +170,7 @@ button {
       border-color: ${({ theme }) => theme.secondaryColor};
     }
     &[disabled] {
-      border-color: #444444;
+      border-color: ${({ theme }) => theme.buttonDisabled};
       opacity: 0.3;
     }
   }
@@ -214,7 +215,7 @@ kbd {
     }
 
     > header {
-      min-height: '54px';
+      min-height: 54px;
       h1 {
         margin: 12px 0 0 56px;
         font-size: 20px;
@@ -249,9 +250,9 @@ kbd {
           max-width: calc(100% - 40px);
           min-width: calc(${({ theme }) => theme.screenDesktopMin} - ${({ theme }) => theme.navWidth} - 40px);
           padding: 20px;
-          margin: 20px;
+          margin: 0 20px;
           box-shadow: ${({ theme }) => theme.cardShadow};
-          border-radius: 10px;
+          border-radius: 0 10px 10px;
         }
         @media only screen and (min-width: 1024px) {
           min-width: 768px;
