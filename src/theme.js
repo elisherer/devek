@@ -35,7 +35,7 @@ const base = {
   badgeHoverBackground: '#dddddd',
  
   togglebarActiveForeground: 'white',
-  togglebarForeground: '#333333',
+  togglebarForeground: x => x.foregroundColor,
   togglebarBackground: x => x.secondaryColor,
   togglebarActiveHoverBackground: x => hexLighten(x.secondaryColor, x.dark ? -10 : 10),
   togglebarHoverBackground: x => hexLighten(x.secondaryColor, x.dark ? -30 : 30),

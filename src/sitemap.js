@@ -9,7 +9,7 @@ import PageJWT from './components/jwt/PageJWT';
 import PageXML from './components/xml/PageXML';
 import PageTime from './components/time/PageTime';
 import PageCron from './components/cron/PageCron';
-//import PageImage from './components/image/PageImage'; // Lazy loaded
+import PageImage from './components/image/PageImage';
 import PageRandom from './components/random/PageRandom';
 import PageColor from './components/color/PageColor';
 import PageNetwork from './components/network/PageNetwork';
@@ -41,7 +41,6 @@ import {
 
 const PageCryptoLazy = lazy(() => import(/* webpackChunkName: "crypto" */'./components/crypto/PageCrypto'));
 const PageDataLazy =  lazy(() => import(/* webpackChunkName: "data" */'./components/data/PageData'));
-const PageImageLazy =  lazy(() => import(/* webpackChunkName: "image" */'./components/image/PageImage'));
 
 export const siteMap = {
   "/": {
@@ -208,7 +207,7 @@ export const siteMap = {
     }
   },
   "/image": {
-    component: PageImageLazy,
+    component: PageImage,
     keyword: 'image',
     title: 'Image',
     header: 'Image Tools',

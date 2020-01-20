@@ -36,7 +36,7 @@ module.exports = {
   },
   devtool: ANALYZE ? 'source-map' : (PRODUCTION ? false : 'cheap-module-source-map'),
   optimization: {
-    minimizer: [new TerserJSPlugin({})/*, new OptimizeCSSAssetsPlugin({})*/],
+    minimizer: [new TerserJSPlugin({})],
     splitChunks: {
       chunks: 'all'
     }
@@ -63,13 +63,9 @@ module.exports = {
         const author = (packageJson.author && packageJson.author.name) || packageJson.author;
         return `Copyright (c) ${(new Date()).getFullYear()} ${author}.  All Rights Reserved.`;
       })(),
+      exclude: /\.LICENSE/,
       raw: false // wrap in a comment
     }),
-
-    /*new MiniCssExtractPlugin({ // Minify and create one css file
-      filename: 'assets/style-[contenthash].css',
-      chunkFilename: 'assets/[name]-style-[contenthash].css',
-    }),*/
 
     new HtmlWebpackPlugin({ // Create index.html file
       cache: PRODUCTION,
@@ -78,7 +74,6 @@ module.exports = {
     new ScriptExtHtmlWebpackPlugin({
       defaultAttribute: 'defer'
     }),
-    //PRODUCTION && new StyleExtHtmlWebpackPlugin(),
 
     PRODUCTION && new CleanWebpackPlugin(), // Cleanup before each build
 
@@ -95,28 +90,6 @@ module.exports = {
     strictExportPresence: true,
     rules: [
       { parser: { requireEnsure: false } },
-      /*{ test: /\.(c|le)ss$/,
-        use: [
-          !PRODUCTION ? 'style-loader' : MiniCssExtractPlugin.loader, 
-          {
-            loader: "css-loader",
-            options: {
-              importLoaders: 1,
-              sourceMap: true,
-              modules: {
-                localIdentName: PRODUCTION ? '[hash:base64:8]' : '[local]__[hash:base64:5]',
-              },
-            }
-          },
-          {
-            loader: "less-loader",
-            options: {
-              sourceMap: true,
-              strictMath: true,
-            }
-          }
-        ],
-      },*/
       { test: /\.(ico|gif|png|jpe?g|svg)$/,
         use: {
           loader: 'url-loader',
