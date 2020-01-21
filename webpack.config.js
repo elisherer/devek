@@ -84,7 +84,11 @@ module.exports = {
 
     PRODUCTION && new WorkboxPlugin.GenerateSW({
       skipWaiting: true,
-      exclude: [ /htaccess/, /robots\.txt/, /\.php$/ ]
+      exclude: [ /\.html$/, /htaccess/, /robots\.txt/, /\.php$/ ],
+      runtimeCaching: [{
+        urlPattern: ({event}) => event.request.url === '/',
+        handler: 'NetworkFirst',
+      }]
     }),
   ].filter(Boolean),
   module: {
