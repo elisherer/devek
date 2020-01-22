@@ -23,20 +23,17 @@ module.exports = {
   bail: PRODUCTION,
   entry: PRODUCTION ? './src/index.js' : ['react-hot-loader/patch', './src/index.js'],
   output: {
-    filename: '[name]-[hash].js',
+    filename: '[name]-[contenthash].js',
     path: outputPath,
     publicPath : "/",
+    //ecmaVersion: 5, // support IE11
     chunkFilename: "[name]-[chunkhash].js",
     devtoolModuleFilenameTemplate: info =>
       path.resolve(info.absoluteResourcePath).replace(/\\/g, '/'),
   },
-  node: {
-    Buffer: false,
-    setImmediate: false,
-  },
   devtool: ANALYZE ? 'source-map' : (PRODUCTION ? false : 'cheap-module-source-map'),
   optimization: {
-    minimizer: [new TerserJSPlugin({})],
+    ...(PRODUCTION ? { minimizer: [new TerserJSPlugin({})] } : {}),
     splitChunks: {
       chunks: 'all'
     }
@@ -94,7 +91,6 @@ module.exports = {
   module: {
     strictExportPresence: true,
     rules: [
-      { parser: { requireEnsure: false } },
       { test: /\.(ico|gif|png|jpe?g|svg)$/,
         use: {
           loader: 'url-loader',
