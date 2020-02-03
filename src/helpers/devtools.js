@@ -11,7 +11,7 @@ const consoleLogger = (name, type, payload) => {
   );
 };
 
-export default ({ name, initialState, store }) => {
+export default ({ name, init, initialState, store }) => {
   const reduxDevTools = window.__REDUX_DEVTOOLS_EXTENSION__;
   if (!reduxDevTools) return consoleLogger;
 
@@ -24,7 +24,7 @@ export default ({ name, initialState, store }) => {
   devTools.subscribe(data => {
     switch (data.type) {
       case 'START':
-        devTools.init(initialState);
+        devTools.init(init());
         break;
       case 'RESET':
         store.setState(initialState);

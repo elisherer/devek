@@ -86,8 +86,14 @@ input[type=range]::-webkit-slider-thumb {
   -webkit-appearance: none;
   margin-top: -6px;
 }
+input[type=range]:disabled::-webkit-slider-thumb {
+  background: ${({ theme }) => theme.buttonDisabled};
+}
+input[type=range]:disabled::-webkit-slider-runnable-track {
+  background: ${({ theme }) => theme.buttonDisabled};
+}
 input[type=range]:focus::-webkit-slider-runnable-track {
-  background: #d9d9d9;
+  background: ${({ theme }) => theme.rangeTrackFocusColor};
 }
 input[type=range]::-moz-range-track {
   width: 100%;
@@ -123,11 +129,17 @@ input[type=range]::-ms-thumb {
   background: ${({ theme }) => theme.secondaryColor};
   cursor: pointer;
 }
+input[type=range]:disabled::-ms-thumb {
+  background: ${({ theme }) => theme.buttonDisabled};
+}
 input[type=range]:focus::-ms-fill-lower {
   background: #cccccc;
 }
 input[type=range]:focus::-ms-fill-upper {
-  background: #d9d9d9;
+  background: ${({ theme }) => theme.rangeTrackFocusColor};
+}
+input[type=range]:disabled::-ms-fill-upper {
+  background: ${({ theme }) => theme.buttonDisabled};
 }
 
 button {

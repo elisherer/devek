@@ -3,12 +3,14 @@ import createDevTools from './devtools';
 
 const resetActionType = '__RESET';
 
-export default (actionCreators, initialState, name) => {
+export default (actionCreators, initialArg, name, options = { persist: true }) => {
   const store = {
-    dispatch: () => { throw new Error("Don't call actions before calling useStore") }
+    dispatch: () => { throw new Error("Don't call actions before calling useStore") },
   };
 
-  const devTools = createDevTools({ name, initialState, store});
+  let initialState = initialArg;
+
+  const devTools = createDevTools({ name, init: () => initialState, initialState, store});
 
   if (process.env.NODE_ENV === 'development') {
     actionCreators[resetActionType] = state => () => state; // ignoring the current state and setting it to a new one
@@ -30,7 +32,10 @@ export default (actionCreators, initialState, name) => {
     return a;
   }, {});
   const reducer = (state, action) => {
-    if (actionCreators[action.type]) return action.payload;
+    if (actionCreators[action.type]) {
+      options.persist && (initialState = action.payload);
+      return action.payload;
+    }
     throw new Error(`Unknown type: ${action.type}`);
   };
   const useStore = () => {

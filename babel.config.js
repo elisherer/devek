@@ -4,9 +4,7 @@ const babelPresetStage1 = () => ({
     // Stage 1 - Proposal
     require("@babel/plugin-proposal-export-default-from"),
     require("@babel/plugin-proposal-logical-assignment-operators"),
-    [require("@babel/plugin-proposal-optional-chaining"), { loose: false }],
     [require("@babel/plugin-proposal-pipeline-operator"), { proposal: "minimal" }],
-    [require("@babel/plugin-proposal-nullish-coalescing-operator"), { loose: false }],
     require("@babel/plugin-proposal-do-expressions"),
 
     // Stage 2 - Draft
@@ -17,7 +15,6 @@ const babelPresetStage1 = () => ({
     require("@babel/plugin-proposal-throw-expressions"),
 
     // Stage 3 - Candidate
-    require("@babel/plugin-syntax-dynamic-import"),
     require("@babel/plugin-syntax-import-meta"),
     [require("@babel/plugin-proposal-class-properties"), { loose: false }],
     require("@babel/plugin-proposal-json-strings"),

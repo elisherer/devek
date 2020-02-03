@@ -17,6 +17,7 @@ import PageNetwork from './components/network/PageNetwork';
 import PageDiff from './components/diff/PageDiff'; // Lazy loaded
 //import PageData from './components/data/PageData';
 import PageURL from './components/url/PageURL';
+import PageSpeech from './components/speech/PageSpeech';
 import PageChecksum from './components/checksum/PageChecksum';
 
 import {
@@ -37,6 +38,7 @@ import {
   mdiFormatLineStyle, // data
   mdiLink, // url
   mdiHandOkay, // checksum
+  mdiTextToSpeech, // speech
 } from '@mdi/js';
 
 const PageCryptoLazy = lazy(() => import(/* webpackChunkName: "crypto" */'./components/crypto/PageCrypto'));
@@ -342,6 +344,14 @@ export const siteMap = {
     header: 'URL Parser',
     description: 'Parse URL to its components',
     icon: mdiLink,
+  },
+  "/speech": {
+    component: PageSpeech,
+    keyword: 'speech',
+    title: 'Speech',
+    header: 'Speech Utilities',
+    description: 'Speech synthesis',
+    icon: mdiTextToSpeech,
   },
   "/checksum": {
     component: PageChecksum,

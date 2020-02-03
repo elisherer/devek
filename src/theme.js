@@ -10,7 +10,7 @@ const base = {
   
   // colors
   primaryColor: '#5500aa',
-  secondaryColor: '#2060e0',
+  secondaryColor: '#7744cc',
  
   highlight: '#1e90ff',
   greyBorder: '#e0e0e0',
@@ -29,6 +29,8 @@ const base = {
   inputDisabledBackground: '#f6f6f6',
   inputPlaceholder: '#bbbbbb',
   inputFocusBorder: x => x.secondaryColor,
+
+  rangeTrackFocusColor: x => hexLighten(x.secondaryColor, 30),
 
   badgeForeground: x => x.foregroundColor,
   badgeBackground: '#eeeeee',
