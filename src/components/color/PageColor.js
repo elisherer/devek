@@ -2,7 +2,7 @@ import React from 'react';
 import {CopyToClipboard, ListBox, Radio, TextBox} from '../_lib';
 import { Redirect }  from 'react-router-dom';
 import { useStore, actions } from './PageColor.store';
-import { formatters, parsers } from './color.js';
+import { formatters, parsers, gradients } from './color.js';
 import x11 from './x11';
 import styled from 'styled-components';
 
@@ -25,10 +25,7 @@ const Preview = styled.div`
   height: ${({ gradient }) => gradient ? '120px' : '40px'};
   background-position: 0 0, 10px 10px;
   background-size: 20px 20px;
-  background-image: ${({theme})=> theme.dark
-    ? 'linear-gradient(45deg, #555 25%, transparent 25%, transparent 75%, #555 75%, #555 100%), linear-gradient(45deg, #555 25%, #333 25%, #333 75%, #555 75%, #555 100%)'
-    : 'linear-gradient(45deg, #eee 25%, transparent 25%, transparent 75%, #eee 75%, #eee 100%), linear-gradient(45deg, #eee 25%, white 25%, white 75%, #eee 75%, #eee 100%)'
-  };
+  background-image: ${({theme})=> theme.checkeredBackground};
   margin-bottom: ${({ gradient }) => gradient ? '0px' : '30px'};
   padding: ${({ gradient }) => gradient ? '12px' : '5px'};
   > div {
@@ -142,24 +139,10 @@ const PageColor = ({ location } : { location: Object }) => {
 
         <label>Gradient type</label>
         <GradientsRadio>
-          <div data-active={gradientType === 'linear-gradient(to left' || null} data-gt="linear-gradient(to left" onClick={actions.gradientType}
-          style={{background: `linear-gradient(to left, ${gradientStop[0].color},${gradientStop[1].color})`}}/>
-          <div data-active={gradientType === 'linear-gradient(to right' || null} data-gt="linear-gradient(to right" onClick={actions.gradientType}
-               style={{background: `linear-gradient(to right, ${gradientStop[0].color},${gradientStop[1].color})`}}/>
-          <div data-active={gradientType === 'linear-gradient(to top left' || null} data-gt="linear-gradient(to top left" onClick={actions.gradientType}
-               style={{background: `linear-gradient(to top left, ${gradientStop[0].color},${gradientStop[1].color})`}}/>
-          <div data-active={gradientType === 'linear-gradient(to top right' || null} data-gt="linear-gradient(to top right" onClick={actions.gradientType}
-               style={{background: `linear-gradient(to top right, ${gradientStop[0].color},${gradientStop[1].color})`}}/>
-          <div data-active={gradientType === 'linear-gradient(to bottom' || null} data-gt="linear-gradient(to bottom" onClick={actions.gradientType}
-               style={{background: `linear-gradient(to bottom, ${gradientStop[0].color},${gradientStop[1].color})`}}/>
-          <div data-active={gradientType === 'linear-gradient(to top' || null} data-gt="linear-gradient(to top" onClick={actions.gradientType}
-               style={{background: `linear-gradient(to top, ${gradientStop[0].color},${gradientStop[1].color})`}}/>
-          <div data-active={gradientType === 'linear-gradient(to bottom left' || null} data-gt="linear-gradient(to bottom left" onClick={actions.gradientType}
-               style={{background: `linear-gradient(to bottom left, ${gradientStop[0].color},${gradientStop[1].color})`}}/>
-          <div data-active={gradientType === 'linear-gradient(to bottom right' || null} data-gt="linear-gradient(to bottom right" onClick={actions.gradientType}
-               style={{background: `linear-gradient(to bottom right, ${gradientStop[0].color},${gradientStop[1].color})`}}/>
-          <div data-active={gradientType === 'radial-gradient(circle at center' || null} data-gt="radial-gradient(circle at center" onClick={actions.gradientType}
-               style={{background: `radial-gradient(circle at center, ${gradientStop[0].color},${gradientStop[1].color})`}}/>
+          {gradients.map(g => (
+            <div key={g} data-active={gradientType === g || null} data-gt={g} onClick={actions.gradientType}
+                 style={{background: `${g}, ${gradientStop[0].color},${gradientStop[1].color})`}}/>
+          ))}
         </GradientsRadio>
 
         <span>Gradient CSS:</span><CopyToClipboard from="color_gradient"/>
