@@ -44,13 +44,16 @@ const base = {
   togglebarInactiveBackground: '#cccccc',
 
   radioBorder: '#c0c0c0',
-  radioMark: x => hexLighten(x.secondaryColor, 30),
 
   buttonBackground: x => x.secondaryColor,
   buttonHoverBackground: x => hexLighten(x.secondaryColor, x.dark ? -10 : 10),
   buttonDisabled: '#dddddd',
   buttonDisabledText: '#444444',
-    
+
+  checkeredLight: 'white',
+  checkeredShade: '#eee',
+  checkeredBackground: x => `linear-gradient(45deg, ${x.checkeredShade} 25%, transparent 25%, transparent 75%, ${x.checkeredShade} 75%, ${x.checkeredShade} 100%), linear-gradient(45deg, ${x.checkeredShade} 25%, ${x.checkeredLight} 25%, ${x.checkeredLight} 75%, ${x.checkeredShade} 75%, ${x.checkeredShade} 100%)`,
+
   navBackground: x => `linear-gradient(130deg, ${x.primaryColor}, ${hexDarken(x.primaryColor, 20)})`,
   navForeground: 'rgba(250,250,250,0.7)',
   navSelected: 'white',
@@ -89,6 +92,9 @@ const base_dark = {
   radioBorder: '#606060',
 
   buttonDisabled: '#777777',
+
+  checkeredLight: '#333',
+  checkeredShade: '#444',
 };
 
 const evalTheme = theme => 

@@ -98,7 +98,7 @@ const PageJWT = ({ location } : { location: Object }) => {
         <p style={{color: 'red'}}>{state.error}</p>
       )}
       { state.alg && (
-        <label className="emoji">Verify <b>{state.alg}</b> Signature {state.valid ? "- ✔ Verified" : "- ❌ Not verified"}</label>
+        <label>Verify <b>{state.alg}</b> Signature <span className="emoji">{state.valid ? "- ✔ Verified" : "- ❌ Not verified"}</span></label>
       )}
       {state.alg && secretTextbox}
 

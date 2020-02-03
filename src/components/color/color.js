@@ -150,6 +150,19 @@ export const hexDarken = (hex, amount) => {
   return formatters.hex(fromHSL(hsl.h, hsl.s, hsl.l));
 };
 
+const linearGradientTo = 'linear-gradient(to ';
+export const gradients = [
+  linearGradientTo + 'left',
+  linearGradientTo + 'right',
+  linearGradientTo + 'top left',
+  linearGradientTo + 'top right',
+  linearGradientTo + 'bottom',
+  linearGradientTo + 'top',
+  linearGradientTo + 'bottom left',
+  linearGradientTo + 'bottom right',
+  'radial-gradient(circle at center',
+];
+
 export const reduceBy = (field, fields) => {
   const newState = { ...fields, errors: { ...fields.errors }};
 

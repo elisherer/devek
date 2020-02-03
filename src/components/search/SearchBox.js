@@ -75,7 +75,7 @@ const SearchBox = () => {
   return (
     <SearchModal>
       <SearchIcon>🔍</SearchIcon>
-      <SearchTextBox type="search" autoFocus autoComplete="off" placeholder="Search" 
+      <SearchTextBox autoFocus autoComplete="off" placeholder="Search"
                      value={search} onChange={actions.search} onBlur={onBlur} />
       {search && paths.map((p, i) => (
         <SearchItem key={p.path} to={p.path} active={(i === index) ? "true" : ""} onMouseDown={clickLinkHandler}>
