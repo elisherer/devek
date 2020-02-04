@@ -80,7 +80,7 @@ const Home = () => (
       </tbody>
     </table>
 
-    <footer className="emoji"><strong>Developed & Hosted</strong> with ❤ by <a href="https://github.com/elisherer">elisherer</a></footer>
+    <footer><strong>Developed & Hosted</strong> with <span className="emoji">❤</span> by <a href="https://github.com/elisherer">elisherer</a></footer>
   </Page>
 );
 
