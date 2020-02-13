@@ -8,7 +8,7 @@ const Wrapper = styled.label`
   background: ${({ theme, readOnly, disabled }) => readOnly || disabled ? theme.inputDisabledBackground : theme.inputBackground};
   border: 1px solid ${({ theme }) => theme.greyBorder};
   border-radius: 5px;
-  padding: 8px;
+  padding: 4px 8px;
   max-width: 560px;
   cursor: pointer;
   select{
