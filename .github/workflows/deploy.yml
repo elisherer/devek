@@ -27,10 +27,11 @@ jobs:
     - name: List output files
       run: ls
       
-    - name: FTP-Deploy-Action
+    - name: FTP Deploy
       uses: SamKirkland/FTP-Deploy-Action@3.0.0
       with:
         ftp-server: ${{ secrets.ftp_url }}
         ftp-username: devek
         ftp-password: ${{ secrets.ftp_password }}
+        local-dir: dist
         git-ftp-args: --dry-run
