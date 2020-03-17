@@ -2,8 +2,8 @@ import { hexDarken, hexLighten } from './components/color/color';
 
 const base = {
   // constants
-  nativeFont: '16px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, system-ui, Cantarell, "Helvetica Neue", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"',
-  fontMono: 'SFMono-Regular,Consolas,Liberation Mono,Menlo,Courier,monospace',
+  nativeFont: '16px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"',
+  fontMono: 'source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace',
 
   screenDesktopMin: '768px',
   navWidth: '240px',

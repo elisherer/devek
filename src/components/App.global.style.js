@@ -14,12 +14,18 @@ html, body {
   color: ${({ theme }) => theme.foregroundColor};
 }
 
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
 html, body, input, textarea, keygen, select, option, button {
   font: ${({ theme }) => theme.nativeFont};
   font-weight: 360;
 }
 
 code {
+  font-family: ${({ theme }) => theme.fontMono};
   background-color: ${({ theme }) => theme.codeBackground};
 }
 

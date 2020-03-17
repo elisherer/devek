@@ -24,7 +24,7 @@ import {
   mdiText, // text
   mdiCalculator, // base
   mdiRegex, // regex
-  mdiJson, // json
+  mdiCodeJson, // json
   mdiXml, // xml
   mdiShieldKeyOutline, // jwt
   mdiClockOutline, // time
@@ -121,7 +121,7 @@ export const siteMap = {
     title: 'JSON',
     header: 'JSON Tools',
     description: "Debug, Prettify",
-    icon: mdiJson,
+    icon: mdiCodeJson,
   },
   "/xml": {
     component: PageXML,

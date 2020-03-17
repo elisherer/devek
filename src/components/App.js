@@ -1,7 +1,7 @@
 import React, { Fragment, Suspense, useEffect } from 'react';
 import { Switch, Route, Link, NavLink, Redirect, useLocation } from 'react-router-dom';
 import Icon from '@mdi/react';
-import { mdiGithubCircle, mdiMenu, mdiBrightness4 } from '@mdi/js';
+import { mdiGithub, mdiMenu, mdiBrightness4 } from '@mdi/js';
 import SearchBox from './search/SearchBox';
 import NotFound from './NotFound';
 import { siteMap } from '../sitemap';
@@ -67,7 +67,7 @@ const App = ({ theme, toggleTheme } : {theme : Object, toggleTheme: Function}) =
         </Hamburger>
         <GitHubIcon>
           <a href="https://github.com/elisherer/devek" target="_blank" rel="noopener noreferrer" title="GitHub">
-            <Icon path={mdiGithubCircle} size={1.33} />
+            <Icon path={mdiGithub} size={1.33} />
           </a>
         </GitHubIcon>
         {navLinks}
