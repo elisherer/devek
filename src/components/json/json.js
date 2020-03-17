@@ -1,4 +1,4 @@
-const pathRegex = /^[a-z_]\w*((\[(\d+|"[\w-. ]*")])|(\.[a-z_]\w*(\[(\d+|"[\w-. ]*")])?|$))*$/i;
+const pathRegex = /^[a-z_$][$\w]*((\[(\d+|"[\w$-. ]*")])|(\.[a-z_$][\w$]*(\[(\d+|"[\w-. ]*")])?|$))*$/i;
 
 const queryObject = (obj, path) => {
   let result = obj;

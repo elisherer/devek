@@ -12,8 +12,10 @@ import {
   mdiExport,
 } from '@mdi/js';
 import Icon from '@mdi/react';
-import Worker from './data.worker';
+//import Worker from './data.worker';
 import styled from 'styled-components';
+
+const Worker = function() { return this; };
 
 const options = Object.keys(data.actions);
 const stringify = obj => Object.keys(obj).reduce((a,c) => a + (a ? ", " : '') + c + '=' + obj[c], '');

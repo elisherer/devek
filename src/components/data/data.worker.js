@@ -35,7 +35,6 @@ const actions = {
 };
 
 onmessage = event => {
-  console.log('GOT MSG FROM MAIN');
   const { input, pipe } = event.data;
   const result = pipe.reduce((a, c) => actions[c.action](a, c.parameters), input);
   self.postMessage({ result })
