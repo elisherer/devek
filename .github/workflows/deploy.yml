@@ -11,20 +11,29 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-      
+
+    # Node version
     - name: Use Node.js 12.x
       uses: actions/setup-node@v1
       with:
         node-version: '12.x'
+
+    # Install Node modules
     - run: npm ci
+
+    # Run unit tests
     - run: npm test
       env:
         CI: true
-    - run: npm run build --if-present
 
+    # Run build
+    - run: npm run build
+
+    # List artifact files
     - name: List output files
       run: ls dist -ltr
-      
+
+    # Upload files to server
     - name: FTP Deploy
       uses: SamKirkland/FTP-Deploy-Action@3.0.0
       with:
