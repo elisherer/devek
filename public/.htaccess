@@ -1,3 +1,7 @@
+# Disable server and runtime version headers
+ServerSignature Off
+ServerTokens Prod
+
 # 404 fallback
 <ifModule mod_rewrite.c>
     # Rewrite /api/* to /api.php
