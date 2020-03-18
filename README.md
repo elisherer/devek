@@ -1,5 +1,7 @@
 ![Devek](design/devek_text.svg?raw=true&sanitize=true "Devek")
 
+![Build and Deploy](https://github.com/elisherer/devek/workflows/Build%20and%20Deploy/badge.svg)
+
 Developer Kit - helping utilities for developers
 
 [https://devek.app](https://devek.app)
