@@ -31,7 +31,7 @@ jobs:
       uses: SamKirkland/FTP-Deploy-Action@3.0.0
       with:
         ftp-server: ${{ secrets.ftp_url }}
-        ftp-username: devek
+        ftp-username: devek@devek.app
         ftp-password: ${{ secrets.ftp_password }}
         local-dir: dist
         git-ftp-args: --dry-run
