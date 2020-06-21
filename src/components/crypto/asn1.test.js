@@ -67,17 +67,17 @@ rGhLV1pRG9frwDFshqD2Vaj4ENBCBh6UpeBop5+285zQ4SI7q4U9oSebUDJiuOx6
 
 describe('crypto/asn1', () => {
   test('cert 1', () => {
-    const asn = parseCertificate(c0_ec);
+    const { buffer, ...asn } = parseCertificate(c0_ec);
     expect(asn).toMatchSnapshot();
   });
 
   test('cert 2', () => {
-    const asn = parseCertificate(c1);
+    const { buffer, ...asn } = parseCertificate(c1);
     expect(asn).toMatchSnapshot();
   });
 
   test('cert 3', () => {
-    const asn = parseCertificate(c2);
+    const { buffer, ...asn } = parseCertificate(c2);
     expect(asn).toMatchSnapshot();
   });
 });
