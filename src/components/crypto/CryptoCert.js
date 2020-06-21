@@ -1,5 +1,5 @@
 import React from 'react';
-import {TextArea} from "../_lib";
+import {TextArea, TextBox, CopyToClipboard} from "../_lib";
 import {actions} from "./PageCrypto.store";
 import loadFileAsync from "helpers/loadFileAsync";
 import styled from 'styled-components';
@@ -43,7 +43,7 @@ const DraggingTextArea = styled(TextArea)`
   }
 `;
 
-const CryptoHash = ({ pem, output, dragging } : { pem: string, output: string, dragging: boolean }) => (
+const CryptoHash = ({ pem, output, sha1Print, md5Print, dragging } : { pem: string, output: string, sha1Print: string, md5Print: string, dragging: boolean }) => (
   <div onDragEnter={actions.onDragEnter} onDragOver={onDragOver}
        onDragLeave={actions.onDragLeave} onDrop={onDrop}>
     <div>
@@ -53,6 +53,13 @@ const CryptoHash = ({ pem, output, dragging } : { pem: string, output: string, d
 
     <label>Certificate fields</label>
     <TextArea readOnly value={output} />
+
+    <h3>Fingerprints</h3>
+    <span>SHA-1:</span><CopyToClipboard from="cert_sha1_print"/>
+    <TextBox id="cert_sha1_print" readOnly value={sha1Print}/>
+    <span>MD5:</span><CopyToClipboard from="cert_md5_print"/>
+    <TextBox id="cert_md5_print" readOnly value={md5Print}/>
+
   </div>
 );
 

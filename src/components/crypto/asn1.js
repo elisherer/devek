@@ -6,7 +6,7 @@ const parsePem = buffer => {
     .split('\n')
     .filter(line => line.indexOf('-----'))
     .join(''));
-  return parse(buffer);
+  return { buffer, info: parse(buffer) };
 };
 
 const toDate = buffer => {
@@ -281,7 +281,7 @@ const parsePublicKey = (algorithm, publicKey) => {
 
 function parseCertificate(pem) {
   try {
-    const info = parsePem(pem);
+    const { buffer, info } = parsePem(pem);
     const tbsCert = info.children[0];
 
     let idx = -1;
@@ -345,6 +345,7 @@ function parseCertificate(pem) {
         parameters: info.value[1][1],
       },
       signatureValue: info.value[2],
+      buffer
     }
   }
   catch (e) {

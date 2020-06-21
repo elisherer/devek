@@ -124,15 +124,18 @@ const actionCreators = {
   genKey: () => generate,
 
   // cert
-  loaded: (pem) => state => {
+  loaded: (pem) => async state => {
     const cert = parseCertificate(pem);
     if (cert.error) {
       return {...state, cert: { ...state.cert, loaded: false, pem: 'Error reading certificate\n\nMessage: ' + cert.error , output: '' }};
     }
     else {
-      const output = prettyCert(cert);
+      const output = await prettyCert(cert);
 
-      return {...state, cert: { ...state.cert, loaded: true, pem, output} };
+      const sha1Print = devek.arrayToHexString(new Uint8Array(await crypto.subtle.digest('SHA-1', cert.buffer)));
+      const md5Print = devek.arrayToHexString(MD5(cert.buffer));
+
+      return {...state, cert: { ...state.cert, loaded: true, pem, output, sha1Print, md5Print} };
     }
   },
   onDragEnter: e => state => {
