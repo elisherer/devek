@@ -11,8 +11,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-      with:
-        fetch-depth: 2
 
     # Node version
     - name: Use Node.js 12.x
@@ -37,7 +35,7 @@ jobs:
 
     # Upload files to server
     - name: FTP Deploy
-      uses: SamKirkland/FTP-Deploy-Action@3.0.0
+      uses: SamKirkland/FTP-Deploy-Action@3.1.1
       with:
         ftp-server: ${{ secrets.ftp_url }}
         ftp-username: devek@devek.app
