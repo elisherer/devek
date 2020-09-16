@@ -1,33 +1,48 @@
-const spanEl = document.createElement('span');
-const areaEl = document.createElement('textarea');
+const spanEl = document.createElement("span");
+const areaEl = document.createElement("textarea");
 
 const textCategories = [
-  { category: "case", title: 'Case' },
-  { category: "url", title: 'URL' },
-  { category: "html", title: 'HTML' },
-  { category: 'convert', title: 'Conversion' },
+	{ category: "case", title: "Case" },
+	{ category: "url", title: "URL" },
+	{ category: "html", title: "HTML" },
+	{ category: "convert", title: "Conversion" }
 ];
 
 const textFunctions = {
-  case: {
-    uppercase: { title: 'Uppercase', func: input => input.toUpperCase() },
-    lowercase: { title: 'Lowercase', func: input => input.toLowerCase() },
-    capitalize: { title: 'Capitalize', func: input => input.replace(/(?:^|\s)\S/g, a => a.toUpperCase()) },
-  },
-  url: {
-    encode: { title: 'Encode', func: input => encodeURIComponent(input)  },
-    decode: { title: 'Decode', func: input => decodeURIComponent(input)  },
-  },
-  html: {
-    encode: { title: 'Encode', func: input => { spanEl.textContent = input; return spanEl.innerHTML; }},
-    decode: { title: 'Decode', func: input => { areaEl.innerHTML = input; return areaEl.value; }},
-  },
-  convert: {
-    reverse: { title: 'Reverse', func: input => [...input].reduce((a, c) => c + a, '') },
-  },
+	case: {
+		uppercase: { title: "Uppercase", func: input => input.toUpperCase() },
+		lowercase: { title: "Lowercase", func: input => input.toLowerCase() },
+		capitalize: {
+			title: "Capitalize",
+			func: input => input.replace(/(?:^|\s)\S/g, a => a.toUpperCase())
+		}
+	},
+	url: {
+		encode: { title: "Encode", func: input => encodeURIComponent(input) },
+		decode: { title: "Decode", func: input => decodeURIComponent(input) }
+	},
+	html: {
+		encode: {
+			title: "Encode",
+			func: input => {
+				spanEl.textContent = input;
+				return spanEl.innerHTML;
+			}
+		},
+		decode: {
+			title: "Decode",
+			func: input => {
+				areaEl.innerHTML = input;
+				return areaEl.value;
+			}
+		}
+	},
+	convert: {
+		reverse: {
+			title: "Reverse",
+			func: input => [...input].reduce((a, c) => c + a, "")
+		}
+	}
 };
 
-export {
-  textCategories,
-  textFunctions,
-};
+export { textCategories, textFunctions };

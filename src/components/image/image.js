@@ -1,176 +1,196 @@
-const canvas = document.createElement('canvas'),
-    ctx = canvas.getContext('2d');
+const canvas = document.createElement("canvas"),
+	ctx = canvas.getContext("2d");
 
-export const loadFromDataUri = (callback) => {
-  const img = new Image();
-    img.onload = () => {
-      canvas.width = img.naturalWidth;
-      canvas.height = img.naturalHeight;
-      ctx.drawImage(img, 0, 0);
-      const src = img.src;
-      callback(canvas.width, canvas.height, src);
-    };
-    img.src = prompt('Enter Data URI:', 'data:image/png;base64,');
+export const loadFromDataUri = callback => {
+	const img = new Image();
+	img.onload = () => {
+		canvas.width = img.naturalWidth;
+		canvas.height = img.naturalHeight;
+		ctx.drawImage(img, 0, 0);
+		const src = img.src;
+		callback(canvas.width, canvas.height, src);
+	};
+	img.src = prompt("Enter Data URI:", "data:image/png;base64,");
 };
 
 export const loadFileAsync = (file, callback) => {
-  if (typeof FileReader === "undefined" || !file || file.type.indexOf("image") === -1) return; // no file or not an image
+	if (
+		typeof FileReader === "undefined" ||
+		!file ||
+		file.type.indexOf("image") === -1
+	)
+		return; // no file or not an image
 
-  const reader = new FileReader();
-  reader.onload = e => {
-    const img = new Image();
-    img.onload = () => {
-      canvas.width = img.naturalWidth;
-      canvas.height = img.naturalHeight;
-      ctx.drawImage(img, 0, 0);
-      const src = img.src;
-      callback(canvas.width, canvas.height, src);
-    };
-    img.src = e.target.result;
-  };
-  reader.onerror = () => {
-    reader.abort();
-  };
-  reader.readAsDataURL(file);
+	const reader = new FileReader();
+	reader.onload = e => {
+		const img = new Image();
+		img.onload = () => {
+			canvas.width = img.naturalWidth;
+			canvas.height = img.naturalHeight;
+			ctx.drawImage(img, 0, 0);
+			const src = img.src;
+			callback(canvas.width, canvas.height, src);
+		};
+		img.src = e.target.result;
+	};
+	reader.onerror = () => {
+		reader.abort();
+	};
+	reader.readAsDataURL(file);
 };
 
 const createFilter = filter => {
-  return () => {
-    const imageData = ctx.getImageData(0,0, ctx.canvas.width, ctx.canvas.height);
+	return () => {
+		const imageData = ctx.getImageData(
+			0,
+			0,
+			ctx.canvas.width,
+			ctx.canvas.height
+		);
 
-    for (let j = 0; j < imageData.width ; j++)
-      for (let i = 0; i < imageData.height ; i++)
-        filter(imageData.data, (i*4)*imageData.width+(j*4), i, j);
+		for (let j = 0; j < imageData.width; j++)
+			for (let i = 0; i < imageData.height; i++)
+				filter(imageData.data, i * 4 * imageData.width + j * 4, i, j);
 
-    ctx.putImageData(imageData,0, 0);
+		ctx.putImageData(imageData, 0, 0);
 
-    return canvas.toDataURL();
-  }
+		return canvas.toDataURL();
+	};
 };
 
 export const handleGrayscale = createFilter((data, index) => {
-  const gray = 0.2989 * data[index] + 0.587 * data[index + 1] + 0.114 * data[index + 2];
-  data[index]= gray;
-  data[index+1]= gray;
-  data[index+2]= gray;
+	const gray =
+		0.2989 * data[index] + 0.587 * data[index + 1] + 0.114 * data[index + 2];
+	data[index] = gray;
+	data[index + 1] = gray;
+	data[index + 2] = gray;
 });
 
 export const handleSepia = createFilter((data, index) => {
-  const r = data[index], g = data[index + 1], b = data[index + 2];
-  data[index] = Math.min(255, r * 0.393 + g * 0.769 + b * 0.189);
-  data[index + 1] = Math.min(255, r * 0.349 + g * 0.686 + b * 0.168);
-  data[index + 2] = Math.min(255, r * 0.272 + g * 0.534 + b * 0.131);
+	const r = data[index],
+		g = data[index + 1],
+		b = data[index + 2];
+	data[index] = Math.min(255, r * 0.393 + g * 0.769 + b * 0.189);
+	data[index + 1] = Math.min(255, r * 0.349 + g * 0.686 + b * 0.168);
+	data[index + 2] = Math.min(255, r * 0.272 + g * 0.534 + b * 0.131);
 });
 
 export const handleInvert = createFilter((data, index) => {
-  data[index] = 255 - data[index];
-  data[index + 1] = 255 - data[index + 1];
-  data[index + 2] = 255 - data[index + 2];
+	data[index] = 255 - data[index];
+	data[index + 1] = 255 - data[index + 1];
+	data[index + 2] = 255 - data[index + 2];
 });
 
 export const handleFlip = dir => {
-  const oc = document.createElement('canvas'),
-    octx = oc.getContext('2d');
-  oc.width = canvas.width;
-  oc.height = canvas.height;
+	const oc = document.createElement("canvas"),
+		octx = oc.getContext("2d");
+	oc.width = canvas.width;
+	oc.height = canvas.height;
 
-  if (dir === 'h' ) {
-    octx.translate(canvas.width, 0);
-    octx.scale(-1, 1);
-  }
-  else {
-    octx.translate(0, canvas.height);
-    octx.scale(1, -1);  
-  }
-  octx.drawImage(canvas, 0, 0);
-  //clear
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  ctx.drawImage(oc, 0, 0);
-  return canvas.toDataURL();
+	if (dir === "h") {
+		octx.translate(canvas.width, 0);
+		octx.scale(-1, 1);
+	} else {
+		octx.translate(0, canvas.height);
+		octx.scale(1, -1);
+	}
+	octx.drawImage(canvas, 0, 0);
+	//clear
+	ctx.clearRect(0, 0, canvas.width, canvas.height);
+	ctx.drawImage(oc, 0, 0);
+	return canvas.toDataURL();
 };
 
 export const handleResize = (width, height) => {
-  const oc = document.createElement('canvas'),
-    octx = oc.getContext('2d');
-  oc.width = width;
-  oc.height = height;
-  octx.drawImage(canvas, 0, 0, width, height);
+	const oc = document.createElement("canvas"),
+		octx = oc.getContext("2d");
+	oc.width = width;
+	oc.height = height;
+	octx.drawImage(canvas, 0, 0, width, height);
 
-  canvas.width = width;
-  canvas.height = height;
-  ctx.drawImage(oc, 0, 0);
-  return canvas.toDataURL();
+	canvas.width = width;
+	canvas.height = height;
+	ctx.drawImage(oc, 0, 0);
+	return canvas.toDataURL();
 };
 
 export const handleCrop = crop => {
-  let
-    x = parseInt(crop.x),
-    y = parseInt(crop.y),
-    width = parseInt(crop.width),
-    height = parseInt(crop.height);
+	let x = parseInt(crop.x),
+		y = parseInt(crop.y),
+		width = parseInt(crop.width),
+		height = parseInt(crop.height);
 
-  const oc = document.createElement('canvas'),
-    octx = oc.getContext('2d');
-  oc.width = width;
-  oc.height = height;
-  octx.drawImage(canvas, x ,y ,width, height, 0, 0, width, height);
+	const oc = document.createElement("canvas"),
+		octx = oc.getContext("2d");
+	oc.width = width;
+	oc.height = height;
+	octx.drawImage(canvas, x, y, width, height, 0, 0, width, height);
 
-  canvas.width = width;
-  canvas.height = height;
-  ctx.drawImage(oc, 0, 0);
-  return canvas.toDataURL();
+	canvas.width = width;
+	canvas.height = height;
+	ctx.drawImage(oc, 0, 0);
+	return canvas.toDataURL();
 };
 
 export const handleRotate = angle_rad => {
-  let w = canvas.width,
-    h = canvas.height;
+	let w = canvas.width,
+		h = canvas.height;
 
-  const oc = document.createElement('canvas'),
-    octx = oc.getContext('2d');
-  oc.width = w;
-  oc.height = h;
-  octx.drawImage(canvas, 0 ,0);
+	const oc = document.createElement("canvas"),
+		octx = oc.getContext("2d");
+	oc.width = w;
+	oc.height = h;
+	octx.drawImage(canvas, 0, 0);
 
-  canvas.width = h;
-  canvas.height = w;
-  ctx.save();
-  ctx.translate(h/2, w/2);
-  ctx.rotate(angle_rad);
-  ctx.drawImage(oc, - w/2, - h/2);
-  ctx.restore();
+	canvas.width = h;
+	canvas.height = w;
+	ctx.save();
+	ctx.translate(h / 2, w / 2);
+	ctx.rotate(angle_rad);
+	ctx.drawImage(oc, -w / 2, -h / 2);
+	ctx.restore();
 
-  return canvas.toDataURL();
+	return canvas.toDataURL();
 };
 
 export const handleBlur = () => {
-  ctx.save();
-  const blur = 4;
-  let sum = 0;
-  let delta = 5;
-  let alpha_left = 1 / (2 * Math.PI * delta * delta);
-  let step = blur < 3 ? 1 : 2;
-  for (let y = -blur; y <= blur; y += step) {
-    for (let x = -blur; x <= blur; x += step) {
-      let weight = alpha_left * Math.exp(-(x * x + y * y) / (2 * delta * delta));
-      sum += weight;
-    }
-  }
-  for (let y = -blur; y <= blur; y += step) {
-    for (let x = -blur; x <= blur; x += step) {
-      ctx.globalAlpha = alpha_left * Math.exp(-(x * x + y * y) / (2 * delta * delta)) / sum * blur;
-      ctx.drawImage(canvas,x,y);
-    }
-  }
-  ctx.restore();
+	ctx.save();
+	const blur = 4;
+	let sum = 0;
+	let delta = 5;
+	let alpha_left = 1 / (2 * Math.PI * delta * delta);
+	let step = blur < 3 ? 1 : 2;
+	for (let y = -blur; y <= blur; y += step) {
+		for (let x = -blur; x <= blur; x += step) {
+			let weight =
+				alpha_left * Math.exp(-(x * x + y * y) / (2 * delta * delta));
+			sum += weight;
+		}
+	}
+	for (let y = -blur; y <= blur; y += step) {
+		for (let x = -blur; x <= blur; x += step) {
+			ctx.globalAlpha =
+				((alpha_left * Math.exp(-(x * x + y * y) / (2 * delta * delta))) /
+					sum) *
+				blur;
+			ctx.drawImage(canvas, x, y);
+		}
+	}
+	ctx.restore();
 
-  return canvas.toDataURL();
+	return canvas.toDataURL();
 };
 
 //const rgbToHex = (r, g, b) => "#" + ("000000" + ((r << 16) | (g << 8) | b).toString(16)).slice(-6);
 
-export const getColor = (loc) => {
-  const pixel = ctx.getImageData(loc[0], loc[1], 1, 1).data;
-  return "#" + ("000000" + ((pixel[0] << 16) | (pixel[1] << 8) | pixel[2]).toString(16)).slice(-6);
+export const getColor = loc => {
+	const pixel = ctx.getImageData(loc[0], loc[1], 1, 1).data;
+	return (
+		"#" +
+		(
+			"000000" + ((pixel[0] << 16) | (pixel[1] << 8) | pixel[2]).toString(16)
+		).slice(-6)
+	);
 };
 
 /**

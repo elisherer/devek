@@ -42,6 +42,7 @@ module.exports = {
     }
   },
   devServer: {
+    port: 8080,
     compress: true,
     historyApiFallback: true,
     before: (app, server) => {

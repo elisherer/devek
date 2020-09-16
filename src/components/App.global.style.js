@@ -1,5 +1,5 @@
-import { createGlobalStyle } from 'styled-components';
-import DevekWatermark from '../assets/devek_watermark.svg';
+import { createGlobalStyle } from "styled-components";
+import DevekWatermark from "../assets/devek_watermark.svg";
 
 const GlobalStyle = createGlobalStyle`
 
@@ -179,7 +179,7 @@ button {
   /* button with class="tool" */
   &.tool {
     background: ${({ theme }) => theme.cardBackground};
-    fill: ${({ theme }) => theme.dark ? 'white' : 'black'};
+    fill: ${({ theme }) => (theme.dark ? "white" : "black")};
     padding: 8px;
     border: 1px solid ${({ theme }) => theme.greyBorder};
     width: 40px;
@@ -263,10 +263,13 @@ kbd {
         background: ${({ theme }) => theme.cardBackground};
         position: relative;
 
-        @media only screen and (min-width: ${({ theme }) => theme.screenDesktopMin}) {
+        @media only screen and (min-width: ${({ theme }) =>
+					theme.screenDesktopMin}) {
           width: fit-content;
           max-width: calc(100% - 40px);
-          min-width: calc(${({ theme }) => theme.screenDesktopMin} - ${({ theme }) => theme.navWidth} - 40px);
+          min-width: calc(${({ theme }) => theme.screenDesktopMin} - ${({
+	theme
+}) => theme.navWidth} - 40px);
           padding: 20px;
           margin: 0 20px;
           box-shadow: ${({ theme }) => theme.cardShadow};
@@ -294,6 +297,6 @@ kbd {
     }
   }
 }
-`
+`;
 
 export default GlobalStyle;

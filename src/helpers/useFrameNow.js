@@ -1,30 +1,29 @@
-
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 
 function useFrameNow(isActive) {
-  const [now, setNow] = useState(null)
+	const [now, setNow] = useState(null);
 
-  useEffect(() => {
-    if (!isActive) return;
+	useEffect(() => {
+		if (!isActive) return;
 
-    let id;
-    
-    function updateNow() {
-      setNow(performance.now());
-    }
+		let id;
 
-    function tick() {
-      if (!isActive) return;
-      updateNow();
-      id = requestAnimationFrame(tick);
-    }
+		function updateNow() {
+			setNow(performance.now());
+		}
 
-    updateNow();
-    id = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(id);
-  }, [ isActive ]);
+		function tick() {
+			if (!isActive) return;
+			updateNow();
+			id = requestAnimationFrame(tick);
+		}
 
-  return isActive ? now : null;
+		updateNow();
+		id = requestAnimationFrame(tick);
+		return () => cancelAnimationFrame(id);
+	}, [isActive]);
+
+	return isActive ? now : null;
 }
 
 export default useFrameNow;

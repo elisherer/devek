@@ -1,5 +1,4 @@
-import { parseCertificate } from './asn1';
-
+import { parseCertificate } from "./asn1";
 
 const c0_ec = `-----BEGIN CERTIFICATE-----
 MIIBCTCBsAIJAI1GxVa/1o2pMAoGCCqGSM49BAMCMA0xCzAJBgNVBAMMAkNBMB4X
@@ -64,20 +63,19 @@ NRQykpwexmnjPPv0mvj7i8XgG379TyW6P+WWV5okeUkXJ9eJS2ouDYdR2SM9BoVW
 rGhLV1pRG9frwDFshqD2Vaj4ENBCBh6UpeBop5+285zQ4SI7q4U9oSebUDJiuOx6
 +tZ9KynmrbJpTSi0+BM=`;
 
+describe("crypto/asn1", () => {
+	test("cert 1", () => {
+		const asn = parseCertificate(c0_ec);
+		expect(asn).toMatchSnapshot();
+	});
 
-describe('crypto/asn1', () => {
-  test('cert 1', () => {
-    const asn = parseCertificate(c0_ec);
-    expect(asn).toMatchSnapshot();
-  });
+	test("cert 2", () => {
+		const asn = parseCertificate(c1);
+		expect(asn).toMatchSnapshot();
+	});
 
-  test('cert 2', () => {
-    const asn = parseCertificate(c1);
-    expect(asn).toMatchSnapshot();
-  });
-
-  test('cert 3', () => {
-    const asn = parseCertificate(c2);
-    expect(asn).toMatchSnapshot();
-  });
+	test("cert 3", () => {
+		const asn = parseCertificate(c2);
+		expect(asn).toMatchSnapshot();
+	});
 });
