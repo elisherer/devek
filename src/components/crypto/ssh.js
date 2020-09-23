@@ -90,7 +90,7 @@ function publicKeyJWKToSSH(jwk) {
 	};
 }
 
-function privateKeyJWKToSSHNew(sshpub, jwk) {
+function privateKeyJWKToSSH(sshpub, jwk) {
 	const rnd = crypto.getRandomValues(new Uint8Array(4));
 
 	let prv = null;
@@ -129,4 +129,4 @@ function privateKeyJWKToSSHNew(sshpub, jwk) {
 	return devek.arrayToPEM(array, "OPENSSH PRIVATE KEY");
 }
 
-export { publicKeyJWKToSSH, privateKeyJWKToSSHNew };
+export { publicKeyJWKToSSH, privateKeyJWKToSSH };

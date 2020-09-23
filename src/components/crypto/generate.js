@@ -1,13 +1,32 @@
 import devek from "devek";
-import { publicKeyJWKToSSH, privateKeyJWKToSSHNew } from "./ssh";
+import { publicKeyJWKToSSH, privateKeyJWKToSSH } from "./ssh";
 const crypto = devek.crypto;
 
 const toPrivateKey = async key => {
 	const rsa = key.algorithm.name[0] === "R";
-	return devek.arrayToPEM(
-		new Uint8Array(await crypto.subtle.exportKey("pkcs8", key)),
-		rsa ? "RSA PRIVATE KEY" : "EC PRIVATE KEY"
-	);
+	const pkcs8 = new Uint8Array(await crypto.subtle.exportKey("pkcs8", key));
+	if (rsa) {
+		let offset = 4; // assume starts with sequence
+		while (
+			pkcs8[offset] !== 0x04 &&
+			pkcs8[offset + 1] !== 0 &&
+			offset < pkcs8.length
+		) {
+			offset += pkcs8[offset + 1] + 2;
+		}
+		if (pkcs8[offset] !== 0x04) {
+			throw new Error(
+				"Error extracting private key sequence from PKCS8 format"
+			);
+		}
+		// offset is on octet stream
+		let length = (pkcs8[offset + 2] << 8) + pkcs8[offset + 3];
+		return devek.arrayToPEM(
+			pkcs8.slice(offset + 4, offset + 4 + length),
+			"RSA PRIVATE KEY"
+		);
+	}
+	return devek.arrayToPEM(pkcs8, "EC PRIVATE KEY");
 };
 
 const toPublicKey = async key => {
@@ -240,7 +259,7 @@ export const formatOutput = async (outputKey, format) => {
 							"\n" +
 							devek.arrayToHexString(devek.md5(pubssh.decoded), ":");
 						privateKey = await toPrivateKey(outputKey.privateKey, format);
-						privateSSH = privateKeyJWKToSSHNew(
+						privateSSH = privateKeyJWKToSSH(
 							pubssh,
 							await crypto.subtle.exportKey("jwk", outputKey.privateKey)
 						);
