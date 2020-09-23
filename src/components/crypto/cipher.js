@@ -96,10 +96,11 @@ const importRSAOAEPCryptoKey = (jwk, usage) =>
 		[usage]
 	);
 
-const getRsaOaepParams = (alg, label) => ({
-	name: alg,
-	label
-});
+const getRsaOaepParams = (name, label) => {
+	const params = { name };
+	if (label) params.label = label;
+	return params;
+};
 
 const buildIVOutput = (alg, iv) =>
 	(alg === "AES-CTR" ? "counter = " : "iv      = ") +
