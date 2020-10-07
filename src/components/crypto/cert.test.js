@@ -1,4 +1,4 @@
-import { parseCertificate } from "./asn1";
+import { parseCertificate } from "./cert";
 
 const c0_ec = `-----BEGIN CERTIFICATE-----
 MIIBCTCBsAIJAI1GxVa/1o2pMAoGCCqGSM49BAMCMA0xCzAJBgNVBAMMAkNBMB4X
@@ -63,19 +63,19 @@ NRQykpwexmnjPPv0mvj7i8XgG379TyW6P+WWV5okeUkXJ9eJS2ouDYdR2SM9BoVW
 rGhLV1pRG9frwDFshqD2Vaj4ENBCBh6UpeBop5+285zQ4SI7q4U9oSebUDJiuOx6
 +tZ9KynmrbJpTSi0+BM=`;
 
-describe("crypto/asn1", () => {
+describe("crypto/cert", () => {
 	test("cert 1", () => {
-		const { buffer, ...asn } = parseCertificate(c0_ec);
+		const { buffer, ...asn } = parseCertificate(c0_ec); // eslint-disable-line no-unused-vars
 		expect(asn).toMatchSnapshot();
 	});
 
 	test("cert 2", () => {
-		const { buffer, ...asn } = parseCertificate(c1);
+		const { buffer, ...asn } = parseCertificate(c1); // eslint-disable-line no-unused-vars
 		expect(asn).toMatchSnapshot();
 	});
 
 	test("cert 3", () => {
-		const { buffer, ...asn } = parseCertificate(c2);
+		const { buffer, ...asn } = parseCertificate(c2); // eslint-disable-line no-unused-vars
 		expect(asn).toMatchSnapshot();
 	});
 });

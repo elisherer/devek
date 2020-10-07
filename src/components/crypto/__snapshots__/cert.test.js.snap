@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`crypto/asn1 cert 1 1`] = `
+exports[`crypto/cert cert 1 1`] = `
 Object {
   "extensions": undefined,
   "issuer": Object {
@@ -185,7 +185,7 @@ Object {
 }
 `;
 
-exports[`crypto/asn1 cert 2 1`] = `
+exports[`crypto/cert cert 2 1`] = `
 Object {
   "extensions": Object {
     "extKeyUsage": Object {
@@ -1312,7 +1312,7 @@ Object {
 }
 `;
 
-exports[`crypto/asn1 cert 3 1`] = `
+exports[`crypto/cert cert 3 1`] = `
 Object {
   "extensions": undefined,
   "issuer": Object {

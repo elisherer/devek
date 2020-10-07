@@ -163,6 +163,11 @@ const parsePublicKey = (algorithm, publicKey) => {
 	}
 };
 
+/**
+ *
+ * @param pem
+ * @returns {{serialNumber: *, issuerUniqueID: (*|undefined), signature: {parameters: *, algorithm: *}, subject: *, version: (*|number), subjectUniqueID: (*|undefined), issuer: *, signatureAlgorithm: {parameters: *, algorithm: *}, extensions: (*|undefined), subjectPublicKeyInfo: {publicKey: ({publicKey: string, modulus: *, exponent: *}|{asn1Oid: *, publicKey: string, nistCurve: string, pub: *}), algorithm: *}, validity: {notAfter: *, notBefore: *}, buffer: *, signatureValue: *}|{error: *}}
+ */
 export const parseCertificate = pem => {
 	try {
 		const { buffer, info } = ASN1.parsePEM(pem);
