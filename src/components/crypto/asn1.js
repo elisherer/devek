@@ -1,15 +1,15 @@
 import devek from "devek";
 const fieldNames = require("./fieldNames");
+import OID from "./OID";
+const certificateTrimmer = /-----\s?[^-]+-----|\r|\n/g;
 
-const parsePem = buffer => {
-	buffer = devek.base64ToUint8Array(
-		(buffer + "")
-			.split("\r")
-			.join("")
-			.split("\n")
-			.filter(line => line.indexOf("-----"))
-			.join("")
+const pemToUint8Array = buffer =>
+	devek.base64ToUint8Array(
+		(buffer + "").replace(certificateTrimmer, "").trim()
 	);
+
+const parsePEM = buffer => {
+	buffer = pemToUint8Array(buffer);
 	return { buffer, info: parse(buffer) };
 };
 
@@ -21,6 +21,8 @@ const toDate = buffer => {
 		}Z`
 	);
 };
+
+/** Convert key-value tuples to a dictionary */
 const toDictionary = children =>
 	children.reduce((a, c) => {
 		c.value.forEach(val => {
@@ -67,7 +69,7 @@ const tagTypes = [
 	]
 ];
 
-function parse(buffer) {
+function parse(buffer, offset = 0) {
 	const octet1 = buffer[0];
 	const octet2 = buffer[1];
 
@@ -100,6 +102,7 @@ function parse(buffer) {
 		headerLength = 2;
 		data = buffer.slice(headerLength);
 		return {
+			offset,
 			tagClassName,
 			tagClass,
 			tagName,
@@ -113,10 +116,11 @@ function parse(buffer) {
 
 	let children;
 	if (constructed) {
-		children = parseChildren(data);
+		children = parseChildren(data, offset + headerLength);
 	}
 
 	const info = {
+		offset,
 		raw: data,
 		value: data,
 		headerLength
@@ -151,14 +155,7 @@ function parse(buffer) {
 				break;
 			//case 5: //NULL
 			case 6: //OBJECT IDENTIFIER
-				info.value = ~~(data[0] / 40) + "." + (data[0] % 40);
-				for (let i = 1, val = 0; i < data.length; i++) {
-					val = val * 0x80 + (data[i] & 0x7f);
-					if (!(data[i] & 0x80)) {
-						info.value += "." + val;
-						val = 0;
-					}
-				}
+				info.value = OID.decode(data);
 				info.oid = info.value;
 				info.value = fieldNames[info.value] || info.value;
 				break;
@@ -212,233 +209,101 @@ function parse(buffer) {
 	};
 }
 
-function parseChildren(buffer) {
+function parseChildren(buffer, offset) {
 	let pos = 0,
 		lastPos;
 	const parts = [];
 	do {
 		lastPos = pos;
-		const info = parse(buffer.slice(pos));
+		const info = parse(buffer.slice(pos), offset + pos);
 		pos += info.raw.length + info.headerLength;
 		parts.push(info);
 	} while (pos < buffer.length && pos > lastPos);
 	return parts;
 }
 
-const ext_keyUsages = [
-	"digitalSignature",
-	"nonRepudiation",
-	"keyEncipherment",
-	"dataEncipherment",
-	"keyAgreement",
-	"keyCertSign",
-	"cRLSign",
-	"encipherOnly",
-	"decipherOnly"
-];
-const ext_subjectAltNames = [
-	"otherName",
-	"rfc822Name",
-	"dNSName",
-	"x400Address",
-	"directoryName",
-	"ediPartyName",
-	"uniformResourceIdentifier",
-	"iPAddress",
-	"registeredID"
-];
+// ----- ENCODER -----
 
-const parseExtension = (oid, ext) => {
-	try {
-		switch (oid.oid) {
-			case "2.5.29.14": // subjectKeyIdentifier
-				return { keyIdentifier: ext.value };
-			case "2.5.29.15": {
-				// keyUsage
-				let bitmap = ext.value[0];
-				const usage = [];
-				for (let i = 0; i < 8; i++) {
-					bitmap & (1 << (7 - i)) && usage.push(ext_keyUsages[i]);
-				}
-				return usage;
-			}
-			case "2.5.29.17": // subjectAltName
-			case "2.5.29.18": // issuerAltName
-				return ext.children.reduce((a, c) => {
-					a[ext_subjectAltNames[c.tagNumber]] = devek.arrayToAscii(c.value);
-					return a;
-				}, {});
-			case "2.5.29.19": // basicConstraints
-				return { cA: !!ext.value[0], pathLenConstraint: ext.value[1] };
-			case "2.5.29.31": // CRLDistributionPoints
-				return ext.children.map(distPoints =>
-					distPoints.children.reduce((result, distPoint) => {
-						switch (distPoint.tagClass) {
-							case 0: //result.distributionPoint; // TODO: add result.distributionPoint
-								break;
-							case 1: //result.reasons; // TODO: add result.reasons
-								break;
-							case 2:
-								result.cRLIssuer = devek.arrayToAscii(
-									distPoint.children[0].children[0].value
-								);
-						}
-						return result;
-					}, {})
-				);
-			case "2.5.29.35": // authorityKeyIdentifier
-				return {
-					keyIdentifier: ext.value[0] ? ext.value[0] : undefined,
-					authorityCertIssuer: ext.value[1],
-					authorityCertSerialNumber: ext.value[2]
-				};
-			case "2.5.29.37": // extKeyUsage
-				return ext.children.map(oid => oid.value);
-			case "1.3.6.1.5.5.7.1.1": // authorityInfoAccess
-				return ext.children.map(c => ({
-					accessMethod: c.value[0],
-					accessLocation: devek.arrayToAscii(c.value[1])
-				}));
-			case "1.3.6.1.5.5.7.1.3": // qcStatements
-				return ext.children.reduce((a, c) => {
-					if (c.children[0].oid === "0.4.0.19495.2")
-						// PSD2 qcStatement
-						a[c.value[0]] = {
-							rolesOfPSP: c.value[1][0].reduce((b, d) => {
-								b[fieldNames[d[0]] || d[0]] = d[1];
-								return b;
-							}, {}),
-							ncaName: c.value[1][1],
-							ncaId: c.value[1][2]
-						};
-					else
-						a[c.value[0]] =
-							c.value.length === 1
-								? true
-								: fieldNames[c.value[1]] || c.value[1];
-					return a;
-				}, {});
-			default:
-				return ext && Object.prototype.hasOwnProperty.call(ext, "value")
-					? ext.value
-					: ext;
-		}
-	} catch (err) {
-		console.error(err); // eslint-disable-line
-		return ext && Object.prototype.hasOwnProperty.call(ext, "value")
-			? ext.value
-			: ext;
+const ASN1_TagLength = length => {
+	// short form
+	if (length < 0x80) {
+		return Uint8Array.of(length);
+	}
+	// long form
+	let temp = length;
+	let bytesRequired = 0;
+	while (temp > 0) {
+		temp >>= 8;
+		bytesRequired++;
+	}
+	const result = new Uint8Array(bytesRequired + 1);
+	result[0] = bytesRequired | 0x80;
+	for (let i = bytesRequired - 1; i >= 0; i--) {
+		result[bytesRequired - i] = (length >> (8 * i)) & 0xff;
+	}
+	return result;
+};
+
+const ASN1_Encode = (type, buffer) => {
+	return devek.concatUint8Array([type], ASN1_TagLength(buffer.length), buffer);
+};
+
+const ASN1_INTEGER_BE = buffer => {
+	let leadingZeroes = 0;
+	for (let i = 0; i < buffer.length; i++) {
+		if (buffer[i] !== 0) break;
+		leadingZeroes++;
+	}
+	if (buffer.length === leadingZeroes)
+		// all zeros
+		return ASN1_Encode(0x02, [0]);
+	if (buffer[leadingZeroes] > 0x7f) {
+		return ASN1_Encode(
+			0x02,
+			devek.concatUint8Array([0], buffer.slice(leadingZeroes))
+		);
+	} else {
+		return ASN1_Encode(0x02, buffer.slice(leadingZeroes));
 	}
 };
 
-const parsePublicKey = (algorithm, publicKey) => {
-	switch (algorithm.children[0].oid) {
-		case "1.2.840.113549.1.1.1": {
-			// rsaEncryption
-			const keyAsn = parse(publicKey.value);
-			return {
-				publicKey: `(${keyAsn.children[0].bitSize} bit)`,
-				modulus: keyAsn.children[0].raw,
-				exponent: keyAsn.value[1]
-			};
-		}
-		case "1.2.840.10045.2.1": {
-			// ecPublicKey
-			const size = algorithm.value[1].match(/\d{3}/)[0];
-			return {
-				publicKey: `(${size} bit)`,
-				pub: publicKey.value,
-				asn1Oid: algorithm.value[1],
-				nistCurve: `P-${size}`
-			};
-		}
-	}
+const ASN1_BIT_STRING = (numberOfUnusedBits, buffer) =>
+	ASN1_Encode(0x03, devek.concatUint8Array([numberOfUnusedBits], buffer));
+
+const ASN1_OCTET_STRING = buffer => ASN1_Encode(0x04, buffer);
+
+const ASN1_NULL = Uint8Array.of(0x05, 0x00);
+
+const ASN1_OID = oid => ASN1_Encode(0x06, OID.encode(oid));
+
+const ASN1_SEQUENCE = (...values) => {
+	return ASN1_Encode(0x30, devek.concatUint8Array(values));
 };
 
-function parseCertificate(pem) {
-	try {
-		const { buffer, info } = parsePem(pem);
-		const tbsCert = info.children[0];
+const ASN1_UTF8STRING = string => {
+	return ASN1_Encode(0x0c, devek.stringToUint8Array(string));
+};
 
-		let idx = -1;
-		const version =
-				tbsCert.children[0].tagClass === 2 /*context*/ &&
-				tbsCert.children[0].tagNumber === 0 /*version*/
-					? tbsCert.children[++idx].children[0].value
-					: 0, // default is v1
-			serialNumber = tbsCert.children[++idx],
-			signature = tbsCert.children[++idx],
-			issuer = tbsCert.children[++idx],
-			validity = tbsCert.children[++idx],
-			subject = tbsCert.children[++idx],
-			subjectPublicKeyInfo = tbsCert.children[++idx];
+const ASN1 = {
+	parse,
+	parsePEM,
+	pemToUint8Array,
+	toDate,
+	toDictionary,
+	BIT_STRING: 0x03,
+	OCTET_STRING: 0x04,
+	SEQUENCE: 0x10
+};
 
-		let issuerUniqueID = null,
-			subjectUniqueID = null,
-			extensions = null;
-		for (let i = idx; i < tbsCert.children.length; i++) {
-			if (tbsCert.children[i].tagClass !== 2) continue; // not context-specific
-			switch (tbsCert.children[i].tagNumber) {
-				case 1:
-					issuerUniqueID = tbsCert.children[i].children[0];
-					break;
-				case 2:
-					subjectUniqueID = tbsCert.children[i].children[0];
-					break;
-				case 3:
-					extensions = tbsCert.children[i].children[0];
-					break;
-			}
-		}
-
-		return {
-			version: version.value || version || 0,
-			serialNumber: serialNumber.value,
-			signature: {
-				algorithm: signature.value[0],
-				parameters: signature.value[1]
-			},
-			issuer: toDictionary(issuer.children),
-			validity: {
-				notBefore: validity.value[0],
-				notAfter: validity.value[1]
-			},
-			subject: toDictionary(subject.children),
-			subjectPublicKeyInfo: {
-				algorithm: subjectPublicKeyInfo.value[0][0],
-				publicKey: parsePublicKey(
-					subjectPublicKeyInfo.children[0],
-					subjectPublicKeyInfo.children[1]
-				)
-			},
-			issuerUniqueID: issuerUniqueID ? issuerUniqueID.value : undefined,
-			subjectUniqueID: subjectUniqueID ? subjectUniqueID.value : undefined,
-			extensions: extensions
-				? extensions.children.reduce((a, c) => {
-						a[c.value[0]] = {
-							critical:
-								c.value.length > 2 &&
-								typeof c.value[1] === "boolean" &&
-								c.value[1],
-							value: parseExtension(
-								c.children[0],
-								parse(c.value[c.value.length - 1])
-							)
-						};
-						return a;
-				  }, {})
-				: undefined,
-			signatureAlgorithm: {
-				algorithm: info.value[1][0],
-				parameters: info.value[1][1]
-			},
-			signatureValue: info.value[2],
-			buffer
-		};
-	} catch (e) {
-		return { error: e.message };
-	}
-}
-
-export { parseCertificate };
+export {
+	ASN1,
+	ASN1_Encode,
+	ASN1_INTEGER_BE,
+	ASN1_BIT_STRING,
+	ASN1_OCTET_STRING,
+	ASN1_NULL,
+	ASN1_OID,
+	ASN1_SEQUENCE,
+	ASN1_UTF8STRING
+};
 //exports.parseCertificate = parseCertificate;

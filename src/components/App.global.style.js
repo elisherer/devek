@@ -273,17 +273,22 @@ kbd {
           padding: 20px;
           margin: 0 20px;
           box-shadow: ${({ theme }) => theme.cardShadow};
-          border-radius: 0 10px 10px;
+          border-radius: 10px;
+          &:first-of-type {
+            border-radius: 0 10px 10px;
+          }
         }
         @media only screen and (min-width: 1024px) {
           min-width: 768px;
         }
       }
 
+      h1, h2, h3, h4, h5, h6 {
+        margin: 0 0 16px;
+      }
       h1 {
         color: ${({ theme }) => theme.headerColor};
         padding: 0 0 4px;
-        margin: 0 0 16px;
         font-size: 20px;
         font-weight: bold;
       }

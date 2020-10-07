@@ -1,12 +1,14 @@
-function add32(a, b) {
-	return (a + b) & 0xffffffff;
-}
+const cmn = (q, a, b, x, s, t) => {
+	a = (a + q + x + t) & 0xffffffff;
+	return (b + ((a << s) | (a >>> (32 - s)))) & 0xffffffff;
+};
+const ff = (a, b, c, d, x, s, t) => cmn((b & c) | (~b & d), a, b, x, s, t);
+const gg = (a, b, c, d, x, s, t) => cmn((b & d) | (c & ~d), a, b, x, s, t);
+const hh = (a, b, c, d, x, s, t) => cmn(b ^ c ^ d, a, b, x, s, t);
+const ii = (a, b, c, d, x, s, t) => cmn(c ^ (b | ~d), a, b, x, s, t);
 
 const md5cycle = (x, k) => {
-	let a = x[0],
-		b = x[1],
-		c = x[2],
-		d = x[3];
+	let [a, b, c, d] = x;
 
 	a = ff(a, b, c, d, k[0], 7, -680876936);
 	d = ff(d, a, b, c, k[1], 12, -389564586);
@@ -76,25 +78,15 @@ const md5cycle = (x, k) => {
 	c = ii(c, d, a, b, k[2], 15, 718787259);
 	b = ii(b, c, d, a, k[9], 21, -343485551);
 
-	x[0] = add32(a, x[0]);
-	x[1] = add32(b, x[1]);
-	x[2] = add32(c, x[2]);
-	x[3] = add32(d, x[3]);
+	x[0] += a;
+	x[1] += b;
+	x[2] += c;
+	x[3] += d;
 };
-
-function cmn(q, a, b, x, s, t) {
-	a = add32(add32(a, q), add32(x, t));
-	return add32((a << s) | (a >>> (32 - s)), b);
-}
-
-const ff = (a, b, c, d, x, s, t) => cmn((b & c) | (~b & d), a, b, x, s, t);
-const gg = (a, b, c, d, x, s, t) => cmn((b & d) | (c & ~d), a, b, x, s, t);
-const hh = (a, b, c, d, x, s, t) => cmn(b ^ c ^ d, a, b, x, s, t);
-const ii = (a, b, c, d, x, s, t) => cmn(c ^ (b | ~d), a, b, x, s, t);
 
 function md5(s) {
 	const n = s.length,
-		state = [0x67452301, 0xefcdab89, 0x98badcfe, 0x10325476];
+		state = new Uint32Array([0x67452301, 0xefcdab89, 0x98badcfe, 0x10325476]);
 	if (typeof s === "string") {
 		s = [...s].map(c => c.charCodeAt());
 	}

@@ -34,7 +34,8 @@ const CryptoCipher = ({
 	cipherKey,
 	iv,
 	aesCounter,
-	jwk,
+	encKey,
+	decKey,
 	output
 }: {
 	alg: string,
@@ -47,7 +48,8 @@ const CryptoCipher = ({
 	cipherKey: string,
 	iv: string,
 	aesCounter: string,
-	jwk: string,
+	encKey: string,
+	decKey: string,
 	output: string
 }) => (
 	<div>
@@ -64,8 +66,19 @@ const CryptoCipher = ({
 
 		{alg === "RSA-OAEP" ? (
 			<>
-				<label>JWK:</label>
-				<TextArea autoComplete="off" onChange={actions.cipherJWK} value={jwk} />
+				<label>Public Key (Encryption): (JWK / PEM (X.509))</label>
+				<TextArea
+					autoComplete="off"
+					onChange={actions.cipherEncKey}
+					value={encKey}
+				/>
+
+				<label>Private Key (Decryption): (JWK / PEM (PKCS#8))</label>
+				<TextArea
+					autoComplete="off"
+					onChange={actions.cipherDecKey}
+					value={decKey}
+				/>
 
 				<NoteText>
 					* You can use the <Link to="/crypto/generate">generate</Link> page to

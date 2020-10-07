@@ -43,7 +43,8 @@ const Radio = ({
 	value,
 	onClick,
 	showEmptyWith,
-	flexBasis
+	flexBasis,
+	...rest
 }: {
 	className?: string,
 	children?: any,
@@ -53,7 +54,7 @@ const Radio = ({
 	showEmptyWith?: string,
 	flexBasis?: number
 }) => (
-	<Wrapper className={className} flexBasis={flexBasis}>
+	<Wrapper className={className} flexBasis={flexBasis} {...rest}>
 		{options
 			? options.map(
 					o =>

@@ -1,8 +1,7 @@
 import devek from "devek";
 import MD5 from "./md5";
 import createStore from "helpers/createStore";
-import { parseCertificate } from "./asn1";
-import { prettyCert } from "./cert";
+import { prettyCert, parseCertificate } from "./cert";
 import { cipherEncrypt, cipherDecrypt, cipherFormat } from "./cipher";
 import { formatOutput, generate } from "./generate";
 
@@ -76,9 +75,13 @@ const actionCreators = {
 		...state,
 		cipher: { ...state.cipher, aesCounter: e.target.value }
 	}),
-	cipherJWK: e => state => ({
+	cipherEncKey: e => state => ({
 		...state,
-		cipher: { ...state.cipher, jwk: e.target.innerText }
+		cipher: { ...state.cipher, encKey: e.target.innerText }
+	}),
+	cipherDecKey: e => state => ({
+		...state,
+		cipher: { ...state.cipher, decKey: e.target.innerText }
 	}),
 	cipherFormat: e => state => {
 		const format = e.target.dataset.value;
@@ -106,7 +109,7 @@ const actionCreators = {
 			state.cipher.useSalt,
 			!state.cipher.salt,
 			devek.hexStringToArray(state.cipher.salt),
-			state.cipher.jwk
+			state.cipher.encKey
 		);
 		output.format = "Base64";
 		output.formatted = cipherFormat(output.output, output.format);
@@ -131,7 +134,7 @@ const actionCreators = {
 			state.cipher.useSalt,
 			!state.cipher.salt,
 			devek.hexStringToArray(state.cipher.salt),
-			state.cipher.jwk
+			state.cipher.decKey
 		);
 		output.format = "UTF-8";
 		output.formatted = cipherFormat(output.output, output.format);
@@ -241,14 +244,19 @@ const actionCreators = {
 		} else {
 			const output = await prettyCert(cert);
 
-			const sha1Print = devek.arrayToHexString(
-				new Uint8Array(await crypto.subtle.digest("SHA-1", cert.buffer))
-			);
-			const md5Print = devek.arrayToHexString(MD5(cert.buffer));
+			const fingerprints = {
+				md5: devek.arrayToHexString(MD5(cert.buffer)),
+				sha1: devek.arrayToHexString(
+					new Uint8Array(await crypto.subtle.digest("SHA-1", cert.buffer))
+				),
+				sha256: devek.arrayToHexString(
+					new Uint8Array(await crypto.subtle.digest("SHA-256", cert.buffer))
+				)
+			};
 
 			return {
 				...state,
-				cert: { ...state.cert, loaded: true, pem, output, sha1Print, md5Print }
+				cert: { ...state.cert, loaded: true, pem, output, fingerprints }
 			};
 		}
 	},
@@ -292,7 +300,8 @@ const initialState = {
 		salt: "",
 		cipherKey: "",
 		iv: "",
-		jwk: "",
+		encKey: "",
+		decKey: "",
 		aesCounter: "",
 		format: "",
 		output: null,
@@ -306,13 +315,13 @@ const initialState = {
 		symmAlg: "AES-CBC", // HMAC / AES-CTR / AES-CBC / AES-GCM / AES-KW
 		hashAlg: "SHA-256", // SHA-1 / SHA-256 / SHA-384 / SHA-512
 		rsaModulusLength: 2048, // 2048 / 4096
-		ecNamedCurve: "P-384", // P-256 / P-384 / P-521
+		ecNamedCurve: "P-256", // P-256 / P-384 / P-521
 		aesKeyLength: 256, // 128 / 192 / 256
 		publicKey: "",
 		privateKey: "",
 		privateSSH: "",
 		symmKey: "",
-		format: "JWK", // JWK / SSH / X.509 (PKCS8+SPKI)
+		format: "JWK", // JWK / SSH / PEM (SPKI+PKCS8/SEC1)
 		source: "Random", // Random / PBKDF2
 		kdf: {
 			passphrase: "",

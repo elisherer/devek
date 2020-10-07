@@ -47,14 +47,12 @@ const DraggingTextArea = styled(TextArea)`
 const CryptoHash = ({
 	pem,
 	output,
-	sha1Print,
-	md5Print,
+	fingerprints,
 	dragging
 }: {
 	pem: string,
 	output: string,
-	sha1Print: string,
-	md5Print: string,
+	fingerprints: Object,
 	dragging: boolean
 }) => (
 	<div
@@ -86,12 +84,19 @@ const CryptoHash = ({
 		<TextArea readOnly value={output} />
 
 		<h3>Fingerprints</h3>
+		<span>SHA-256:</span>
+		<CopyToClipboard from="cert_sha256_print" />
+		<TextBox
+			id="cert_sha256_print"
+			readOnly
+			value={fingerprints?.sha256 ?? ""}
+		/>
 		<span>SHA-1:</span>
 		<CopyToClipboard from="cert_sha1_print" />
-		<TextBox id="cert_sha1_print" readOnly value={sha1Print} />
+		<TextBox id="cert_sha1_print" readOnly value={fingerprints?.sha1 ?? ""} />
 		<span>MD5:</span>
 		<CopyToClipboard from="cert_md5_print" />
-		<TextBox id="cert_md5_print" readOnly value={md5Print} />
+		<TextBox id="cert_md5_print" readOnly value={fingerprints?.md5 ?? ""} />
 	</div>
 );
 

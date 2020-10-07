@@ -1,5 +1,6 @@
 import devek from "devek";
 import md5 from "./md5";
+import { ASN1 } from "./asn1";
 
 const crypto = devek.crypto;
 devek.md5 = md5;
@@ -84,17 +85,35 @@ const getAesParams = (alg, iv) =>
 				iv
 		  };
 
-const importRSAOAEPCryptoKey = (jwk, usage) =>
-	crypto.subtle.importKey(
-		"jwk",
-		jwk,
-		{
-			name: "RSA-OAEP",
-			hash: "SHA" + (jwk.alg.substr(8) || "-1")
-		},
-		true,
-		[usage]
-	);
+const importRSAOAEPCryptoKey = (input, usage) => {
+	try {
+		const jwk = JSON.parse(input);
+		return crypto.subtle.importKey(
+			"jwk",
+			jwk,
+			{
+				name: "RSA-OAEP",
+				hash: "SHA" + (jwk.alg.substr(8) || "-1")
+			},
+			true,
+			[usage]
+		);
+	} catch (e) {
+		if (e instanceof SyntaxError) {
+			// probably not JWK, try PEM
+			return crypto.subtle.importKey(
+				usage === "encrypt" ? "spki" : "pkcs8",
+				ASN1.pemToUint8Array(input),
+				{
+					name: "RSA-OAEP",
+					hash: "SHA-512"
+				},
+				true,
+				[usage]
+			);
+		}
+	}
+};
 
 const getRsaOaepParams = (name, label) => {
 	const params = { name };
@@ -129,13 +148,14 @@ export const cipherEncrypt = async (
 	useSalt,
 	generateSalt,
 	salt,
-	jwk
+	encKey
 ) => {
 	try {
 		const isAES = alg.startsWith("AES");
 		let cryptoKey,
 			options,
-			ivGenerated = false;
+			ivGenerated = false,
+			inputLimit = Infinity;
 		if (isAES) {
 			if (useKDF) {
 				const keyAndIV = await deriveAESCryptoKeyAndIV(
@@ -164,17 +184,26 @@ export const cipherEncrypt = async (
 			}
 			options = getAesParams(alg, iv);
 		} else {
-			cryptoKey = await importRSAOAEPCryptoKey(JSON.parse(jwk), "encrypt");
+			cryptoKey = await importRSAOAEPCryptoKey(encKey, "encrypt");
+			inputLimit = cryptoKey.algorithm.modulusLength / 8 - (2 * 160) / 8 - 2;
 			options = getRsaOaepParams(alg);
 		}
 
-		let encrypted = new Uint8Array(
-			await crypto.subtle.encrypt(
-				options,
-				cryptoKey,
-				devek.stringToUint8Array(data)
-			)
-		);
+		const dataArray = devek.stringToUint8Array(data);
+		let encrypted;
+		try {
+			encrypted = new Uint8Array(
+				await crypto.subtle.encrypt(options, cryptoKey, dataArray)
+			);
+		} catch (e) {
+			if (dataArray.length > inputLimit) {
+				throw new Error(
+					`Input is over the maximum limit of ${inputLimit} bytes (*it might be lower)`
+				);
+			} else {
+				throw e;
+			}
+		}
 		if (isAES && useKDF && useSalt) {
 			encrypted = devek.concatUint8Array(OPENSSL_MAGIC, salt, encrypted);
 		}
@@ -223,7 +252,7 @@ export const cipherDecrypt = async (
 	useSalt,
 	generateSalt,
 	salt,
-	jwk
+	decKey
 ) => {
 	try {
 		const isAES = alg.startsWith("AES");
@@ -280,7 +309,7 @@ export const cipherDecrypt = async (
 			}
 			options = getAesParams(alg, iv);
 		} else {
-			cryptoKey = await importRSAOAEPCryptoKey(JSON.parse(jwk), "decrypt");
+			cryptoKey = await importRSAOAEPCryptoKey(decKey, "decrypt");
 			options = getRsaOaepParams(alg);
 		}
 

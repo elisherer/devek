@@ -1,39 +1,55 @@
 import devek from "devek";
 import { publicKeyJWKToSSH, privateKeyJWKToSSH } from "./ssh";
+import { ASN1, ASN1_Encode, ASN1_OID } from "./asn1";
 const crypto = devek.crypto;
 
-const toPrivateKey = async key => {
-	const rsa = key.algorithm.name[0] === "R";
-	const pkcs8 = new Uint8Array(await crypto.subtle.exportKey("pkcs8", key));
-	if (rsa) {
-		let offset = 4; // assume starts with sequence
-		while (
-			pkcs8[offset] !== 0x04 &&
-			pkcs8[offset + 1] !== 0 &&
-			offset < pkcs8.length
-		) {
-			offset += pkcs8[offset + 1] + 2;
-		}
-		if (pkcs8[offset] !== 0x04) {
-			throw new Error(
-				"Error extracting private key sequence from PKCS8 format"
-			);
-		}
-		// offset is on octet stream
-		let length = (pkcs8[offset + 2] << 8) + pkcs8[offset + 3];
-		return devek.arrayToPEM(
-			pkcs8.slice(offset + 4, offset + 4 + length),
-			"RSA PRIVATE KEY"
-		);
-	}
-	return devek.arrayToPEM(pkcs8, "EC PRIVATE KEY");
+const spkiToPKCS1 = spki => {
+	const parsedSpki = ASN1.parse(spki);
+	//const alg = parsedSpki.value[0][0].startsWith("rsa") ? "RSA" : "EC";
+	const pkcs1Container = parsedSpki.children.find(
+		x => x.tagNumber === ASN1.BIT_STRING
+	);
+	const buffer = pkcs1Container.value;
+	return devek.arrayToPEM(buffer, "RSA PUBLIC KEY");
 };
 
-const toPublicKey = async key => {
-	return devek.arrayToPEM(
-		new Uint8Array(await crypto.subtle.exportKey("spki", key)),
-		"PUBLIC KEY"
+/**
+ * PKCS-8 to PKCS-1 (RSA) / SEC-1 (EC)
+ * @param pkcs8 {Uint8Array}
+ * @returns {string}
+ */
+const pkcs8ToPKCS1 = pkcs8 => {
+	const parsedPkcs8 = ASN1.parse(pkcs8);
+	const alg = parsedPkcs8.value[1][0].startsWith("rsa") ? "RSA" : "EC";
+	const pkcs1Container = parsedPkcs8.children.find(
+		x => x.tagNumber === ASN1.OCTET_STRING
 	);
+
+	let buffer = pkcs1Container.value;
+
+	if (alg === "EC") {
+		const parsedPkcs1 = ASN1.parse(pkcs1Container.value);
+		const octet = parsedPkcs1.children.find(
+			x => x.tagNumber === ASN1.OCTET_STRING
+		);
+		const sequenceSize = pkcs8[2] & 0b10000000 ? 1 : 2;
+		const oidBuffer = parsedPkcs8.children
+			.find(x => x.tagNumber === ASN1.SEQUENCE)
+			.children.pop();
+		// we need to copy OID to the sequence
+		buffer = ASN1_Encode(
+			0x30,
+			devek.concatUint8Array(
+				buffer.slice(
+					1 + sequenceSize,
+					octet.offset + octet.headerLength + octet.value.length
+				),
+				ASN1_Encode(0xa0, ASN1_OID(oidBuffer.oid)),
+				buffer.slice(octet.offset + octet.headerLength + octet.value.length)
+			)
+		);
+	}
+	return devek.arrayToPEM(buffer, alg + " PRIVATE KEY");
 };
 
 const getFamily = alg => alg.match(/^(RSA|EC|AES|HMAC)/)[0];
@@ -192,6 +208,7 @@ export const generate = async state => {
 			generate: {
 				...state.generate,
 				outputKey,
+				outputParams: state.generate,
 				kdf: { ...state.generate.kdf, output: kdfOutput },
 				...(await formatOutput(outputKey, format))
 			}
@@ -258,16 +275,42 @@ export const formatOutput = async (outputKey, format) => {
 							devek.arrayToBase64(shaFingerprint) +
 							"\n" +
 							devek.arrayToHexString(devek.md5(pubssh.decoded), ":");
-						privateKey = await toPrivateKey(outputKey.privateKey, format);
+						privateKey = pkcs8ToPKCS1(
+							new Uint8Array(
+								await crypto.subtle.exportKey("pkcs8", outputKey.privateKey)
+							)
+						);
 						privateSSH = privateKeyJWKToSSH(
 							pubssh,
 							await crypto.subtle.exportKey("jwk", outputKey.privateKey)
 						);
 					}
 					break;
-				case "X.509 (PKCS8+SPKI)":
-					publicKey = await toPublicKey(outputKey.publicKey, format);
-					privateKey = await toPrivateKey(outputKey.privateKey, format);
+				case "PEM (PKCS#1)": // only RSA
+					publicKey = spkiToPKCS1(
+						new Uint8Array(
+							await crypto.subtle.exportKey("spki", outputKey.publicKey)
+						)
+					);
+					privateKey = pkcs8ToPKCS1(
+						new Uint8Array(
+							await crypto.subtle.exportKey("pkcs8", outputKey.privateKey)
+						)
+					);
+					break;
+				case "PEM (X.509+PKCS#8)":
+					publicKey = devek.arrayToPEM(
+						new Uint8Array(
+							await crypto.subtle.exportKey("spki", outputKey.publicKey)
+						),
+						"PUBLIC KEY"
+					);
+					privateKey = devek.arrayToPEM(
+						new Uint8Array(
+							await crypto.subtle.exportKey("pkcs8", outputKey.privateKey)
+						),
+						"PRIVATE KEY"
+					);
 					break;
 			}
 

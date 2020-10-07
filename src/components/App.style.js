@@ -130,8 +130,11 @@ export const GitHubIcon = styled.div`
 		right: 24px;
 		top: 26px;
 	}
-	svg {
-		fill: ${({ theme }) => theme.navSelected};
+	a {
+		color: ${({ theme }) => theme.navSelected};
+		svg {
+			fill: ${({ theme }) => theme.navSelected};
+		}
 	}
 `;
 

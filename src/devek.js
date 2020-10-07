@@ -62,10 +62,14 @@ devek.arrayToBase64 = value =>
 	!value ? emptyB64 : btoa(String.fromCharCode.apply(null, value));
 devek.arrayToBase64Url = value =>
 	!value ? emptyB64 : toB64Url(btoa(String.fromCharCode.apply(null, value)));
-devek.arrayToHexString = (a, j = "") =>
-	(Array.isArray(a) ? a : [...a])
+devek.arrayToHexString = (a, j = "", splitAt = 0) => {
+	const result = (Array.isArray(a) ? a : [...a])
 		.map(x => x.toString(16).padStart(2, "0"))
 		.join(j);
+	return splitAt > 0
+		? result.match(new RegExp(`.{1,${splitAt}}`, "g")).join("\n")
+		: result;
+};
 devek.arrayToAscii = a =>
 	decoder.decode(Array.isArray(a) ? new Uint8Array(a).buffer : a);
 const charCache = new Array(128);
