@@ -83,17 +83,11 @@ export const StyledNavLink = styled(NavLink)`
 		color: ${({ theme }) => theme.navSelected};
 		background-color: rgba(0, 0, 0, 0.2);
 		border-color: ${({ theme }) => theme.navSelected};
-		svg path {
-			fill: ${({ theme }) => theme.navSelected};
-		}
 	}
 	svg {
 		margin-right: 10px;
 		vertical-align: middle;
 		padding-bottom: 5px;
-		path {
-			fill: ${({ theme }) => theme.navForeground};
-		}
 	}
 `;
 
@@ -132,9 +126,6 @@ export const GitHubIcon = styled.div`
 	}
 	a {
 		color: ${({ theme }) => theme.navSelected};
-		svg {
-			fill: ${({ theme }) => theme.navSelected};
-		}
 	}
 `;
 

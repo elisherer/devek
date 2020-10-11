@@ -171,7 +171,7 @@ button {
   }
   /* button with class="icon" */
   &.icon {
-    fill: white;
+    color: white;
     padding: 8px;
     width: 40px;
     height: 40px;
@@ -179,7 +179,7 @@ button {
   /* button with class="tool" */
   &.tool {
     background: ${({ theme }) => theme.cardBackground};
-    fill: ${({ theme }) => (theme.dark ? "white" : "black")};
+    color: ${({ theme }) => (theme.dark ? "white" : "black")};
     padding: 8px;
     border: 1px solid ${({ theme }) => theme.greyBorder};
     width: 40px;
@@ -243,7 +243,6 @@ kbd {
         }
         svg {
           display: none;
-          fill: ${({ theme }) => theme.foregroundColor};
           @media (min-width: ${({ theme }) => theme.screenDesktopMin}) {
             vertical-align: middle;
             margin-right: 10px;

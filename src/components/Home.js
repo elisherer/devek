@@ -20,7 +20,7 @@ const Page = styled.div`
 	svg {
 		margin-top: 40px;
 		margin-bottom: 40px;
-		fill: ${({ theme }) => (theme.dark ? "#fff" : "#000")};
+		color: ${({ theme }) => (theme.dark ? "#fff" : "#000")};
 	}
 	p {
 		margin: 0;
