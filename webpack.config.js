@@ -9,7 +9,8 @@ const HtmlWebpackPlugin = require("html-webpack-plugin"),
 	CopyWebpackPlugin = require("copy-webpack-plugin"),
 	TerserJSPlugin = require("terser-webpack-plugin"),
 	ScriptExtHtmlWebpackPlugin = require("script-ext-html-webpack-plugin"),
-	WorkboxPlugin = require("workbox-webpack-plugin");
+	WorkboxPlugin = require("workbox-webpack-plugin"),
+	ESLintPlugin = require("eslint-webpack-plugin");
 
 const mode = process.env.NODE_ENV || "development";
 const node_modules = /[\\/]node_modules[\\/]/;
@@ -92,7 +93,11 @@ module.exports = {
 
 		!PRODUCTION && webpackDevServerWaitpage.plugin(),
 
-		new CopyWebpackPlugin([{ from: "public", to: "" }]), // Copy root domain files
+		new CopyWebpackPlugin({
+			patterns: [
+				{ from: "public", to: "." } // Copy root domain files
+			].filter(Boolean)
+		}),
 
 		ANALYZE &&
 			new BundleAnalyzerPlugin({ analyzerMode: "static", openAnalyzer: false }),
@@ -107,7 +112,14 @@ module.exports = {
 						handler: "NetworkFirst"
 					}
 				]
-			})
+			}),
+
+		new ESLintPlugin({
+			formatter: require("eslint-friendly-formatter"),
+			failOnWarning: PRODUCTION,
+			failOnError: PRODUCTION,
+			emitWarning: !PRODUCTION,
+		})
 	].filter(Boolean),
 	module: {
 		strictExportPresence: true,
@@ -128,24 +140,13 @@ module.exports = {
 				test: /\.worker\.js$/,
 				use: {
 					loader: "worker-loader",
-					options: { inline: true, fallback: false }
+					options: { inline: "no-fallback" }
 				}
 			},
 			{
 				test: /\.js$/,
 				exclude: node_modules,
-				use: [
-					"babel-loader",
-					{
-						loader: "eslint-loader",
-						options: {
-							formatter: require("eslint-friendly-formatter"),
-							failOnWarning: PRODUCTION,
-							failOnError: PRODUCTION,
-							emitWarning: !PRODUCTION
-						}
-					}
-				]
+				use: "babel-loader"
 			}
 		]
 	}

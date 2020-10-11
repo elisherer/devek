@@ -1,0 +1,9 @@
+!.*
+node_modules/
+coverage/
+reports/
+dist/
+
+# test files
+**/*.spec.js
+**/*.test.js

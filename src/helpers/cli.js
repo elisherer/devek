@@ -1,3 +1,4 @@
+/* eslint-disable */
 const unescapeArgument = (arg, mode) => {
 	const singleQuoted = arg[0] === "'" && arg[arg.length - 1] === "'";
 	const doubleQuoted =

@@ -1,4 +1,6 @@
-/* 
+/* eslint-disable */
+
+/*
 https://curl.haxx.se/docs/manpage.html
 http://www.mit.edu/afs.new/sipb/user/ssen/src/curl-7.11.1/docs/curl.html
 https://github.com/tj/parse-curl.js/blob/master/index.js
