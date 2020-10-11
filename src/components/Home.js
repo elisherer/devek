@@ -21,6 +21,9 @@ const Page = styled.div`
 		margin-top: 40px;
 		margin-bottom: 40px;
 		color: ${({ theme }) => (theme.dark ? "#fff" : "#000")};
+		path {
+			fill: currentColor;
+		}
 	}
 	p {
 		margin: 0;
