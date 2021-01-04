@@ -166,12 +166,4 @@ const App = ({
 	);
 };
 
-let exportedApp = withTheme(App);
-
-if (process.env.NODE_ENV !== "production") {
-	const { hot /*, setConfig*/ } = require("react-hot-loader/root");
-	//setConfig({ logLevel: "debug"});
-	exportedApp = hot(exportedApp);
-}
-
-export default exportedApp;
+export default withTheme(App);
