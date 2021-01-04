@@ -1,30 +1,5 @@
-// Copied from @babel/preset-stage-1 (https://github.com/babel/babel/tree/master/packages/babel-preset-stage-1)
 const babelPresetStage1 = () => ({
-  plugins: [
-    // Stage 1 - Proposal
-    require("@babel/plugin-proposal-export-default-from"),
-    require("@babel/plugin-proposal-logical-assignment-operators"),
-    [require("@babel/plugin-proposal-pipeline-operator"), { proposal: "minimal" }],
-    require("@babel/plugin-proposal-do-expressions"),
-
-    // Stage 2 - Draft
-    [require("@babel/plugin-proposal-decorators"), { legacy: true }],
-    require("@babel/plugin-proposal-function-sent"),
-    require("@babel/plugin-proposal-export-namespace-from"),
-
-    // Stage 3 - Candidate
-    require("@babel/plugin-syntax-import-meta"),
-    require("@babel/plugin-proposal-json-strings"),
-
-    require("babel-plugin-styled-components")
-
-    // Optional chaining and nullish coalescing are supported in @babel/preset-env,
-    // but not yet supported in webpack due to support missing from acorn.
-    // These can be removed once webpack has support.
-    // See https://github.com/facebook/create-react-app/issues/8445#issuecomment-588512250
-    //require("@babel/plugin-proposal-optional-chaining"),
-    //require("@babel/plugin-proposal-nullish-coalescing-operator")
-  ]
+  plugins: [require("babel-plugin-styled-components")]
 });
 
 module.exports = function (api) {
