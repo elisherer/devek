@@ -18,7 +18,8 @@ module.exports = function (api) {
       "@babel/preset-react",
       {
         development: dev,
-        useBuiltIns: true
+        useBuiltIns: true,
+        runtime: "automatic" // jsx transform
       }
     ],
 

@@ -1,4 +1,4 @@
-import React, { useRef, useState, useCallback, useEffect } from "react";
+import { useRef, useState, useCallback, useEffect } from "react";
 import styled from "styled-components";
 
 const UnsortedList = styled.ul`
@@ -29,65 +29,60 @@ const UnsortedList = styled.ul`
 `;
 
 const DropDownMenu = ({
-	menu,
-	disabled,
-	children,
-	...props
+  menu,
+  disabled,
+  children,
+  ...props
 }: {
-	menu: Array,
-	disabled?: boolean,
-	children?: any
+  menu: Array,
+  disabled?: boolean,
+  children?: any
 }) => {
-	const ref = useRef();
-	const [open, setOpen] = useState(false);
-	const handleTriggerClick = useCallback(() => setOpen(!open), [open]);
+  const ref = useRef();
+  const [open, setOpen] = useState(false);
+  const handleTriggerClick = useCallback(() => setOpen(!open), [open]);
 
-	const handleKeyDown = useCallback(e => {
-		if (e.key === "Escape") {
-			setOpen(false);
-			e.preventDefault();
-		}
-	}, []);
-	const handleClickOutside = useCallback(e => {
-		if (!ref.current.contains(e.target)) setOpen(false);
-	}, []);
+  const handleKeyDown = useCallback(e => {
+    if (e.key === "Escape") {
+      setOpen(false);
+      e.preventDefault();
+    }
+  }, []);
+  const handleClickOutside = useCallback(e => {
+    if (!ref.current.contains(e.target)) setOpen(false);
+  }, []);
 
-	useEffect(() => {
-		document.addEventListener("mousedown", handleClickOutside);
-		return () => {
-			document.removeEventListener("mousedown", handleClickOutside);
-		};
-	}, []);
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
-	useEffect(() => {
-		if (!open) return; // no need for listener
-		document.addEventListener("keydown", handleKeyDown);
-		return () => {
-			document.removeEventListener("keydown", handleKeyDown);
-		};
-	}, [open]);
+  useEffect(() => {
+    if (!open) return; // no need for listener
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [open]);
 
-	const isOpen = !disabled && open;
+  const isOpen = !disabled && open;
 
-	return (
-		<span
-			ref={ref}
-			{...props}
-			aria-haspopup="true"
-			aria-expanded={isOpen}
-			onClick={!disabled ? handleTriggerClick : undefined}
-		>
-			{children}
-			<UnsortedList
-				open={isOpen}
-				onClick={handleTriggerClick}
-				onChange={handleTriggerClick}
-			>
-				{menu &&
-					menu.map(({ id, ...props }, i) => <li key={id || i} {...props} />)}
-			</UnsortedList>
-		</span>
-	);
+  return (
+    <span
+      ref={ref}
+      {...props}
+      aria-haspopup="true"
+      aria-expanded={isOpen}
+      onClick={!disabled ? handleTriggerClick : undefined}
+    >
+      {children}
+      <UnsortedList open={isOpen} onClick={handleTriggerClick} onChange={handleTriggerClick}>
+        {menu && menu.map(({ id, ...props }, i) => <li key={id || i} {...props} />)}
+      </UnsortedList>
+    </span>
+  );
 };
 
 export default DropDownMenu;

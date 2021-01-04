@@ -1,4 +1,3 @@
-import React from "react";
 import { TextArea, TextBox, CopyToClipboard } from "../_lib";
 import { actions } from "./PageCrypto.store";
 import loadFileAsync from "helpers/loadFileAsync";

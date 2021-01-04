@@ -32,7 +32,13 @@ module.exports = {
   devtool: ANALYZE ? "source-map" : PRODUCTION ? false : "cheap-module-source-map",
   optimization: {
     splitChunks: {
-      chunks: "all"
+      cacheGroups: {
+        commons: {
+          test: node_modules,
+          name: "vendors",
+          chunks: "all"
+        }
+      }
     }
   },
   devServer: {

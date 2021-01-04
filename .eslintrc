@@ -31,7 +31,12 @@
   },
   "rules": {
     //"react/jsx-no-bind": 1
-    "no-mixed-spaces-and-tabs": 0
+    "react/display-name": 0, // slow
+    "react/no-deprecated": 0, // slow
+    "react/prop-types": 0, // slow
+    "react/require-render-return": 0, // slow
+    "react/jsx-uses-react": "off", // jsx transform
+    "react/react-in-jsx-scope": "off" // jsx transform
   },
   "globals": {
     "__LICENSES__": true,
