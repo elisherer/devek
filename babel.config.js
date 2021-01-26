@@ -1,7 +1,3 @@
-const babelPresetStage1 = () => ({
-  plugins: [require("babel-plugin-styled-components")]
-});
-
 module.exports = function (api) {
   const prod = api.env("production"),
     dev = api.env("development"),
@@ -33,13 +29,12 @@ module.exports = function (api) {
         exclude: ["transform-typeof-symbol"],
         bugfixes: true
       }
-    ],
-
-    [babelPresetStage1, { decoratorsLegacy: true }]
+    ]
   ];
 
   let plugins = [
     // plugins to include
+    "babel-plugin-styled-components"
   ]
     .concat(
       prod

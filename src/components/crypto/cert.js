@@ -90,19 +90,7 @@ const parseExtension = (oid, ext) => {
             return result;
           }, {})
         );
-      case "2.5.29.35": // authorityKeyIdentifier
-        return {
-          keyIdentifier: ext.value[0] ? ext.value[0] : undefined,
-          authorityCertIssuer: ext.value[1],
-          authorityCertSerialNumber: ext.value[2]
-        };
-      case "2.5.29.37": // extKeyUsage
-        return ext.children.map(oid => oid.value);
-      case "1.3.6.1.5.5.7.1.1": // authorityInfoAccess
-        return ext.children.map(c => ({
-          accessMethod: c.value[0],
-          accessLocation: devek.arrayToAscii(c.value[1])
-        }));
+      case "2.5.29.32": // certificatePolicies
       case "1.3.6.1.5.5.7.1.3": // qcStatements
         return ext.children.reduce((a, c) => {
           if (c.children[0].oid === "0.4.0.19495.2")
@@ -118,6 +106,19 @@ const parseExtension = (oid, ext) => {
           else a[c.value[0]] = c.value.length === 1 ? true : fieldNames[c.value[1]] || c.value[1];
           return a;
         }, {});
+      case "2.5.29.35": // authorityKeyIdentifier
+        return {
+          keyIdentifier: ext.value[0] ? ext.value[0] : undefined,
+          authorityCertIssuer: ext.value[1],
+          authorityCertSerialNumber: ext.value[2]
+        };
+      case "2.5.29.37": // extKeyUsage
+        return ext.children.map(oid => oid.value);
+      case "1.3.6.1.5.5.7.1.1": // authorityInfoAccess
+        return ext.children.map(c => ({
+          accessMethod: c.value[0],
+          accessLocation: devek.arrayToAscii(c.value[1])
+        }));
       default:
         return ext && Object.prototype.hasOwnProperty.call(ext, "value") ? ext.value : ext;
     }
