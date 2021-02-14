@@ -3,9 +3,12 @@
 exports[`crypto/cert cert 1 1`] = `
 Object {
   "extensions": undefined,
-  "issuer": Object {
-    "commonName": "CA",
-  },
+  "issuer": Array [
+    Array [
+      "commonName",
+      "CA",
+    ],
+  ],
   "issuerUniqueID": undefined,
   "serialNumber": Array [
     141,
@@ -98,9 +101,12 @@ Object {
     26,
     67,
   ],
-  "subject": Object {
-    "commonName": "EE",
-  },
+  "subject": Array [
+    Array [
+      "commonName",
+      "EE",
+    ],
+  ],
   "subjectPublicKeyInfo": Object {
     "algorithm": "ecPublicKey",
     "publicKey": Object {
@@ -230,15 +236,36 @@ Object {
       },
     },
   },
-  "issuer": Object {
-    "commonName": "DEV CheBanca CA",
-    "countryName": "IT",
-    "emailAddress": "sicurezza@chebanca.it",
-    "localityName": "Milan",
-    "organizationName": "CheBanca",
-    "organizationalUnitName": "Sicurezza",
-    "stateOrProvinceName": "Italy",
-  },
+  "issuer": Array [
+    Array [
+      "countryName",
+      "IT",
+    ],
+    Array [
+      "stateOrProvinceName",
+      "Italy",
+    ],
+    Array [
+      "localityName",
+      "Milan",
+    ],
+    Array [
+      "organizationName",
+      "CheBanca",
+    ],
+    Array [
+      "organizationalUnitName",
+      "Sicurezza",
+    ],
+    Array [
+      "commonName",
+      "DEV CheBanca CA",
+    ],
+    Array [
+      "emailAddress",
+      "sicurezza@chebanca.it",
+    ],
+  ],
   "issuerUniqueID": undefined,
   "serialNumber": Array [
     73,
@@ -772,15 +799,36 @@ Object {
     155,
     170,
   ],
-  "subject": Object {
-    "commonName": "CB TPP SANDBOX",
-    "countryName": "IT",
-    "localityName": "Milan",
-    "organizationIdentifier": "PSDIT-CB-000000",
-    "organizationName": "CB TPP SANDBOX",
-    "organizationalUnitName": "TPP",
-    "stateOrProvinceName": "Italy",
-  },
+  "subject": Array [
+    Array [
+      "organizationIdentifier",
+      "PSDIT-CB-000000",
+    ],
+    Array [
+      "countryName",
+      "IT",
+    ],
+    Array [
+      "commonName",
+      "CB TPP SANDBOX",
+    ],
+    Array [
+      "organizationalUnitName",
+      "TPP",
+    ],
+    Array [
+      "organizationName",
+      "CB TPP SANDBOX",
+    ],
+    Array [
+      "stateOrProvinceName",
+      "Italy",
+    ],
+    Array [
+      "localityName",
+      "Milan",
+    ],
+  ],
   "subjectPublicKeyInfo": Object {
     "algorithm": "rsaEncryption",
     "publicKey": Object {
@@ -1315,15 +1363,36 @@ Object {
 exports[`crypto/cert cert 3 1`] = `
 Object {
   "extensions": undefined,
-  "issuer": Object {
-    "commonName": "Frank4DD Web CA",
-    "countryName": "JP",
-    "emailAddress": "support@frank4dd.com",
-    "localityName": "Chuo-ku",
-    "organizationName": "Frank4DD",
-    "organizationalUnitName": "WebCert Support",
-    "stateOrProvinceName": "Tokyo",
-  },
+  "issuer": Array [
+    Array [
+      "countryName",
+      "JP",
+    ],
+    Array [
+      "stateOrProvinceName",
+      "Tokyo",
+    ],
+    Array [
+      "localityName",
+      "Chuo-ku",
+    ],
+    Array [
+      "organizationName",
+      "Frank4DD",
+    ],
+    Array [
+      "organizationalUnitName",
+      "WebCert Support",
+    ],
+    Array [
+      "commonName",
+      "Frank4DD Web CA",
+    ],
+    Array [
+      "emailAddress",
+      "support@frank4dd.com",
+    ],
+  ],
   "issuerUniqueID": undefined,
   "serialNumber": 3580,
   "signature": Object {
@@ -1464,12 +1533,24 @@ Object {
     248,
     19,
   ],
-  "subject": Object {
-    "commonName": "www.example.com",
-    "countryName": "JP",
-    "organizationName": "Frank4DD",
-    "stateOrProvinceName": "Tokyo",
-  },
+  "subject": Array [
+    Array [
+      "countryName",
+      "JP",
+    ],
+    Array [
+      "stateOrProvinceName",
+      "Tokyo",
+    ],
+    Array [
+      "organizationName",
+      "Frank4DD",
+    ],
+    Array [
+      "commonName",
+      "www.example.com",
+    ],
+  ],
   "subjectPublicKeyInfo": Object {
     "algorithm": "rsaEncryption",
     "publicKey": Object {
