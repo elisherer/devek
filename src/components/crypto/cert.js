@@ -16,6 +16,7 @@ const printHex = (array, width = -1, indent = 0) => {
 
 const openSslAliases = {
   countryName: "C",
+  domainComponent: "DC",
   stateOrProvinceName: "ST",
   localityName: "L",
   organizationName: "O",
@@ -200,12 +201,12 @@ export const parseCertificate = pem => {
         algorithm: signature.value[0],
         parameters: signature.value[1]
       },
-      issuer: ASN1.toDictionary(issuer.children),
+      issuer: ASN1.toArray(issuer.children),
       validity: {
         notBefore: validity.value[0],
         notAfter: validity.value[1]
       },
-      subject: ASN1.toDictionary(subject.children),
+      subject: ASN1.toArray(subject.children),
       subjectPublicKeyInfo: {
         algorithm: subjectPublicKeyInfo.value[0][0],
         publicKey: parsePublicKey(
@@ -270,14 +271,12 @@ export const prettyCert = cert => {
         Serial Number:
             ${printHex(cert.serialNumber)}
     Signature Algorithm: ${cert.signature.algorithm}
-        Issuer: ${Object.keys(cert.issuer)
-          .map(d => (openSslAliases[d] || d) + "=" + cert.issuer[d])
-          .join(", ")}
+        Issuer: ${cert.issuer.map(kv => (openSslAliases[kv[0]] || kv[0]) + "=" + kv[1]).join(", ")}
         Validity
             Not Before: ${cert.validity.notBefore.toGMTString()}
             Not After : ${cert.validity.notAfter.toGMTString()}
-        Subject: ${Object.keys(cert.subject)
-          .map(d => (openSslAliases[d] || d) + "=" + cert.subject[d])
+        Subject: ${cert.subject
+          .map(kv => (openSslAliases[kv[0]] || kv[0]) + "=" + kv[1])
           .join(", ")}
         Subject Public Key Info:
             Public Key Algorithm: ${cert.subjectPublicKeyInfo.algorithm}${publicKey}${extensions}
