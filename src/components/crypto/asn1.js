@@ -296,6 +296,8 @@ const ASN1 = {
   SEQUENCE: 0x10
 };
 
+window.ASN1 = ASN1;
+
 export {
   ASN1,
   ASN1_Encode,

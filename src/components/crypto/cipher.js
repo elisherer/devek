@@ -1,6 +1,7 @@
 import devek from "devek";
 import md5 from "./md5";
 import { ASN1 } from "./asn1";
+import { pkcs1ToJWK } from "./crypto";
 
 const crypto = devek.crypto;
 devek.md5 = md5;
@@ -90,12 +91,28 @@ const importRSAOAEPCryptoKey = (input, usage) => {
   } catch (e) {
     if (e instanceof SyntaxError) {
       // probably not JWK, try PEM
+      const pem = ASN1.pemToUint8Array(input);
+      // Check if PKCS#1
+      if (input.includes("BEGIN RSA ")) {
+        const jwk = pkcs1ToJWK(pem);
+        return crypto.subtle.importKey(
+          "jwk",
+          jwk,
+          {
+            name: "RSA-OAEP", // guess
+            hash: "SHA-512" // guess
+          },
+          true,
+          [usage]
+        );
+      }
+      // try X.509 / PKCS#8
       return crypto.subtle.importKey(
         usage === "encrypt" ? "spki" : "pkcs8",
         ASN1.pemToUint8Array(input),
         {
-          name: "RSA-OAEP",
-          hash: "SHA-512"
+          name: "RSA-OAEP", // guess
+          hash: "SHA-512" // guess
         },
         true,
         [usage]
@@ -310,10 +327,3 @@ export const cipherDecrypt = async (
     return { properties: "", error: e.name + ": " + e.message };
   }
 };
-
-export const cipherFormat = (array, format) =>
-  format === "Base64"
-    ? devek.arrayToBase64(array)
-    : format === "UTF-8"
-    ? devek.arrayToUTF8(array)
-    : devek.arrayToHexString(array);

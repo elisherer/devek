@@ -29,7 +29,6 @@ const CryptoHash = ({
     <label>Input:</label>
     <TextArea autoFocus onChange={actions.hashInput} value={input} />
     <SmallInfo>Length: {input.length}</SmallInfo>
-
     <label>Algorithm:</label>
     <Radio
       flexBasis={20}
@@ -37,7 +36,6 @@ const CryptoHash = ({
       value={alg}
       onClick={actions.hashAlg}
     />
-
     <label>Output format:</label>
     {alg !== "MD5" ? (
       <Radio
@@ -49,7 +47,6 @@ const CryptoHash = ({
     ) : (
       <Radio flexBasis={20} options={["Hex"]} value="Hex" />
     )}
-
     <span>Hash:</span>
     <CopyToClipboard from="crypto_hash" />
     <LongTextArea

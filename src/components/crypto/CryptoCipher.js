@@ -65,10 +65,10 @@ const CryptoCipher = ({
 
     {alg === "RSA-OAEP" ? (
       <>
-        <label>Public Key (Encryption): (JWK / PEM (X.509))</label>
+        <label>Public Key (Encryption): (JWK / PEM (PKCS#1/X.509))</label>
         <TextArea autoComplete="off" onChange={actions.cipherEncKey} value={encKey} />
 
-        <label>Private Key (Decryption): (JWK / PEM (PKCS#8))</label>
+        <label>Private Key (Decryption): (JWK / PEM (PKCS#1/PKCS#8))</label>
         <TextArea autoComplete="off" onChange={actions.cipherDecKey} value={decKey} />
 
         <NoteText>

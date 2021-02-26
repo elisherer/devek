@@ -1,4 +1,4 @@
-import { Fragment, Suspense, useEffect } from "react";
+import { Fragment, Suspense, useCallback, useEffect, useState } from "react";
 import { Switch, Route, Link, NavLink, Redirect, useLocation } from "react-router-dom";
 import Icon from "@mdi/react";
 import { mdiGithub, mdiMenu, mdiBrightness4 } from "@mdi/js";
@@ -20,11 +20,25 @@ import {
   StyledTabs,
   Overlay
 } from "./App.style";
-import { withTheme } from "styled-components";
+import { ThemeProvider } from "styled-components";
+import themes from "../theme";
+import Settings from "../settings";
 
 const devekSearch = () => window.devek.openSearch();
 
-const App = ({ theme, toggleTheme }: { theme: Object, toggleTheme: Function }) => {
+const App = () => {
+  const [theme, setTheme] = useState(Settings.get("theme"));
+  const toggleTheme = useCallback(() => {
+    if (theme === "dark") {
+      setTheme("light");
+      Settings.set("theme", "light");
+    }
+    if (theme === "light") {
+      setTheme("dark");
+      Settings.set("theme", "dark");
+    }
+  }, [theme]);
+
   const location = useLocation();
   if (location.pathname === "/" && location.search) {
     return <Redirect to="/" />;
@@ -67,7 +81,7 @@ const App = ({ theme, toggleTheme }: { theme: Object, toggleTheme: Function }) =
   }, [location.pathname]);
 
   return (
-    <>
+    <ThemeProvider theme={themes[theme]}>
       <GlobalStyle />
 
       <MainNavigation open={state.drawer}>
@@ -129,8 +143,8 @@ const App = ({ theme, toggleTheme }: { theme: Object, toggleTheme: Function }) =
           </article>
         </Suspense>
       </main>
-    </>
+    </ThemeProvider>
   );
 };
 
-export default withTheme(App);
+export default App;

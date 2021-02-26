@@ -48,26 +48,16 @@ const PageJWT = ({ location }: { location: Object }) => {
 
   const state = useStore();
 
-  const secretTextbox = (
-    <TextBox
-      value={state.secret}
-      placeholder="Base64Url encoded secret"
-      onChange={actions.secret}
-    />
-  );
-
   if (type === "encode") {
     return (
       <div>
-        <label>Algorithm</label>
-        <TextBox value="HS256" readOnly />
-
+        <label>Payload</label>
         <HeaderTextArea value={state.header} readOnly />
         <PayloadTextArea value={state.in_payload} onChange={actions.in_payload} autoFocus />
         <SignatureTextArea value={state.secret ? state.sig : ""} readOnly />
 
-        <label>Secret key</label>
-        {secretTextbox}
+        <label>Secret key (HS256; UTF-8)</label>
+        <TextBox value={state.secret} onChange={actions.secret} />
 
         {state.error ? (
           <p style={{ color: "red" }}>{state.error}</p>
@@ -75,7 +65,7 @@ const PageJWT = ({ location }: { location: Object }) => {
           <div>
             <span>Token</span>
             <CopyToClipboard from="jwt" />
-            <FullWidthTextBox
+            <TextArea
               id="jwt"
               invalid={state.error}
               value={state.out_token}
@@ -106,13 +96,6 @@ const PageJWT = ({ location }: { location: Object }) => {
         onChange={actions.in_token}
       />
       {state.error && <p style={{ color: "red" }}>{state.error}</p>}
-      {state.alg && (
-        <label>
-          Verify <b>{state.alg}</b> Signature{" "}
-          <span className="emoji">{state.valid ? "- ✔ Verified" : "- ❌ Not verified"}</span>
-        </label>
-      )}
-      {state.alg && secretTextbox}
 
       <label>Contents:</label>
       <TextArea readOnly={type === "decode"} html value={resultHTML} />

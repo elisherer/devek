@@ -4,10 +4,11 @@ import { useStore } from "./PageCrypto.store";
 import CryptoHash from "./CryptoHash";
 import CryptoCert from "./CryptoCert";
 import CryptoCipher from "./CryptoCipher";
+import CryptoSign from "./CryptoSign";
 import CryptoGenerate from "./CryptoGenerate";
 
-const pageRoutes = ["hash", "cipher", "generate", "cert"];
-const pages = [CryptoHash, CryptoCipher, CryptoGenerate, CryptoCert];
+const pageRoutes = ["hash", "cipher", "sign", "generate", "cert"];
+const pages = [CryptoHash, CryptoCipher, CryptoSign, CryptoGenerate, CryptoCert];
 
 const PageCrypto = ({ location }: { location: Object }) => {
   const pathSegments = location.pathname.substr(1).split("/");

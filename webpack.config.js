@@ -42,14 +42,14 @@ module.exports = {
     }
   },
   devServer: {
-    hot: true,
+    firewall: false,
     port: 8080,
     compress: true,
     historyApiFallback: true,
-    before: (app, server) => {
-      app.use(require("./api.mock"));
+    onBeforeSetupMiddleware: server => {
+      server.app.use(require("./api.mock"));
       // Be sure to pass the server argument from the arguments
-      app.use(webpackDevServerWaitpage(server, { theme: "material" }));
+      server.app.use(webpackDevServerWaitpage(server, { theme: "material" }));
     }
   },
   resolve: {
