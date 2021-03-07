@@ -10,15 +10,13 @@ const HtmlWebpackPlugin = require("html-webpack-plugin"),
   ReactRefreshWebpackPlugin = require("@pmmmwh/react-refresh-webpack-plugin"),
   ESLintPlugin = require("eslint-webpack-plugin");
 
-const mode = process.env.NODE_ENV || "development";
 const node_modules = /[\\/]node_modules[\\/]/;
-const PRODUCTION = mode === "production";
+const PRODUCTION = process.env.NODE_ENV === "production";
 const ANALYZE = process.env.ANALYZE;
 
 const outputPath = path.resolve(__dirname, PRODUCTION ? "dist" : "dist-dev");
 
 module.exports = {
-  mode,
   target: PRODUCTION ? "browserslist" : "web",
   bail: PRODUCTION,
   output: {
@@ -42,6 +40,7 @@ module.exports = {
     }
   },
   devServer: {
+    hot: true,
     firewall: false,
     port: 8080,
     compress: true,
