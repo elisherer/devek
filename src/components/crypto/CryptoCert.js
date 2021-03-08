@@ -44,11 +44,13 @@ const CryptoHash = ({
   pem,
   output,
   fingerprints,
+                      publicKey,
   dragging
 }: {
   pem: string,
   output: string,
   fingerprints: Object,
+  publicKey: string,
   dragging: boolean
 }) => (
   <div
@@ -80,6 +82,10 @@ const CryptoHash = ({
     <span>MD5:</span>
     <CopyToClipboard from="cert_md5_print" />
     <TextBox id="cert_md5_print" readOnly value={fingerprints?.md5 ?? ""} />
+
+    <h3>Public Key</h3>
+    <TextArea readOnly value={publicKey} />
+
   </div>
 );
 

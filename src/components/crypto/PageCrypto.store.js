@@ -338,7 +338,7 @@ const actionCreators = {
         }
       };
     } else {
-      const output = await prettyCert(cert);
+      const output = prettyCert(cert);
 
       const fingerprints = {
         md5: devek.arrayToHexString(MD5(cert.buffer)),
@@ -352,7 +352,7 @@ const actionCreators = {
 
       return {
         ...state,
-        cert: { ...state.cert, loaded: true, pem, output, fingerprints }
+        cert: { ...state.cert, loaded: true, pem, output, fingerprints, publicKey: cert.subjectPublicKeyInfo.pem }
       };
     }
   },

@@ -1,6 +1,6 @@
 import devek from "devek";
 import { ASN1 } from "./asn1";
-import { getECCurveNameFromPEM, pkcs1ToJWK } from "./crypto";
+import { getNamedCurveFromSEC1, pkcs1ToJWK } from "./crypto";
 
 const crypto = devek.crypto;
 
@@ -28,8 +28,8 @@ const importSignVerifyCryptoKey = (alg, hashAlg, input, usage) => {
         const jwk = pkcs1ToJWK(pem);
         return crypto.subtle.importKey("jwk", jwk, algorithm, true, [usage]);
       }
-      // try X.509 / PKCS#8
-      const namedCurve = getECCurveNameFromPEM(pem);
+      // try X.509 (for public) / PKCS#8 (for private)
+      const namedCurve = getNamedCurveFromSEC1(pem);
       if (namedCurve) algorithm.namedCurve = namedCurve;
       return crypto.subtle.importKey(usage === "verify" ? "spki" : "pkcs8", pem, algorithm, true, [
         usage

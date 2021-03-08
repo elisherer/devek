@@ -129,27 +129,36 @@ const parseExtension = (oid, ext) => {
   }
 };
 
-const parsePublicKey = (algorithm, publicKey) => {
-  switch (algorithm.children[0].oid) {
+const parsePublicKey = spki => {
+  let publicKey, pki = spki.children[1], algorithm = spki.children[0].children[0];
+
+  switch (algorithm.oid) {
     case "1.2.840.113549.1.1.1": {
       // rsaEncryption
-      const keyAsn = ASN1.parse(publicKey.value);
-      return {
+      const keyAsn = ASN1.parse(pki.value);
+      publicKey = {
         publicKey: `(${keyAsn.children[0].bitSize} bit)`,
         modulus: keyAsn.children[0].raw,
         exponent: keyAsn.value[1]
       };
+      break;
     }
     case "1.2.840.10045.2.1": {
       // ecPublicKey
-      const size = algorithm.value[1].match(/\d{3}/)[0];
-      return {
+      const size = spki.children[0].children[1].value.match(/\d{3}/)[0];
+      publicKey = {
         publicKey: `(${size} bit)`,
-        pub: publicKey.value,
-        asn1Oid: algorithm.value[1],
+        pub: pki.value,
+        asn1Oid: algorithm.value,
         nistCurve: `P-${size}`
       };
+      break;
     }
+  }
+  return {
+    algorithm: algorithm.value,
+    publicKey,
+    pem: devek.arrayToPEM(spki.raw, 'PUBLIC KEY')
   }
 };
 
@@ -207,13 +216,7 @@ export const parseCertificate = pem => {
         notAfter: validity.value[1]
       },
       subject: ASN1.toArray(subject.children),
-      subjectPublicKeyInfo: {
-        algorithm: subjectPublicKeyInfo.value[0][0],
-        publicKey: parsePublicKey(
-          subjectPublicKeyInfo.children[0],
-          subjectPublicKeyInfo.children[1]
-        )
-      },
+      subjectPublicKeyInfo: parsePublicKey(subjectPublicKeyInfo),
       issuerUniqueID: issuerUniqueID ? issuerUniqueID.value : undefined,
       subjectUniqueID: subjectUniqueID ? subjectUniqueID.value : undefined,
       extensions: extensions
@@ -233,6 +236,7 @@ export const parseCertificate = pem => {
       buffer
     };
   } catch (e) {
+    console.error(e);
     return { error: e.message };
   }
 };

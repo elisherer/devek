@@ -1,7 +1,7 @@
 import devek from "devek";
 import { ASN1, ASN1_Encode, ASN1_OID, ASN1_SEQUENCE } from "./asn1";
 
-export const getECCurveNameFromPEM = pem => {
+export const getNamedCurveFromSEC1 = pem => {
   try {
     const parsed = ASN1.parse(pem);
     // find first array in sequence (in public 1st, in private 2nd)
