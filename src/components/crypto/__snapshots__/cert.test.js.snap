@@ -109,8 +109,13 @@ Object {
   ],
   "subjectPublicKeyInfo": Object {
     "algorithm": "ecPublicKey",
+    "pem": "-----BEGIN PUBLIC KEY-----
+MBMGByqGSM49AgEGCCqGSM49AwEHA0IABMIyguFP7XRAQelxu7qT6ShiEsF4TLxt
+QgdEFejRbb18NQMJEe6zc2LGRvFxqsbFouaG/BgWBB1uBoaMrHwgkvM=
+-----END PUBLIC KEY-----
+",
     "publicKey": Object {
-      "asn1Oid": "X9_62_prime256v1",
+      "asn1Oid": "ecPublicKey",
       "nistCurve": "P-256",
       "pub": Array [
         4,
@@ -831,6 +836,21 @@ Object {
   ],
   "subjectPublicKeyInfo": Object {
     "algorithm": "rsaEncryption",
+    "pem": "-----BEGIN PUBLIC KEY-----
+MA0GCSqGSIb3DQEBAQUAA4ICDwAwggIKAoICAQC3doBPCwtOlHDBhFDBdEM5b8bQ
+gCJnAsiz0qdFWxkTuWTG6lXA6zThRUUqVCnb0pNVQt9o96lJ+DT/htKfxQTCIIMq
+Vi5bgXTD2ZBJRBOOWV4avEG9J0LRKVzxmN+s4DQvcCKSGZ6dNelRFhtHi6xIuVqv
+p6ldHdE1MlH+osP1A1PeFJ4wuaLzzatO3rI/f+UaAuIb0y4sGdxHODcP/tuHCYxi
+55kAV+5BxntjJNO1FNFINvjNH1hC+Kxyjn7bGgTxaGqo9AplXe653BEQsPhOdh12
+E3hR5FRuqqGzcVpDQo/Q/xtaaV/ZQeqck4gdV0Nn8HpOuoq+Ssizolyi0cMyyQzh
+ERHFtDy4Zs5QM51vica+hrMpJQhEPda7ZVXLewTBSC2XowdAtbFmILnvk6/AkbxF
+OWx7ESA3SiNixv9Slh5F0g9Ste8C4WgasOZwAt2a3gKYxM//uVvyZEBzi2dg5Wjv
+7yfo/fnSFrRS3asi153KaHMP4CKyNyQ7ZCDXHsAdBrbBXUvpopAHfgxNXNh6mSW8
+X10NFgF+yrIlnvOL67juvv4y5GLs9Ee/T4GriCi0KBwqBp1EcGIVO8JuFlMEQmyB
+IUmiX44Smv+zl0+ptqQWvdJDy+hwieBd6tbBUr+hhzlZCrXU9EKIJDrjZzSXN1JL
+RK1E3QmLBCg2M/4pCQIDAQAB
+-----END PUBLIC KEY-----
+",
     "publicKey": Object {
       "exponent": 65537,
       "modulus": Array [
@@ -1553,6 +1573,16 @@ Object {
   ],
   "subjectPublicKeyInfo": Object {
     "algorithm": "rsaEncryption",
+    "pem": "-----BEGIN PUBLIC KEY-----
+MA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQC0z9FeMynsC8+udvX+LciZxnh5
+uRj4C9S6tNeeAlIGCfQYk0zUcNFCoCkTknNQd/YEiawDLNbxBqutbMDZ1aarys1a
+0lYmUeVLCIqvzBkPJTSQsCopQQ9V8WuT252zzNzs68dVGNdCJd5JNRQykpwexmnj
+PPv0mvj7i8XgG379TyW6P+WWV5okeUkXJ9eJS2ouDYdR2SM9BoVW+FgxDu6BmXho
+zW5EfsnajFp7HL8kQClI0QOc79yuKl3492rH6bzFsFn2lfwWy9ic7cP8EpCTeFp1
+tFaD+vxBhPZkeTQ1HKx6hQ5zeHIB5ySJJZ7af2W8r4eTGYzbdRW24DDHCPhZAgMB
+AAE=
+-----END PUBLIC KEY-----
+",
     "publicKey": Object {
       "exponent": 65537,
       "modulus": Array [
