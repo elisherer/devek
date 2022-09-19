@@ -110,8 +110,8 @@ Object {
   "subjectPublicKeyInfo": Object {
     "algorithm": "ecPublicKey",
     "pem": "-----BEGIN PUBLIC KEY-----
-MBMGByqGSM49AgEGCCqGSM49AwEHA0IABMIyguFP7XRAQelxu7qT6ShiEsF4TLxt
-QgdEFejRbb18NQMJEe6zc2LGRvFxqsbFouaG/BgWBB1uBoaMrHwgkvM=
+MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEwjKC4U/tdEBB6XG7upPpKGISwXhM
+vG1CB0QV6NFtvXw1AwkR7rNzYsZG8XGqxsWi5ob8GBYEHW4GhoysfCCS8w==
 -----END PUBLIC KEY-----
 ",
     "publicKey": Object {
