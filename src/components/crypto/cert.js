@@ -130,7 +130,9 @@ const parseExtension = (oid, ext) => {
 };
 
 const parsePublicKey = spki => {
-  let publicKey, pki = spki.children[1], algorithm = spki.children[0].children[0];
+  let publicKey,
+    pki = spki.children[1],
+    algorithm = spki.children[0].children[0];
 
   switch (algorithm.oid) {
     case "1.2.840.113549.1.1.1": {
@@ -158,8 +160,8 @@ const parsePublicKey = spki => {
   return {
     algorithm: algorithm.value,
     publicKey,
-    pem: devek.arrayToPEM(spki.raw, 'PUBLIC KEY')
-  }
+    pem: devek.arrayToPEM(devek.concatUint8Array(spki.header, spki.raw), "PUBLIC KEY")
+  };
 };
 
 /**
@@ -184,7 +186,6 @@ export const parseCertificate = pem => {
       validity = tbsCert.children[++idx],
       subject = tbsCert.children[++idx],
       subjectPublicKeyInfo = tbsCert.children[++idx];
-
     let issuerUniqueID = null,
       subjectUniqueID = null,
       extensions = null;

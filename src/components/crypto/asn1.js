@@ -111,6 +111,7 @@ function parse(buffer, offset = 0) {
       tagName,
       tagNumber,
       constructed,
+      header: buffer.slice(0, headerLength),
       headerLength,
       raw: data,
       value: data
@@ -124,6 +125,7 @@ function parse(buffer, offset = 0) {
 
   const info = {
     offset,
+    header: buffer.slice(0, headerLength),
     raw: data,
     value: data,
     headerLength
