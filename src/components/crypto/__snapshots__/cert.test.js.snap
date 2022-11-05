@@ -109,6 +109,7 @@ Object {
   ],
   "subjectPublicKeyInfo": Object {
     "algorithm": "ecPublicKey",
+    "oid": "1.2.840.10045.2.1",
     "pem": "-----BEGIN PUBLIC KEY-----
 MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEwjKC4U/tdEBB6XG7upPpKGISwXhM
 vG1CB0QV6NFtvXw1AwkR7rNzYsZG8XGqxsWi5ob8GBYEHW4GhoysfCCS8w==
@@ -836,6 +837,7 @@ Object {
   ],
   "subjectPublicKeyInfo": Object {
     "algorithm": "rsaEncryption",
+    "oid": "1.2.840.113549.1.1.1",
     "pem": "-----BEGIN PUBLIC KEY-----
 MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAt3aATwsLTpRwwYRQwXRD
 OW/G0IAiZwLIs9KnRVsZE7lkxupVwOs04UVFKlQp29KTVULfaPepSfg0/4bSn8UE
@@ -1573,6 +1575,7 @@ Object {
   ],
   "subjectPublicKeyInfo": Object {
     "algorithm": "rsaEncryption",
+    "oid": "1.2.840.113549.1.1.1",
     "pem": "-----BEGIN PUBLIC KEY-----
 MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAtM/RXjMp7AvPrnb1/i3I
 mcZ4ebkY+AvUurTXngJSBgn0GJNM1HDRQqApE5JzUHf2BImsAyzW8QarrWzA2dWm

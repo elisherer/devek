@@ -25,6 +25,9 @@
     "email": "eli.sherer@gmail.com"
   },
   "license": "MIT",
+  "jest": {
+
+  },
   "dependencies": {
     "@mdi/js": "5.8.55",
     "@mdi/react": "1.4.0",

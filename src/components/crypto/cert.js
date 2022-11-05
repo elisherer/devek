@@ -151,7 +151,7 @@ const parsePublicKey = spki => {
       publicKey = {
         publicKey: `(${size} bit)`,
         pub: pki.value,
-        asn1Oid: algorithm.oid,
+        asn1Oid: algorithm.value,
         nistCurve: `P-${size}`
       };
       break;
