@@ -6,9 +6,9 @@ const certificateTrimmer = /-----\s?[^-]+-----|\r|\n/g;
 const pemToUint8Array = buffer =>
   devek.base64ToUint8Array((buffer + "").replace(certificateTrimmer, "").trim());
 
-const parsePEM = buffer => {
+const parsePEM = (buffer, hideRaw = false) => {
   buffer = pemToUint8Array(buffer);
-  return { buffer, info: parse(buffer) };
+  return { buffer, info: parse(buffer, 0, hideRaw) };
 };
 
 const toDate = buffer => {
@@ -36,7 +36,7 @@ const toArray = children =>
     return a;
   }, []);
 
-const tagClasses = ["UNIVERSAL", "APPLICATION", "CONTEXT", "PRIVATE"];
+const tagClasses = ["UNIVERSAL", "APPLICATION", "CONTEXT-SPECIFIC", "PRIVATE"];
 
 const tagTypes = [
   [
@@ -74,14 +74,14 @@ const tagTypes = [
   ]
 ];
 
-function parse(buffer, offset = 0) {
+function parse(buffer, offset = 0, hideRaw = false) {
   const octet1 = buffer[0];
   const octet2 = buffer[1];
 
   const tagClass = (octet1 & 0b11000000) >> 6;
   const tagClassName = tagClasses[tagClass];
   const tagNumber = octet1 & 0b00011111;
-  const tagName = tagTypes[tagClass] ? tagTypes[tagClass][tagNumber] : "N/A";
+  const tagName = tagTypes[tagClass] ? tagTypes[tagClass][tagNumber] : `[${tagNumber}]`;
   const constructed = !!(octet1 & 0b00100000);
 
   const lengthBytes = octet2 & 0b01111111,
@@ -111,25 +111,29 @@ function parse(buffer, offset = 0) {
       tagName,
       tagNumber,
       constructed,
-      header: buffer.slice(0, headerLength),
+      header: hideRaw ? undefined : buffer.slice(0, headerLength),
       headerLength,
-      raw: data,
+      raw: hideRaw ? undefined : data,
+      rawLength: data.length,
       value: data
     };
   }
 
   let children;
   if (constructed) {
-    children = parseChildren(data, offset + headerLength);
+    children = parseChildren(data, offset + headerLength, hideRaw);
   }
 
   const info = {
     offset,
-    header: buffer.slice(0, headerLength),
-    raw: data,
     value: data,
+    rawLength: data.length,
     headerLength
   };
+  if (!hideRaw) {
+    info.header = buffer.slice(0, headerLength);
+    info.raw = data;
+  }
 
   if (tagClass === 0) {
     // UNIVERSAL
@@ -146,18 +150,41 @@ function parse(buffer, offset = 0) {
           // parse integer (only if 32bit or lower)
           info.value = data.reduce((a, c) => a * 0x100 + c, 0);
         } else {
-          info.value = [...data];
+          if (hideRaw) {
+            info.value = "0x" + devek.arrayToHexString(data);
+          } else {
+            info.value = [...data];
+          }
         }
         break;
       case 3: // BIT STRING
         info.numberOfUnusedBits = data[0];
         data = data.slice(1);
         info.bitSize = data.length * 8 - info.numberOfUnusedBits;
-        info.value = [...data];
+        if (hideRaw) {
+          info.value = "0x" + devek.arrayToHexString(data);
+        } else {
+          info.value = [...data];
+        }
         break;
-      case 4: // OCTET STRING
-        info.value = [...data];
+      case 4: {
+        // OCTET STRING
+        let subData = null;
+        try {
+          subData = parse(data, 0, hideRaw);
+        } catch (ex) {
+          console.error(ex);
+        }
+        if (subData) {
+          info.children = [subData];
+        }
+        if (hideRaw) {
+          info.value = "0x" + devek.arrayToHexString(data);
+        } else {
+          info.value = [...data];
+        }
         break;
+      }
       //case 5: //NULL
       case 6: //OBJECT IDENTIFIER
         info.value = OID.decode(data);
@@ -174,7 +201,11 @@ function parse(buffer, offset = 0) {
         break;
       case 16: //SEQUENCE
       case 17: //SET
-        info.value = children.map(x => x.value);
+        if (!hideRaw) {
+          info.value = children.map(x => x.value);
+        } else {
+          info.value = null;
+        }
         break;
       case 18: // NumericString
       case 19: // PrintableString
@@ -199,10 +230,21 @@ function parse(buffer, offset = 0) {
         info.value = devek.arrayToUnicode(data);
         break;
       default:
-        info.value = null;
+        if (tagNumber > 30) {
+          throw new Error(`Encountered an invalid tag (0x${tagNumber.toString(2)}) while parsing`);
+        } else {
+          info.value = null;
+        }
     }
   }
-
+  if (tagClass === 2) {
+    // CONTEXT
+    if (tagNumber === 3) {
+      if (hideRaw) {
+        delete info.value;
+      }
+    }
+  }
   return {
     ...info,
     tagClassName,
@@ -214,14 +256,14 @@ function parse(buffer, offset = 0) {
   };
 }
 
-function parseChildren(buffer, offset) {
+function parseChildren(buffer, offset, hideRaw) {
   let pos = 0,
     lastPos;
   const parts = [];
   do {
     lastPos = pos;
-    const info = parse(buffer.slice(pos), offset + pos);
-    pos += info.raw.length + info.headerLength;
+    const info = parse(buffer.slice(pos), offset + pos, hideRaw);
+    pos += info.rawLength + info.headerLength;
     parts.push(info);
   } while (pos < buffer.length && pos > lastPos);
   return parts;

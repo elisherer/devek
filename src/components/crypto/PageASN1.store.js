@@ -1,0 +1,38 @@
+import createStore from "helpers/createStore";
+
+const actionCreators = {
+  set: e => state => ({ ...state, input: e.target.innerText })
+};
+
+export const initialState = {
+  input: `-----BEGIN PRIVATE KEY-----
+MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDL6qeLOkAgHWtM
+c1tuquU7PNZbC/My/EfO80DMh7o+CyOWsbKBMWdQnQytzRtXasaEj0nprfT6Z6Yv
+i6dFVB3XY5AkUklumk8do9VebDN3advf7n3z6F9VVfREvNhTyoWl274ShJVT7ZLm
+zmVDG5Dn8ibEI55ZcK1PMXDWOL2m4I7ONwQzyTd5pWqXpW3MVumnX3OWSt5pAwbx
+ge/D0RJ+i/ddcj9dZ4bf74OaAhxuEhZuKe6Jv3QRGHFbNxIfxreksVCxE2cETqcr
+v2N0Glf9mj4AF5UisLPbwc6nI8L/0UGdWLJOCyIpur0H7V/rYNyUXHzA1CpEXCd/
+ZOOQ3SGPAgMBAAECggEAK7KRTMiizT8Aq1VdFo4QqW0UElaxOw/M45BFJo8/XeRN
+MBHMStsnZKMDAIuffFApUmbSU/0vLinf9vhaVAT+kBWJ4f6wNb9jjNp68s0FCmXo
+9EfLPeVh6IuO2NwPD4WqtiwswxMeXOngPQ2lrYfOuaWuoQFxAYGf4gSaRY3LNmMu
+fLKiPSABKv1675v488TLJ6SzyAASkTqLEWr0cJYcaNR13l/B/782xS7sDay/6mqX
+maEZE9poxK8ZogpwlPSJuD6MPlOzY4wMK+Iz1KYczbvpD3Kxd9JkWcnz9C5x4hLe
+I1MRZQJKes9yn+ee/BVIchVVhTxqPNpE2ff+eAKKIQKBgQD3N3heADlhWYcZYroq
+r+rcpWnnhbNqSbFHsYfqNBofqEmOUKsR59QU7uEKyLsexJ32R7dvQYXk6rAsolNC
+2ZgmmskPk015XZcC6kkMsH7Hl/B+8ouPUs8QGNdCjQi5eBmfhNaOJTzrD2P9zsP6
+JyqZ9QtJF68gKod8gNYPllfn6wKBgQDTKVqO35joqfMwqtcgs1JU9yuo2lizdeup
+mGJTzl+5w8vgW6QZasM7B8ZWdtmEtprzqzXbSClJwLHxJG+u6VekILlvU+BKs+zN
+BAaRQwaAgTYgjNvYtJ0+VcuZoAEdf8GLq9hP5/2w/pi1LEm38hHd3f2TttEyw33e
+nOk7qWwH7QKBgQCiGu+ExCTcHvalwMVOhHg/IwBk3pkdUyE6X8E949hVdeZ1uZPT
+c+7vowxSI/n/XPIvsisoexCvYO0Q94gdR82rUsgQvIiK0sHZGYO5HGqluo3q0GSP
+IL/CUGemrhBQfd5faZ2/K8/cWwU4QsLjX5dhyPsTfMJLF1gsXdb/9ZfC7QKBgDae
+o8YBIFROYZFdH3hd6hYAOVLb58XD4sljmUuEPk6Wzs2h5riMXSOPx0XmSC2D7mDJ
+EI1ABS4GogB2JE1iHkFeFZkuYP3xvHbra6d3Zt8mjRGuXc+YKHRPTPLX6HHw8edm
+8/T3VS/LK0Txx7/E5co1+bmTuFkhKBXFEK9WC5OhAoGBANQ4HA26/Er4R3OlwXVV
+bYHDs3eIshV4VnXSUpzkPeHILQGUK+eBF5aF7WsRvvEKKslnsXfWh3sW15lQh0bY
+5kRQ5FNBHBWSYimpyevFonNujK0WDxJzInm6kWMkrg7Jzvwuab5BZpSaiZd2unv8
+BGlZqnbbmw33qAzt5tFOeNa2
+-----END PRIVATE KEY-----`
+};
+
+export const { actions, useStore } = createStore(actionCreators, initialState, "asn1");

@@ -177,6 +177,8 @@ export const formatOutput = async (outputKey, format) => {
         privateSSH = "";
       if (format === "SSH" && !SSH_SUPPORT[outputKey.publicKey.algorithm.name]) {
         format = "JWK"; // switch to default
+      } else if (format === "PEM (PKCS#1)" && outputKey.publicKey.algorithm.name[0] !== "R") {
+        format = "JWK";
       }
       switch (format) {
         case "JWK":

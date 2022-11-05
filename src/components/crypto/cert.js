@@ -151,13 +151,14 @@ const parsePublicKey = spki => {
       publicKey = {
         publicKey: `(${size} bit)`,
         pub: pki.value,
-        asn1Oid: algorithm.value,
+        asn1Oid: algorithm.oid,
         nistCurve: `P-${size}`
       };
       break;
     }
   }
   return {
+    oid: algorithm.oid,
     algorithm: algorithm.value,
     publicKey,
     pem: devek.arrayToPEM(devek.concatUint8Array(spki.header, spki.raw), "PUBLIC KEY")
@@ -244,7 +245,7 @@ export const parseCertificate = pem => {
 
 export const prettyCert = cert => {
   const publicKey =
-    cert.subjectPublicKeyInfo.algorithm === "rsaEncryption"
+    cert.subjectPublicKeyInfo.oid === "1.2.840.113549.1.1.1" // rsaEncryption
       ? `
                 Public-Key: ${cert.subjectPublicKeyInfo.publicKey.publicKey}
                 Modulus:

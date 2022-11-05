@@ -44,6 +44,9 @@ import {
 const PageCryptoLazy = lazy(() =>
   import(/* webpackChunkName: "crypto" */ "./components/crypto/PageCrypto")
 );
+const PageASN1Lazy = lazy(() =>
+  import(/* webpackChunkName: "crypto" */ "./components/crypto/PageASN1")
+);
 const PageDataLazy = lazy(() =>
   import(/* webpackChunkName: "data" */ "./components/data/PageData")
 );
@@ -301,6 +304,14 @@ export const siteMap = {
         description: "Parse PEM (X.509 / ASN.1) certificates"
       }
     }
+  },
+  "/asn1": {
+    component: PageASN1Lazy,
+    keyword: "asn1",
+    title: "ASN.1",
+    header: "ASN.1 Tools",
+    description: "Decode",
+    icon: mdiCodeJson
   },
   "/diff": {
     component: PageDiff,
