@@ -4,6 +4,7 @@ import { useStore, actions } from "./PageTime.store";
 import Now from "./Now";
 import Stopwatch from "./Stopwatch";
 import styled from "styled-components";
+import getHebrewDate from "./hebrew";
 
 const ButtonsWrapper = styled.div`
   margin-bottom: 30px;
@@ -70,8 +71,12 @@ const PageTime = ({ location }: { location: Object }) => {
       <TextBox id="time_unix" value={unix} readOnly />
 
       <span>RFC 2822:</span>
-      <CopyToClipboard from="time_unix" />
-      <TextBox id="time_unix" value={rfc} readOnly />
+      <CopyToClipboard from="time_rfc" />
+      <TextBox id="time_rfc" value={rfc} readOnly />
+
+      <span>Hebrew Calendar:</span>
+      <CopyToClipboard from="time_hebrew" />
+      <TextBox id="time_hebrew" value={getHebrewDate(parsed)} readOnly />
     </div>
   );
 };

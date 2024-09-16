@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "analyze": "cross-env ANALYZE=true npm run build",
-    "build": "webpack --node-env=production",
-    "start": "webpack serve --node-env=development",
+    "build": "NODE_OPTIONS=--openssl-legacy-provider webpack --node-env=production",
+    "start": "NODE_OPTIONS=--openssl-legacy-provider webpack serve --node-env=development",
     "test": "jest"
   },
   "repository": {

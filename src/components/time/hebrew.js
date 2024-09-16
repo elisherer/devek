@@ -14,7 +14,7 @@ const HEBREW_MONTHS = [
 	"אלול"
 ];
 const HEBREW_DAYS = [
-	"'א'",
+	"א'",
 	"ב'",
 	"ג'",
 	"ד'",
@@ -195,9 +195,10 @@ function convertToHebrewDate(date) {
 }
 
 function hebrewYearInGematria(hebYear) {
-	let tmp,
-		yearStr = "ה'";
-	hebYear -= 5000;
+	let tmp;
+	const thousands = Math.floor(hebYear / 1000);
+  let yearStr = GEMATRIA[thousands] ? GEMATRIA[thousands] + "'" : "";
+	hebYear -= thousands * 1000;
 	while (hebYear) {
 		if (hebYear >= 100) {
 			tmp = Math.min(4, ~~(hebYear / 100));
