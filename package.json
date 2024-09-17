@@ -25,12 +25,11 @@
     "email": "eli.sherer@gmail.com"
   },
   "license": "MIT",
-  "jest": {
-
-  },
+  "jest": {},
   "dependencies": {
     "@mdi/js": "5.8.55",
     "@mdi/react": "1.4.0",
+    "caniuse-lite": "1.0.30001660",
     "core-js": "3.8.2",
     "react": "17.0.1",
     "react-dom": "17.0.1",
