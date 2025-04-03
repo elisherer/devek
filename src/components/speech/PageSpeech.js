@@ -1,11 +1,12 @@
-import { useCallback, useMemo, useEffect } from "react";
+import { useCallback, useMemo, useEffect, useState } from "react";
 import { TextArea, ListBox } from "../_lib";
 import { useStore, actions } from "./PageSpeech.store";
-import { speak, synth } from "./speech";
+import { recordSpeech, speak, synth } from "./speech";
 import styled from "styled-components";
 
-import { mdiPlay, mdiPause, mdiStop } from "@mdi/js";
+import { mdiPlay, mdiPause, mdiStop, mdiRecord, mdiUndo } from "@mdi/js";
 import Icon from "@mdi/react";
+import { supportedAudios } from "./record";
 
 const RangeWrapper = styled.label`
   display: flex !important;
@@ -42,6 +43,8 @@ const resume = () => {
 
 const PageSpeech = () => {
   const { input, pitch, rate, voices, voice, speaking, paused } = useStore();
+  const [recordedBlobUrl, setRecordedBlobUrl] = useState("");
+  const [mimeType, setMimeType] = useState("audio/mp4");
 
   useEffect(() => {
     actions.voices();
@@ -67,6 +70,23 @@ const PageSpeech = () => {
       name: `${voice.name} (${voice.lang})${voice.default ? " *" : ""}`
     }));
   }, [voices]);
+
+  const record = () => {
+    setRecordedBlobUrl("");
+    recordSpeech(
+      {
+        input,
+        pitch,
+        rate,
+        voice: voices.find(v => v.name === voice)
+      },
+      mimeType
+    ).then(url => {
+      setRecordedBlobUrl(url);
+      actions.stop();
+    });
+    actions.speak();
+  };
 
   return (
     <div>
@@ -94,45 +114,76 @@ const PageSpeech = () => {
         />
       </label>
 
-      <RangeWrapper>
-        <span>Pitch ({pitch})</span>
-        <input
-          disabled={speaking}
-          type="range"
-          min="0"
-          max="2"
-          step="0.1"
-          value={pitch}
-          onChange={actions.pitch}
-        />
-      </RangeWrapper>
+      <div style={{ position: "relative" }}>
+        <RangeWrapper>
+          <span>Pitch ({pitch})</span>
+          <input
+            disabled={speaking}
+            type="range"
+            min="0"
+            max="2"
+            step="0.1"
+            value={pitch}
+            onChange={actions.pitch}
+          />
+        </RangeWrapper>
 
-      <RangeWrapper>
-        <span>Rate ({rate})</span>
-        <input
-          disabled={speaking}
-          type="range"
-          min="0.5"
-          max="2"
-          step="0.1"
-          value={rate}
-          onChange={actions.rate}
-        />
-      </RangeWrapper>
+        <RangeWrapper>
+          <span>Rate ({rate})</span>
+          <input
+            disabled={speaking}
+            type="range"
+            min="0.5"
+            max="2"
+            step="0.1"
+            value={rate}
+            onChange={actions.rate}
+          />
+        </RangeWrapper>
+        <button
+          style={{ position: "absolute", top: 0, right: 0 }}
+          className="icon"
+          onClick={actions.reset}
+          disabled={(rate === 1) & (pitch === 1)}
+        >
+          <Icon path={mdiUndo} />
+        </button>
+      </div>
 
-      <div>
+      <div style={{ display: "flex", gap: "4px" }}>
         <button className="icon" onClick={speaking ? resume : play} disabled={speaking && !paused}>
           <Icon path={mdiPlay} />
         </button>
-        &nbsp;
         <button className="icon" onClick={pause} disabled={!speaking || paused}>
           <Icon path={mdiPause} />
         </button>
-        &nbsp;
         <button className="icon" onClick={stop} disabled={!speaking}>
           <Icon path={mdiStop} />
         </button>
       </div>
+
+      <br />
+      <h4>Record</h4>
+      <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+        <button className="icon" onClick={record} disabled={speaking}>
+          <Icon path={mdiRecord} />
+        </button>
+        <div>
+          <label>Select a mime-type (output format):</label>
+          <ListBox
+            size={1}
+            value={mimeType}
+            onChange={e => setMimeType(e.target.value)}
+            options={supportedAudios}
+          />
+        </div>
+      </div>
+      {recordedBlobUrl && (
+        <>
+          <br />
+          <audio controls src={recordedBlobUrl}></audio>
+        </>
+      )}
     </div>
   );
 };
