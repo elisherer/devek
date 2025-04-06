@@ -1,4 +1,4 @@
-import devek from "devek";
+import devek from "@/devek";
 const crypto = devek.crypto;
 
 const hmacSha256 = (str, key) =>
@@ -8,10 +8,10 @@ const hmacSha256 = (str, key) =>
       devek.stringToUint8Array(key),
       {
         name: "HMAC",
-        hash: "SHA-256"
+        hash: "SHA-256",
       },
       true,
-      ["sign"]
+      ["sign"],
     )
     .then(cryptoKey => crypto.subtle.sign("HMAC", cryptoKey, devek.stringToUint8Array(str)))
     .then(buffer => new Uint8Array(buffer));
@@ -22,7 +22,7 @@ const base64UrlDecode = b64uval => {
     return devek.arrayToUTF8(devek.base64UrlToUint8Array(b64uval));
   } catch (e) {
     return {
-      error: "Bad Base64Url value"
+      error: "Bad Base64Url value",
     };
   }
 };
@@ -55,7 +55,7 @@ const encodeAsync = async (alg, payload, secret) => {
       payload: JSON.stringify(JSON.parse(payload), null, 2),
       header: JSON.stringify(header, null, 2),
       sig,
-      error: false
+      error: false,
     };
   } catch (e) {
     return { error: e.message };
@@ -68,11 +68,11 @@ const parseAndPrettify = input => {
     const obj = JSON.parse(input);
     return {
       pretty: JSON.stringify(obj, null, 2),
-      obj
+      obj,
     };
   } catch (e) {
     return {
-      pretty: input
+      pretty: input,
     };
   }
 };
@@ -84,7 +84,7 @@ const decodeAsync = async (token, secret) => {
     payload: "",
     sig: "",
     valid: false,
-    error: false
+    error: false,
   };
   try {
     const parts = token.split(".");

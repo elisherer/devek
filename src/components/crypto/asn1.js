@@ -1,10 +1,9 @@
-import devek from "devek";
+import devek from "@/devek";
 const fieldNames = require("./fieldNames");
 import OID from "./OID";
 const certificateTrimmer = /-----\s?[^-]+-----|\r|\n/g;
 
-const pemToUint8Array = buffer =>
-  devek.base64ToUint8Array((buffer + "").replace(certificateTrimmer, "").trim());
+const pemToUint8Array = buffer => devek.base64ToUint8Array((buffer + "").replace(certificateTrimmer, "").trim());
 
 const parsePEM = (buffer, hideRaw = false) => {
   buffer = pemToUint8Array(buffer);
@@ -70,8 +69,8 @@ const tagTypes = [
     "GeneralString",
     "UniversalString",
     "CHARACTER STRING",
-    "BMPString"
-  ]
+    "BMPString",
+  ],
 ];
 
 function parse(buffer, offset = 0, hideRaw = false) {
@@ -115,7 +114,7 @@ function parse(buffer, offset = 0, hideRaw = false) {
       headerLength,
       raw: hideRaw ? undefined : data,
       rawLength: data.length,
-      value: data
+      value: data,
     };
   }
 
@@ -128,7 +127,7 @@ function parse(buffer, offset = 0, hideRaw = false) {
     offset,
     value: data,
     rawLength: data.length,
-    headerLength
+    headerLength,
   };
   if (!hideRaw) {
     info.header = buffer.slice(0, headerLength);
@@ -252,7 +251,7 @@ function parse(buffer, offset = 0, hideRaw = false) {
     tagName,
     tagNumber,
     constructed,
-    children
+    children,
   };
 }
 
@@ -337,7 +336,7 @@ const ASN1 = {
   toDictionary,
   BIT_STRING: 0x03,
   OCTET_STRING: 0x04,
-  SEQUENCE: 0x10
+  SEQUENCE: 0x10,
 };
 
 window.ASN1 = ASN1;
@@ -351,6 +350,6 @@ export {
   ASN1_NULL,
   ASN1_OID,
   ASN1_SEQUENCE,
-  ASN1_UTF8STRING
+  ASN1_UTF8STRING,
 };
 //exports.parseCertificate = parseCertificate;

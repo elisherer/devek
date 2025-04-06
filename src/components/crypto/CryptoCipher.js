@@ -1,5 +1,5 @@
 import { Checkbox, CopyToClipboard, Radio, TextArea, TextBox } from "../_lib";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import { actions } from "./PageCrypto.store";
 
 import styled from "styled-components";

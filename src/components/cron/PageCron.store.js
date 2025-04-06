@@ -1,15 +1,15 @@
 import Cron from "./cron";
-import createStore from "helpers/createStore";
+import createStore from "@/helpers/createStore";
 
 const actionCreators = {
   mode: mode => state => ({ ...state, mode }),
   exp: e => state => ({
     ...state,
-    [state.mode]: { ...state[state.mode], exp: e.target.value }
+    [state.mode]: { ...state[state.mode], exp: e.target.value },
   }),
   tab: e => state => ({
     ...state,
-    [state.mode]: { ...state[state.mode], tab: e.target.dataset.tab }
+    [state.mode]: { ...state[state.mode], tab: e.target.dataset.tab },
   }),
   parse: () => state => {
     let parsed = null,
@@ -32,9 +32,9 @@ const actionCreators = {
                 gen[part] = { ...gen[part], ...parsed[part] };
                 return gen;
               },
-              { ...state[state.mode].gen }
-            )
-      }
+              { ...state[state.mode].gen },
+            ),
+      },
     };
   },
   type: e => state => ({
@@ -45,10 +45,10 @@ const actionCreators = {
         ...state[state.mode].gen,
         [state[state.mode].tab]: {
           ...state[state.mode].gen[state[state.mode].tab],
-          type: e.target.dataset.type
-        }
-      }
-    }
+          type: e.target.dataset.type,
+        },
+      },
+    },
   }),
   args: e => state => ({
     ...state,
@@ -59,10 +59,10 @@ const actionCreators = {
         [state[state.mode].tab]: {
           ...state[state.mode].gen[state[state.mode].tab],
           type: e.target.dataset.type,
-          [e.target.dataset.type]: e.target.value
-        }
-      }
-    }
+          [e.target.dataset.type]: e.target.value,
+        },
+      },
+    },
   }),
   arg0: e => state => ({
     ...state,
@@ -74,11 +74,11 @@ const actionCreators = {
           ...state[state.mode].gen[state[state.mode].tab],
           type: e.target.dataset.type,
           [e.target.dataset.type]: [parseInt(e.target.value, 10)].concat(
-            state[state.mode].gen[state[state.mode].tab][e.target.dataset.type].slice(1)
-          )
-        }
-      }
-    }
+            state[state.mode].gen[state[state.mode].tab][e.target.dataset.type].slice(1),
+          ),
+        },
+      },
+    },
   }),
   arg1: e => state => ({
     ...state,
@@ -89,15 +89,13 @@ const actionCreators = {
         [state[state.mode].tab]: {
           ...state[state.mode].gen[state[state.mode].tab],
           type: e.target.dataset.type,
-          [e.target.dataset.type]: state[state.mode].gen[state[state.mode].tab][
-            e.target.dataset.type
-          ]
+          [e.target.dataset.type]: state[state.mode].gen[state[state.mode].tab][e.target.dataset.type]
             .slice(0, -1)
-            .concat([parseInt(e.target.value, 10)])
-        }
-      }
-    }
-  })
+            .concat([parseInt(e.target.value, 10)]),
+        },
+      },
+    },
+  }),
 };
 
 const now = new Date();
@@ -113,19 +111,19 @@ const initState = mode => ({
             type: ",",
             "/": [0, 1],
             "-": [0, 0],
-            ",": [0]
+            ",": [0],
           },
     minute: {
       type: ",",
       "/": [0, 1],
       "-": [0, 0],
-      ",": [0]
+      ",": [0],
     },
     hour: {
       type: ",",
       "/": [0, 1],
       "-": [0, 0],
-      ",": [0]
+      ",": [0],
     },
     day:
       mode === "crontab"
@@ -134,7 +132,7 @@ const initState = mode => ({
             "m/": [1, 1],
             "m,": [1],
             "w/": [1, 0],
-            "w,": [0]
+            "w,": [0],
           }
         : {
             type: "*",
@@ -145,26 +143,26 @@ const initState = mode => ({
             "w/": [1, 1],
             "w,": [1],
             wL: [1],
-            "w#": [1, 1]
+            "w#": [1, 1],
           },
     month: {
       type: "*",
       "/": [1, 1],
       "-": [1, 1],
-      ",": [1]
+      ",": [1],
     },
     year: {
       type: "*",
       "/": [now.getFullYear(), 1],
       "-": [now.getFullYear(), now.getFullYear()],
-      ",": [now.getFullYear()]
-    }
-  }
+      ",": [now.getFullYear()],
+    },
+  },
 });
 
 const initialState = {
   crontab: initState("crontab"),
-  quartz: initState("quartz")
+  quartz: initState("quartz"),
 };
 
 export const { actions, useStore } = createStore(actionCreators, initialState, "cron");

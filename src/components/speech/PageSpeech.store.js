@@ -1,4 +1,4 @@
-import createStore from "helpers/createStore";
+import createStore from "@/helpers/createStore";
 import { getVoices } from "./speech";
 
 const actionCreators = {
@@ -15,7 +15,7 @@ const actionCreators = {
   speak: () => state => ({ ...state, speaking: true, paused: false }),
   pause: () => state => ({ ...state, paused: true }),
   resume: () => state => ({ ...state, paused: false }),
-  stop: () => state => ({ ...state, speaking: false })
+  stop: () => state => ({ ...state, speaking: false }),
 };
 
 const initialState = {
@@ -25,7 +25,7 @@ const initialState = {
   voices: [],
   voice: "",
   speaking: false,
-  paused: false
+  paused: false,
 };
 
 export const { actions, useStore } = createStore(actionCreators, initialState, "speech");

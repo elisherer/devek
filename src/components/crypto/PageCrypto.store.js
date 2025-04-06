@@ -1,6 +1,6 @@
-import devek from "devek";
+import devek from "@/devek";
 import MD5 from "./md5";
-import createStore from "helpers/createStore";
+import createStore from "@/helpers/createStore";
 import { prettyCert, parseCertificate } from "./cert";
 import { cipherEncrypt, cipherDecrypt } from "./cipher";
 import { formatOutput, generate } from "./generate";
@@ -22,67 +22,67 @@ const actionCreators = {
     actions.hash(newState.hash);
     return newState;
   },
-  hash: ({ input, alg }) => async state => {
-    const buf = devek.stringToUint8Array(input);
-    const hash =
-      alg === "MD5"
-        ? devek.arrayToHexString(MD5(input))
-        : new Uint8Array(await crypto.subtle.digest(alg, buf));
-    return { ...state, hash: { ...state.hash, input, alg, hash } };
-  },
+  hash:
+    ({ input, alg }) =>
+    async state => {
+      const buf = devek.stringToUint8Array(input);
+      const hash =
+        alg === "MD5" ? devek.arrayToHexString(MD5(input)) : new Uint8Array(await crypto.subtle.digest(alg, buf));
+      return { ...state, hash: { ...state.hash, input, alg, hash } };
+    },
   hashFormat: e => state => ({
     ...state,
-    hash: { ...state.hash, format: e.target.dataset.value }
+    hash: { ...state.hash, format: e.target.dataset.value },
   }),
 
   // cipher
   cipherAlg: e => state => ({
     ...state,
-    cipher: { ...state.cipher, alg: e.target.dataset.value }
+    cipher: { ...state.cipher, alg: e.target.dataset.value },
   }),
   cipherKDF: e => state => ({
     ...state,
-    cipher: { ...state.cipher, kdf: e.target.dataset.value }
+    cipher: { ...state.cipher, kdf: e.target.dataset.value },
   }),
   cipherPosition: e => state => ({
     ...state,
-    cipher: { ...state.cipher, position: e.target.dataset.value }
+    cipher: { ...state.cipher, position: e.target.dataset.value },
   }),
   cipherInput: e => state => ({
     ...state,
-    cipher: { ...state.cipher, input: e.target.innerText }
+    cipher: { ...state.cipher, input: e.target.innerText },
   }),
   passphrase: e => state => ({
     ...state,
-    cipher: { ...state.cipher, passphrase: e.target.value }
+    cipher: { ...state.cipher, passphrase: e.target.value },
   }),
   useSalt: e => state => ({
     ...state,
-    cipher: { ...state.cipher, useSalt: e.target.checked }
+    cipher: { ...state.cipher, useSalt: e.target.checked },
   }),
   salt: e => state => ({
     ...state,
-    cipher: { ...state.cipher, salt: e.target.value }
+    cipher: { ...state.cipher, salt: e.target.value },
   }),
   cipherIV: e => state => ({
     ...state,
-    cipher: { ...state.cipher, iv: e.target.value }
+    cipher: { ...state.cipher, iv: e.target.value },
   }),
   cipherKey: e => state => ({
     ...state,
-    cipher: { ...state.cipher, cipherKey: e.target.value }
+    cipher: { ...state.cipher, cipherKey: e.target.value },
   }),
   cipherAESCounter: e => state => ({
     ...state,
-    cipher: { ...state.cipher, aesCounter: e.target.value }
+    cipher: { ...state.cipher, aesCounter: e.target.value },
   }),
   cipherEncKey: e => state => ({
     ...state,
-    cipher: { ...state.cipher, encKey: e.target.innerText }
+    cipher: { ...state.cipher, encKey: e.target.innerText },
   }),
   cipherDecKey: e => state => ({
     ...state,
-    cipher: { ...state.cipher, decKey: e.target.innerText }
+    cipher: { ...state.cipher, decKey: e.target.innerText },
   }),
   cipherFormat: e => state => {
     const format = e.target.dataset.value;
@@ -93,9 +93,9 @@ const actionCreators = {
         output: {
           ...state.cipher.output,
           format,
-          formatted: devek.formatArray(state.cipher.output.output, format)
-        }
-      }
+          formatted: devek.formatArray(state.cipher.output.output, format),
+        },
+      },
     };
   },
   encrypt: () => async state => {
@@ -110,7 +110,7 @@ const actionCreators = {
       state.cipher.useSalt,
       !state.cipher.salt,
       devek.hexStringToArray(state.cipher.salt),
-      state.cipher.encKey
+      state.cipher.encKey,
     );
     if (!output.error) {
       output.format = "Base64";
@@ -120,8 +120,8 @@ const actionCreators = {
       ...state,
       cipher: {
         ...state.cipher,
-        output
-      }
+        output,
+      },
     };
   },
   decrypt: () => async state => {
@@ -136,7 +136,7 @@ const actionCreators = {
       state.cipher.useSalt,
       !state.cipher.salt,
       devek.hexStringToArray(state.cipher.salt),
-      state.cipher.decKey
+      state.cipher.decKey,
     );
     if (!output.error) {
       output.format = "UTF-8";
@@ -146,42 +146,42 @@ const actionCreators = {
       ...state,
       cipher: {
         ...state.cipher,
-        output
-      }
+        output,
+      },
     };
   },
 
   // sign
   signAlg: e => state => ({
     ...state,
-    sign: { ...state.sign, alg: e.target.dataset.value }
+    sign: { ...state.sign, alg: e.target.dataset.value },
   }),
   signInput: e => state => ({
     ...state,
-    sign: { ...state.sign, input: e.target.innerText }
+    sign: { ...state.sign, input: e.target.innerText },
   }),
   signHashAlg: e => state => ({
     ...state,
-    sign: { ...state.sign, hashAlg: e.target.dataset.value }
+    sign: { ...state.sign, hashAlg: e.target.dataset.value },
   }),
   signPublicKey: e => state => ({
     ...state,
-    sign: { ...state.sign, publicKey: e.target.innerText }
+    sign: { ...state.sign, publicKey: e.target.innerText },
   }),
   signPrivateKey: e => state => ({
     ...state,
-    sign: { ...state.sign, privateKey: e.target.innerText }
+    sign: { ...state.sign, privateKey: e.target.innerText },
   }),
   signSecretKey: e => state => ({
     ...state,
-    sign: { ...state.sign, secretKey: e.target.innerText }
+    sign: { ...state.sign, secretKey: e.target.innerText },
   }),
   signSecretFormat: e => state => ({
-    sign: { ...state.sign, secretFormat: e.target.dataset.value }
+    sign: { ...state.sign, secretFormat: e.target.dataset.value },
   }),
   signSignature: e => state => ({
     ...state,
-    sign: { ...state.sign, signature: e.target.innerText }
+    sign: { ...state.sign, signature: e.target.innerText },
   }),
   signFormat: e => state => {
     const format = e.target.dataset.value;
@@ -192,9 +192,9 @@ const actionCreators = {
         output: {
           ...state.sign.output,
           format,
-          formatted: devek.formatArray(state.sign.output.output, format)
-        }
-      }
+          formatted: devek.formatArray(state.sign.output.output, format),
+        },
+      },
     };
   },
   sign: () => async state => {
@@ -214,8 +214,8 @@ const actionCreators = {
       ...state,
       sign: {
         ...state.sign,
-        output
-      }
+        output,
+      },
     };
   },
   verify: () => async state => {
@@ -226,13 +226,7 @@ const actionCreators = {
       if (state.sign.secretFormat === "Hex") key = new Uint8Array(devek.hexStringToArray(key));
       if (state.sign.secretFormat === "Base64") key = devek.base64UrlToUint8Array(key);
     }
-    const output = await verify(
-      state.sign.alg,
-      state.sign.hashAlg,
-      key,
-      state.sign.signature,
-      state.sign.input
-    );
+    const output = await verify(state.sign.alg, state.sign.hashAlg, key, state.sign.signature, state.sign.input);
     if (!output.error) {
       output.format = "";
       output.formatted = output.output.toString();
@@ -241,86 +235,86 @@ const actionCreators = {
       ...state,
       sign: {
         ...state.sign,
-        output
-      }
+        output,
+      },
     };
   },
 
   //generate
   genAlgType: e => state => ({
     ...state,
-    generate: { ...state.generate, algType: e.target.dataset.value }
+    generate: { ...state.generate, algType: e.target.dataset.value },
   }),
   genAsymAlg: e => state => ({
     ...state,
-    generate: { ...state.generate, asymAlg: e.target.dataset.value }
+    generate: { ...state.generate, asymAlg: e.target.dataset.value },
   }),
   genSymmAlg: e => state => ({
     ...state,
-    generate: { ...state.generate, symmAlg: e.target.dataset.value }
+    generate: { ...state.generate, symmAlg: e.target.dataset.value },
   }),
   genHashAlg: e => state => ({
     ...state,
-    generate: { ...state.generate, hashAlg: e.target.dataset.value }
+    generate: { ...state.generate, hashAlg: e.target.dataset.value },
   }),
   genFormat: e => async state => {
     return {
       ...state,
       generate: {
         ...state.generate,
-        ...(await formatOutput(state.generate.outputKey, e.target.dataset.value))
-      }
+        ...(await formatOutput(state.generate.outputKey, e.target.dataset.value)),
+      },
     };
   },
   genSource: e => state => ({
     ...state,
-    generate: { ...state.generate, source: e.target.dataset.value }
+    generate: { ...state.generate, source: e.target.dataset.value },
   }),
   genKdfPassphrase: e => state => ({
     ...state,
     generate: {
       ...state.generate,
-      kdf: { ...state.generate.kdf, passphrase: e.target.value }
-    }
+      kdf: { ...state.generate.kdf, passphrase: e.target.value },
+    },
   }),
   genKdfSalt: e => state => ({
     ...state,
     generate: {
       ...state.generate,
-      kdf: { ...state.generate.kdf, salt: e.target.value }
-    }
+      kdf: { ...state.generate.kdf, salt: e.target.value },
+    },
   }),
   genKdfIterations: e => state => ({
     ...state,
     generate: {
       ...state.generate,
-      kdf: { ...state.generate.kdf, iterations: parseInt(e.target.value) }
-    }
+      kdf: { ...state.generate.kdf, iterations: parseInt(e.target.value) },
+    },
   }),
   genKdfHashAlg: e => state => ({
     ...state,
     generate: {
       ...state.generate,
-      kdf: { ...state.generate.kdf, hash: e.target.dataset.value }
-    }
+      kdf: { ...state.generate.kdf, hash: e.target.dataset.value },
+    },
   }),
   rsaModulusLength: e => state => ({
     ...state,
     generate: {
       ...state.generate,
-      rsaModulusLength: parseInt(e.target.dataset.value)
-    }
+      rsaModulusLength: parseInt(e.target.dataset.value),
+    },
   }),
   ecNamedCurve: e => state => ({
     ...state,
-    generate: { ...state.generate, ecNamedCurve: e.target.dataset.value }
+    generate: { ...state.generate, ecNamedCurve: e.target.dataset.value },
   }),
   aesKeyLength: e => state => ({
     ...state,
     generate: {
       ...state.generate,
-      aesKeyLength: parseInt(e.target.dataset.value)
-    }
+      aesKeyLength: parseInt(e.target.dataset.value),
+    },
   }),
   genKey: () => generate,
 
@@ -334,25 +328,21 @@ const actionCreators = {
           ...state.cert,
           loaded: false,
           pem: "Error reading certificate\n\nMessage: " + cert.error,
-          output: ""
-        }
+          output: "",
+        },
       };
     } else {
       const output = prettyCert(cert);
 
       const fingerprints = {
         md5: devek.arrayToHexString(MD5(cert.buffer)),
-        sha1: devek.arrayToHexString(
-          new Uint8Array(await crypto.subtle.digest("SHA-1", cert.buffer))
-        ),
-        sha256: devek.arrayToHexString(
-          new Uint8Array(await crypto.subtle.digest("SHA-256", cert.buffer))
-        )
+        sha1: devek.arrayToHexString(new Uint8Array(await crypto.subtle.digest("SHA-1", cert.buffer))),
+        sha256: devek.arrayToHexString(new Uint8Array(await crypto.subtle.digest("SHA-256", cert.buffer))),
       };
 
       return {
         ...state,
-        cert: { ...state.cert, loaded: true, pem, output, fingerprints, publicKey: cert.subjectPublicKeyInfo.pem }
+        cert: { ...state.cert, loaded: true, pem, output, fingerprints, publicKey: cert.subjectPublicKeyInfo.pem },
       };
     }
   },
@@ -361,7 +351,7 @@ const actionCreators = {
     e.stopPropagation();
     return {
       ...state,
-      cert: { ...state.cert, dragging: state.cert.dragging + 1 }
+      cert: { ...state.cert, dragging: state.cert.dragging + 1 },
     };
   },
   onDragLeave: e => state => {
@@ -369,9 +359,9 @@ const actionCreators = {
     e.stopPropagation();
     return {
       ...state,
-      cert: { ...state.cert, dragging: state.cert.dragging - 1 }
+      cert: { ...state.cert, dragging: state.cert.dragging - 1 },
     };
-  }
+  },
 };
 
 const initialState = {
@@ -380,7 +370,7 @@ const initialState = {
     input: "",
     alg: "SHA-256",
     hash: devek.base64ToUint8Array("47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU="),
-    format: "Base64"
+    format: "Base64",
   },
 
   // cipher
@@ -399,7 +389,7 @@ const initialState = {
     aesCounter: "",
     format: "",
     output: null,
-    error: ""
+    error: "",
   },
 
   sign: {
@@ -412,7 +402,7 @@ const initialState = {
     secretFormat: "UTF-8",
     signature: "",
     output: null,
-    error: ""
+    error: "",
   },
 
   //generate keys
@@ -434,10 +424,10 @@ const initialState = {
       passphrase: "",
       salt: "",
       hash: "SHA-256",
-      iterations: 10000
+      iterations: 10000,
     },
     error: "",
-    outputKey: null
+    outputKey: null,
   },
 
   // cert
@@ -445,8 +435,8 @@ const initialState = {
     dragging: 0,
     loaded: false,
     pem: "",
-    output: ""
-  }
+    output: "",
+  },
 };
 
 export const { actions, useStore } = createStore(actionCreators, initialState, "crypto");

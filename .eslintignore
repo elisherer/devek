@@ -7,3 +7,8 @@ dist/
 # test files
 **/*.spec.js
 **/*.test.js
+
+# external files
+archive/
+design/
+scripts/

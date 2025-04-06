@@ -1,4 +1,4 @@
-module.exports = `varying highp vec2 vTextureCoord;
+export default `varying highp vec2 vTextureCoord;
 varying highp vec3 vLighting;
 uniform sampler2D uSampler;
 void main(void) {

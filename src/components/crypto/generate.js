@@ -1,4 +1,4 @@
-import devek from "devek";
+import devek from "@/devek";
 import { publicKeyJWKToSSH, privateKeyJWKToSSH } from "./ssh";
 import { spkiToPKCS1, pkcs8ToPKCS1 } from "./crypto";
 const crypto = devek.crypto;
@@ -7,7 +7,7 @@ const getFamily = alg => alg.match(/^(RSA|EC|AES|HMAC)/)[0];
 
 export const SSH_SUPPORT = {
   "RSASSA-PKCS1-v1_5": 1,
-  ECDSA: 1
+  ECDSA: 1,
 };
 const PBKDF2_SALT_MIN_SIZE = 16;
 const getPBKDF2Salt = salt => {
@@ -40,10 +40,10 @@ export const generate = async state => {
               name: asymAlg,
               modulusLength: rsaModulusLength,
               publicExponent: new Uint8Array([1, 0, 1]),
-              hash: hashAlg
+              hash: hashAlg,
             },
             true,
-            asymAlg === "RSA-OAEP" ? ["encrypt", "decrypt"] : ["sign", "verify"]
+            asymAlg === "RSA-OAEP" ? ["encrypt", "decrypt"] : ["sign", "verify"],
           );
         }
         break;
@@ -53,10 +53,10 @@ export const generate = async state => {
           outputKey = await crypto.subtle.generateKey(
             {
               name: asymAlg,
-              namedCurve: ecNamedCurve
+              namedCurve: ecNamedCurve,
             },
             true,
-            asymAlg === "ECDH" ? ["deriveKey"] : ["sign", "verify"]
+            asymAlg === "ECDH" ? ["deriveKey"] : ["sign", "verify"],
           );
         }
         break;
@@ -65,7 +65,7 @@ export const generate = async state => {
           const { hashAlg, kdf } = state.generate;
           const hmacKeyGenParams = {
             name: symmAlg,
-            hash: { name: hashAlg }
+            hash: { name: hashAlg },
           };
           if (source === "Random") {
             outputKey = await crypto.subtle.generateKey(hmacKeyGenParams, true, ["sign", "verify"]);
@@ -76,7 +76,7 @@ export const generate = async state => {
               devek.stringToUint8Array(kdf.passphrase),
               { name: "PBKDF2" },
               false,
-              ["deriveBits", "deriveKey"]
+              ["deriveBits", "deriveKey"],
             );
             const salt = getPBKDF2Salt(kdf.salt);
             kdfOutput = `salt = ${devek.arrayToHexString(salt)}`;
@@ -85,12 +85,12 @@ export const generate = async state => {
                 name: "PBKDF2",
                 salt,
                 iterations: kdf.iterations,
-                hash: kdf.hash
+                hash: kdf.hash,
               },
               keyMaterial,
               hmacKeyGenParams,
               true,
-              ["sign", "verify"]
+              ["sign", "verify"],
             );
           }
         }
@@ -100,7 +100,7 @@ export const generate = async state => {
           const { aesKeyLength, kdf } = state.generate;
           const aesKeyGenParams = {
               name: symmAlg,
-              length: aesKeyLength
+              length: aesKeyLength,
             },
             aesKeyUsages = symmAlg === "AES-KW" ? ["wrapKey", "unwrapKey"] : ["encrypt", "decrypt"];
           if (source === "Random") {
@@ -112,7 +112,7 @@ export const generate = async state => {
               devek.stringToUint8Array(kdf.passphrase),
               { name: "PBKDF2" },
               false,
-              ["deriveBits", "deriveKey"]
+              ["deriveBits", "deriveKey"],
             );
             const salt = getPBKDF2Salt(kdf.salt);
             kdfOutput = `salt = ${devek.arrayToHexString(salt)}`;
@@ -121,12 +121,12 @@ export const generate = async state => {
                 name: "PBKDF2",
                 salt,
                 iterations: kdf.iterations,
-                hash: kdf.hash
+                hash: kdf.hash,
               },
               keyMaterial,
               aesKeyGenParams,
               true,
-              aesKeyUsages
+              aesKeyUsages,
             );
           }
         }
@@ -137,8 +137,8 @@ export const generate = async state => {
           generate: {
             ...state.generate,
             outputKey: null,
-            error: "Unknown generation algorithm"
-          }
+            error: "Unknown generation algorithm",
+          },
         };
     }
     return {
@@ -148,8 +148,8 @@ export const generate = async state => {
         outputKey,
         outputParams: state.generate,
         kdf: { ...state.generate.kdf, output: kdfOutput },
-        ...(await formatOutput(outputKey, format))
-      }
+        ...(await formatOutput(outputKey, format)),
+      },
     };
   } catch (e) {
     return {
@@ -157,8 +157,8 @@ export const generate = async state => {
       generate: {
         ...state.generate,
         outputKey: null,
-        error: e.name + ": " + e.message
-      }
+        error: e.name + ": " + e.message,
+      },
     };
   }
 };
@@ -167,9 +167,7 @@ export const formatOutput = async (outputKey, format) => {
   const symmetric = outputKey.extractable;
   try {
     if (symmetric) {
-      const symmKey = devek.arrayToHexString(
-        new Uint8Array(await crypto.subtle.exportKey("raw", outputKey))
-      );
+      const symmKey = devek.arrayToHexString(new Uint8Array(await crypto.subtle.exportKey("raw", outputKey)));
       return { symmKey, error: "" };
     } else {
       let publicKey,
@@ -182,25 +180,13 @@ export const formatOutput = async (outputKey, format) => {
       }
       switch (format) {
         case "JWK":
-          publicKey = JSON.stringify(
-            await crypto.subtle.exportKey("jwk", outputKey.publicKey),
-            null,
-            2
-          );
-          privateKey = JSON.stringify(
-            await crypto.subtle.exportKey("jwk", outputKey.privateKey),
-            null,
-            2
-          );
+          publicKey = JSON.stringify(await crypto.subtle.exportKey("jwk", outputKey.publicKey), null, 2);
+          privateKey = JSON.stringify(await crypto.subtle.exportKey("jwk", outputKey.privateKey), null, 2);
           break;
         case "SSH":
           {
-            const pubssh = publicKeyJWKToSSH(
-              await crypto.subtle.exportKey("jwk", outputKey.publicKey)
-            );
-            const shaFingerprint = new Uint8Array(
-              await crypto.subtle.digest("SHA-256", pubssh.decoded)
-            );
+            const pubssh = publicKeyJWKToSSH(await crypto.subtle.exportKey("jwk", outputKey.publicKey));
+            const shaFingerprint = new Uint8Array(await crypto.subtle.digest("SHA-256", pubssh.decoded));
             publicKey =
               pubssh.type +
               " " +
@@ -212,31 +198,22 @@ export const formatOutput = async (outputKey, format) => {
               devek.arrayToBase64(shaFingerprint) +
               "\n" +
               devek.arrayToHexString(devek.md5(pubssh.decoded), ":");
-            privateKey = pkcs8ToPKCS1(
-              new Uint8Array(await crypto.subtle.exportKey("pkcs8", outputKey.privateKey))
-            );
-            privateSSH = privateKeyJWKToSSH(
-              pubssh,
-              await crypto.subtle.exportKey("jwk", outputKey.privateKey)
-            );
+            privateKey = pkcs8ToPKCS1(new Uint8Array(await crypto.subtle.exportKey("pkcs8", outputKey.privateKey)));
+            privateSSH = privateKeyJWKToSSH(pubssh, await crypto.subtle.exportKey("jwk", outputKey.privateKey));
           }
           break;
         case "PEM (PKCS#1)": // only RSA
-          publicKey = spkiToPKCS1(
-            new Uint8Array(await crypto.subtle.exportKey("spki", outputKey.publicKey))
-          );
-          privateKey = pkcs8ToPKCS1(
-            new Uint8Array(await crypto.subtle.exportKey("pkcs8", outputKey.privateKey))
-          );
+          publicKey = spkiToPKCS1(new Uint8Array(await crypto.subtle.exportKey("spki", outputKey.publicKey)));
+          privateKey = pkcs8ToPKCS1(new Uint8Array(await crypto.subtle.exportKey("pkcs8", outputKey.privateKey)));
           break;
         case "PEM (X.509+PKCS#8)":
           publicKey = devek.arrayToPEM(
             new Uint8Array(await crypto.subtle.exportKey("spki", outputKey.publicKey)),
-            "PUBLIC KEY"
+            "PUBLIC KEY",
           );
           privateKey = devek.arrayToPEM(
             new Uint8Array(await crypto.subtle.exportKey("pkcs8", outputKey.privateKey)),
-            "PRIVATE KEY"
+            "PRIVATE KEY",
           );
           break;
       }

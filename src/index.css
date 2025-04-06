@@ -1,0 +1,98 @@
+@import "tailwindcss";
+@plugin "tailwindcss-animate";
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  --default-font: 16px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  --default-font-mono: 	source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
+
+  --screen-desktop-min: 768px;
+  --nav-width: 240px;
+
+  --background: #f3f5f9;
+  --foreground: #303030;
+  --color-primary: #5500aa;
+  --color-secondary: #7744cc;
+  --color-highlight: #1e90ff;
+  --color-border: #e0e0e0;
+
+  --color-header: var(--color-secondary);
+  --card-background: #ffffff;
+  --card-shadow: 3px 3px 11px rgba(0,0,0,.1);
+  --tabs-color-text: var(--color-secondary);
+  --code-background: #f0f0f0;
+  --input-background: #fdfdfd;
+  --input-disabled-background: #f6f6f6;
+  --input-color-placeholder: #bbbbbb;
+  --input-focus-border: var(--color-secondary);
+
+  --scrollbar-thumb: rgba(0, 0, 0, 0.3);
+  --scrollbar-thumb-hover: rgba(0, 0, 0, 0.2);
+}
+
+.dark {
+  --background: #1e1e1e;
+  --foreground: #cccccc;
+  /*--color-primary: ;*/
+  /*--color-secondary: ;*/
+  /*--color-highlight: ;*/
+  --color-border: #444444;
+
+  /*--color-header: ;*/
+  --card-background: #383838;
+  /*--card-shadow: ;*/
+  /*--tabs-color-text: ;*/
+  --code-background: #2a2a2a;
+  --input-background: #222222;
+  --input-disabled-background: #2e2e2e;
+  --input-color-placeholder: #777777;
+  /*--input-focus-border: ;*/
+
+  --scrollbar-thumb: ;
+  --scrollbar-thumb-hover: ;
+}
+
+@layer base {
+  #root {
+    height: 100vh;
+    display: flex;
+  }
+
+  ::-webkit-scrollbar {
+    @apply block size-3
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: var(--scrollbar-thumb);
+    border-radius: 9999px;
+  }
+  ::-webkit-scrollbar-track {
+    @apply mx-2
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: var(--scrollbar-thumb-hover);
+  }
+
+  a:not([class]), a:not([class]):visited {
+    color: var(--color-primary);
+  }
+  a:not([class]):hover {
+    @apply underline;
+  }
+  code {
+    background: rgba(128,128,128,0.2);
+    border-radius: 4px;
+    padding: 1px 4px;
+    font-size: 0.9em;
+  }
+
+  button,
+  [role='button'] {
+    cursor: pointer;
+  }
+  button:disabled,
+  [role='button']:disabled {
+    cursor: default;
+  }
+}

@@ -1,4 +1,4 @@
-import devek from "devek";
+import devek from "@/devek";
 import md5 from "./md5";
 import { ASN1 } from "./asn1";
 import { pkcs1ToJWK } from "./crypto";
@@ -37,7 +37,7 @@ const EVP_BytesToKey = (passphrase, salt, keySize, ivSize, count) => {
   }
   return {
     key: keyAndIv.slice(0, keySize),
-    iv: keyAndIv.slice(keySize, keySize + ivSize)
+    iv: keyAndIv.slice(keySize, keySize + ivSize),
   };
 };
 
@@ -59,7 +59,7 @@ const deriveAESCryptoKeyAndIV = async (alg, passphrase, useSalt, generateSalt, s
   return {
     cryptoKey: await crypto.subtle.importKey("raw", derived.key, alg, true, [usage]),
     iv: derived.iv,
-    salt
+    salt,
   };
 };
 
@@ -68,11 +68,11 @@ const getAesParams = (alg, iv) =>
     ? {
         name: alg,
         counter: iv,
-        length: 64
+        length: 64,
       }
     : {
         name: alg,
-        iv
+        iv,
       };
 
 const importRSAOAEPCryptoKey = (input, usage) => {
@@ -83,10 +83,10 @@ const importRSAOAEPCryptoKey = (input, usage) => {
       jwk,
       {
         name: "RSA-OAEP",
-        hash: "SHA" + (jwk.alg.substr(8) || "-1")
+        hash: "SHA" + (jwk.alg.substr(8) || "-1"),
       },
       true,
-      [usage]
+      [usage],
     );
   } catch (e) {
     if (e instanceof SyntaxError) {
@@ -100,10 +100,10 @@ const importRSAOAEPCryptoKey = (input, usage) => {
           jwk,
           {
             name: "RSA-OAEP", // guess
-            hash: "SHA-512" // guess
+            hash: "SHA-512", // guess
           },
           true,
-          [usage]
+          [usage],
         );
       }
       // try X.509 / PKCS#8
@@ -112,10 +112,10 @@ const importRSAOAEPCryptoKey = (input, usage) => {
         ASN1.pemToUint8Array(input),
         {
           name: "RSA-OAEP", // guess
-          hash: "SHA-512" // guess
+          hash: "SHA-512", // guess
         },
         true,
-        [usage]
+        [usage],
       );
     }
   }
@@ -127,15 +127,13 @@ const getRsaOaepParams = (name, label) => {
   return params;
 };
 
-const buildIVOutput = (alg, iv) =>
-  (alg === "AES-CTR" ? "counter = " : "iv      = ") + devek.arrayToHexString(iv);
+const buildIVOutput = (alg, iv) => (alg === "AES-CTR" ? "counter = " : "iv      = ") + devek.arrayToHexString(iv);
 
 const buildPropertiesOutputAsync = async (alg, iv, useSalt, salt, cryptoKey) =>
   [
     useSalt && "salt    = " + devek.arrayToHexString(salt),
-    "key     = " +
-      devek.arrayToHexString(new Uint8Array(await crypto.subtle.exportKey("raw", cryptoKey))),
-    buildIVOutput(alg, iv)
+    "key     = " + devek.arrayToHexString(new Uint8Array(await crypto.subtle.exportKey("raw", cryptoKey))),
+    buildIVOutput(alg, iv),
   ]
     .filter(Boolean)
     .join("\n");
@@ -151,7 +149,7 @@ export const cipherEncrypt = async (
   useSalt,
   generateSalt,
   salt,
-  encKey
+  encKey,
 ) => {
   try {
     const isAES = alg.startsWith("AES");
@@ -161,25 +159,14 @@ export const cipherEncrypt = async (
       inputLimit = Infinity;
     if (isAES) {
       if (useKDF) {
-        const keyAndIV = await deriveAESCryptoKeyAndIV(
-          alg,
-          passphrase,
-          useSalt,
-          generateSalt,
-          salt,
-          "encrypt"
-        );
+        const keyAndIV = await deriveAESCryptoKeyAndIV(alg, passphrase, useSalt, generateSalt, salt, "encrypt");
         cryptoKey = keyAndIV.cryptoKey;
         iv = keyAndIV.iv;
         salt = keyAndIV.salt;
       } else {
-        cryptoKey = await crypto.subtle.importKey(
-          "raw",
-          new Uint8Array(devek.hexStringToArray(key)),
-          alg,
-          false,
-          ["encrypt"]
-        );
+        cryptoKey = await crypto.subtle.importKey("raw", new Uint8Array(devek.hexStringToArray(key)), alg, false, [
+          "encrypt",
+        ]);
         if (!iv) {
           iv = crypto.getRandomValues(new Uint8Array(IV_SIZE));
           ivGenerated = true;
@@ -198,9 +185,7 @@ export const cipherEncrypt = async (
       encrypted = new Uint8Array(await crypto.subtle.encrypt(options, cryptoKey, dataArray));
     } catch (e) {
       if (dataArray.length > inputLimit) {
-        throw new Error(
-          `Input is over the maximum limit of ${inputLimit} bytes (*it might be lower)`
-        );
+        throw new Error(`Input is over the maximum limit of ${inputLimit} bytes (*it might be lower)`);
       } else {
         throw e;
       }
@@ -228,7 +213,7 @@ export const cipherEncrypt = async (
 
     return {
       properties,
-      output: encrypted
+      output: encrypted,
     };
   } catch (e) {
     console.error(e);
@@ -247,18 +232,14 @@ export const cipherDecrypt = async (
   useSalt,
   generateSalt,
   salt,
-  decKey
+  decKey,
 ) => {
   try {
     const isAES = alg.startsWith("AES");
 
     // extract salt from data if there
     let encrypted = devek.base64ToUint8Array(data);
-    if (
-      useKDF &&
-      encrypted.length > OPENSSL_MAGIC.length &&
-      OPENSSL_MAGIC.every((x, i) => encrypted[i] === x)
-    ) {
+    if (useKDF && encrypted.length > OPENSSL_MAGIC.length && OPENSSL_MAGIC.every((x, i) => encrypted[i] === x)) {
       useSalt = true;
       salt = encrypted.slice(OPENSSL_MAGIC.length, OPENSSL_MAGIC.length + 8);
       encrypted = encrypted.slice(OPENSSL_MAGIC.length + 8);
@@ -280,25 +261,14 @@ export const cipherDecrypt = async (
     let cryptoKey, options;
     if (isAES) {
       if (useKDF) {
-        const derived = await deriveAESCryptoKeyAndIV(
-          alg,
-          passphrase,
-          useSalt,
-          false,
-          salt,
-          "decrypt"
-        );
+        const derived = await deriveAESCryptoKeyAndIV(alg, passphrase, useSalt, false, salt, "decrypt");
         cryptoKey = derived.cryptoKey;
         iv = derived.iv;
         salt = derived.salt;
       } else {
-        cryptoKey = await crypto.subtle.importKey(
-          "raw",
-          new Uint8Array(devek.hexStringToArray(key)),
-          alg,
-          true,
-          ["decrypt"]
-        );
+        cryptoKey = await crypto.subtle.importKey("raw", new Uint8Array(devek.hexStringToArray(key)), alg, true, [
+          "decrypt",
+        ]);
         if (typeof iv === "string") iv = new Uint8Array(devek.hexStringToArray(iv));
       }
       options = getAesParams(alg, iv);
@@ -320,7 +290,7 @@ export const cipherDecrypt = async (
 
     return {
       properties,
-      output: decrypted
+      output: decrypted,
     };
   } catch (e) {
     console.error(e);

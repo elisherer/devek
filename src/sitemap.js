@@ -1,55 +1,65 @@
+import {
+  // text
+  mdiCalculator,
+  // jwt
+  mdiClockOutline,
+  // regex
+  mdiCodeJson,
+  // image
+  mdiDiceMultipleOutline,
+  // network
+  mdiFormatLineStyle,
+  // url
+  mdiHandOkay,
+  mdiImage,
+  // color
+  mdiLanConnect,
+  // data
+  mdiLink,
+  // random
+  mdiLockOutline,
+  // checksum
+  mdiMicrophoneMessage, // speech
+  // diff
+  mdiPalette,
+  // base
+  mdiRegex,
+  // xml
+  mdiShieldKeyOutline,
+  mdiText,
+  // time
+  mdiTimer,
+  // crypto
+  mdiVectorDifference,
+  // json
+  mdiXml,
+} from "@mdi/js";
 import { lazy } from "react";
 
 import Home from "./components/Home";
-import PageText from "./components/text/PageText";
 import PageBase from "./components/base/PageBase";
-import PageRegex from "./components/regex/PageRegex";
+import PageChecksum from "./components/checksum/PageChecksum";
+import PageColor from "./components/color/PageColor";
+import PageCron from "./components/cron/PageCron";
+//import PageCrypto from './components/crypto/PageCrypto'; // Lazy loaded
+import PageDiff from "./components/diff/PageDiff";
+import PageImage from "./components/image/PageImage";
 import PageJSON from "./components/json/PageJSON";
 import PageJWT from "./components/jwt/PageJWT";
-import PageXML from "./components/xml/PageXML";
-import PageTime from "./components/time/PageTime";
-import PageCron from "./components/cron/PageCron";
-import PageImage from "./components/image/PageImage";
-import PageRandom from "./components/random/PageRandom";
-import PageColor from "./components/color/PageColor";
 import PageNetwork from "./components/network/PageNetwork";
-//import PageCrypto from './components/crypto/PageCrypto'; // Lazy loaded
-import PageDiff from "./components/diff/PageDiff"; // Lazy loaded
+import PageRandom from "./components/random/PageRandom";
+import PageRegex from "./components/regex/PageRegex";
+import PageSpeech from "./components/speech/PageSpeech";
+import PageText from "./components/text/PageText";
+import PageTime from "./components/time/PageTime";
+// Lazy loaded
 //import PageData from './components/data/PageData';
 import PageURL from "./components/url/PageURL";
-import PageSpeech from "./components/speech/PageSpeech";
-import PageChecksum from "./components/checksum/PageChecksum";
+import PageXML from "./components/xml/PageXML";
 
-import {
-  mdiText, // text
-  mdiCalculator, // base
-  mdiRegex, // regex
-  mdiCodeJson, // json
-  mdiXml, // xml
-  mdiShieldKeyOutline, // jwt
-  mdiClockOutline, // time
-  mdiTimer,
-  mdiImage, // image
-  mdiDiceMultipleOutline, // random
-  mdiLockOutline, // crypto
-  mdiVectorDifference, // diff
-  mdiPalette, // color
-  mdiLanConnect, // network
-  mdiFormatLineStyle, // data
-  mdiLink, // url
-  mdiHandOkay, // checksum
-  mdiTextToSpeech // speech
-} from "@mdi/js";
-
-const PageCryptoLazy = lazy(() =>
-  import(/* webpackChunkName: "crypto" */ "./components/crypto/PageCrypto")
-);
-const PageASN1Lazy = lazy(() =>
-  import(/* webpackChunkName: "crypto" */ "./components/crypto/PageASN1")
-);
-const PageDataLazy = lazy(() =>
-  import(/* webpackChunkName: "data" */ "./components/data/PageData")
-);
+const PageCryptoLazy = lazy(() => import(/* webpackChunkName: "crypto" */ "./components/crypto/PageCrypto"));
+const PageASN1Lazy = lazy(() => import(/* webpackChunkName: "crypto" */ "./components/crypto/PageASN1"));
+const PageDataLazy = lazy(() => import(/* webpackChunkName: "data" */ "./components/data/PageData"));
 
 export const siteMap = {
   "/": {
@@ -57,7 +67,7 @@ export const siteMap = {
     keyword: "home",
     title: "Home",
     header: "Developer Kit",
-    description: "Home"
+    description: "Home",
   },
   "/text": {
     component: PageText,
@@ -70,29 +80,29 @@ export const siteMap = {
       "/case": {
         keyword: "case",
         title: "Case",
-        description: "Uppercase, lowercase and capitalize"
+        description: "Uppercase, lowercase and capitalize",
       },
       "/url": {
         keyword: "url",
         title: "URL",
-        description: "encode and decode"
+        description: "encode and decode",
       },
       "/html": {
         keyword: "html",
         title: "HTML",
-        description: "encode and decode"
+        description: "encode and decode",
       },
       "/convert": {
         keyword: "convert",
         title: "Conversion",
-        description: "Reverse text etc."
+        description: "Reverse text etc.",
       },
       "/charmap": {
         keyword: "characters",
         title: "CharMap",
-        description: "Characters map"
-      }
-    }
+        description: "Characters map",
+      },
+    },
   },
   "/base": {
     component: PageBase,
@@ -105,14 +115,14 @@ export const siteMap = {
       "/numbers": {
         keyword: "numbers",
         title: "Numbers",
-        description: "Convert between numbers bases"
+        description: "Convert between numbers bases",
       },
       "/text": {
         keyword: "text",
         title: "Text",
-        description: "Convert between text bases"
-      }
-    }
+        description: "Convert between text bases",
+      },
+    },
   },
   "/regex": {
     component: PageRegex,
@@ -120,7 +130,7 @@ export const siteMap = {
     title: "RegEx",
     header: "RegEx Tester",
     description: "Regular expression testing",
-    icon: mdiRegex
+    icon: mdiRegex,
   },
   "/json": {
     component: PageJSON,
@@ -128,7 +138,7 @@ export const siteMap = {
     title: "JSON",
     header: "JSON Tools",
     description: "Debug, Prettify",
-    icon: mdiCodeJson
+    icon: mdiCodeJson,
   },
   "/xml": {
     component: PageXML,
@@ -141,14 +151,14 @@ export const siteMap = {
       "/": {
         keyword: "xpath",
         title: "Debug and Prettify",
-        description: "Debug XML using XPath, and apply prettify"
+        description: "Debug XML using XPath, and apply prettify",
       },
       "/transform": {
         keyword: "transform",
         title: "Transform",
-        description: "Transform XML using XSLT"
-      }
-    }
+        description: "Transform XML using XSLT",
+      },
+    },
   },
   "/jwt": {
     component: PageJWT,
@@ -161,14 +171,14 @@ export const siteMap = {
       "/decode": {
         keyword: "decode",
         title: "Decoder",
-        description: "Decode and validate JWT"
+        description: "Decode and validate JWT",
       },
       "/encode": {
         keyword: "encode",
         title: "Encoder",
-        description: "Generate JWT"
-      }
-    }
+        description: "Generate JWT",
+      },
+    },
   },
   "/time": {
     component: PageTime,
@@ -181,19 +191,19 @@ export const siteMap = {
       "/now": {
         keyword: "now",
         title: "Now",
-        description: "See current time"
+        description: "See current time",
       },
       "/convert": {
         keyword: "convert",
         title: "Convert",
-        description: "Convert between different time representations"
+        description: "Convert between different time representations",
       },
       "/stopwatch": {
         keyword: "stopwatch",
         title: "Stopwatch",
-        description: "Stopwatch with laps"
-      }
-    }
+        description: "Stopwatch with laps",
+      },
+    },
   },
   "/cron": {
     component: PageCron,
@@ -206,14 +216,14 @@ export const siteMap = {
       "/crontab": {
         keyword: "crontab",
         title: "Crontab",
-        description: "Encode and decode crontab expressions"
+        description: "Encode and decode crontab expressions",
       },
       "/quartz": {
         keyword: "quartz",
         title: "Quartz",
-        description: "Encode and decode quartz expressions"
-      }
-    }
+        description: "Encode and decode quartz expressions",
+      },
+    },
   },
   "/image": {
     component: PageImage,
@@ -226,29 +236,29 @@ export const siteMap = {
       "/": {
         keyword: "image",
         title: "Actions",
-        description: "Image transformations and extraction"
+        description: "Image transformations and extraction",
       },
       "/filters": {
         keyword: "filters",
         title: "Filters",
-        description: "Apply image filters"
+        description: "Apply image filters",
       },
       "/crop": {
         keyword: "crop",
         title: "Crop",
-        description: "Image cropping tool"
+        description: "Image cropping tool",
       },
       "/resize": {
         keyword: "resize",
         title: "Resize",
-        description: "Resize images"
+        description: "Resize images",
       },
       "/picker": {
         keyword: "picker",
         title: "Color Picker",
-        description: "Pick color from an image"
-      }
-    }
+        description: "Pick color from an image",
+      },
+    },
   },
   "/random": {
     component: PageRandom,
@@ -261,14 +271,14 @@ export const siteMap = {
       "/password": {
         keyword: "password",
         title: "Password",
-        description: "Generate passwords"
+        description: "Generate passwords",
       },
       "/guid": {
         keyword: "guid",
         title: "Guid",
-        description: "Generate unique ids"
-      }
-    }
+        description: "Generate unique ids",
+      },
+    },
   },
   "/crypto": {
     component: PageCryptoLazy,
@@ -281,29 +291,29 @@ export const siteMap = {
       "/hash": {
         keyword: "hash",
         title: "Hash",
-        description: "Generate hash of input text"
+        description: "Generate hash of input text",
       },
       "/cipher": {
         keyword: "cipher",
         title: "Cipher",
-        description: "Encrypt or decrypt information"
+        description: "Encrypt or decrypt information",
       },
       "/sign": {
         keyword: "sign",
         title: "Sign",
-        description: "Sign or verify information"
+        description: "Sign or verify information",
       },
       "/generate": {
         keyword: "generate",
         title: "Generate Keys",
-        description: "Generate/derive symmetric/asymmetric keys for encryption/signing"
+        description: "Generate/derive symmetric/asymmetric keys for encryption/signing",
       },
       "/cert": {
         keyword: "certificate",
         title: "Certificate Parser",
-        description: "Parse PEM (X.509 / ASN.1) certificates"
-      }
-    }
+        description: "Parse PEM (X.509 / ASN.1) certificates",
+      },
+    },
   },
   "/asn1": {
     component: PageASN1Lazy,
@@ -311,7 +321,7 @@ export const siteMap = {
     title: "ASN.1",
     header: "ASN.1 Tools",
     description: "Decode",
-    icon: mdiCodeJson
+    icon: mdiCodeJson,
   },
   "/diff": {
     component: PageDiff,
@@ -319,7 +329,7 @@ export const siteMap = {
     title: "Diff",
     header: "Difference finder",
     description: "Find differences between two texts",
-    icon: mdiVectorDifference
+    icon: mdiVectorDifference,
   },
   "/color": {
     component: PageColor,
@@ -332,14 +342,14 @@ export const siteMap = {
       "/convert": {
         keyword: "convert",
         title: "Conversion",
-        description: "Convert between different color representations"
+        description: "Convert between different color representations",
       },
       "/gradient": {
         keyword: "gradient",
         title: "Gradient",
-        description: "Create CSS color gradients"
-      }
-    }
+        description: "Create CSS color gradients",
+      },
+    },
   },
   "/network": {
     component: PageNetwork,
@@ -347,7 +357,7 @@ export const siteMap = {
     title: "Network",
     header: "Network Tools",
     description: "Network information utilities (IP address and more)",
-    icon: mdiLanConnect
+    icon: mdiLanConnect,
   },
   "/data": {
     component: PageDataLazy,
@@ -355,7 +365,7 @@ export const siteMap = {
     title: "Data",
     header: "Data Tools",
     description: "Data manipulation tools",
-    icon: mdiFormatLineStyle
+    icon: mdiFormatLineStyle,
   },
   "/url": {
     component: PageURL,
@@ -363,7 +373,7 @@ export const siteMap = {
     title: "URL",
     header: "URL Parser",
     description: "Parse URL to its components",
-    icon: mdiLink
+    icon: mdiLink,
   },
   "/speech": {
     component: PageSpeech,
@@ -371,7 +381,7 @@ export const siteMap = {
     title: "Speech",
     header: "Speech Utilities",
     description: "Speech synthesis",
-    icon: mdiTextToSpeech
+    icon: mdiMicrophoneMessage,
   },
   "/checksum": {
     component: PageChecksum,
@@ -384,13 +394,13 @@ export const siteMap = {
       "/crc": {
         keyword: "crc",
         title: "CRC",
-        description: "Calculate cyclic redundancy check for a given input"
+        description: "Calculate cyclic redundancy check for a given input",
       },
       "/luhn": {
         keyword: "luhn",
         title: "Luhn",
-        description: "Validate using the Luhn Algorithm (Mod 10)"
-      }
-    }
-  }
+        description: "Validate using the Luhn Algorithm (Mod 10)",
+      },
+    },
+  },
 };

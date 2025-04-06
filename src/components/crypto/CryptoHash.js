@@ -1,6 +1,6 @@
 import { CopyToClipboard, Radio, TextArea } from "../_lib";
 import { actions } from "./PageCrypto.store";
-import devek from "devek";
+import devek from "@/devek";
 
 import styled from "styled-components";
 

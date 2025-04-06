@@ -1,5 +1,5 @@
 import { reduceBy } from "./color";
-import createStore from "helpers/createStore";
+import createStore from "@/helpers/createStore";
 
 const actionCreators = {
   rgba: e => state => reduceBy("rgba", { ...state, rgba: e.target.value }),
@@ -18,9 +18,9 @@ const actionCreators = {
           : {
               // index is string while i is number
               ...c,
-              [field]: e.target.value
-            }
-      )
+              [field]: e.target.value,
+            },
+      ),
     };
   },
   gradientType: e => state => ({ ...state, gradientType: e.target.dataset.gt }),
@@ -29,8 +29,8 @@ const actionCreators = {
     gradientStop: state.gradientStop
       .slice()
       .reverse()
-      .map((c, i) => ({ ...c, pos: state.gradientStop[i].pos }))
-  })
+      .map((c, i) => ({ ...c, pos: state.gradientStop[i].pos })),
+  }),
 };
 
 const initialState = {
@@ -43,11 +43,11 @@ const initialState = {
 
   gradientStop: [
     { color: "#5500aa", pos: 0 },
-    { color: "yellow", pos: 100 }
+    { color: "yellow", pos: 100 },
   ],
   gradientType: "linear-gradient(to right",
 
-  errors: {}
+  errors: {},
 };
 
 export const { actions, useStore } = createStore(actionCreators, initialState, "color");

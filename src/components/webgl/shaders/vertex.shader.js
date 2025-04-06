@@ -1,4 +1,4 @@
-module.exports = `attribute vec4 aVertexPosition;
+export default `attribute vec4 aVertexPosition;
 attribute vec3 aVertexNormal;
 attribute vec2 aTextureCoord;
 uniform mat4 uNormalMatrix;

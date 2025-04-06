@@ -1,6 +1,6 @@
 import { TextArea, TextBox, CopyToClipboard } from "../_lib";
 import { actions } from "./PageCrypto.store";
-import loadFileAsync from "helpers/loadFileAsync";
+import loadFileAsync from "@/helpers/loadFileAsync";
 import styled from "styled-components";
 
 const onDragOver = e => {

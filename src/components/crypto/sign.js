@@ -1,4 +1,4 @@
-import devek from "devek";
+import devek from "@/devek";
 import { ASN1 } from "./asn1";
 import { getNamedCurveFromSEC1, pkcs1ToJWK } from "./crypto";
 
@@ -7,7 +7,7 @@ const crypto = devek.crypto;
 const importSignVerifyCryptoKey = (alg, hashAlg, input, usage) => {
   const algorithm = {
     name: alg,
-    hash: hashAlg
+    hash: hashAlg,
   };
   if (alg === "HMAC") {
     return crypto.subtle.importKey("raw", input, algorithm, true, [usage]);
@@ -31,9 +31,7 @@ const importSignVerifyCryptoKey = (alg, hashAlg, input, usage) => {
       // try X.509 (for public) / PKCS#8 (for private)
       const namedCurve = getNamedCurveFromSEC1(pem);
       if (namedCurve) algorithm.namedCurve = namedCurve;
-      return crypto.subtle.importKey(usage === "verify" ? "spki" : "pkcs8", pem, algorithm, true, [
-        usage
-      ]);
+      return crypto.subtle.importKey(usage === "verify" ? "spki" : "pkcs8", pem, algorithm, true, [usage]);
     }
   }
 };
@@ -53,7 +51,7 @@ export const sign = async (alg, hashAlg, key, data) => {
 
     const signature = new Uint8Array(await crypto.subtle.sign(algorithm, cryptoKey, dataArray));
     return {
-      output: signature
+      output: signature,
     };
   } catch (e) {
     console.error(e);
@@ -72,7 +70,7 @@ export const verify = async (alg, hashAlg, key, signature, data) => {
     const verified = await crypto.subtle.verify(algorithm, cryptoKey, sig, dataArray);
 
     return {
-      output: verified
+      output: verified,
     };
   } catch (e) {
     console.error(e);

@@ -1,4 +1,4 @@
-import devek from "devek";
+import devek from "@/devek";
 import { ASN1, ASN1_Encode, ASN1_OID, ASN1_SEQUENCE } from "./asn1";
 
 export const getNamedCurveFromSEC1 = pem => {
@@ -42,7 +42,7 @@ export const pkcs8ToPKCS1 = pkcs8 => {
     buffer = ASN1_SEQUENCE(
       buffer.slice(1 + sequenceSize, octet.offset + octet.headerLength + octet.value.length),
       ASN1_Encode(0xa0, ASN1_OID(oidBuffer.oid)),
-      buffer.slice(octet.offset + octet.headerLength + octet.value.length)
+      buffer.slice(octet.offset + octet.headerLength + octet.value.length),
     );
   }
   return devek.arrayToPEM(buffer, alg + " PRIVATE KEY");
@@ -58,9 +58,7 @@ export const pkcs1ToJWK = pkcs1 => {
     return {
       kty: "RSA",
       n: devek.arrayToBase64Url(parsedPkcs1.value[0]),
-      e: devek.arrayToBase64Url(
-        devek.hexStringToArray(parsedPkcs1.value[1].toString(16).padStart(6, "0"))
-      )
+      e: devek.arrayToBase64Url(devek.hexStringToArray(parsedPkcs1.value[1].toString(16).padStart(6, "0"))),
     };
   } else {
     // Private (assume length of 9)
@@ -70,15 +68,13 @@ export const pkcs1ToJWK = pkcs1 => {
     return {
       kty: "RSA",
       n: devek.arrayToBase64Url(parsedPkcs1.value[1]),
-      e: devek.arrayToBase64Url(
-        devek.hexStringToArray(parsedPkcs1.value[2].toString(16).padStart(6, "0"))
-      ),
+      e: devek.arrayToBase64Url(devek.hexStringToArray(parsedPkcs1.value[2].toString(16).padStart(6, "0"))),
       d: devek.arrayToBase64Url(parsedPkcs1.value[3]),
       p: devek.arrayToBase64Url(parsedPkcs1.value[4]),
       q: devek.arrayToBase64Url(parsedPkcs1.value[5]),
       dp: devek.arrayToBase64Url(parsedPkcs1.value[6]),
       dq: devek.arrayToBase64Url(parsedPkcs1.value[7]),
-      qi: devek.arrayToBase64Url(parsedPkcs1.value[8])
+      qi: devek.arrayToBase64Url(parsedPkcs1.value[8]),
     };
   }
 };
