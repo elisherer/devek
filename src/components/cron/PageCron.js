@@ -181,12 +181,12 @@ const PageCron = ({ location }: { location: Object }) => {
               onChange={actions.type}
             >
               Every{" "}
-              <select data-type="w/" value={gen[tab]["w/"][0]} onChange={actions.arg0}>
-                {allValuesFromOne}
-              </select>{" "}
-              {tab}(s) starting on{" "}
               <select data-type="w/" value={gen[tab]["w/"][1]} onChange={actions.arg1}>
                 {namedOptionsFromFirst}
+              </select>{" "}
+              {tab}(s) starting on{" "}
+              <select data-type="w/" value={gen[tab]["w/"][0]} onChange={actions.arg0}>
+                {allValuesFromOne}
               </select>
             </RadioOption>
             <RadioOption
@@ -376,3 +376,4 @@ const PageCron = ({ location }: { location: Object }) => {
 };
 
 export default PageCron;
+
