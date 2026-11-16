@@ -39,6 +39,15 @@
   <meta name="msapplication-TileColor" content="#5500aa"/>
   <meta name="msapplication-TileImage" content="/ms-icon-144x144.png"/>
   <meta name="theme-color" content="#5500aa" />
+  <!-- client router fix for github pages -->
+  <script type="text/javascript">
+    const cr = new URLSearchParams(location.search).get('client_redirect');
+    if (cr) {
+      const u = new URL(cr);
+      history.replaceState(null, null, u.pathname + u.search + u.hash);
+    }
+  </script>
+  <!-- client router fix for github pages -->
 </head>
 <body>
   <div id="root">
